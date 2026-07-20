@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 import { Heart } from "lucide-react";
 import { isFavorite, toggleFavorite } from "@/lib/favorites";
 
@@ -12,21 +12,22 @@ export function FavoriteButton({
   kind: "event" | "practitioner";
   id: string;
 }) {
-  const [active, setActive] = useState(false);
-
-  useEffect(() => {
-    setActive(isFavorite(kind, id));
-    const sync = () => setActive(isFavorite(kind, id));
-    window.addEventListener("fts:favorites-changed", sync);
-    return () => window.removeEventListener("fts:favorites-changed", sync);
-  }, [kind, id]);
+  const subscribe = useCallback((onChange: () => void) => {
+    window.addEventListener("fts:favorites-changed", onChange);
+    return () => window.removeEventListener("fts:favorites-changed", onChange);
+  }, []);
+  const active = useSyncExternalStore(
+    subscribe,
+    () => isFavorite(kind, id),
+    () => false // rendu serveur : jamais actif
+  );
 
   return (
     <button
       type="button"
       onClick={(e) => {
         e.preventDefault();
-        setActive(toggleFavorite(kind, id));
+        toggleFavorite(kind, id); // déclenche fts:favorites-changed → re-rendu
       }}
       aria-pressed={active}
       aria-label={active ? "Retirer des favoris" : "Ajouter aux favoris"}

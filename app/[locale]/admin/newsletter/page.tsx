@@ -27,6 +27,9 @@ export default async function AdminNewsletterPage() {
           Export segmenté par tag d&apos;intérêt, prêt à importer dans MailerLite.
         </p>
         <div className="flex flex-wrap gap-2">
+          {/* Liens <a> natifs volontaires : téléchargement CSV (Content-Disposition),
+              le routeur client Next ne doit pas intercepter la navigation. */}
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a href="/api/admin/newsletter-export" className="btn-primary">
             Tout exporter ({contacts.length})
           </a>

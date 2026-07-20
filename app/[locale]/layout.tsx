@@ -48,7 +48,6 @@ export async function generateMetadata({
       siteName: "ForTheSoul",
       type: "website",
       locale,
-      images: ["/og-image.png"],
     },
     icons: { icon: "/favicon.ico" },
   };
