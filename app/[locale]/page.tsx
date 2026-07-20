@@ -18,7 +18,6 @@ export default async function HomePage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("home");
-  const tCommon = await getTranslations("common");
 
   const [topEvents, upcoming, categories] = await Promise.all([
     getTopEvents(3),
@@ -51,85 +50,66 @@ export default async function HomePage({
           className="pointer-events-none absolute -left-24 bottom-0 h-80 w-80 rounded-full bg-soul-terracotta/10 blur-3xl"
         />
 
-        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 md:grid-cols-[1.15fr_1fr] md:py-24">
-          <div>
-            <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-soul-bronze/25 bg-white/70 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-soul-bronze backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5" />
-              {t("didierEyebrow")}
-            </p>
+        {/* Emplacement image d'ambiance : déposer public/hero.jpg (paysage) pour
+            un fond plein cadre — voir le brief d'assets. Fond dégradé en attendant. */}
+        <div className="relative mx-auto max-w-3xl px-4 py-20 text-center md:py-28">
+          <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-soul-bronze/25 bg-white/70 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-soul-bronze backdrop-blur">
+            <Sparkles className="h-3.5 w-3.5" />
+            {t("didierEyebrow")}
+          </p>
 
-            <h1 className="font-serif text-4xl leading-[1.1] text-soul-brown sm:text-5xl lg:text-6xl">
-              {t("heroTitle")}
-            </h1>
-            <p className="mt-5 max-w-xl text-lg leading-relaxed text-soul-ink/70">
-              {t("heroSubtitle")}
-            </p>
+          <h1 className="font-serif text-4xl leading-[1.1] text-soul-brown sm:text-5xl lg:text-6xl">
+            {t("heroTitle")}
+          </h1>
+          <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-soul-ink/70">
+            {t("heroSubtitle")}
+          </p>
 
-            <form action="/experiences" className="mt-8 max-w-lg">
-              <div className="flex flex-col gap-3 sm:relative">
-                <div className="relative">
-                  <Search className="absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-soul-bronze" />
-                  <input
-                    type="search"
-                    name="q"
-                    placeholder={t("searchPlaceholder")}
-                    aria-label={t("searchPlaceholder")}
-                    className="w-full rounded-full border border-soul-bronze/20 bg-white py-4 pl-13 pr-5 text-sm text-soul-ink shadow-lg shadow-soul-bronze/10 outline-none transition placeholder:text-soul-bronze/50 focus:border-soul-bronze focus:ring-2 focus:ring-soul-bronze/20 sm:pr-52"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="btn-accent w-full !py-3.5 sm:absolute sm:right-1.5 sm:top-1/2 sm:w-auto sm:-translate-y-1/2 sm:!py-2.5"
-                >
-                  {t("heroCta")}
-                </button>
+          <form action="/experiences" className="mx-auto mt-9 max-w-xl">
+            <div className="flex flex-col gap-3 sm:relative">
+              <div className="relative">
+                <Search className="absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-soul-bronze" />
+                <input
+                  type="search"
+                  name="q"
+                  placeholder={t("searchPlaceholder")}
+                  aria-label={t("searchPlaceholder")}
+                  className="w-full rounded-full border border-soul-bronze/20 bg-white py-4 pl-13 pr-5 text-sm text-soul-ink shadow-lg shadow-soul-bronze/10 outline-none transition placeholder:text-soul-bronze/50 focus:border-soul-bronze focus:ring-2 focus:ring-soul-bronze/20 sm:pr-52"
+                />
               </div>
-            </form>
-
-            <div className="mt-6">
-              <Link
-                href="/praticiens"
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-soul-brown underline-offset-4 hover:text-soul-terracotta hover:underline"
+              <button
+                type="submit"
+                className="btn-accent w-full !py-3.5 sm:absolute sm:right-1.5 sm:top-1/2 sm:w-auto sm:-translate-y-1/2 sm:!py-2.5"
               >
-                {t("heroSecondary")}
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+                {t("heroCta")}
+              </button>
             </div>
+          </form>
 
-            {/* Badges de confiance */}
-            <ul className="mt-9 flex flex-wrap gap-x-6 gap-y-3">
-              {badges.map(({ icon: Icon, label }) => (
-                <li
-                  key={label}
-                  className="flex items-center gap-2 text-sm font-medium text-soul-brown/80"
-                >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-soul-sand text-soul-bronze">
-                    <Icon className="h-4 w-4" />
-                  </span>
-                  {label}
-                </li>
-              ))}
-            </ul>
+          <div className="mt-6">
+            <Link
+              href="/praticiens"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-soul-brown underline-offset-4 hover:text-soul-terracotta hover:underline"
+            >
+              {t("heroSecondary")}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
 
-          {/* Photo de Didier — présente mais juste (méditation, regard baissé). */}
-          <div className="relative mx-auto hidden w-full max-w-sm md:block">
-            <div className="absolute -inset-3 rounded-[2rem] bg-white/40 blur-xl" aria-hidden />
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] shadow-2xl shadow-soul-brown/20 ring-1 ring-white/40">
-              <Image
-                src="/didier-yoga.jpg"
-                alt="Didier Picamoles en méditation"
-                fill
-                priority
-                sizes="(max-width: 768px) 0px, 400px"
-                className="object-cover"
-              />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-soul-ink/70 to-transparent p-5">
-                <p className="font-serif text-lg text-soul-cream">Didier Picamoles</p>
-                <p className="text-xs text-soul-sand/80">{tCommon("footer.curated")}</p>
-              </div>
-            </div>
-          </div>
+          {/* Badges de confiance */}
+          <ul className="mt-10 flex flex-wrap justify-center gap-x-6 gap-y-3">
+            {badges.map(({ icon: Icon, label }) => (
+              <li
+                key={label}
+                className="flex items-center gap-2 text-sm font-medium text-soul-brown/80"
+              >
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-soul-sand text-soul-bronze">
+                  <Icon className="h-4 w-4" />
+                </span>
+                {label}
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
@@ -221,8 +201,8 @@ export default async function HomePage({
           <div className="relative mx-auto w-full max-w-sm">
             <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] shadow-2xl ring-1 ring-soul-cream/15">
               <Image
-                src="/didier.jpg"
-                alt="Didier Picamoles, fondateur de ForTheSoul"
+                src="/didier-yoga.jpg"
+                alt="Didier Picamoles en méditation"
                 fill
                 sizes="(max-width: 768px) 100vw, 400px"
                 className="object-cover"

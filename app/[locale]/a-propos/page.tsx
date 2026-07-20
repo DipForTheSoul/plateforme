@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { JsonLd } from "@/components/JsonLd";
@@ -35,19 +36,21 @@ export default async function AboutPage({
       <h1 className="text-4xl text-soul-brown">{t("title")}</h1>
 
       <div className="mt-10 grid gap-10 md:grid-cols-[300px_1fr]">
-        {/* PLACEHOLDER — à remplacer par une vraie photo de Didier :
-            déposer public/didier.jpg puis remplacer ce bloc par
-            <Image src="/didier.jpg" alt="Didier Picamoles" … /> */}
-        <div
-          className="flex aspect-[4/5] flex-col items-center justify-center gap-3 rounded-3xl p-8 text-center text-soul-cream"
-          style={{
-            background: "linear-gradient(160deg, #443420 0%, #9e7c52 60%, #fdead2 100%)",
-          }}
-        >
-          <span className="text-6xl">🌿</span>
-          <p className="font-serif text-xl">Didier Picamoles</p>
-          <p className="text-sm text-soul-sand/80">Fondateur de ForTheSoul</p>
-        </div>
+        <figure className="m-0">
+          <div className="relative aspect-[4/5] overflow-hidden rounded-3xl shadow-xl shadow-soul-brown/15 ring-1 ring-soul-bronze/15">
+            <Image
+              src="/didier.jpg"
+              alt="Didier Picamoles, fondateur de ForTheSoul"
+              fill
+              sizes="(max-width: 768px) 100vw, 300px"
+              className="object-cover"
+            />
+          </div>
+          <figcaption className="mt-3 text-center">
+            <p className="font-serif text-lg text-soul-brown">Didier Picamoles</p>
+            <p className="text-sm text-soul-bronze">Fondateur de ForTheSoul</p>
+          </figcaption>
+        </figure>
 
         <div className="flex flex-col gap-5 text-soul-ink/85">
           <p>
