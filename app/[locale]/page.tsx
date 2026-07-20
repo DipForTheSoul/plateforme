@@ -66,18 +66,20 @@ export default async function HomePage({
             </p>
 
             <form action="/experiences" className="mt-8 max-w-lg">
-              <div className="relative">
-                <Search className="absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-soul-bronze" />
-                <input
-                  type="search"
-                  name="q"
-                  placeholder={t("searchPlaceholder")}
-                  aria-label={t("searchPlaceholder")}
-                  className="w-full rounded-full border border-soul-bronze/20 bg-white py-4 pl-13 pr-32 text-sm text-soul-ink shadow-lg shadow-soul-bronze/10 outline-none transition placeholder:text-soul-bronze/50 focus:border-soul-bronze focus:ring-2 focus:ring-soul-bronze/20"
-                />
+              <div className="flex flex-col gap-3 sm:relative">
+                <div className="relative">
+                  <Search className="absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-soul-bronze" />
+                  <input
+                    type="search"
+                    name="q"
+                    placeholder={t("searchPlaceholder")}
+                    aria-label={t("searchPlaceholder")}
+                    className="w-full rounded-full border border-soul-bronze/20 bg-white py-4 pl-13 pr-5 text-sm text-soul-ink shadow-lg shadow-soul-bronze/10 outline-none transition placeholder:text-soul-bronze/50 focus:border-soul-bronze focus:ring-2 focus:ring-soul-bronze/20 sm:pr-52"
+                  />
+                </div>
                 <button
                   type="submit"
-                  className="btn-accent absolute right-1.5 top-1/2 -translate-y-1/2 !px-5 !py-2.5"
+                  className="btn-accent w-full !py-3.5 sm:absolute sm:right-1.5 sm:top-1/2 sm:w-auto sm:-translate-y-1/2 sm:!py-2.5"
                 >
                   {t("heroCta")}
                 </button>
