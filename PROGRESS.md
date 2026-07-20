@@ -2,7 +2,32 @@
 
 > Suivi d'avancement lisible par Victor & Rodrigue. Dernière mise à jour : 2026-07-20.
 
-## État global : les 10 phases sont codées ✅ — reste le branchement des comptes (Rodrigue)
+## État global : 10 phases codées ✅ — base Supabase EN LIGNE ✅ — refonte visuelle façon retreat.guru ✅
+
+### Fait le 2026-07-20 (session refonte)
+- **Base Supabase branchée et peuplée** : migrations `0001→0005` + `seed.sql`
+  appliquées sur le projet `pccbiclpgrjmejpybcki` (via `psql`, `DATABASE_URL`
+  dans `.env.local`). PostGIS OK, recherche par rayon testée (Berne 30 km ✓).
+  7 lieux, 5 praticiens, 8 événements suisses, 5 catégories, 3 contacts.
+- **Logo réel intégré** : `public/logo-icon.png` (symbole extrait) + wordmark
+  dans le header et le footer (remplace `logo.svg`).
+- **Photos de Didier** : `public/didier-yoga.jpg` (hero, méditation) et
+  `public/didier.jpg` (bandeau « curation »). Présence juste, pas frontale.
+- **Refonte landing** (`app/[locale]/page.tsx`) façon retreat.guru : hero + barre
+  de recherche à bouton intégré + badges de confiance, tuiles catégories,
+  « Sélection du moment », « Prochaines expériences », bandeau incarné Didier
+  (citation + signature). Nouvelles clés i18n FR/DE/EN.
+- Vérifs : `npm run lint` clean ; SSR FR/DE/EN 200 ; catalogue, fiches
+  praticiens/lieux/événement 200 ; recherche `?q=gong` OK.
+- Dev : ForTheSoul tourne sur **:3100/:3001** (port 3000 pris par un autre projet).
+
+### À fournir par Rodrigue (assets pour finaliser le style)
+- 1 vidéo hero courte (paysage/danse/méditation) — sinon photo pleine largeur.
+- 5 photos de catégories (une par univers) pour remplacer les tuiles dégradé.
+- Ré-export propre des photos **Costa Rica** (fichiers vides) et **Dromadaire**
+  (fichier `.~tmp` Lightroom). 1 photo horizontale de Didier bienvenue.
+
+## Reste : branchement des comptes tiers (Rodrigue)
 
 | Phase | Contenu | État |
 |---|---|---|

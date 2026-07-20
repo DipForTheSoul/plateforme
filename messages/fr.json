@@ -42,7 +42,16 @@
     "didierTitle": "Choisi avec cœur, validé par Didier",
     "didierText": "ForTheSoul n'est pas un annuaire de plus : chaque praticien·ne et chaque expérience sont validés personnellement par Didier Picamoles, fondateur de la plateforme et créateur de la Humanic Dance. Vous savez que ce que vous réservez a été vécu, rencontré, choisi.",
     "didierCta": "Découvrir l'histoire de ForTheSoul",
-    "upcomingTitle": "Prochaines expériences"
+    "upcomingTitle": "Prochaines expériences",
+    "heroBadge1": "Validé un à un par Didier",
+    "heroBadge2": "Ancré en Suisse",
+    "heroBadge3": "Sans algorithme, avec le cœur",
+    "categoriesSubtitle": "Trouvez la pratique qui vous appelle",
+    "upcomingSubtitle": "Les prochaines dates près de chez vous",
+    "upcomingCta": "Voir toutes les expériences",
+    "didierEyebrow": "La curation de Didier",
+    "didierQuote": "Je ne partage que les expériences que j'ai vécues et les personnes que j'ai rencontrées. C'est ça, ForTheSoul.",
+    "didierSignature": "Didier Picamoles, fondateur"
   },
   "events": {
     "title": "Toutes les expériences",

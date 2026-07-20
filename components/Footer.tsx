@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { NewsletterForm } from "@/components/NewsletterForm";
@@ -10,8 +11,17 @@ export async function Footer() {
     <footer className="mt-16 border-t border-soul-bronze/15 bg-soul-brown text-soul-cream">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 md:grid-cols-3">
         <div>
-          <p className="font-serif text-2xl">ForTheSoul</p>
-          <p className="mt-2 text-sm text-soul-sand/80">{t("tagline")}</p>
+          <div className="flex items-center gap-2.5">
+            <Image
+              src="/logo-icon.png"
+              alt=""
+              width={36}
+              height={30}
+              className="h-8 w-auto"
+            />
+            <p className="font-serif text-2xl">ForTheSoul</p>
+          </div>
+          <p className="mt-3 text-sm text-soul-sand/80">{t("tagline")}</p>
           <p className="mt-4 text-sm italic text-soul-bronze">{t("footer.curated")}</p>
         </div>
 

@@ -40,3 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 !.env.example
+
+# Assets sources bruts (originaux lourds) — versions web dans public/
+image de Didier/

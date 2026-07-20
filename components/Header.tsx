@@ -19,8 +19,22 @@ export async function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-soul-bronze/15 bg-soul-cream/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
-        <Link href="/" className="shrink-0" aria-label="ForTheSoul — accueil">
-          <Image src="/logo.svg" alt="ForTheSoul" width={176} height={38} priority />
+        <Link
+          href="/"
+          className="flex shrink-0 items-center gap-2.5"
+          aria-label="ForTheSoul — accueil"
+        >
+          <Image
+            src="/logo-icon.png"
+            alt=""
+            width={40}
+            height={34}
+            priority
+            className="h-9 w-auto"
+          />
+          <span className="font-serif text-2xl leading-none text-soul-brown">
+            For<span className="text-soul-bronze">The</span>Soul
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
