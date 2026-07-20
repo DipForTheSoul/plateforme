@@ -39,29 +39,37 @@ export default async function HomePage({
       {/* ------------------------------------------------------------------ */}
       {/* Hero */}
       {/* ------------------------------------------------------------------ */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-soul-sand/70 via-soul-cream to-soul-cream">
-        {/* halos décoratifs */}
+      <section className="relative isolate overflow-hidden">
+        {/* Vidéo d'ambiance en fond plein cadre (muette, en boucle). */}
+        <video
+          className="absolute inset-0 h-full w-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          poster="/hero-poster.jpg"
+          aria-hidden="true"
+        >
+          <source src="/hero.mp4" type="video/mp4" />
+        </video>
+        {/* Voile chaud : lisibilité du texte + harmonie avec la charte or/brun. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-32 -top-40 h-96 w-96 rounded-full bg-soul-amber/20 blur-3xl"
+          className="absolute inset-0 bg-gradient-to-b from-soul-ink/55 via-soul-brown/45 to-soul-brown/80"
         />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -left-24 bottom-0 h-80 w-80 rounded-full bg-soul-terracotta/10 blur-3xl"
-        />
+        <div aria-hidden className="absolute inset-0 bg-soul-terracotta/15 mix-blend-multiply" />
 
-        {/* Emplacement image d'ambiance : déposer public/hero.jpg (paysage) pour
-            un fond plein cadre — voir le brief d'assets. Fond dégradé en attendant. */}
-        <div className="relative mx-auto max-w-3xl px-4 py-20 text-center md:py-28">
-          <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-soul-bronze/25 bg-white/70 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-soul-bronze backdrop-blur">
+        <div className="relative mx-auto max-w-3xl px-4 py-24 text-center md:py-32">
+          <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-soul-cream backdrop-blur">
             <Sparkles className="h-3.5 w-3.5" />
             {t("didierEyebrow")}
           </p>
 
-          <h1 className="font-serif text-4xl leading-[1.1] text-soul-brown sm:text-5xl lg:text-6xl">
+          <h1 className="font-serif text-4xl leading-[1.1] text-soul-cream drop-shadow-md sm:text-5xl lg:text-6xl">
             {t("heroTitle")}
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-soul-ink/70">
+          <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-soul-sand drop-shadow">
             {t("heroSubtitle")}
           </p>
 
@@ -74,7 +82,7 @@ export default async function HomePage({
                   name="q"
                   placeholder={t("searchPlaceholder")}
                   aria-label={t("searchPlaceholder")}
-                  className="w-full rounded-full border border-soul-bronze/20 bg-white py-4 pl-13 pr-5 text-sm text-soul-ink shadow-lg shadow-soul-bronze/10 outline-none transition placeholder:text-soul-bronze/50 focus:border-soul-bronze focus:ring-2 focus:ring-soul-bronze/20 sm:pr-52"
+                  className="w-full rounded-full border border-white/20 bg-white py-4 pl-13 pr-5 text-sm text-soul-ink shadow-xl shadow-soul-ink/20 outline-none transition placeholder:text-soul-bronze/50 focus:border-soul-bronze focus:ring-2 focus:ring-soul-bronze/30 sm:pr-52"
                 />
               </div>
               <button
@@ -89,7 +97,7 @@ export default async function HomePage({
           <div className="mt-6">
             <Link
               href="/praticiens"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-soul-brown underline-offset-4 hover:text-soul-terracotta hover:underline"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-soul-cream underline-offset-4 hover:text-soul-amber hover:underline"
             >
               {t("heroSecondary")}
               <ArrowRight className="h-4 w-4" />
@@ -101,9 +109,9 @@ export default async function HomePage({
             {badges.map(({ icon: Icon, label }) => (
               <li
                 key={label}
-                className="flex items-center gap-2 text-sm font-medium text-soul-brown/80"
+                className="flex items-center gap-2 text-sm font-medium text-soul-cream/90"
               >
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-soul-sand text-soul-bronze">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15 text-soul-cream backdrop-blur">
                   <Icon className="h-4 w-4" />
                 </span>
                 {label}
