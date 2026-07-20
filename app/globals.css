@@ -1,26 +1,62 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * ForTheSoul — design system.
+ * Palette extraite de forthesoul.ch (esprit naturel, spirituel, chaleureux,
+ * professionnalisé) : bruns terre, bronze, crème, terracotta.
+ * Typo : Playfair Display (titres) + Work Sans (texte) — comme le site actuel.
+ */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@theme {
+  --color-soul-ink: #171200;        /* brun-noir profond (textes forts) */
+  --color-soul-brown: #443420;      /* brun terre (couleur primaire) */
+  --color-soul-bronze: #9e7c52;     /* bronze / camel (accents) */
+  --color-soul-sand: #fdead2;       /* sable clair */
+  --color-soul-cream: #fef6ed;      /* crème (fonds) */
+  --color-soul-ivory: #fffeed;      /* ivoire */
+  --color-soul-terracotta: #ff8044; /* terracotta (CTA chaleureux) */
+  --color-soul-amber: #f9ad4d;      /* ambre */
+  --color-soul-violet: #5e4d9e;     /* violet spirituel (touches) */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-work-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-playfair), ui-serif, Georgia, serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-soul-cream);
+  color: var(--color-soul-ink);
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-serif);
+}
+
+/* Champs de formulaire homogènes */
+.field {
+  @apply w-full rounded-xl border border-soul-bronze/30 bg-white px-4 py-2.5 text-sm text-soul-ink placeholder:text-soul-bronze/50 focus:border-soul-bronze focus:outline-none focus:ring-2 focus:ring-soul-bronze/20;
+}
+
+.label {
+  @apply mb-1.5 block text-sm font-medium text-soul-brown;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-soul-brown px-6 py-2.5 text-sm font-medium text-soul-cream transition hover:bg-soul-ink disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 rounded-full border border-soul-brown/30 bg-white px-6 py-2.5 text-sm font-medium text-soul-brown transition hover:border-soul-brown hover:bg-soul-sand/40;
+}
+
+.btn-accent {
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-soul-terracotta px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-soul-amber;
+}
+
+.card {
+  @apply overflow-hidden rounded-2xl border border-soul-bronze/15 bg-white shadow-sm transition hover:shadow-md;
+}
+
+.badge {
+  @apply inline-flex items-center rounded-full bg-soul-sand px-3 py-1 text-xs font-medium text-soul-brown;
 }

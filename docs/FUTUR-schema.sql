@@ -1,0 +1,60 @@
+-- ForTheSoul — Schéma ANTICIPÉ des phases futures (CLAUDE.md §8)
+-- ⚠️ NE PAS APPLIQUER pour ce build. Ce fichier documente la structure prévue
+-- pour que les avis, le blog et la réservation en ligne puissent être ajoutés
+-- sans refonte de l'architecture existante.
+
+-- ---------------------------------------------------------------------------
+-- reviews — avis / notes des praticiens (modération admin comme les events)
+-- ---------------------------------------------------------------------------
+-- create table public.reviews (
+--   id uuid primary key default gen_random_uuid(),
+--   practitioner_id uuid not null references public.practitioners (id) on delete cascade,
+--   event_id uuid references public.events (id) on delete set null,
+--   author_name text not null,
+--   author_email text not null,
+--   rating integer not null check (rating between 1 and 5),
+--   comment text,
+--   status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
+--   created_at timestamptz not null default now()
+-- );
+-- RLS : lecture publique si approved · insertion anonyme (anti-spam) · gestion admin.
+
+-- ---------------------------------------------------------------------------
+-- blog_posts — blog + commentaires
+-- ---------------------------------------------------------------------------
+-- create table public.blog_posts (
+--   id uuid primary key default gen_random_uuid(),
+--   title text not null,
+--   slug text not null unique,
+--   excerpt text,
+--   content text,                        -- markdown
+--   cover_image text,
+--   author_id uuid references auth.users (id) on delete set null,
+--   lang text not null default 'fr',
+--   published_at timestamptz,            -- null = brouillon
+--   created_at timestamptz not null default now()
+-- );
+-- create table public.blog_comments ( … même modèle de modération que reviews );
+
+-- ---------------------------------------------------------------------------
+-- bookings — réservation en ligne + commission (modèle Retreat Guru)
+-- ---------------------------------------------------------------------------
+-- create table public.bookings (
+--   id uuid primary key default gen_random_uuid(),
+--   event_id uuid not null references public.events (id) on delete cascade,
+--   participant_email text not null,
+--   participant_name text,
+--   quantity integer not null default 1,
+--   amount_total numeric(10, 2) not null,
+--   commission numeric(10, 2) not null default 0,   -- part plateforme
+--   stripe_payment_intent_id text unique,           -- idempotence, comme credit_transactions
+--   status text not null default 'pending' check (status in ('pending', 'paid', 'cancelled', 'refunded')),
+--   created_at timestamptz not null default now()
+-- );
+-- Le flux Stripe (Checkout + webhook signé + idempotence) réutilisera tel quel
+-- l'infrastructure de app/api/stripe/ — seule la metadata change.
+
+-- ---------------------------------------------------------------------------
+-- Génération automatique des textes d'annonce : aucune table nécessaire —
+-- s'appuiera sur events.description + un appel LLM côté serveur.
+-- ---------------------------------------------------------------------------

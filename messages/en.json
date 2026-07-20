@@ -1,0 +1,150 @@
+{
+  "common": {
+    "siteName": "ForTheSoul",
+    "tagline": "Conscious experiences in Switzerland, chosen with heart",
+    "nav": {
+      "experiences": "Experiences",
+      "practitioners": "Practitioners",
+      "about": "About",
+      "favorites": "Favourites",
+      "login": "Log in",
+      "logout": "Log out",
+      "practitionerSpace": "Practitioner space",
+      "admin": "Admin"
+    },
+    "footer": {
+      "curated": "Every experience is personally reviewed by Didier.",
+      "newsletterTitle": "Hear about upcoming experiences",
+      "newsletterPlaceholder": "Your email address",
+      "newsletterConsent": "I agree to receive the ForTheSoul newsletter (unsubscribe anytime).",
+      "newsletterButton": "Subscribe",
+      "newsletterSuccess": "Thank you! You're subscribed.",
+      "newsletterError": "Subscription unavailable right now. Please try again later.",
+      "legal": "© {year} ForTheSoul — Switzerland",
+      "becomePractitioner": "Become a practitioner"
+    },
+    "noResults": "No results for now.",
+    "loading": "Loading…",
+    "from": "from",
+    "free": "By donation",
+    "back": "Back",
+    "validatedByDidier": "Reviewed by Didier"
+  },
+  "home": {
+    "heroTitle": "Experiences that nourish the soul",
+    "heroSubtitle": "Free dance, meditation, yoga, sound journeys and retreats — in Switzerland and beyond, hand-picked one by one by Didier.",
+    "heroCta": "Explore experiences",
+    "heroSecondary": "Meet the practitioners",
+    "searchPlaceholder": "Search an experience (dance, gong, retreat…)",
+    "categoriesTitle": "Explore by universe",
+    "topTitle": "Current selection",
+    "topSubtitle": "Experiences highlighted by Didier",
+    "didierTitle": "Chosen with heart, reviewed by Didier",
+    "didierText": "ForTheSoul is not just another directory: every practitioner and every experience is personally reviewed by Didier Picamoles, founder of the platform and creator of Humanic Dance. What you book has been lived, met, chosen.",
+    "didierCta": "Discover the ForTheSoul story",
+    "upcomingTitle": "Upcoming experiences"
+  },
+  "events": {
+    "title": "All experiences",
+    "subtitle": "Search by mood, date or distance — everything reviewed, everything alive.",
+    "searchPlaceholder": "Free search: dance, breathwork, singing bowls…",
+    "filters": {
+      "title": "Filters",
+      "category": "Category",
+      "allCategories": "All categories",
+      "language": "Language",
+      "allLanguages": "All languages",
+      "practitioner": "Practitioner",
+      "allPractitioners": "All practitioners",
+      "region": "Region",
+      "allRegions": "Everywhere",
+      "priceMax": "Max price (CHF)",
+      "durationMax": "Max duration",
+      "anyDuration": "Any duration",
+      "radius": "Near me",
+      "radiusOff": "Off",
+      "radiusHelp": "Distance search (browser location)",
+      "reset": "Reset",
+      "apply": "Filter"
+    },
+    "calendar": {
+      "title": "Calendar",
+      "help": "Dotted days offer at least one experience. Click to filter, click two dates for a range.",
+      "clear": "All dates"
+    },
+    "resultCount": "{count, plural, =0 {No experiences} one {# experience} other {# experiences}}",
+    "empty": "No experience matches these criteria — widen your search or come back soon: the programme evolves every week.",
+    "top": "Highlighted"
+  },
+  "event": {
+    "date": "Date",
+    "schedule": "Time",
+    "duration": "Duration",
+    "price": "Price",
+    "languages": "Languages",
+    "venue": "Venue",
+    "practitioner": "Offered by",
+    "aboutVenue": "The venue",
+    "recurrenceNote": "This experience returns regularly — check the other dates.",
+    "otherDates": "Other dates",
+    "share": "Share",
+    "notFound": "This experience doesn't exist or is no longer online."
+  },
+  "practitioners": {
+    "title": "The practitioners",
+    "subtitle": "People Didier has met, listened to and reviewed.",
+    "searchPlaceholder": "Search a practitioner…",
+    "upcoming": "Upcoming experiences",
+    "noUpcoming": "No experience scheduled at the moment.",
+    "specialties": "Specialties",
+    "languages": "Spoken languages",
+    "notFound": "This profile doesn't exist or hasn't been reviewed yet."
+  },
+  "venues": {
+    "capacity": "Capacity: {count} people",
+    "upcoming": "Experiences at this venue",
+    "notFound": "This venue doesn't exist."
+  },
+  "favorites": {
+    "title": "My favourites",
+    "subtitle": "Experiences and practitioners saved on this device — no account needed.",
+    "events": "Experiences",
+    "practitioners": "Practitioners",
+    "empty": "Nothing yet. Tap the heart on an experience or practitioner profile to find it here.",
+    "add": "Add to favourites",
+    "remove": "Remove from favourites"
+  },
+  "auth": {
+    "loginTitle": "Log in",
+    "signupTitle": "Create an account",
+    "email": "Email address",
+    "password": "Password",
+    "passwordConfirm": "Confirm password",
+    "loginButton": "Log in",
+    "signupButton": "Create my account",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "No account yet?",
+    "haveAccount": "Already have an account?",
+    "signupAsParticipant": "I take part in experiences",
+    "signupAsPractitioner": "I'm a practitioner and want to publish",
+    "practitionerNote": "Your profile will be reviewed by Didier before publication.",
+    "checkEmail": "Check your inbox: a confirmation link has just been sent.",
+    "resetTitle": "Forgot password",
+    "resetHelp": "Enter your email: we'll send you a reset link.",
+    "resetButton": "Send the link",
+    "resetSent": "If an account exists for this address, a reset email is on its way.",
+    "newPasswordTitle": "New password",
+    "newPasswordButton": "Save password",
+    "errors": {
+      "invalidCredentials": "Incorrect email or password.",
+      "passwordMismatch": "Passwords don't match.",
+      "weakPassword": "Password must be at least 8 characters.",
+      "generic": "Something went wrong. Please try again.",
+      "emailInUse": "An account already exists with this address."
+    }
+  },
+  "about": {
+    "title": "The ForTheSoul story",
+    "metaDescription": "ForTheSoul was born from Didier Picamoles' conviction: transformative experiences are chosen with the heart, not by an algorithm."
+  }
+}

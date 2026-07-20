@@ -1,0 +1,150 @@
+{
+  "common": {
+    "siteName": "ForTheSoul",
+    "tagline": "Expériences conscientes en Suisse, choisies avec cœur",
+    "nav": {
+      "experiences": "Expériences",
+      "practitioners": "Praticien·nes",
+      "about": "À propos",
+      "favorites": "Favoris",
+      "login": "Connexion",
+      "logout": "Se déconnecter",
+      "practitionerSpace": "Espace praticien",
+      "admin": "Administration"
+    },
+    "footer": {
+      "curated": "Chaque expérience est validée personnellement par Didier.",
+      "newsletterTitle": "Recevez les prochaines expériences",
+      "newsletterPlaceholder": "Votre adresse e-mail",
+      "newsletterConsent": "J'accepte de recevoir la newsletter ForTheSoul (désinscription à tout moment).",
+      "newsletterButton": "S'inscrire",
+      "newsletterSuccess": "Merci ! Vous êtes bien inscrit·e.",
+      "newsletterError": "Inscription impossible pour le moment. Réessayez plus tard.",
+      "legal": "© {year} ForTheSoul — Suisse",
+      "becomePractitioner": "Devenir praticien·ne"
+    },
+    "noResults": "Aucun résultat pour le moment.",
+    "loading": "Chargement…",
+    "from": "dès",
+    "free": "Prix libre",
+    "back": "Retour",
+    "validatedByDidier": "Validé par Didier"
+  },
+  "home": {
+    "heroTitle": "Des expériences qui nourrissent l'âme",
+    "heroSubtitle": "Danse libre, méditation, yoga, voyages sonores et retraites — en Suisse et au-delà, choisies une à une par Didier.",
+    "heroCta": "Explorer les expériences",
+    "heroSecondary": "Rencontrer les praticien·nes",
+    "searchPlaceholder": "Rechercher une expérience (danse, gong, retraite…)",
+    "categoriesTitle": "Explorer par univers",
+    "topTitle": "Sélection du moment",
+    "topSubtitle": "Les expériences mises en avant par Didier",
+    "didierTitle": "Choisi avec cœur, validé par Didier",
+    "didierText": "ForTheSoul n'est pas un annuaire de plus : chaque praticien·ne et chaque expérience sont validés personnellement par Didier Picamoles, fondateur de la plateforme et créateur de la Humanic Dance. Vous savez que ce que vous réservez a été vécu, rencontré, choisi.",
+    "didierCta": "Découvrir l'histoire de ForTheSoul",
+    "upcomingTitle": "Prochaines expériences"
+  },
+  "events": {
+    "title": "Toutes les expériences",
+    "subtitle": "Recherchez par envie, par date ou par distance — tout est validé, tout est vivant.",
+    "searchPlaceholder": "Recherche libre : danse, breathwork, bols tibétains…",
+    "filters": {
+      "title": "Filtres",
+      "category": "Catégorie",
+      "allCategories": "Toutes les catégories",
+      "language": "Langue",
+      "allLanguages": "Toutes les langues",
+      "practitioner": "Praticien·ne",
+      "allPractitioners": "Tou·tes les praticien·nes",
+      "region": "Région",
+      "allRegions": "Partout",
+      "priceMax": "Prix max (CHF)",
+      "durationMax": "Durée max",
+      "anyDuration": "Toutes durées",
+      "radius": "Autour de moi",
+      "radiusOff": "Désactivé",
+      "radiusHelp": "Recherche par distance (géolocalisation du navigateur)",
+      "reset": "Réinitialiser",
+      "apply": "Filtrer"
+    },
+    "calendar": {
+      "title": "Calendrier",
+      "help": "Les jours pastillés proposent au moins une expérience. Cliquez pour filtrer, cliquez deux dates pour une période.",
+      "clear": "Toutes les dates"
+    },
+    "resultCount": "{count, plural, =0 {Aucune expérience} one {# expérience} other {# expériences}}",
+    "empty": "Aucune expérience ne correspond à ces critères — élargissez la recherche ou revenez bientôt : la programmation vit chaque semaine.",
+    "top": "Mise en avant"
+  },
+  "event": {
+    "date": "Date",
+    "schedule": "Horaire",
+    "duration": "Durée",
+    "price": "Prix",
+    "languages": "Langues",
+    "venue": "Lieu",
+    "practitioner": "Proposé par",
+    "aboutVenue": "Le lieu",
+    "recurrenceNote": "Cette expérience revient régulièrement — consultez les autres dates.",
+    "otherDates": "Autres dates",
+    "share": "Partager",
+    "notFound": "Cette expérience n'existe pas ou n'est plus en ligne."
+  },
+  "practitioners": {
+    "title": "Les praticien·nes",
+    "subtitle": "Des femmes et des hommes rencontrés, écoutés et validés par Didier.",
+    "searchPlaceholder": "Rechercher un·e praticien·ne…",
+    "upcoming": "Prochaines expériences",
+    "noUpcoming": "Pas d'expérience programmée pour le moment.",
+    "specialties": "Spécialités",
+    "languages": "Langues parlées",
+    "notFound": "Cette fiche n'existe pas ou n'est pas encore validée."
+  },
+  "venues": {
+    "capacity": "Capacité : {count} personnes",
+    "upcoming": "Expériences dans ce lieu",
+    "notFound": "Ce lieu n'existe pas."
+  },
+  "favorites": {
+    "title": "Mes favoris",
+    "subtitle": "Vos expériences et praticien·nes enregistrés sur cet appareil — aucun compte nécessaire.",
+    "events": "Expériences",
+    "practitioners": "Praticien·nes",
+    "empty": "Rien pour l'instant. Touchez le cœur d'une expérience ou d'une fiche praticien pour la retrouver ici.",
+    "add": "Ajouter aux favoris",
+    "remove": "Retirer des favoris"
+  },
+  "auth": {
+    "loginTitle": "Connexion",
+    "signupTitle": "Créer un compte",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "passwordConfirm": "Confirmez le mot de passe",
+    "loginButton": "Se connecter",
+    "signupButton": "Créer mon compte",
+    "forgotPassword": "Mot de passe oublié ?",
+    "noAccount": "Pas encore de compte ?",
+    "haveAccount": "Déjà un compte ?",
+    "signupAsParticipant": "Je participe aux expériences",
+    "signupAsPractitioner": "Je suis praticien·ne et souhaite publier",
+    "practitionerNote": "Votre fiche sera relue et validée par Didier avant publication.",
+    "checkEmail": "Vérifiez votre boîte mail : un lien de confirmation vient de vous être envoyé.",
+    "resetTitle": "Mot de passe oublié",
+    "resetHelp": "Indiquez votre e-mail : nous vous enverrons un lien de réinitialisation.",
+    "resetButton": "Envoyer le lien",
+    "resetSent": "Si un compte existe pour cette adresse, un e-mail de réinitialisation est parti.",
+    "newPasswordTitle": "Nouveau mot de passe",
+    "newPasswordButton": "Enregistrer le mot de passe",
+    "errors": {
+      "invalidCredentials": "E-mail ou mot de passe incorrect.",
+      "passwordMismatch": "Les mots de passe ne correspondent pas.",
+      "weakPassword": "Le mot de passe doit contenir au moins 8 caractères.",
+      "generic": "Une erreur est survenue. Réessayez.",
+      "emailInUse": "Un compte existe déjà avec cette adresse."
+    }
+  },
+  "about": {
+    "title": "L'histoire de ForTheSoul",
+    "metaDescription": "ForTheSoul est née de la conviction de Didier Picamoles : les expériences qui transforment se choisissent avec le cœur, pas avec un algorithme."
+  }
+}
