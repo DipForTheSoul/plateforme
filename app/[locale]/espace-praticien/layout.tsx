@@ -31,6 +31,9 @@ export default async function PractitionerLayout({
     <div className="mx-auto max-w-6xl px-4 py-8">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl text-soul-brown">Espace praticien</h1>
+        {/* Lien direct (pas <Link>) : on veut atteindre la route serveur qui
+            vide la session et redirige — insensible au cache d'un onglet périmé. */}
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a href="/api/logout" className="text-sm text-soul-bronze underline">
           Se déconnecter
         </a>
