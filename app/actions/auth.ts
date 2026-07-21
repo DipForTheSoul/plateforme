@@ -37,9 +37,15 @@ export async function signIn(
     .eq("id", user?.id ?? "")
     .single();
 
+  // Redirection par rôle en priorité (évite qu'un admin arrivant depuis une page
+  // praticien via ?next=… ne soit renvoyé dans le mauvais espace).
+  if (profile?.role === "admin") {
+    redirect(next.startsWith("/admin") ? next : "/admin");
+  }
+  if (profile?.role === "practitioner") {
+    redirect(next.startsWith("/espace-praticien") ? next : "/espace-praticien");
+  }
   if (next.startsWith("/")) redirect(next);
-  if (profile?.role === "admin") redirect("/admin");
-  if (profile?.role === "practitioner") redirect("/espace-praticien");
   redirect("/");
 }
 
