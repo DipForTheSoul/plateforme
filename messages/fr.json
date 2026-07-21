@@ -143,7 +143,10 @@
     "reserve": "Réserver",
     "addToCalendar": "Ajouter à mon agenda",
     "calGoogle": "Google Agenda",
-    "calOther": "Apple / Outlook (.ics)"
+    "calOther": "Apple / Outlook (.ics)",
+    "included": "Ce qui est inclus",
+    "toBring": "À apporter",
+    "reserveNote": "Pas de paiement en ligne : en cliquant sur « Réserver », vous contactez directement le/la praticien·ne par e-mail. Le règlement (acompte éventuel ou paiement sur place) se convient directement avec lui/elle."
   },
   "practitioners": {
     "title": "Les praticien·nes",

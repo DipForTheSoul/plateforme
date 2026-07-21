@@ -143,7 +143,10 @@
     "reserve": "Book",
     "addToCalendar": "Add to my calendar",
     "calGoogle": "Google Calendar",
-    "calOther": "Apple / Outlook (.ics)"
+    "calOther": "Apple / Outlook (.ics)",
+    "included": "What’s included",
+    "toBring": "What to bring",
+    "reserveNote": "No online payment: clicking “Book” contacts the practitioner directly by email. Payment (any deposit or on-site) is arranged directly with them."
   },
   "practitioners": {
     "title": "The practitioners",

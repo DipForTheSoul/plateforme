@@ -19,7 +19,7 @@ import {
   LANGUAGE_LABELS,
 } from "@/lib/utils";
 import type { Event, Locale, Review } from "@/types/database";
-import { Calendar, Clock, Globe, MapPin, User } from "lucide-react";
+import { Backpack, Calendar, Clock, Globe, Info, MapPin, PackageCheck, User } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -166,6 +166,11 @@ export default async function EventPage({
         />
       </div>
 
+      <p className="mt-3 flex items-start gap-2 text-xs leading-relaxed text-soul-bronze">
+        <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+        {t("reserveNote")}
+      </p>
+
       <div className="mt-6 grid gap-4 rounded-2xl bg-white p-6 sm:grid-cols-2">
         <p className="flex items-center gap-3 text-sm text-soul-ink">
           <Calendar className="h-4 w-4 shrink-0 text-soul-bronze" />
@@ -198,6 +203,31 @@ export default async function EventPage({
       {event.description && (
         <div className="prose mt-8 max-w-none whitespace-pre-line text-soul-ink/90">
           {event.description}
+        </div>
+      )}
+
+      {(event.included || event.to_bring) && (
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          {event.included && (
+            <div className="rounded-2xl border border-soul-bronze/15 bg-white p-6">
+              <h2 className="mb-3 flex items-center gap-2 text-lg text-soul-brown">
+                <PackageCheck className="h-5 w-5 text-soul-terracotta" /> {t("included")}
+              </h2>
+              <p className="whitespace-pre-line text-sm leading-relaxed text-soul-ink/85">
+                {event.included}
+              </p>
+            </div>
+          )}
+          {event.to_bring && (
+            <div className="rounded-2xl border border-soul-bronze/15 bg-white p-6">
+              <h2 className="mb-3 flex items-center gap-2 text-lg text-soul-brown">
+                <Backpack className="h-5 w-5 text-soul-terracotta" /> {t("toBring")}
+              </h2>
+              <p className="whitespace-pre-line text-sm leading-relaxed text-soul-ink/85">
+                {event.to_bring}
+              </p>
+            </div>
+          )}
         </div>
       )}
 

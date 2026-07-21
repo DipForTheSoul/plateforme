@@ -27,6 +27,8 @@ const eventSchema = z.object({
   languages: z.array(z.string()).min(1),
   recurrence: z.enum(["weekly", "biweekly", "monthly"]).optional().nullable(),
   recurrence_count: z.coerce.number().int().min(2).max(26).optional().nullable(),
+  included: z.string().max(2000).optional().nullable(),
+  to_bring: z.string().max(2000).optional().nullable(),
   images: z.array(z.string().url()).max(6),
 });
 
@@ -43,6 +45,8 @@ function parseEventForm(formData: FormData) {
     languages: formData.getAll("languages").map(String).filter(Boolean),
     recurrence: String(formData.get("recurrence") ?? "") || null,
     recurrence_count: String(formData.get("recurrence_count") ?? "") || null,
+    included: String(formData.get("included") ?? "").trim() || null,
+    to_bring: String(formData.get("to_bring") ?? "").trim() || null,
     images: formData.getAll("images").map(String).filter(Boolean),
   });
 }
@@ -102,6 +106,8 @@ export async function createEvent(
     duration_minutes: input.duration_minutes,
     price: input.price,
     languages: input.languages,
+    included: input.included,
+    to_bring: input.to_bring,
     images: input.images,
     status: "pending" as const,
   };
@@ -181,6 +187,8 @@ export async function updateEvent(
       duration_minutes: input.duration_minutes,
       price: input.price,
       languages: input.languages,
+      included: input.included,
+      to_bring: input.to_bring,
       images: input.images,
       // Toute modification repart en relecture (le trigger SQL empêche de
       // toute façon un praticien de changer lui-même le statut vers approved).

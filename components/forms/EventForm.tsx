@@ -100,7 +100,22 @@ export function EventForm({ categories, venues, defaultLanguages, event }: Props
           <label htmlFor="description" className="label">Description *</label>
           <textarea id="description" name="description" required minLength={20} rows={8}
             defaultValue={event?.description ?? ""} className="field"
-            placeholder="Décrivez l'expérience : déroulé, à qui elle s'adresse, ce qu'il faut apporter…" />
+            placeholder="Décrivez l'expérience : déroulé, à qui elle s'adresse…" />
+        </div>
+
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div>
+            <label htmlFor="included" className="label">Ce qui est inclus</label>
+            <textarea id="included" name="included" rows={4} maxLength={2000}
+              defaultValue={event?.included ?? ""} className="field"
+              placeholder="Ex. : tapis fournis, tisane, prêt du matériel, repas du midi…" />
+          </div>
+          <div>
+            <label htmlFor="to_bring" className="label">Ce que le/la participant·e doit apporter</label>
+            <textarea id="to_bring" name="to_bring" rows={4} maxLength={2000}
+              defaultValue={event?.to_bring ?? ""} className="field"
+              placeholder="Ex. : tenue confortable, bouteille d'eau, plaid, carnet…" />
+          </div>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2">

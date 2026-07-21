@@ -78,6 +78,14 @@ export interface Event {
   status: ModerationStatus;
   admin_message: string | null;
   is_top: boolean;
+  /** Fenêtre de mise en avant payée (null = aucune en cours). */
+  top_until: string | null;
+  /** Demande de mise en avant en attente de validation admin. */
+  top_requested_at: string | null;
+  /** Ce qui est inclus (prix, matériel, repas…). */
+  included: string | null;
+  /** Ce que le/la participant·e doit apporter. */
+  to_bring: string | null;
   images: string[];
   view_count: number;
   rating_avg: number;

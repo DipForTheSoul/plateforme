@@ -143,7 +143,10 @@
     "reserve": "Reservieren",
     "addToCalendar": "Zum Kalender hinzufügen",
     "calGoogle": "Google Kalender",
-    "calOther": "Apple / Outlook (.ics)"
+    "calOther": "Apple / Outlook (.ics)",
+    "included": "Inbegriffen",
+    "toBring": "Mitzubringen",
+    "reserveNote": "Keine Online-Zahlung: Mit einem Klick auf «Reservieren» kontaktierst du die anbietende Person direkt per E-Mail. Die Bezahlung (allfällige Anzahlung oder vor Ort) wird direkt mit ihr vereinbart."
   },
   "practitioners": {
     "title": "Die Anbieter:innen",
