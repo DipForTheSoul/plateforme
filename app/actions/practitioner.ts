@@ -16,6 +16,9 @@ const profileSchema = z.object({
   website: z.string().url().optional().nullable(),
   instagram: z.string().url().optional().nullable(),
   facebook: z.string().url().optional().nullable(),
+  googleUrl: z.string().url().optional().nullable(),
+  googleRating: z.string().max(4).optional().nullable(),
+  googleCount: z.string().max(7).optional().nullable(),
   photos: z.array(z.string().url()).max(6),
 });
 
@@ -40,6 +43,9 @@ export async function updatePractitionerProfile(
     website: String(formData.get("website") ?? "").trim() || null,
     instagram: String(formData.get("instagram") ?? "").trim() || null,
     facebook: String(formData.get("facebook") ?? "").trim() || null,
+    googleUrl: String(formData.get("googleUrl") ?? "").trim() || null,
+    googleRating: String(formData.get("googleRating") ?? "").trim() || null,
+    googleCount: String(formData.get("googleCount") ?? "").trim() || null,
     photos: formData.getAll("photos").map(String).filter(Boolean),
   });
   if (!parsed.success) {
@@ -63,6 +69,9 @@ export async function updatePractitionerProfile(
       links: {
         ...(input.instagram ? { instagram: input.instagram } : {}),
         ...(input.facebook ? { facebook: input.facebook } : {}),
+        ...(input.googleUrl ? { googleUrl: input.googleUrl } : {}),
+        ...(input.googleRating ? { googleRating: input.googleRating } : {}),
+        ...(input.googleCount ? { googleCount: input.googleCount } : {}),
       },
       photos: input.photos,
     })

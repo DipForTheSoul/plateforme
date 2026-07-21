@@ -8,7 +8,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { getApprovedEvents, getPractitionerBySlug } from "@/lib/queries";
 import { practitionerJsonLd } from "@/lib/seo";
 import { LANGUAGE_LABELS } from "@/lib/utils";
-import { Globe, Link as LinkIcon, Mail } from "lucide-react";
+import { Globe, Link as LinkIcon, Mail, Star } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -83,12 +83,14 @@ export default async function PractitionerPage({
                 <Globe className="h-4 w-4 text-soul-bronze" /> Site web
               </a>
             )}
-            {Object.entries(practitioner.links).map(([name, url]) => (
-              <a key={name} href={url} target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-2 capitalize text-soul-brown hover:underline">
-                <LinkIcon className="h-4 w-4 text-soul-bronze" /> {name}
-              </a>
-            ))}
+            {Object.entries(practitioner.links)
+              .filter(([name]) => !name.startsWith("google"))
+              .map(([name, url]) => (
+                <a key={name} href={url} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-2 capitalize text-soul-brown hover:underline">
+                  <LinkIcon className="h-4 w-4 text-soul-bronze" /> {name}
+                </a>
+              ))}
           </div>
         </div>
 
@@ -105,6 +107,31 @@ export default async function PractitionerPage({
             {t("languages")} :{" "}
             {practitioner.languages.map((l) => LANGUAGE_LABELS[l] ?? l).join(", ")}
           </p>
+
+          {practitioner.links.googleUrl && (
+            <a
+              href={practitioner.links.googleUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex items-center gap-2 rounded-full border border-soul-bronze/25 bg-white px-4 py-2 text-sm shadow-sm transition hover:border-soul-bronze"
+            >
+              <span className="font-semibold text-soul-brown">Avis Google</span>
+              {practitioner.links.googleRating && (
+                <span className="flex items-center gap-1">
+                  <Star className="h-4 w-4 fill-soul-amber text-soul-amber" />
+                  <span className="font-semibold text-soul-brown">
+                    {practitioner.links.googleRating}
+                  </span>
+                </span>
+              )}
+              {practitioner.links.googleCount && (
+                <span className="text-soul-bronze">
+                  · {practitioner.links.googleCount} avis
+                </span>
+              )}
+              <span className="text-soul-terracotta">Voir sur Google ↗</span>
+            </a>
+          )}
 
           {practitioner.bio && (
             <p className="mt-6 whitespace-pre-line text-soul-ink/85">{practitioner.bio}</p>

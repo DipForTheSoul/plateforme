@@ -78,6 +78,32 @@ export function ProfileForm({ practitioner }: { practitioner: Practitioner }) {
         </div>
       </div>
 
+      <div className="rounded-2xl border border-soul-bronze/15 bg-soul-sand/20 p-5">
+        <p className="font-serif text-lg text-soul-brown">Avis Google</p>
+        <p className="mb-4 mt-1 text-xs text-soul-bronze">
+          Faites remonter votre réputation Google sur votre fiche. Collez le lien
+          de vos avis, votre note et le nombre d&apos;avis (visibles sur votre
+          fiche Google Business).
+        </p>
+        <div className="grid gap-4 sm:grid-cols-4">
+          <div className="sm:col-span-2">
+            <label htmlFor="googleUrl" className="label">Lien vers vos avis Google</label>
+            <input id="googleUrl" name="googleUrl" type="url" placeholder="https://g.page/…/review"
+              defaultValue={practitioner.links.googleUrl ?? ""} className="field" />
+          </div>
+          <div>
+            <label htmlFor="googleRating" className="label">Note (ex. 4.9)</label>
+            <input id="googleRating" name="googleRating" inputMode="decimal" placeholder="4.9"
+              defaultValue={practitioner.links.googleRating ?? ""} className="field" />
+          </div>
+          <div>
+            <label htmlFor="googleCount" className="label">Nombre d&apos;avis</label>
+            <input id="googleCount" name="googleCount" inputMode="numeric" placeholder="128"
+              defaultValue={practitioner.links.googleCount ?? ""} className="field" />
+          </div>
+        </div>
+      </div>
+
       <div>
         <span className="label">Photos (la première est votre portrait principal)</span>
         <ImageUploader prefix="practitioner" images={photos} onChange={setPhotos} max={6} />
