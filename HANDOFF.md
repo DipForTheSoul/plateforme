@@ -23,14 +23,15 @@ Marque **ForTheSoul** (logo doré). Base **Supabase** en ligne.
 
 ## 2. Supabase (EN LIGNE)
 - Projet `pccbiclpgrjmejpybcki` (région eu-west-1).
-- **Migrations + seed déjà appliqués** : `0001`→`0010` + `seed.sql`, `seed_extra.sql`,
+- **Migrations + seed déjà appliqués** : `0001`→`0011` + `seed.sql`, `seed_extra.sql`,
   `seed_reviews.sql`.
-  - `0009` : colonnes `included`/`to_bring` sur events + infra mise en avant
-    (`top_until`, `top_requested_at`, garde-fou étendu, `request_feature`/`resolve_feature`).
-  - `0010` : correctif — ces 2 fonctions posent `app.credit_op` avant de toucher
-    aux crédits (sinon le garde-fou `guard_practitioner_sensitive_fields` bloque).
-    Flux vérifié de bout en bout via `psql` (transactions rollback + `set local
-    request.jwt.claim.sub` pour simuler praticien/admin).
+  - `0009` : colonnes `included`/`to_bring` sur events (conservées).
+  - `0010`/`0011` : la mise en avant self-service praticien a été **ajoutée puis
+    RETIRÉE** (hors périmètre du cahier des charges — les top listings sont
+    manuels/admin, §6.5). `0011` supprime colonnes `top_*` + fonctions
+    `request_feature`/`resolve_feature` et restaure le garde-fou d'origine.
+    → Les **top listings** restent gérés via `is_top` (bouton admin dans
+    `/admin/soumissions`), comme prévu au contrat.
   - ⚠️ `yoga-matin-geneve` a des `included`/`to_bring` de démo saisis à la main
     (pour montrer la fonctionnalité) — à valider/retirer avec Didier.
 - Pour exécuter du SQL / migrations : `psql "$DATABASE_URL"` — **`DATABASE_URL`
@@ -50,9 +51,17 @@ Marque **ForTheSoul** (logo doré). Base **Supabase** en ligne.
 - Créés via l'API admin Supabase (confirmés). **À supprimer/changer avant prod.**
 - Déconnexion fiable : visiter `/api/logout` (ou le bouton, qui pointe dessus).
 
-## 4. Git
-- Branche de travail : **`refonte-landing`**. **Rien n'est poussé** (local only).
-- Beaucoup de commits (voir `git log`). Pas de remote configuré.
+## 4. Git & déploiement
+- Remote : **`github.com/DipForTheSoul/plateforme`** (repo **public**).
+- Branches `main` et `refonte-landing` synchronisées (mêmes commits).
+- **Vercel (compte DipForTheSoul, PAS windoapp)** connecté au repo → **déploie
+  automatiquement à chaque push**. Production = branche `refonte-landing`.
+  - 🌐 **En ligne : https://plateforme-pi-rouge.vercel.app**
+  - Variables d'env Supabase déjà configurées sur Vercel (import `.env.local`).
+  - ⚠️ Identité git du repo forcée sur `rodrigue.wixfactory@gmail.com`
+    (`git config user.email`) — sinon Vercel **bloque** le déploiement
+    (« commit author email is not valid »).
+- Reste à faire déploiement : domaine `forthesoul.ch`, clés Stripe/Resend réelles.
 
 ## 5. Ce qui est FAIT (cette phase de refonte)
 - Base Supabase branchée + données suisses + avis.
@@ -78,10 +87,9 @@ Marque **ForTheSoul** (logo doré). Base **Supabase** en ligne.
 - **Espace participant** : favoris enregistrés + agenda + déconnexion + **rappel
   des prochains rendez-vous** (favoris à venir, compte à rebours ; `ParticipantReminders.tsx`)
   + **encart « Comment réserver ? »** (pas de paiement en ligne).
-- **Mise en avant self-service** (nouveau) : le praticien dépense **1 crédit** pour
-  demander la mise en avant **7 jours** (`FeatureButton.tsx` → `request_feature`) ;
-  **Didier valide ou refuse** (`/admin/soumissions` → `resolve_feature`, refus = crédit
-  remboursé) ; badge ★ + remontée en tête tant que `top_until` actif (`lib/featuring.ts`).
+- **Top listings** : mise en avant **manuelle par l'admin** (`is_top`, bouton dans
+  `/admin/soumissions`) — conforme §6.5. *(Une variante « self-service praticien »
+  avait été prototypée puis retirée car hors périmètre — voir §2, migration 0011.)*
 - **Admin** : refus d'événement/praticien **avec motif + e-mail**, gestion lieux/crédits,
   **export CSV newsletter incrémental** (« nouveaux uniquement », `exported_at`).
 - **Bug crédit corrigé** (migration `0006`) : `consume_credit` était bloqué par un
