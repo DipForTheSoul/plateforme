@@ -106,6 +106,28 @@ export function eventRejectedEmail(
   };
 }
 
+/** Fiche praticien refusée — avec le motif de Didier. */
+export function practitionerRejectedEmail(
+  practitionerName: string,
+  adminMessage?: string | null
+) {
+  return {
+    subject: "Votre fiche praticien ForTheSoul — des précisions nécessaires",
+    html: layout(
+      "Votre fiche n'a pas pu être validée",
+      p(`Bonjour ${practitionerName},`) +
+        p(
+          "Après relecture, votre fiche praticien n'a pas pu être validée en l'état."
+        ) +
+        (adminMessage
+          ? p(`<em>Motif indiqué par Didier :</em> ${adminMessage}`)
+          : p("N'hésitez pas à nous écrire pour en discuter.")) +
+        p("Vous pouvez compléter votre fiche et la soumettre à nouveau.") +
+        button(`${SITE_URL}/espace-praticien/profil`, "Compléter ma fiche")
+    ),
+  };
+}
+
 /** Fiche praticien validée. */
 export function practitionerApprovedEmail(practitionerName: string, slug: string) {
   return {

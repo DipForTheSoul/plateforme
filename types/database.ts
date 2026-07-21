@@ -108,6 +108,7 @@ export interface Contact {
   consent: boolean;
   opt_in_at: string | null;
   source: string | null;
+  exported_at: string | null;
   created_at: string;
 }
 

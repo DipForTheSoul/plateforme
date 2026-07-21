@@ -8,6 +8,7 @@ import {
   eventApprovedEmail,
   eventRejectedEmail,
   practitionerApprovedEmail,
+  practitionerRejectedEmail,
 } from "@/lib/email-templates";
 
 /** Vérification systématique du rôle admin (en plus de la RLS). */
@@ -84,6 +85,7 @@ export async function moderatePractitioner(formData: FormData): Promise<void> {
   await assertAdmin();
   const practitionerId = String(formData.get("practitioner_id") ?? "");
   const decision = String(formData.get("decision") ?? "");
+  const message = String(formData.get("message") ?? "").trim() || null;
   if (!practitionerId || !["approved", "rejected"].includes(decision)) return;
 
   const supabase = await createClient();
@@ -95,12 +97,15 @@ export async function moderatePractitioner(formData: FormData): Promise<void> {
 
   await supabase
     .from("practitioners")
-    .update({ status: decision })
+    .update({ status: decision, admin_message: message })
     .eq("id", practitionerId);
 
   const to = (practitioner?.contact as { email?: string } | null)?.email;
-  if (to && decision === "approved" && practitioner) {
-    const tpl = practitionerApprovedEmail(practitioner.name, practitioner.slug);
+  if (to && practitioner) {
+    const tpl =
+      decision === "approved"
+        ? practitionerApprovedEmail(practitioner.name, practitioner.slug)
+        : practitionerRejectedEmail(practitioner.name, message);
     await sendEmail({ to, ...tpl });
   }
 

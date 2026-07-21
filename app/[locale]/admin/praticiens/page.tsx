@@ -37,16 +37,21 @@ export default async function AdminPractitionersPage() {
                 <StatusBadge status={p.status} />
               </div>
               {p.bio && <p className="mt-3 line-clamp-3 text-sm text-soul-ink/80">{p.bio}</p>}
-              <form action={moderatePractitioner} className="mt-4 flex flex-wrap gap-3">
+              <form action={moderatePractitioner} className="mt-4 flex flex-col gap-3">
                 <input type="hidden" name="practitioner_id" value={p.id} />
-                <button type="submit" name="decision" value="approved"
-                  className="btn-primary min-h-12 flex-1 sm:flex-none">
-                  ✓ Valider la fiche
-                </button>
-                <button type="submit" name="decision" value="rejected"
-                  className="min-h-12 flex-1 rounded-full border border-red-300 bg-white px-6 text-sm font-medium text-red-700 hover:bg-red-50 sm:flex-none">
-                  ✕ Refuser
-                </button>
+                <input type="text" name="message"
+                  placeholder="Motif en cas de refus (envoyé par e-mail au/à la praticien·ne)"
+                  className="field" />
+                <div className="flex flex-wrap gap-3">
+                  <button type="submit" name="decision" value="approved"
+                    className="btn-primary min-h-12 flex-1 sm:flex-none">
+                    ✓ Valider la fiche
+                  </button>
+                  <button type="submit" name="decision" value="rejected"
+                    className="min-h-12 flex-1 rounded-full border border-red-300 bg-white px-6 text-sm font-medium text-red-700 hover:bg-red-50 sm:flex-none">
+                    ✕ Refuser (avec motif)
+                  </button>
+                </div>
               </form>
             </div>
           ))}

@@ -64,14 +64,25 @@ export default async function VenuePage({
       )}
 
       {venue.lat !== null && venue.lng !== null && (
-        <a
-          href={`https://www.openstreetmap.org/?mlat=${venue.lat}&mlon=${venue.lng}#map=15/${venue.lat}/${venue.lng}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-secondary mt-4"
-        >
-          Voir sur la carte
-        </a>
+        <div className="mt-6 max-w-3xl">
+          <div className="overflow-hidden rounded-2xl border border-soul-bronze/20 shadow-sm">
+            <iframe
+              title={`Carte — ${venue.name}`}
+              className="h-72 w-full"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              src={`https://www.openstreetmap.org/export/embed.html?bbox=${venue.lng - 0.012}%2C${venue.lat - 0.007}%2C${venue.lng + 0.012}%2C${venue.lat + 0.007}&layer=mapnik&marker=${venue.lat}%2C${venue.lng}`}
+            />
+          </div>
+          <a
+            href={`https://www.openstreetmap.org/?mlat=${venue.lat}&mlon=${venue.lng}#map=16/${venue.lat}/${venue.lng}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 inline-flex items-center gap-1 text-sm text-soul-terracotta underline"
+          >
+            Ouvrir dans OpenStreetMap ↗
+          </a>
+        </div>
       )}
 
       <section className="mt-12">
