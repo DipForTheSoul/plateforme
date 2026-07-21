@@ -123,7 +123,9 @@
     },
     "resultCount": "{count, plural, =0 {No experiences} one {# experience} other {# experiences}}",
     "empty": "No experience matches these criteria — widen your search or come back soon: the programme evolves every week.",
-    "top": "Highlighted"
+    "top": "Highlighted",
+    "viewList": "List",
+    "viewMap": "Map"
   },
   "event": {
     "date": "Date",

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { EventCard } from "@/components/EventCard";
+import { EventsMap, type MapEvent } from "@/components/EventsMap";
 import { ExplorerControls } from "@/components/ExplorerControls";
+import { ViewToggle } from "@/components/ViewToggle";
 import {
   getApprovedEvents,
   getApprovedPractitioners,
@@ -34,6 +36,7 @@ interface SearchParams {
   lat?: string;
   lng?: string;
   rayon?: string;
+  vue?: string;
 }
 
 /** Catalogue + recherche (Phase 3) — état piloté par l'URL, rendu serveur. */
@@ -101,13 +104,34 @@ export default async function ExperiencesPage({
         </aside>
 
         <section>
-          <p className="mb-4 text-sm text-soul-bronze">
-            {t("resultCount", { count: events.length })}
-          </p>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm text-soul-bronze">
+              {t("resultCount", { count: events.length })}
+            </p>
+            <ViewToggle />
+          </div>
           {events.length === 0 ? (
             <p className="rounded-2xl bg-soul-sand/40 p-8 text-center text-soul-brown">
               {t("empty")}
             </p>
+          ) : sp.vue === "carte" ? (
+            <EventsMap
+              events={events.reduce<MapEvent[]>((acc, e) => {
+                if (e.venue?.lat != null && e.venue?.lng != null) {
+                  acc.push({
+                    id: e.id,
+                    slug: e.slug,
+                    title: e.title,
+                    lat: e.venue.lat,
+                    lng: e.venue.lng,
+                    venueName: e.venue.name,
+                    priceLabel:
+                      e.price && e.price > 0 ? `CHF ${e.price}.–` : "Prix libre",
+                  });
+                }
+                return acc;
+              }, [])}
+            />
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
               {events.map((event) => (
