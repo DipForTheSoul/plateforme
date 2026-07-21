@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Info } from "lucide-react";
 import { getCurrentProfile } from "@/lib/auth";
 import { FavoritesClient } from "@/app/[locale]/favoris/FavoritesClient";
+import { ParticipantReminders } from "@/components/ParticipantReminders";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +37,19 @@ export default async function ParticipantSpace({
           Se déconnecter
         </a>
       </div>
+
+      <ParticipantReminders />
+
+      <p className="mb-8 flex items-start gap-2 rounded-2xl border border-soul-bronze/15 bg-white p-4 text-sm leading-relaxed text-soul-bronze">
+        <Info className="mt-0.5 h-4 w-4 shrink-0 text-soul-terracotta" />
+        <span>
+          <strong className="text-soul-brown">Comment réserver&nbsp;?</strong> Il
+          n&apos;y a pas de paiement en ligne&nbsp;: sur une expérience, le bouton
+          «&nbsp;Réserver&nbsp;» ouvre un e-mail vers le/la praticien·ne. Le
+          règlement (acompte éventuel ou paiement sur place) se convient
+          directement avec lui/elle.
+        </span>
+      </p>
 
       <h2 className="text-xl text-soul-brown">Mes expériences enregistrées</h2>
       <p className="mt-1 max-w-2xl text-sm text-soul-bronze">
