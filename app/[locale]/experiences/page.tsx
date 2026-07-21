@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { EventCard } from "@/components/EventCard";
-import { EventsMap, type MapEvent } from "@/components/EventsMap";
+import { EventsMapExplorer, type MapItem } from "@/components/EventsMapExplorer";
 import { ExplorerControls } from "@/components/ExplorerControls";
 import { ViewToggle } from "@/components/ViewToggle";
+import { isFeatured } from "@/lib/featuring";
+import { formatDate, formatPrice } from "@/lib/utils";
+import type { Locale } from "@/types/database";
 import {
   getApprovedEvents,
   getApprovedPractitioners,
@@ -51,6 +54,8 @@ export default async function ExperiencesPage({
   setRequestLocale(locale);
   const sp = await searchParams;
   const t = await getTranslations("events");
+  const tCommon = await getTranslations("common");
+  const currentLocale = (await getLocale()) as Locale;
 
   const filters: EventFilters = {
     q: sp.q,
@@ -115,18 +120,22 @@ export default async function ExperiencesPage({
               {t("empty")}
             </p>
           ) : sp.vue === "carte" ? (
-            <EventsMap
-              events={events.reduce<MapEvent[]>((acc, e) => {
+            <EventsMapExplorer
+              hrefPrefix={currentLocale === "fr" ? "" : `/${currentLocale}`}
+              items={events.reduce<MapItem[]>((acc, e) => {
                 if (e.venue?.lat != null && e.venue?.lng != null) {
                   acc.push({
                     id: e.id,
                     slug: e.slug,
                     title: e.title,
+                    venueName: e.venue.name,
+                    regionLabel: e.venue.canton ?? e.venue.country,
+                    priceLabel: formatPrice(e.price, e.currency, tCommon("free")),
+                    dateLabel: formatDate(e.start_date, currentLocale),
+                    image: e.images[0],
+                    featured: isFeatured(e),
                     lat: e.venue.lat,
                     lng: e.venue.lng,
-                    venueName: e.venue.name,
-                    priceLabel:
-                      e.price && e.price > 0 ? `CHF ${e.price}.–` : "Prix libre",
                   });
                 }
                 return acc;
