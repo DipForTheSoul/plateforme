@@ -7,28 +7,35 @@
 export interface CategoryVisual {
   gradient: string;
   emoji: string;
+  /** Photo optionnelle (public/) — si absente, on retombe sur le dégradé. */
+  image?: string;
 }
 
 const VISUALS: Record<string, CategoryVisual> = {
   "danse-mouvement": {
     gradient: "linear-gradient(135deg, #ff8044 0%, #f9ad4d 55%, #fdead2 100%)",
     emoji: "💃",
+    image: "/cat-danse.jpg",
   },
   meditation: {
     gradient: "linear-gradient(135deg, #5e4d9e 0%, #9e7c52 70%, #fef3e5 100%)",
     emoji: "🧘",
+    image: "/cat-meditation.jpg",
   },
   "yoga-somatique": {
     gradient: "linear-gradient(135deg, #9e7c52 0%, #c9a97a 55%, #fffeed 100%)",
     emoji: "🌿",
+    image: "/cat-yoga.jpg",
   },
   "voyages-spirituels": {
     gradient: "linear-gradient(135deg, #171200 0%, #443420 45%, #9e7c52 100%)",
     emoji: "🌍",
+    image: "/cat-voyages.jpg",
   },
   "son-vibration": {
     gradient: "linear-gradient(135deg, #443420 0%, #fe9361 60%, #fabd71 100%)",
     emoji: "🔔",
+    image: "/cat-son.jpg",
   },
 };
 

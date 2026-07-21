@@ -137,15 +137,25 @@ export default async function HomePage({
                 key={category.id}
                 href={`/experiences?categorie=${category.slug}`}
                 className="group relative flex h-44 items-end overflow-hidden rounded-2xl shadow-sm transition hover:shadow-lg"
-                style={{ background: visual.gradient }}
+                style={visual.image ? undefined : { background: visual.gradient }}
               >
-                <span
-                  aria-hidden
-                  className="absolute right-3 top-3 text-4xl opacity-90 transition group-hover:scale-110"
-                >
-                  {visual.emoji}
-                </span>
-                <div className="relative w-full bg-gradient-to-t from-black/45 to-transparent p-4">
+                {visual.image ? (
+                  <Image
+                    src={visual.image}
+                    alt=""
+                    fill
+                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                    className="object-cover transition duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <span
+                    aria-hidden
+                    className="absolute right-3 top-3 text-4xl opacity-90 transition group-hover:scale-110"
+                  >
+                    {visual.emoji}
+                  </span>
+                )}
+                <div className="relative w-full bg-gradient-to-t from-black/70 via-black/25 to-transparent p-4">
                   <span className="font-serif text-lg font-medium leading-tight text-white drop-shadow">
                     {category.name}
                   </span>
