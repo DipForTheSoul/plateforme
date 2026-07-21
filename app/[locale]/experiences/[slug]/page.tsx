@@ -5,6 +5,7 @@ import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { AddToCalendar } from "@/components/AddToCalendar";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { StarRating } from "@/components/StarRating";
 import { JsonLd } from "@/components/JsonLd";
 import { createClient } from "@/lib/supabase/server";
 import { categoryVisual } from "@/lib/gradients";
@@ -17,7 +18,7 @@ import {
   formatTime,
   LANGUAGE_LABELS,
 } from "@/lib/utils";
-import type { Event, Locale } from "@/types/database";
+import type { Event, Locale, Review } from "@/types/database";
 import { Calendar, Clock, Globe, MapPin, User } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -91,6 +92,15 @@ export default async function EventPage({
     ? `${event.venue.name}, ${event.venue.address}`
     : null;
 
+  // Avis de l'expérience.
+  const { data: reviewsData } = await supabase
+    .from("reviews")
+    .select("*")
+    .eq("event_id", event.id)
+    .order("created_at", { ascending: false })
+    .limit(20);
+  const reviews = (reviewsData as Review[]) ?? [];
+
   const visual = categoryVisual(event.category?.slug);
 
   return (
@@ -125,6 +135,11 @@ export default async function EventPage({
               </Link>{" "}
               · <span className="text-xs">✓ {tCommon("validatedByDidier")}</span>
             </p>
+          )}
+          {event.rating_count > 0 && (
+            <div className="mt-2">
+              <StarRating avg={event.rating_avg} count={event.rating_count} size="lg" />
+            </div>
           )}
         </div>
         <p className="font-serif text-2xl text-soul-brown">
@@ -208,6 +223,32 @@ export default async function EventPage({
           <p className="text-sm text-soul-ink/80">{event.venue.description}</p>
           <p className="mt-2 text-xs text-soul-bronze">{event.venue.address}</p>
         </div>
+      )}
+
+      {reviews.length > 0 && (
+        <section className="mt-12">
+          <div className="mb-5 flex flex-wrap items-center gap-3">
+            <h2 className="text-2xl text-soul-brown">Avis</h2>
+            <StarRating avg={event.rating_avg} count={event.rating_count} size="lg" />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {reviews.map((r) => (
+              <figure key={r.id} className="m-0 rounded-2xl border border-soul-bronze/15 bg-white p-5">
+                <div className="flex items-center justify-between gap-3">
+                  <figcaption className="font-medium text-soul-brown">
+                    {r.author_name}
+                  </figcaption>
+                  <StarRating avg={r.rating} count={1} showMeta={false} />
+                </div>
+                {r.comment && (
+                  <blockquote className="mt-2 text-sm leading-relaxed text-soul-ink/80">
+                    {r.comment}
+                  </blockquote>
+                )}
+              </figure>
+            ))}
+          </div>
+        </section>
       )}
     </article>
   );

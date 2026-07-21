@@ -80,8 +80,19 @@ export interface Event {
   is_top: boolean;
   images: string[];
   view_count: number;
+  rating_avg: number;
+  rating_count: number;
   created_at: string;
   updated_at: string;
+}
+
+export interface Review {
+  id: string;
+  event_id: string;
+  author_name: string;
+  rating: number;
+  comment: string | null;
+  created_at: string;
 }
 
 /** Événement avec ses relations chargées (select avec jointures). */

@@ -2,6 +2,7 @@ import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { StarRating } from "@/components/StarRating";
 import { categoryVisual } from "@/lib/gradients";
 import { formatDate, formatPrice, formatTime } from "@/lib/utils";
 import type { EventWithRelations, Locale } from "@/types/database";
@@ -59,6 +60,9 @@ export async function EventCard({ event }: { event: EventWithRelations }) {
           {event.practitioner?.name}
           {event.category && <> · {event.category.name}</>}
         </p>
+        {event.rating_count > 0 && (
+          <StarRating avg={event.rating_avg} count={event.rating_count} />
+        )}
         <div className="mt-auto flex items-center justify-between pt-2 text-sm">
           <span className="flex items-center gap-1 text-soul-bronze">
             {event.venue && (
