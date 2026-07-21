@@ -6,7 +6,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { categoryVisual } from "@/lib/gradients";
 import { getApprovedEvents, getCategories, getTopEvents } from "@/lib/queries";
 import { organizationJsonLd } from "@/lib/seo";
-import { ArrowRight, MapPin, Search, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, MapPin, Plus, Search, ShieldCheck, Sparkles } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -210,6 +210,30 @@ export default async function HomePage({
           </div>
         </section>
       )}
+
+      {/* ------------------------------------------------------------------ */}
+      {/* FAQ */}
+      {/* ------------------------------------------------------------------ */}
+      <section id="faq" className="mx-auto max-w-3xl px-4 py-16">
+        <div className="mb-8 text-center">
+          <h2 className="font-serif text-3xl text-soul-brown">{t("faq.title")}</h2>
+          <p className="mt-1 text-soul-bronze">{t("faq.subtitle")}</p>
+        </div>
+        <div className="flex flex-col gap-3">
+          {(t.raw("faq.items") as { q: string; a: string }[]).map((item, i) => (
+            <details
+              key={i}
+              className="group rounded-2xl border border-soul-bronze/15 bg-white px-5 transition open:shadow-sm"
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-serif text-lg text-soul-brown marker:content-none [&::-webkit-details-marker]:hidden">
+                {item.q}
+                <Plus className="h-5 w-5 shrink-0 text-soul-bronze transition-transform duration-200 group-open:rotate-45" />
+              </summary>
+              <p className="pb-5 leading-relaxed text-soul-ink/75">{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
 
       {/* ------------------------------------------------------------------ */}
       {/* La curation de Didier — bandeau incarné */}

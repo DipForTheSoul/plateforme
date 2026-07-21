@@ -28,7 +28,14 @@
     "from": "dès",
     "free": "Prix libre",
     "back": "Retour",
-    "validatedByDidier": "Validé par Didier"
+    "validatedByDidier": "Validé par Didier",
+    "tabbar": {
+      "home": "Accueil",
+      "favorites": "Favoris",
+      "explore": "Explorer",
+      "practitioners": "Praticiens",
+      "account": "Compte"
+    }
   },
   "home": {
     "heroTitle": "Des expériences qui nourrissent l'âme",
@@ -51,7 +58,37 @@
     "upcomingCta": "Voir toutes les expériences",
     "didierEyebrow": "La curation de Didier",
     "didierQuote": "Je ne partage que les expériences que j'ai vécues et les personnes que j'ai rencontrées. C'est ça, ForTheSoul.",
-    "didierSignature": "Didier Picamoles, fondateur"
+    "didierSignature": "Didier Picamoles, fondateur",
+    "faq": {
+      "title": "Questions fréquentes",
+      "subtitle": "Tout ce qu'il faut savoir avant de se lancer",
+      "items": [
+        {
+          "q": "Qu'est-ce que ForTheSoul ?",
+          "a": "Une plateforme suisse d'expériences conscientes — danse, méditation, yoga, voyages sonores, retraites — choisies une à une par Didier Picamoles. Pas d'algorithme : de vraies rencontres."
+        },
+        {
+          "q": "Comment les expériences sont-elles sélectionnées ?",
+          "a": "Chaque praticien·ne et chaque expérience sont validés personnellement par Didier. Ce qui est publié a été vécu, rencontré, choisi."
+        },
+        {
+          "q": "Comment participer à une expérience ?",
+          "a": "Parcourez le catalogue, ouvrez la fiche qui vous parle et suivez les indications pour contacter le/la praticien·ne ou réserver. Gardez vos coups de cœur en favoris."
+        },
+        {
+          "q": "Faut-il créer un compte ?",
+          "a": "Non pour explorer et enregistrer des favoris (liés à votre appareil). Un compte n'est nécessaire que pour les praticien·nes qui souhaitent publier."
+        },
+        {
+          "q": "Je suis praticien·ne, comment publier ?",
+          "a": "Créez un compte praticien, complétez votre fiche (validée par Didier), puis déposez vos expériences. Chaque publication utilise un crédit."
+        },
+        {
+          "q": "Les expériences ont-elles lieu partout ?",
+          "a": "Principalement en Suisse romande et alémanique, avec quelques immersions à l'étranger. Utilisez la recherche « autour de moi » pour trouver près de chez vous."
+        }
+      ]
+    }
   },
   "events": {
     "title": "Toutes les expériences",

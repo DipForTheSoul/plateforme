@@ -28,7 +28,14 @@
     "from": "ab",
     "free": "Freiwilliger Beitrag",
     "back": "Zurück",
-    "validatedByDidier": "Von Didier geprüft"
+    "validatedByDidier": "Von Didier geprüft",
+    "tabbar": {
+      "home": "Start",
+      "favorites": "Favoriten",
+      "explore": "Entdecken",
+      "practitioners": "Anbieter",
+      "account": "Konto"
+    }
   },
   "home": {
     "heroTitle": "Erlebnisse, die die Seele nähren",
@@ -51,7 +58,37 @@
     "upcomingCta": "Alle Erlebnisse ansehen",
     "didierEyebrow": "Didiers Kuratierung",
     "didierQuote": "Ich teile nur Erlebnisse, die ich selbst gelebt habe, und Menschen, die ich getroffen habe. Das ist ForTheSoul.",
-    "didierSignature": "Didier Picamoles, Gründer"
+    "didierSignature": "Didier Picamoles, Gründer",
+    "faq": {
+      "title": "Häufige Fragen",
+      "subtitle": "Alles Wichtige, bevor du startest",
+      "items": [
+        {
+          "q": "Was ist ForTheSoul ?",
+          "a": "Eine Schweizer Plattform für bewusste Erlebnisse — Tanz, Meditation, Yoga, Klangreisen, Retreats — einzeln von Didier Picamoles ausgewählt. Kein Algorithmus, sondern echte Begegnungen."
+        },
+        {
+          "q": "Wie werden die Erlebnisse ausgewählt ?",
+          "a": "Jede:r Anbieter:in und jedes Erlebnis wird persönlich von Didier geprüft. Was veröffentlicht wird, wurde erlebt, getroffen, ausgewählt."
+        },
+        {
+          "q": "Wie nehme ich an einem Erlebnis teil ?",
+          "a": "Durchstöbere den Katalog, öffne das passende Angebot und folge den Hinweisen, um die anbietende Person zu kontaktieren oder zu buchen. Speichere deine Favoriten."
+        },
+        {
+          "q": "Brauche ich ein Konto ?",
+          "a": "Nicht zum Stöbern und Speichern von Favoriten (an dein Gerät gebunden). Ein Konto ist nur für Anbieter:innen nötig, die veröffentlichen möchten."
+        },
+        {
+          "q": "Ich bin Anbieter:in, wie veröffentliche ich ?",
+          "a": "Erstelle ein Anbieterkonto, vervollständige dein Profil (von Didier geprüft) und reiche deine Erlebnisse ein. Jede Veröffentlichung kostet ein Guthaben."
+        },
+        {
+          "q": "Finden die Erlebnisse überall statt ?",
+          "a": "Hauptsächlich in der Deutsch- und Westschweiz, mit einigen Reisen ins Ausland. Nutze die Umkreissuche, um Angebote in deiner Nähe zu finden."
+        }
+      ]
+    }
   },
   "events": {
     "title": "Alle Erlebnisse",

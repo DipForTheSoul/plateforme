@@ -6,7 +6,9 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { MobileTabBar } from "@/components/MobileTabBar";
 import { PageViewTracker } from "@/components/PageViewTracker";
+import { getCurrentProfile } from "@/lib/auth";
 import "../globals.css";
 
 const playfair = Playfair_Display({
@@ -64,13 +66,22 @@ export default async function LocaleLayout({
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
 
+  const profile = await getCurrentProfile();
+  const accountHref =
+    profile?.role === "admin"
+      ? "/admin"
+      : profile?.role === "practitioner"
+        ? "/espace-praticien"
+        : "/connexion";
+
   return (
     <html lang={locale} className={`${playfair.variable} ${workSans.variable}`}>
-      <body className="flex min-h-screen flex-col antialiased">
+      <body className="flex min-h-screen flex-col antialiased pb-20 md:pb-0">
         <NextIntlClientProvider>
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
+          <MobileTabBar accountHref={accountHref} />
           <PageViewTracker />
         </NextIntlClientProvider>
       </body>

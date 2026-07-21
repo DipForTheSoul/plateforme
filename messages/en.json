@@ -28,7 +28,14 @@
     "from": "from",
     "free": "By donation",
     "back": "Back",
-    "validatedByDidier": "Reviewed by Didier"
+    "validatedByDidier": "Reviewed by Didier",
+    "tabbar": {
+      "home": "Home",
+      "favorites": "Favorites",
+      "explore": "Explore",
+      "practitioners": "Guides",
+      "account": "Account"
+    }
   },
   "home": {
     "heroTitle": "Experiences that nourish the soul",
@@ -51,7 +58,37 @@
     "upcomingCta": "See all experiences",
     "didierEyebrow": "Didier's curation",
     "didierQuote": "I only share experiences I've lived and people I've met. That's ForTheSoul.",
-    "didierSignature": "Didier Picamoles, founder"
+    "didierSignature": "Didier Picamoles, founder",
+    "faq": {
+      "title": "Frequently asked questions",
+      "subtitle": "Everything to know before you begin",
+      "items": [
+        {
+          "q": "What is ForTheSoul ?",
+          "a": "A Swiss platform of conscious experiences — dance, meditation, yoga, sound journeys, retreats — hand-picked one by one by Didier Picamoles. No algorithm, just real encounters."
+        },
+        {
+          "q": "How are experiences selected ?",
+          "a": "Every practitioner and every experience is personally reviewed by Didier. What gets published has been lived, met, chosen."
+        },
+        {
+          "q": "How do I join an experience ?",
+          "a": "Browse the catalogue, open the listing that speaks to you and follow the instructions to contact the practitioner or book. Save your favourites."
+        },
+        {
+          "q": "Do I need an account ?",
+          "a": "Not to explore and save favourites (tied to your device). An account is only needed for practitioners who want to publish."
+        },
+        {
+          "q": "I'm a practitioner, how do I publish ?",
+          "a": "Create a practitioner account, complete your profile (reviewed by Didier), then submit your experiences. Each publication uses one credit."
+        },
+        {
+          "q": "Do experiences take place everywhere ?",
+          "a": "Mostly across French- and German-speaking Switzerland, with a few immersions abroad. Use the 'near me' search to find experiences close to you."
+        }
+      ]
+    }
   },
   "events": {
     "title": "All experiences",
