@@ -1,8 +1,10 @@
 import { Link } from "@/i18n/navigation";
 import { StatusBadge } from "@/components/StatusBadge";
+import { FeatureButton } from "@/components/forms/FeatureButton";
 import { getCurrentPractitioner } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { deleteEvent } from "@/app/actions/events";
+import { isFeatured, hasPendingFeature } from "@/lib/featuring";
 import { formatDate, formatTime } from "@/lib/utils";
 import type { Event } from "@/types/database";
 
@@ -77,7 +79,22 @@ export default async function MyEventsPage({
                 </p>
               )}
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center justify-end gap-3">
+              {event.status === "approved" &&
+                (hasPendingFeature(event) ? (
+                  <span className="text-xs font-medium text-amber-700">
+                    ★ Mise en avant en attente de Didier
+                  </span>
+                ) : isFeatured(event) ? (
+                  <span className="text-xs font-medium text-green-700">
+                    ★ En avant
+                    {event.top_until
+                      ? ` jusqu'au ${formatDate(event.top_until)}`
+                      : ""}
+                  </span>
+                ) : (
+                  <FeatureButton eventId={event.id} />
+                ))}
               <StatusBadge status={event.status} />
               <Link
                 href={`/espace-praticien/evenements/${event.id}`}
