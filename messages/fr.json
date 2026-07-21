@@ -33,7 +33,7 @@
     "tabbar": {
       "home": "Accueil",
       "favorites": "Favoris",
-      "explore": "Explorer",
+      "explore": "Expériences",
       "practitioners": "Praticiens",
       "account": "Compte"
     }
@@ -112,7 +112,9 @@
       "radiusOff": "Désactivé",
       "radiusHelp": "Recherche par distance (géolocalisation du navigateur)",
       "reset": "Réinitialiser",
-      "apply": "Filtrer"
+      "apply": "Filtrer",
+      "from": "Du",
+      "to": "Au"
     },
     "calendar": {
       "title": "Calendrier",

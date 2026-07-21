@@ -33,7 +33,7 @@
     "tabbar": {
       "home": "Home",
       "favorites": "Favorites",
-      "explore": "Explore",
+      "explore": "Experiences",
       "practitioners": "Guides",
       "account": "Account"
     }
@@ -112,7 +112,9 @@
       "radiusOff": "Off",
       "radiusHelp": "Distance search (browser location)",
       "reset": "Reset",
-      "apply": "Filter"
+      "apply": "Filter",
+      "from": "From",
+      "to": "To"
     },
     "calendar": {
       "title": "Calendar",

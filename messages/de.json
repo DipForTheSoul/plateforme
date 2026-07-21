@@ -33,7 +33,7 @@
     "tabbar": {
       "home": "Start",
       "favorites": "Favoriten",
-      "explore": "Entdecken",
+      "explore": "Erlebnisse",
       "practitioners": "Anbieter",
       "account": "Konto"
     }
@@ -112,7 +112,9 @@
       "radiusOff": "Deaktiviert",
       "radiusHelp": "Umkreissuche (Standort des Browsers)",
       "reset": "Zurücksetzen",
-      "apply": "Filtern"
+      "apply": "Filtern",
+      "from": "Ab",
+      "to": "Bis"
     },
     "calendar": {
       "title": "Kalender",
