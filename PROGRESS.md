@@ -1,8 +1,44 @@
 # PROGRESS — ForTheSoul
 
-> Suivi d'avancement lisible par Victor & Rodrigue. Dernière mise à jour : 2026-07-20.
+> Suivi d'avancement lisible par Victor & Rodrigue. Dernière mise à jour : 2026-07-21.
+
+## RESTE À FAIRE (au 2026-07-21)
+
+### 🔴 Bloquant pour la mise en ligne
+1. **Stripe** : vraies clés test → webhook → clés live. Définir les **packs de
+   crédits + tarifs** et le **vrai IBAN** dans `lib/credits.ts` (placeholders).
+2. **Resend** : vérifier `forthesoul.ch`, coller `RESEND_API_KEY` (sinon e-mails
+   applicatifs seulement en console).
+3. **Supabase Auth** : configurer l'envoi du **mail de confirmation** (SMTP) pour
+   les vraies inscriptions.
+4. **Vercel** : connecter le repo, variables d'env, domaine `forthesoul.ch`.
+
+### 🟠 Contenu à fournir (Rodrigue / Didier)
+5. Photos réelles d'événements/lieux (cards en dégradé pour l'instant).
+6. Bios praticiens + descriptions d'événements (seed marqué `PLACEHOLDER`).
+7. Ré-export photos Didier **Costa Rica** (vides) et **Dromadaire** (`.~tmp`).
+
+### 🟡 Optimisation & finitions
+8. Compresser la vidéo hero (`public/hero.mp4`, 19 Mo → ~3-5 Mo).
+9. Re-tester la sécurité RLS en ligne (`docs/SECURITE.md`).
+10. Avant prod : supprimer les **comptes de test** et changer le mot de passe
+    commun `ForTheSoul2026!`.
+11. Analytics : brancher Google Analytics (optionnel — mesure interne déjà là).
 
 ## État global : 10 phases codées ✅ — base Supabase EN LIGNE ✅ — refonte visuelle façon retreat.guru ✅
+
+### Fait le 2026-07-21 (session comptes & admin)
+- 3 comptes de test (participant / praticien / admin Didier), confirmés.
+- **Bug crédit corrigé** (migration 0006) : `consume_credit` était bloqué par le
+  garde-fou → aucun praticien ne pouvait publier. Testé de bout en bout.
+- Formulaire événement : dates simplifiées (« une journée / plusieurs jours »),
+  bouton « ajouter un lieu » rendu visible.
+- Connexion : redirection par rôle (admin → /admin) ; déconnexion fiable via
+  `/api/logout` (lien, insensible au cache d'onglet périmé).
+- Admin : refus de fiche praticien **avec motif + e-mail** ; **carte OpenStreetMap**
+  sur les fiches lieu ; export CSV **« nouveaux uniquement »** (migration 0007,
+  `exported_at`) pour éviter les doublons.
+- +2 praticiens, +5 lieux, +10 événements suisses (total 17 events, 8 cantons).
 
 ### Fait le 2026-07-20 (session refonte)
 - **Base Supabase branchée et peuplée** : migrations `0001→0005` + `seed.sql`
