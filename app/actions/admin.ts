@@ -68,28 +68,6 @@ export async function moderateEvent(formData: FormData): Promise<void> {
   revalidatePath("/experiences");
 }
 
-/**
- * Résolution d'une demande de mise en avant du praticien (Phase 6+) :
- * valider (7 jours d'affichage en avant) ou refuser (rembourse le crédit).
- * Passe par la fonction SQL resolve_feature (vérifie is_admin()).
- */
-export async function resolveFeature(formData: FormData): Promise<void> {
-  await assertAdmin();
-  const eventId = String(formData.get("event_id") ?? "");
-  const approve = formData.get("decision") === "approved";
-  if (!eventId) return;
-
-  const supabase = await createClient();
-  await supabase.rpc("resolve_feature", {
-    p_event_id: eventId,
-    p_approve: approve,
-  });
-
-  revalidatePath("/admin/soumissions");
-  revalidatePath("/experiences");
-  revalidatePath("/");
-}
-
 /** Mise en avant (top listing) en 1 clic. */
 export async function toggleTopListing(formData: FormData): Promise<void> {
   await assertAdmin();

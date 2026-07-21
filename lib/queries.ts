@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import { isFeatured } from "@/lib/featuring";
 import {
   EVENT_WITH_RELATIONS,
   type Category,
@@ -99,10 +98,6 @@ export async function getApprovedEvents(
     if (filters.country)
       events = events.filter((e) => e.venue?.country === filters.country);
 
-    // Les expériences mises en avant (top_until actif ou is_top) remontent en
-    // tête — tri stable, l'ordre par date est conservé dans chaque groupe.
-    events.sort((a, b) => Number(isFeatured(b)) - Number(isFeatured(a)));
-
     return events;
   } catch {
     return [];
@@ -112,13 +107,12 @@ export async function getApprovedEvents(
 export async function getTopEvents(limit = 3): Promise<EventWithRelations[]> {
   try {
     const supabase = await createClient();
-    const now = new Date().toISOString();
     const { data } = await supabase
       .from("events")
       .select(EVENT_WITH_RELATIONS)
       .eq("status", "approved")
-      .or(`is_top.eq.true,top_until.gt.${now}`)
-      .gte("start_date", now)
+      .eq("is_top", true)
+      .gte("start_date", new Date().toISOString())
       .order("start_date")
       .limit(limit);
     return ((data as unknown as EventWithRelations[]) ?? []);

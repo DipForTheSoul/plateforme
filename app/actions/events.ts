@@ -202,28 +202,6 @@ export async function updateEvent(
   redirect("/espace-praticien/evenements?modifie=1");
 }
 
-/**
- * Demande de mise en avant d'une expérience (Phase 6+) : consomme 1 crédit via
- * la fonction SQL request_feature (atomique, blocage à 0). La décision finale
- * revient à Didier (resolve_feature). Renvoie un message pour retour inline.
- */
-export async function requestFeature(
-  _prev: ActionState,
-  formData: FormData
-): Promise<ActionState> {
-  const eventId = String(formData.get("event_id") ?? "");
-  const practitioner = await getCurrentPractitioner();
-  if (!practitioner || !eventId) return { error: "Requête invalide." };
-
-  const supabase = await createClient();
-  const { error } = await supabase.rpc("request_feature", { p_event_id: eventId });
-  if (error) {
-    return { error: error.message || "Demande impossible." };
-  }
-  revalidatePath("/espace-praticien/evenements");
-  return { success: "Demande envoyée — Didier la valide sous peu. 1 crédit a été utilisé." };
-}
-
 /** Suppression d'un événement par son praticien (occurrences en cascade). */
 export async function deleteEvent(formData: FormData): Promise<void> {
   const eventId = String(formData.get("event_id") ?? "");

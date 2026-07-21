@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { moderateEvent, resolveFeature, toggleTopListing } from "@/app/actions/admin";
+import { moderateEvent, toggleTopListing } from "@/app/actions/admin";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatDate, formatTime } from "@/lib/utils";
 import type { EventWithRelations } from "@/types/database";
@@ -24,45 +24,9 @@ export default async function SubmissionsPage() {
   const events = ((data as unknown as EventWithRelations[]) ?? []);
   const pending = events.filter((e) => e.status === "pending");
   const others = events.filter((e) => e.status !== "pending");
-  const featureRequests = events.filter((e) => e.top_requested_at != null);
 
   return (
     <div className="flex flex-col gap-8">
-      {featureRequests.length > 0 && (
-        <section className="rounded-2xl border border-soul-terracotta/30 bg-soul-ivory p-5">
-          <h2 className="mb-1 text-xl text-soul-brown">
-            ★ Demandes de mise en avant ({featureRequests.length})
-          </h2>
-          <p className="mb-4 text-sm text-soul-bronze">
-            Le praticien a dépensé 1 crédit. Valider affiche l&apos;expérience en
-            tête des listes pendant 7 jours. Refuser rembourse le crédit.
-          </p>
-          <div className="flex flex-col gap-3">
-            {featureRequests.map((event) => (
-              <div key={event.id} className="card flex flex-wrap items-center justify-between gap-3 p-4">
-                <div className="min-w-0">
-                  <p className="font-medium text-soul-brown">{event.title}</p>
-                  <p className="text-xs text-soul-bronze">
-                    {event.practitioner?.name ?? "?"} · {formatDate(event.start_date)}
-                  </p>
-                </div>
-                <form action={resolveFeature} className="flex gap-2">
-                  <input type="hidden" name="event_id" value={event.id} />
-                  <button type="submit" name="decision" value="approved"
-                    className="btn-primary min-h-10 !px-4 text-sm">
-                    ✓ Valider (7 j.)
-                  </button>
-                  <button type="submit" name="decision" value="rejected"
-                    className="min-h-10 rounded-full border border-red-300 bg-white px-4 text-sm font-medium text-red-700 hover:bg-red-50">
-                    ✕ Refuser
-                  </button>
-                </form>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
       <section>
         <h2 className="mb-4 text-xl text-soul-brown">
           En attente ({pending.length})

@@ -4,7 +4,6 @@ import { Link } from "@/i18n/navigation";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { StarRating } from "@/components/StarRating";
 import { categoryVisual } from "@/lib/gradients";
-import { isFeatured } from "@/lib/featuring";
 import { formatDate, formatPrice, formatTime } from "@/lib/utils";
 import type { EventWithRelations, Locale } from "@/types/database";
 import { MapPin } from "lucide-react";
@@ -40,7 +39,7 @@ export async function EventCard({ event }: { event: EventWithRelations }) {
             <span className="opacity-80">{visual.emoji}</span>
           </div>
         )}
-        {isFeatured(event) && (
+        {event.is_top && (
           <span className="absolute left-3 top-3 rounded-full bg-soul-terracotta px-3 py-1 text-xs font-semibold text-white">
             ★ {tEvents("top")}
           </span>

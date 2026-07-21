@@ -4,7 +4,6 @@ import { EventCard } from "@/components/EventCard";
 import { EventsMapExplorer, type MapItem } from "@/components/EventsMapExplorer";
 import { ExplorerControls } from "@/components/ExplorerControls";
 import { ViewToggle } from "@/components/ViewToggle";
-import { isFeatured } from "@/lib/featuring";
 import { formatDate, formatPrice } from "@/lib/utils";
 import type { Locale } from "@/types/database";
 import {
@@ -133,7 +132,7 @@ export default async function ExperiencesPage({
                     priceLabel: formatPrice(e.price, e.currency, tCommon("free")),
                     dateLabel: formatDate(e.start_date, currentLocale),
                     image: e.images[0],
-                    featured: isFeatured(e),
+                    featured: e.is_top,
                     lat: e.venue.lat,
                     lng: e.venue.lng,
                   });

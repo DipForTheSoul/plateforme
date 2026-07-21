@@ -13,7 +13,6 @@ export default async function AdminDashboard() {
   const [
     pendingEvents,
     pendingPractitioners,
-    pendingFeatures,
     approvedEvents,
     contacts,
     views,
@@ -21,7 +20,6 @@ export default async function AdminDashboard() {
   ] = await Promise.all([
     supabase.from("events").select("id", { count: "exact", head: true }).eq("status", "pending").is("parent_event_id", null),
     supabase.from("practitioners").select("id", { count: "exact", head: true }).eq("status", "pending"),
-    supabase.from("events").select("id", { count: "exact", head: true }).not("top_requested_at", "is", null),
     supabase.from("events").select("id", { count: "exact", head: true }).eq("status", "approved"),
     supabase.from("contacts").select("id", { count: "exact", head: true }),
     supabase.from("page_views").select("id", { count: "exact", head: true }).gte("created_at", since.toISOString()),
@@ -38,7 +36,6 @@ export default async function AdminDashboard() {
   const cards = [
     { label: "Soumissions en attente", value: pendingEvents.count ?? 0, href: "/admin/soumissions", accent: true },
     { label: "Praticien·nes à valider", value: pendingPractitioners.count ?? 0, href: "/admin/praticiens", accent: true },
-    { label: "Mises en avant à valider", value: pendingFeatures.count ?? 0, href: "/admin/soumissions", accent: true },
     { label: "Expériences en ligne", value: approvedEvents.count ?? 0, href: "/admin/soumissions" },
     { label: "Contacts newsletter", value: contacts.count ?? 0, href: "/admin/newsletter" },
   ];
