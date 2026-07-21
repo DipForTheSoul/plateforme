@@ -1,7 +1,6 @@
 import { setRequestLocale } from "next-intl/server";
 import { requireRole } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
-import { signOut } from "@/app/actions/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -30,11 +29,9 @@ export default async function AdminLayout({
     <div className="mx-auto max-w-6xl px-4 py-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl text-soul-brown">Administration</h1>
-        <form action={signOut}>
-          <button type="submit" className="text-sm text-soul-bronze underline">
-            Se déconnecter
-          </button>
-        </form>
+        <a href="/api/logout" className="text-sm text-soul-bronze underline">
+          Se déconnecter
+        </a>
       </div>
       <nav className="mb-8 flex gap-2 overflow-x-auto pb-1">
         {nav.map((item) => (

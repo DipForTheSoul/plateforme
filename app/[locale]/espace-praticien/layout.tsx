@@ -1,7 +1,6 @@
 import { setRequestLocale } from "next-intl/server";
 import { requireRole } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
-import { signOut } from "@/app/actions/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -32,11 +31,9 @@ export default async function PractitionerLayout({
     <div className="mx-auto max-w-6xl px-4 py-8">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl text-soul-brown">Espace praticien</h1>
-        <form action={signOut}>
-          <button type="submit" className="text-sm text-soul-bronze underline">
-            Se déconnecter
-          </button>
-        </form>
+        <a href="/api/logout" className="text-sm text-soul-bronze underline">
+          Se déconnecter
+        </a>
       </div>
       <div className="grid gap-8 md:grid-cols-[200px_1fr]">
         <nav className="flex flex-row gap-2 overflow-x-auto md:flex-col">
