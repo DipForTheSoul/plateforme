@@ -23,8 +23,16 @@ Marque **ForTheSoul** (logo doré). Base **Supabase** en ligne.
 
 ## 2. Supabase (EN LIGNE)
 - Projet `pccbiclpgrjmejpybcki` (région eu-west-1).
-- **Migrations + seed déjà appliqués** : `0001`→`0008` + `seed.sql`, `seed_extra.sql`,
+- **Migrations + seed déjà appliqués** : `0001`→`0010` + `seed.sql`, `seed_extra.sql`,
   `seed_reviews.sql`.
+  - `0009` : colonnes `included`/`to_bring` sur events + infra mise en avant
+    (`top_until`, `top_requested_at`, garde-fou étendu, `request_feature`/`resolve_feature`).
+  - `0010` : correctif — ces 2 fonctions posent `app.credit_op` avant de toucher
+    aux crédits (sinon le garde-fou `guard_practitioner_sensitive_fields` bloque).
+    Flux vérifié de bout en bout via `psql` (transactions rollback + `set local
+    request.jwt.claim.sub` pour simuler praticien/admin).
+  - ⚠️ `yoga-matin-geneve` a des `included`/`to_bring` de démo saisis à la main
+    (pour montrer la fonctionnalité) — à valider/retirer avec Didier.
 - Pour exécuter du SQL / migrations : `psql "$DATABASE_URL"` — **`DATABASE_URL`
   est dans `.env.local`** (connection string Session pooler, mot de passe
   URL-encodé). Le REST API avec la clé service ne fait PAS de DDL.
@@ -56,15 +64,24 @@ Marque **ForTheSoul** (logo doré). Base **Supabase** en ligne.
 - **Barre d'onglets mobile** (façon appli) : Accueil · Favoris · **Expériences**
   (centre surélevé) · Praticiens · Compte. (`components/MobileTabBar.tsx`)
 - **Catalogue** (`/experiences`) : recherche + **dates Du/Au toujours visibles** +
-  **filtres repliables** (bouton « Filtres ») + **bascule Liste/Carte**
-  (`components/EventsMap.tsx`, OpenStreetMap/Leaflet, sans clé) + calendrier + rayon.
+  **filtres repliables** (bouton « Filtres ») + **bascule Liste/Carte**. Vue carte =
+  **liste à gauche + carte à droite synchronisées** façon retreat.guru
+  (`components/EventsMapExplorer.tsx`, OSM/Leaflet sans clé ; survol liste ↔ bulle
+  marqueur). Calendrier + rayon. *(L'ancien `EventsMap.tsx` plein écran est supprimé.)*
 - **Fiche expérience** : vraie photo, **note ★ + liste d'avis**, bouton **Réserver**
-  (mailto praticien — pas de paiement), **Ajouter à mon agenda** (Google + .ics via
-  `/api/events/[slug]/ics`).
+  (mailto praticien — pas de paiement), **note explicite** « pas de paiement en ligne,
+  contact direct », blocs **« Ce qui est inclus »/« À apporter »**, **Ajouter à mon
+  agenda** (Google + .ics via `/api/events/[slug]/ics`).
 - **Fiche praticien** : **badge « Avis Google »** (lien + note + nb d'avis, saisis
   dans le profil praticien → `links.googleUrl/googleRating/googleCount`).
 - **Fiche lieu** : carte OpenStreetMap intégrée.
-- **Espace participant** : favoris enregistrés + agenda + déconnexion.
+- **Espace participant** : favoris enregistrés + agenda + déconnexion + **rappel
+  des prochains rendez-vous** (favoris à venir, compte à rebours ; `ParticipantReminders.tsx`)
+  + **encart « Comment réserver ? »** (pas de paiement en ligne).
+- **Mise en avant self-service** (nouveau) : le praticien dépense **1 crédit** pour
+  demander la mise en avant **7 jours** (`FeatureButton.tsx` → `request_feature`) ;
+  **Didier valide ou refuse** (`/admin/soumissions` → `resolve_feature`, refus = crédit
+  remboursé) ; badge ★ + remontée en tête tant que `top_until` actif (`lib/featuring.ts`).
 - **Admin** : refus d'événement/praticien **avec motif + e-mail**, gestion lieux/crédits,
   **export CSV newsletter incrémental** (« nouveaux uniquement », `exported_at`).
 - **Bug crédit corrigé** (migration `0006`) : `consume_credit` était bloqué par un
