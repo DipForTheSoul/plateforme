@@ -10,7 +10,8 @@
       "login": "Anmelden",
       "logout": "Abmelden",
       "practitionerSpace": "Anbieterbereich",
-      "admin": "Administration"
+      "admin": "Administration",
+      "participantSpace": "Mein Bereich"
     },
     "footer": {
       "curated": "Jedes Erlebnis wird von Didier persönlich geprüft.",
@@ -134,7 +135,11 @@
     "recurrenceNote": "Dieses Erlebnis findet regelmässig statt — sieh dir die weiteren Termine an.",
     "otherDates": "Weitere Termine",
     "share": "Teilen",
-    "notFound": "Dieses Erlebnis existiert nicht oder ist nicht mehr online."
+    "notFound": "Dieses Erlebnis existiert nicht oder ist nicht mehr online.",
+    "reserve": "Reservieren",
+    "addToCalendar": "Zum Kalender hinzufügen",
+    "calGoogle": "Google Kalender",
+    "calOther": "Apple / Outlook (.ics)"
   },
   "practitioners": {
     "title": "Die Anbieter:innen",

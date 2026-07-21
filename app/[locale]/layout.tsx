@@ -67,12 +67,13 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   const profile = await getCurrentProfile();
-  const accountHref =
-    profile?.role === "admin"
+  const accountHref = !profile
+    ? "/connexion"
+    : profile.role === "admin"
       ? "/admin"
-      : profile?.role === "practitioner"
+      : profile.role === "practitioner"
         ? "/espace-praticien"
-        : "/connexion";
+        : "/espace-participant";
 
   return (
     <html lang={locale} className={`${playfair.variable} ${workSans.variable}`}>

@@ -45,6 +45,10 @@ export async function signIn(
   if (profile?.role === "practitioner") {
     redirect(next.startsWith("/espace-praticien") ? next : "/espace-praticien");
   }
+  // Participant connecté → son espace (favoris + agenda).
+  if (profile?.role === "participant") {
+    redirect(next.startsWith("/") ? next : "/espace-participant");
+  }
   if (next.startsWith("/")) redirect(next);
   redirect("/");
 }

@@ -16,6 +16,24 @@ export async function Header() {
     { href: "/a-propos", label: t("nav.about") },
   ];
 
+  // Lien « compte » selon le rôle (participant inclus).
+  const account = profile
+    ? {
+        href:
+          profile.role === "admin"
+            ? "/admin"
+            : profile.role === "practitioner"
+              ? "/espace-praticien"
+              : "/espace-participant",
+        label:
+          profile.role === "admin"
+            ? t("nav.admin")
+            : profile.role === "practitioner"
+              ? t("nav.practitionerSpace")
+              : t("nav.participantSpace"),
+      }
+    : { href: "/connexion", label: t("nav.login") };
+
   return (
     <header className="sticky top-0 z-40 border-b border-soul-bronze/15 bg-soul-cream/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
@@ -58,35 +76,17 @@ export async function Header() {
 
         <div className="hidden items-center gap-3 md:flex">
           <LocaleSwitcher />
-          {profile ? (
-            <Link
-              href={profile.role === "admin" ? "/admin" : "/espace-praticien"}
-              className="btn-secondary !px-4 !py-2"
-            >
-              {profile.role === "admin"
-                ? t("nav.admin")
-                : t("nav.practitionerSpace")}
-            </Link>
-          ) : (
-            <Link href="/connexion" className="btn-primary !px-4 !py-2">
-              {t("nav.login")}
-            </Link>
-          )}
+          <Link
+            href={account.href}
+            className={`${profile ? "btn-secondary" : "btn-primary"} !px-4 !py-2`}
+          >
+            {account.label}
+          </Link>
         </div>
 
         <MobileNav
           links={[...links, { href: "/favoris", label: t("nav.favorites") }]}
-          authLink={
-            profile
-              ? {
-                  href: profile.role === "admin" ? "/admin" : "/espace-praticien",
-                  label:
-                    profile.role === "admin"
-                      ? t("nav.admin")
-                      : t("nav.practitionerSpace"),
-                }
-              : { href: "/connexion", label: t("nav.login") }
-          }
+          authLink={account}
         />
       </div>
     </header>

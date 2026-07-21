@@ -39,11 +39,12 @@ export default async function AboutPage({
         <figure className="m-0">
           <div className="relative aspect-[4/5] overflow-hidden rounded-3xl shadow-xl shadow-soul-brown/15 ring-1 ring-soul-bronze/15">
             <Image
-              src="/didier.jpg"
+              src="/didier-maroc.jpg"
               alt="Didier Picamoles, fondateur de ForTheSoul"
               fill
               sizes="(max-width: 768px) 100vw, 300px"
               className="object-cover"
+              priority
             />
           </div>
           <figcaption className="mt-3 text-center">

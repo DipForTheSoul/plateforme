@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { AddToCalendar } from "@/components/AddToCalendar";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { JsonLd } from "@/components/JsonLd";
 import { createClient } from "@/lib/supabase/server";
@@ -72,6 +73,24 @@ export default async function EventPage({
     .limit(8);
   const siblings = (siblingsData as Pick<Event, "id" | "slug" | "start_date">[]) ?? [];
 
+  // E-mail du praticien pour le bouton « Réserver » (contact direct — pas de
+  // système de paiement : la réservation se fait auprès du/de la praticien·ne).
+  let practitionerEmail: string | undefined;
+  if (event.practitioner) {
+    const { data: pr } = await supabase
+      .from("practitioners")
+      .select("contact")
+      .eq("id", event.practitioner.id)
+      .maybeSingle();
+    practitionerEmail = (pr?.contact as { email?: string } | null)?.email ?? undefined;
+  }
+  const mailtoHref = practitionerEmail
+    ? `mailto:${practitionerEmail}?subject=${encodeURIComponent(`Réservation — ${event.title}`)}&body=${encodeURIComponent(`Bonjour,\n\nJe souhaite réserver ou avoir des informations sur « ${event.title} ».\n\nMerci !`)}`
+    : null;
+  const venueLocation = event.venue
+    ? `${event.venue.name}, ${event.venue.address}`
+    : null;
+
   const visual = categoryVisual(event.category?.slug);
 
   return (
@@ -111,6 +130,25 @@ export default async function EventPage({
         <p className="font-serif text-2xl text-soul-brown">
           {formatPrice(event.price, event.currency, tCommon("free"))}
         </p>
+      </div>
+
+      {/* Actions : réserver + ajouter à l'agenda */}
+      <div className="mt-6 flex flex-wrap items-center gap-3">
+        {mailtoHref ? (
+          <a href={mailtoHref} className="btn-accent">{t("reserve")}</a>
+        ) : event.practitioner ? (
+          <Link href={`/praticiens/${event.practitioner.slug}`} className="btn-accent">
+            {t("reserve")}
+          </Link>
+        ) : null}
+        <AddToCalendar
+          slug={event.slug}
+          title={event.title}
+          start={event.start_date}
+          end={event.end_date}
+          details={event.description}
+          location={venueLocation}
+        />
       </div>
 
       <div className="mt-6 grid gap-4 rounded-2xl bg-white p-6 sm:grid-cols-2">

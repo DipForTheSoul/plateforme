@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { CalendarPlus } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { createClient } from "@/lib/supabase/client";
@@ -96,6 +97,12 @@ export function FavoritesClient({
                       {formatDate(event.start_date)}
                     </p>
                     <h3 className="font-serif text-lg text-soul-brown">{event.title}</h3>
+                    <a
+                      href={`/api/events/${event.slug}/ics`}
+                      className="relative z-20 mt-2 inline-flex items-center gap-1 text-xs font-medium text-soul-terracotta hover:underline"
+                    >
+                      <CalendarPlus className="h-3.5 w-3.5" /> Ajouter à mon agenda
+                    </a>
                   </div>
                 </article>
               );

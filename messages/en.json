@@ -10,7 +10,8 @@
       "login": "Log in",
       "logout": "Log out",
       "practitionerSpace": "Practitioner space",
-      "admin": "Admin"
+      "admin": "Admin",
+      "participantSpace": "My space"
     },
     "footer": {
       "curated": "Every experience is personally reviewed by Didier.",
@@ -134,7 +135,11 @@
     "recurrenceNote": "This experience returns regularly — check the other dates.",
     "otherDates": "Other dates",
     "share": "Share",
-    "notFound": "This experience doesn't exist or is no longer online."
+    "notFound": "This experience doesn't exist or is no longer online.",
+    "reserve": "Book",
+    "addToCalendar": "Add to my calendar",
+    "calGoogle": "Google Calendar",
+    "calOther": "Apple / Outlook (.ics)"
   },
   "practitioners": {
     "title": "The practitioners",

@@ -10,7 +10,8 @@
       "login": "Connexion",
       "logout": "Se déconnecter",
       "practitionerSpace": "Espace praticien",
-      "admin": "Administration"
+      "admin": "Administration",
+      "participantSpace": "Mon espace"
     },
     "footer": {
       "curated": "Chaque expérience est validée personnellement par Didier.",
@@ -134,7 +135,11 @@
     "recurrenceNote": "Cette expérience revient régulièrement — consultez les autres dates.",
     "otherDates": "Autres dates",
     "share": "Partager",
-    "notFound": "Cette expérience n'existe pas ou n'est plus en ligne."
+    "notFound": "Cette expérience n'existe pas ou n'est plus en ligne.",
+    "reserve": "Réserver",
+    "addToCalendar": "Ajouter à mon agenda",
+    "calGoogle": "Google Agenda",
+    "calOther": "Apple / Outlook (.ics)"
   },
   "practitioners": {
     "title": "Les praticien·nes",
