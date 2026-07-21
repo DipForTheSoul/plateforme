@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useRef, useState } from "react";
 import { createEvent, updateEvent, type ActionState } from "@/app/actions/events";
 import { createVenue } from "@/app/actions/venues";
 import { ImageUploader } from "@/components/forms/ImageUploader";
@@ -36,6 +36,35 @@ export function EventForm({ categories, venues, defaultLanguages, event }: Props
   const [showNewVenue, setShowNewVenue] = useState(false);
   const [venueList, setVenueList] = useState(venues);
   const [selectedVenue, setSelectedVenue] = useState(event?.venue_id ?? "");
+  const venueFormRef = useRef<HTMLFormElement>(null);
+
+  // Sur une journée (cours, atelier, soirée) vs plusieurs jours (retraite, voyage).
+  const [multiDay, setMultiDay] = useState<boolean>(() => {
+    if (event?.start_date && event?.end_date) {
+      return (
+        new Date(event.end_date).toDateString() !==
+        new Date(event.start_date).toDateString()
+      );
+    }
+    return false;
+  });
+
+  function toggleNewVenue() {
+    setShowNewVenue((open) => {
+      const next = !open;
+      if (next) {
+        setTimeout(
+          () =>
+            venueFormRef.current?.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            }),
+          60
+        );
+      }
+      return next;
+    });
+  }
 
   // Sous-formulaire "nouveau lieu" (géocodé à la création — règle d'or n°3).
   const [venueState, venueAction, venuePending] = useActionState(
@@ -94,24 +123,53 @@ export function EventForm({ categories, venues, defaultLanguages, event }: Props
                 <option key={v.id} value={v.id}>{v.name}</option>
               ))}
             </select>
-            <button type="button" onClick={() => setShowNewVenue(!showNewVenue)}
-              className="mt-1 text-xs text-soul-terracotta underline">
-              + Ajouter un nouveau lieu
+            <button type="button" onClick={toggleNewVenue}
+              className="mt-1 text-xs font-medium text-soul-terracotta underline">
+              {showNewVenue ? "− Fermer le nouveau lieu" : "+ Ajouter un nouveau lieu"}
             </button>
           </div>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2">
-          <div>
-            <label htmlFor="start_date" className="label">Début *</label>
-            <input id="start_date" name="start_date" type="datetime-local" required
-              defaultValue={toLocalInput(event?.start_date)} className="field" />
+        <div>
+          <span className="label">Quand a lieu l&apos;expérience&nbsp;?</span>
+          <div className="mb-3 inline-flex rounded-full border border-soul-bronze/30 bg-white p-1 text-sm">
+            <button type="button" onClick={() => setMultiDay(false)}
+              className={`rounded-full px-4 py-1.5 font-medium transition ${!multiDay ? "bg-soul-brown text-soul-cream" : "text-soul-brown hover:text-soul-terracotta"}`}>
+              Sur une journée
+            </button>
+            <button type="button" onClick={() => setMultiDay(true)}
+              className={`rounded-full px-4 py-1.5 font-medium transition ${multiDay ? "bg-soul-brown text-soul-cream" : "text-soul-brown hover:text-soul-terracotta"}`}>
+              Sur plusieurs jours
+            </button>
           </div>
-          <div>
-            <label htmlFor="end_date" className="label">Fin</label>
-            <input id="end_date" name="end_date" type="datetime-local"
-              defaultValue={toLocalInput(event?.end_date)} className="field" />
-          </div>
+
+          {!multiDay ? (
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div>
+                <label htmlFor="start_date" className="label">Date et heure de début *</label>
+                <input id="start_date" name="start_date" type="datetime-local" required
+                  defaultValue={toLocalInput(event?.start_date)} className="field" />
+              </div>
+              <p className="self-end pb-2.5 text-xs text-soul-bronze">
+                Un cours, un atelier, une soirée… La durée se règle juste en dessous.
+                Pour un rendez-vous qui revient (chaque semaine, chaque mois),
+                utilisez la récurrence plus bas.
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div>
+                <label htmlFor="start_date" className="label">Arrivée (jour &amp; heure) *</label>
+                <input id="start_date" name="start_date" type="datetime-local" required
+                  defaultValue={toLocalInput(event?.start_date)} className="field" />
+              </div>
+              <div>
+                <label htmlFor="end_date" className="label">Départ (jour &amp; heure) *</label>
+                <input id="end_date" name="end_date" type="datetime-local" required
+                  defaultValue={toLocalInput(event?.end_date)} className="field" />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="grid gap-5 sm:grid-cols-3">
@@ -186,8 +244,13 @@ export function EventForm({ categories, venues, defaultLanguages, event }: Props
       </form>
 
       {showNewVenue && (
-        <form action={venueAction} className="card flex flex-col gap-4 p-6">
-          <p className="font-serif text-lg text-soul-brown">Nouveau lieu</p>
+        <form ref={venueFormRef} action={venueAction}
+          className="card flex flex-col gap-4 border-2 border-soul-terracotta/40 p-6">
+          <div className="flex items-center justify-between">
+            <p className="font-serif text-lg text-soul-brown">Nouveau lieu</p>
+            <button type="button" onClick={() => setShowNewVenue(false)}
+              className="text-xs text-soul-bronze underline">Fermer</button>
+          </div>
           <p className="text-xs text-soul-bronze">
             L&apos;adresse est géolocalisée automatiquement (recherche par distance).
           </p>
