@@ -1,66 +1,57 @@
-# ForTheSoul — Ce dont nous avons besoin de ta part (Didier)
+# On continue ! 🎉 — Ce dont on a besoin de votre côté
 
-Bonjour Didier 👋
-La plateforme est en ligne en version de test. Pour la finaliser et la mettre sur
-**forthesoul.ch**, voici tout ce qu'il nous faut de ton côté. Tu peux nous envoyer
-les éléments au fur et à mesure — coche au fur et à mesure.
+La plateforme tourne déjà en version de test. Pour brancher les derniers services
+et la mettre en ligne sur **forthesoul.ch**, voici ce qu'il nous faut de vous.
+Rien de compliqué, on vous guide — et comme avant, **tout est à votre nom : vous
+restez 100 % propriétaire**.
 
----
-
-## 1. 🔑 Comptes & accès techniques
-
-### Stripe (paiement des packs de crédits par les praticiens)
-- [ ] Crée un compte sur **stripe.com** (à ton nom / ta société).
-- [ ] Une fois connecté : **Développeurs → Clés API**, envoie-nous :
-  - la **clé publiable** (commence par `pk_live_…`)
-  - la **clé secrète** (commence par `sk_live_…`) — *à transmettre de façon sécurisée (pas par e-mail simple)*
-- [ ] Renseigne tes **coordonnées bancaires** dans Stripe (pour recevoir les paiements).
-- 👉 Pour tester d'abord sans risque, tu peux nous donner les **clés de test** (`pk_test_…` / `sk_test_…`).
-
-### Google Analytics (statistiques d'audience)
-- [ ] Crée une propriété **GA4** sur **analytics.google.com** pour le site forthesoul.ch.
-- [ ] Envoie-nous l'**ID de mesure** (format `G-XXXXXXXXXX`).
-
-### Resend (envoi des e-mails automatiques)
-- [ ] Crée un compte sur **resend.com**.
-- [ ] Ajoute et **vérifie le domaine forthesoul.ch** (on peut t'aider pour les enregistrements DNS).
-- [ ] Envoie-nous la **clé API** (`re_…`).
-
-### Domaine forthesoul.ch
-- [ ] Donne-nous accès à la **gestion DNS** du domaine (ou ajoute les enregistrements qu'on te fournira), pour brancher le site et les e-mails.
-
-### Contacts newsletter (import Wix)
-- [ ] Exporte tes **contacts existants depuis Wix** en **CSV** et envoie-le-nous (nom, e-mail, éventuels centres d'intérêt).
+> Pour chaque service : **récupérez votre compte si vous en avez déjà un, sinon
+> créez-en un — c'est vous qui voyez.** Ensuite, plutôt que de nous envoyer des
+> mots de passe, **invitez-nous** (c'est plus sûr).
+>
+> 👥 Les 2 personnes à inviter (à chaque fois) :
+> **rodrigue.wixfactory@gmail.com** · **victor@wixfactory.com**
 
 ---
 
-## 2. 🧭 Décisions à prendre
+## 1 💳 Stripe — le paiement des packs de crédits
+Récupérez ou créez votre compte sur **stripe.com** (à votre nom).
+**Pour nous inviter :** *Paramètres → Équipe → Inviter un membre* → nos 2 e-mails.
+Pensez aussi à renseigner votre **IBAN** dans Stripe (pour recevoir les paiements).
+> On pourra tester d'abord en mode « test » avant de passer en réel.
 
-- [ ] **Univers d'expériences** : la liste définitive des catégories. Actuellement :
-  Danse & Mouvement · Méditation & Pleine conscience · Yoga & Somatique ·
-  Voyages spirituels · Son & Vibration.
-  → Tu veux en **retirer / ajouter / renommer** ? Donne-nous la liste finale.
-- [ ] **Prix des packs de crédits** : combien coûte 1 publication ? un pack de 5 ? de 10 ?
-- [ ] **Outil d'emailing** : **MailChimp** ou **MailerLite** ? (Ça détermine comment
-  on branche la newsletter.)
+## 2 📊 Google Analytics — les statistiques
+Récupérez ou créez une propriété **GA4** sur **analytics.google.com** pour forthesoul.ch.
+**Pour nous inviter :** *Admin → Gestion des accès* → ajoutez nos 2 e-mails.
+*(Ou envoyez-nous simplement l'ID de mesure, format `G-XXXXXXXXXX`.)*
+
+## 3 ✉️ Resend — les e-mails automatiques
+Récupérez ou créez un compte sur **resend.com**, puis **invitez-nous** (nos 2 e-mails).
+Il faudra **vérifier le domaine forthesoul.ch** (on vous aide pour les réglages DNS).
+
+## 4 🌐 Le domaine forthesoul.ch
+Donnez-nous accès à la **gestion du domaine** (ou on vous envoie les quelques
+réglages à copier-coller) pour brancher le site et les e-mails.
+
+## 5 📇 Vos contacts (newsletter)
+Exportez vos **contacts existants depuis Wix** en **CSV** et envoyez-le-nous.
 
 ---
 
-## 3. 🖋️ Contenus à fournir
+## 🧭 Et 3 petites décisions à prendre
 
-- [ ] **Bios** des praticiens et **descriptions** des événements (les textes actuels
-  sont provisoires).
-- [ ] **Photos** manquantes (ex. SELVA / Costa Rica) et, si tu veux, une **courte
-  vidéo d'accueil** pour la page d'accueil.
-- [ ] La liste des **lieux que tu as choisis** et **pourquoi** (pour la future page
-  « Lieux »).
+- **Vos univers d'expériences** — la liste finale. Aujourd'hui : Danse & Mouvement ·
+  Méditation & Pleine conscience · Yoga & Somatique · Voyages spirituels · Son & Vibration.
+  👉 Vous voulez en **retirer / ajouter / renommer** ?
+- **Le prix des packs de crédits** — combien pour 1 publication ? un pack de 5 ? de 10 ?
+- **Votre outil d'e-mailing** — **MailChimp** ou **MailerLite** ?
+
+## 🖋️ Et les contenus (au fil de l'eau)
+Bios des praticiens, descriptions des événements, photos manquantes (SELVA / Costa Rica…),
+et si vous voulez une **courte vidéo d'accueil** + la liste des **lieux que vous avez
+choisis** et **pourquoi**.
 
 ---
 
-## 4. 📌 Bon à savoir
-- Tant que le domaine n'est pas basculé, le site de démonstration reste sur une
-  adresse temporaire `…vercel.app` — tu peux déjà tout tester dessus.
-- Les frais de fonctionnement (~25 $/mois : hébergement + base) sont sur **tes
-  comptes**, à ton nom (tu es 100 % propriétaire).
-
-Merci ! Dès qu'on a ces éléments, on branche tout et on te livre. 🙏
+**C'est fait ?** Pas besoin de tout d'un coup — envoyez-nous au fur et à mesure, et
+dès qu'on a un élément, on le branche. 🙏
