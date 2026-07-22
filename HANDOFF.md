@@ -42,7 +42,11 @@ Marque **ForTheSoul** (logo doré). Base **Supabase** en ligne.
 - Astuce : après une migration, `notify pgrst, 'reload schema';` pour rafraîchir
   le cache de l'API.
 
-## 3. Comptes de test (mot de passe commun `ForTheSoul2026!`)
+## 3. Comptes de test
+> ⚠️ **Le mot de passe commun n'est PAS écrit ici** : ce repo est **public**.
+> Il est transmis hors dépôt (voir message d'accès à Didier / gestionnaire de mots
+> de passe). **À changer/rotationner + supprimer avant la mise en production.**
+
 | Rôle | E-mail | Espace |
 |---|---|---|
 | Participant | `participant@forthesoul.ch` | `/espace-participant` |
