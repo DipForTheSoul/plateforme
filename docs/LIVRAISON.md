@@ -42,4 +42,4 @@ Recopier `.env.example` avec les valeurs de production. Points d'attention :
 - Guide admin : `docs/ADMIN.md` (à remettre à Didier).
 - Accès : Supabase, Vercel, Stripe, Resend, GitHub, registrar.
 - Rappel : toute la communication client présente le travail comme le
-  développement de l'agence (CLAUDE.md §9).
+  développement de l'agence (BUILD-BRIEF.md §9).

@@ -1,5 +1,5 @@
 -- ForTheSoul — Schéma de données
--- Voir CLAUDE.md §4. Chaque table a la RLS activée (policies dans 0003_rls.sql).
+-- Voir BUILD-BRIEF.md §4. Chaque table a la RLS activée (policies dans 0003_rls.sql).
 
 -- ---------------------------------------------------------------------------
 -- profiles — miroir applicatif de auth.users (rôle + langue préférée)
@@ -174,7 +174,7 @@ alter table public.page_views enable row level security;
 create index page_views_created_idx on public.page_views (created_at);
 
 -- ---------------------------------------------------------------------------
--- Tables FUTURES (hors périmètre — voir CLAUDE.md §8) : reviews, blog_posts,
+-- Tables FUTURES (hors périmètre — voir BUILD-BRIEF.md §8) : reviews, blog_posts,
 -- bookings. Non créées volontairement ; structure anticipée dans
 -- docs/FUTUR-schema.sql pour pouvoir les ajouter sans refonte.
 -- ---------------------------------------------------------------------------

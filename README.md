@@ -21,7 +21,7 @@ Base de données : exécuter `supabase/migrations/0001…0005` puis
 
 ## Documents
 
-- [CLAUDE.md](CLAUDE.md) — brief de build (source de vérité du périmètre)
+- [BUILD-BRIEF.md](BUILD-BRIEF.md) — brief de build (source de vérité du périmètre)
 - [PROGRESS.md](PROGRESS.md) — état d'avancement + checklist de branchement
 - [docs/ADMIN.md](docs/ADMIN.md) — guide d'utilisation pour l'admin (Didier)
 - [docs/LIVRAISON.md](docs/LIVRAISON.md) — transfert des comptes au client

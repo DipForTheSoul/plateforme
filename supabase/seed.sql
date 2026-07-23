@@ -1,4 +1,4 @@
--- ForTheSoul — Données de démonstration (CLAUDE.md §2.3)
+-- ForTheSoul — Données de démonstration (BUILD-BRIEF.md §2.3)
 -- À exécuter APRÈS les migrations. Idempotent (on conflict do nothing).
 -- Les praticiens de seed n'ont pas de user_id : leurs fiches sont gérées par
 -- l'admin tant qu'ils n'ont pas créé de compte (rattachement via user_id ensuite).

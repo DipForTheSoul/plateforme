@@ -1,4 +1,4 @@
--- ForTheSoul — Schéma ANTICIPÉ des phases futures (CLAUDE.md §8)
+-- ForTheSoul — Schéma ANTICIPÉ des phases futures (BUILD-BRIEF.md §8)
 -- ⚠️ NE PAS APPLIQUER pour ce build. Ce fichier documente la structure prévue
 -- pour que les avis, le blog et la réservation en ligne puissent être ajoutés
 -- sans refonte de l'architecture existante.

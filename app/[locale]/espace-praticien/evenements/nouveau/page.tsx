@@ -5,7 +5,7 @@ import { getCategories, getVenues } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
-/** Dépôt d'événement — pré-rempli depuis le profil praticien (CLAUDE.md Phase 2). */
+/** Dépôt d'événement — pré-rempli depuis le profil praticien (BUILD-BRIEF.md Phase 2). */
 export default async function NewEventPage() {
   const practitioner = await getCurrentPractitioner();
   if (!practitioner) redirect("/espace-praticien");

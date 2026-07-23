@@ -4,7 +4,7 @@ import { Resend } from "resend";
 
 /**
  * Envoi d'e-mails transactionnels via Resend (plan gratuit : 3000/mois).
- * Repli (CLAUDE.md §2.1) : tant que RESEND_API_KEY n'est pas renseignée,
+ * Repli (BUILD-BRIEF.md §2.1) : tant que RESEND_API_KEY n'est pas renseignée,
  * les e-mails sont logués en console — aucun blocage du flux.
  * Rodrigue : vérifier le domaine forthesoul.ch dans Resend avant d'activer
  * EMAIL_FROM="ForTheSoul <welcome@forthesoul.ch>".

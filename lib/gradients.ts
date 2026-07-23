@@ -1,5 +1,5 @@
 /**
- * Vignettes en dégradé élégantes par catégorie (CLAUDE.md §2.2) : utilisées
+ * Vignettes en dégradé élégantes par catégorie (BUILD-BRIEF.md §2.2) : utilisées
  * tant qu'aucune vraie photo n'est fournie — jamais d'image cassée.
  * Palette dérivée de forthesoul.ch (bruns, bronze, terracotta, crème).
  */

@@ -1,7 +1,7 @@
-# HANDOFF — ForTheSoul (reprise en nouvelle conversation)
+# HANDOFF — ForTheSoul (note de reprise technique)
 
 > Dernière mise à jour : 2026-07-21. Ce fichier permet de reprendre le travail
-> exactement où on s'est arrêté. **À lire en premier dans une nouvelle session.**
+> exactement où on s'est arrêté. **À lire en premier en début de session.**
 
 ---
 

@@ -130,7 +130,7 @@ export async function createEvent(
     return { error: "Enregistrement impossible. Réessayez." };
   }
 
-  // 3. Occurrences récurrentes (générées à la création — CLAUDE.md Phase 2).
+  // 3. Occurrences récurrentes (générées à la création — BUILD-BRIEF.md Phase 2).
   if (input.recurrence) {
     const count = input.recurrence_count ?? 4;
     const occurrences = Array.from({ length: count - 1 }, (_, i) => ({
