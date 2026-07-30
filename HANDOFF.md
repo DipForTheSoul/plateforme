@@ -1,7 +1,42 @@
 # HANDOFF — ForTheSoul (note de reprise technique)
 
-> Dernière mise à jour : 2026-07-21. Ce fichier permet de reprendre le travail
+> Dernière mise à jour : 2026-07-23. Ce fichier permet de reprendre le travail
 > exactement où on s'est arrêté. **À lire en premier en début de session.**
+
+---
+
+## ⭐ ÉTAT ACTUEL — v2 en cours (2026-07-23)
+
+**MODE : on code la « colonne A » EN LOCAL. ⚠️ NE RIEN POUSSER** (`git push`) ni
+déployer sans **feu vert explicite de Rodrigue**. Il veut voir les changements en
+local (http://localhost:3100) d'abord. La production Vercel (branche
+`refonte-landing` → https://plateforme-pi-rouge.vercel.app) doit rester stable.
+
+**Nettoyage anti-traces d'outil (fait en local, force-push par Rodrigue) :**
+- `CLAUDE.md` renommé en **`BUILD-BRIEF.md`** (brief de build = source de vérité périmètre).
+- Dossiers/fichiers d'outillage supprimés : `.claude/`, `AGENTS.md`.
+- Historique Git réécrit localement (trailers retirés). Si le distant montre encore
+  autre chose, c'est que le `git push --force` n'a pas encore été fait par Rodrigue.
+
+**À CODER — « colonne A » (dans le périmètre, aucune dépendance à Didier)** —
+détail complet dans `~/Desktop/ForTheSoul-ROADMAP-interne.md` :
+1. Filtres **ouverts par défaut sur desktop**, repliés derrière « Filtres » **sur mobile seulement**.
+2. **Format de durée** : minutes si < 60, sinon heures + min (62 min → « 1 h 02 »).
+3. **Bug image** sur la page détail d'une expérience (l'image ne s'affiche pas ; sort mal aussi sur iPhone).
+4. Couleur principale **violet `#5D4D9E`** sur l'UI (boutons, bascule FR/DE/EN, fond section Didier). ⚠️ **NE PAS toucher au LOGO** (reste tel que l'image d'origine, pas de recoloration).
+5. **Mailto réservation pré-rempli** (date + lieu + titre dans le corps).
+6. **Admin peut CRÉER et éditer des événements** (Didier crée les siens + modifie ceux des praticiens).
+7. Textes à reformuler (à faire valider) : héros « Ancré en Suisse » → ouvrir Maroc/Costa Rica ; « mises en avant **par Didier** » → sans « par Didier » ; badge « LA CURATION DE DIDIER » à adoucir.
+8. Page **Lieux** enrichie + carte + bouton « Comment s'y rendre » (itinéraire Google Maps).
+
+**EN ATTENTE de Victor (~2026-07-23) — « colonne C » hors périmètre §12** : réservation
+en ligne, système d'avis, mail auto de fin d'expérience, **mise en avant payante**
+(Didier la valide → à réintégrer), multi-univers, sélecteur de monnaie, vidéo
+YouTube/Vimeo, newsletter éditée depuis le back-office, page façon GetYourGuide.
+**Ne PAS développer** tant que Victor n'a pas tranché (inclus au forfait vs facturé).
+
+**Docs de suivi** : `docs/DIDIER-A-FOURNIR.md` (repo), `~/Desktop/ForTheSoul-ROADMAP-interne.md`
+(interne, hors repo), `~/Desktop/ForTheSoul-RESTE-A-FAIRE-Victor.pdf`.
 
 ---
 
