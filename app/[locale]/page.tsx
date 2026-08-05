@@ -69,7 +69,7 @@ export default async function HomePage({
           <h1 className="font-serif text-4xl leading-[1.1] text-soul-cream drop-shadow-md sm:text-5xl lg:text-6xl">
             {t("heroTitle")}
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-soul-sand drop-shadow">
+          <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-soul-sand drop-shadow sm:text-lg">
             {t("heroSubtitle")}
           </p>
 
