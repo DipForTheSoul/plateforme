@@ -4,7 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { StarRating } from "@/components/StarRating";
 import { categoryVisual } from "@/lib/gradients";
-import { formatDate, formatTime, formatVenueLocation } from "@/lib/utils";
+import { formatDateNumeric, formatTime, formatVenueLocation } from "@/lib/utils";
 import { Price } from "@/components/Price";
 import type { EventWithRelations, Locale } from "@/types/database";
 import { MapPin } from "lucide-react";
@@ -47,9 +47,14 @@ export async function EventCard({ event }: { event: EventWithRelations }) {
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-6">
-        <p className="text-xs font-medium uppercase tracking-wide text-soul-bronze">
-          {formatDate(event.start_date, locale)} · {formatTime(event.start_date, locale)}
-        </p>
+        <div className="flex items-center gap-2 text-sm">
+          <span className="font-semibold text-soul-brown">
+            {formatDateNumeric(event.start_date, locale)}
+          </span>
+          <span className="rounded-full bg-soul-violet/10 px-2.5 py-0.5 text-xs font-semibold text-soul-violet">
+            {formatTime(event.start_date, locale)}
+          </span>
+        </div>
         <h3 className="font-serif text-xl leading-snug text-soul-brown">
           {event.title}
         </h3>

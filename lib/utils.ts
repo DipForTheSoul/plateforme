@@ -83,6 +83,15 @@ export function formatDate(iso: string, locale: Locale = "fr"): string {
   }).format(new Date(iso));
 }
 
+/** Date en chiffres JJ/MM/AAAA (ex. 05/09/2026) — compact pour les cartes. */
+export function formatDateNumeric(iso: string, locale: Locale = "fr"): string {
+  return new Intl.DateTimeFormat(DATE_LOCALES[locale], {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(new Date(iso));
+}
+
 export function formatTime(iso: string, locale: Locale = "fr"): string {
   return new Intl.DateTimeFormat(DATE_LOCALES[locale], {
     hour: "2-digit",
