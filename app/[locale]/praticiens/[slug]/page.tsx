@@ -119,37 +119,12 @@ export default async function PractitionerPage({
             {practitioner.languages.map((l) => LANGUAGE_LABELS[l] ?? l).join(", ")}
           </p>
 
-          {practitioner.links.googleUrl && (
-            <a
-              href={practitioner.links.googleUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-2 rounded-full border border-soul-bronze/25 bg-white px-4 py-2 text-sm shadow-sm transition hover:border-soul-bronze"
-            >
-              <span className="font-semibold text-soul-brown">Avis Google</span>
-              {practitioner.links.googleRating && (
-                <span className="flex items-center gap-1">
-                  <Star className="h-4 w-4 fill-soul-amber text-soul-amber" />
-                  <span className="font-semibold text-soul-brown">
-                    {practitioner.links.googleRating}
-                  </span>
-                </span>
-              )}
-              {practitioner.links.googleCount && (
-                <span className="text-soul-bronze">
-                  · {practitioner.links.googleCount} avis
-                </span>
-              )}
-              <span className="text-soul-violet">Voir sur Google ↗</span>
-            </a>
-          )}
-
           {practitioner.review_url && (
             <a
               href={practitioner.review_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 ml-0 inline-flex items-center gap-2 rounded-full border border-soul-violet/30 bg-soul-violet/5 px-4 py-2 text-sm font-medium text-soul-violet shadow-sm transition hover:bg-soul-violet/10 sm:ml-3"
+              className="mt-4 inline-flex items-center gap-2 rounded-full border border-soul-violet/30 bg-soul-violet/5 px-4 py-2 text-sm font-medium text-soul-violet shadow-sm transition hover:bg-soul-violet/10"
             >
               <Star className="h-4 w-4" />
               Voir mes avis ↗
