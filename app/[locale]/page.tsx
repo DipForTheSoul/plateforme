@@ -176,9 +176,11 @@ export default async function HomePage({
               <h2 className="font-serif text-3xl text-soul-brown">{t("topTitle")}</h2>
               <p className="text-soul-bronze">{t("topSubtitle")}</p>
             </div>
-            <div className="grid gap-6 grid-cols-2 lg:grid-cols-4">
+            <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-6 lg:overflow-visible lg:px-0 lg:pb-0">
               {topEvents.map((event) => (
-                <EventCard key={event.id} event={event} />
+                <div key={event.id} className="w-[82%] shrink-0 snap-start sm:w-[46%] lg:w-auto">
+                  <EventCard event={event} />
+                </div>
               ))}
             </div>
           </div>
@@ -203,9 +205,11 @@ export default async function HomePage({
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="grid gap-6 grid-cols-2 lg:grid-cols-4">
+          <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-6 lg:overflow-visible lg:px-0 lg:pb-0">
             {upcomingNonTop.map((event) => (
-              <EventCard key={event.id} event={event} />
+              <div key={event.id} className="w-[82%] shrink-0 snap-start sm:w-[46%] lg:w-auto">
+                <EventCard event={event} />
+              </div>
             ))}
           </div>
         </section>
