@@ -81,9 +81,7 @@ export default async function CreditsPage({
                 <li key={pack.id} className="flex items-center justify-between py-3 text-sm">
                   <div>
                     <p className="font-medium text-soul-brown">
-                      {pack.credits_remaining} / {pack.credits_total} publication
-                      {pack.credits_total > 1 ? "s" : ""} restante
-                      {pack.credits_remaining > 1 ? "s" : ""}
+                      Pack de {pack.credits_total} publication{pack.credits_total > 1 ? "s" : ""}
                     </p>
                     <p className="text-xs text-soul-bronze">
                       {pack.expires_at

@@ -179,11 +179,29 @@ export async function grantCreditsManually(formData: FormData): Promise<void> {
   if (!practitionerId || !Number.isInteger(amount) || amount <= 0) return;
 
   const supabase = await createClient();
-  await supabase.rpc("grant_credits", {
+  const { error } = await supabase.rpc("grant_credits", {
     p_practitioner_id: practitionerId,
     p_amount: amount,
     p_note: note,
   });
+  if (error) return;
+
+  // §6.2 — on matérialise un pack avec sa date d'échéance (durée réglable en admin),
+  // pour que le praticien voie ses publications restantes + la date de validité.
+  const { data: setting } = await supabase
+    .from("settings")
+    .select("value")
+    .eq("key", "pack_default_valid_days")
+    .maybeSingle();
+  const days = Number((setting as { value: string } | null)?.value) || 365;
+  await supabase.from("credit_packs").insert({
+    practitioner_id: practitionerId,
+    credits_total: amount,
+    credits_remaining: amount,
+    expires_at: new Date(Date.now() + days * 86400_000).toISOString(),
+    source: "manual",
+  });
 
   revalidatePath("/admin/credits");
+  revalidatePath("/espace-praticien/credits");
 }
