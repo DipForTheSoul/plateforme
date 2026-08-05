@@ -59,6 +59,11 @@ export async function EventCard({ event }: { event: EventWithRelations }) {
             <> · {event.categories.map((c) => c.name).join(" · ")}</>
           )}
         </p>
+        {event.description && (
+          <p className="line-clamp-2 text-sm leading-relaxed text-soul-ink/70">
+            {event.description}
+          </p>
+        )}
         {event.rating_count > 0 && (
           <StarRating avg={event.rating_avg} count={event.rating_count} />
         )}
