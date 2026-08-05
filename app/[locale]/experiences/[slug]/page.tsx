@@ -281,13 +281,25 @@ export default async function EventPage({
         </div>
       )}
 
-      {event.venue?.description && (
+      {event.venue && (
         <div className="mt-10 rounded-2xl bg-soul-sand/40 p-6">
           <h2 className="mb-2 flex items-center gap-2 text-xl text-soul-brown">
             <User className="h-5 w-5 text-soul-bronze" /> {t("aboutVenue")} — {event.venue.name}
           </h2>
-          <p className="text-sm text-soul-ink/80">{event.venue.description}</p>
+          {event.venue.description && (
+            <p className="text-sm text-soul-ink/80">{event.venue.description}</p>
+          )}
           <p className="mt-2 text-xs text-soul-bronze">{event.venue.address}</p>
+          <a
+            href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+              `${event.venue.address}, ${event.venue.city ?? ""} ${event.venue.country}`
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-primary mt-4 !py-2"
+          >
+            <MapPin className="h-4 w-4" /> Voir sur Google Maps
+          </a>
         </div>
       )}
 
@@ -324,7 +336,7 @@ export default async function EventPage({
             <Link href={`/experiences/${prev.slug}`}
               className="group flex max-w-[48%] items-center gap-2 text-left text-sm text-soul-brown transition hover:text-soul-violet">
               <ArrowLeft className="h-4 w-4 shrink-0" />
-              <span className="flex flex-col">
+              <span className="flex min-w-0 flex-col">
                 <span className="text-xs uppercase tracking-wide text-soul-bronze">{t("previous")}</span>
                 <span className="line-clamp-1 font-medium">{prev.title}</span>
               </span>
@@ -333,7 +345,7 @@ export default async function EventPage({
           {next ? (
             <Link href={`/experiences/${next.slug}`}
               className="group flex max-w-[48%] items-center gap-2 text-right text-sm text-soul-brown transition hover:text-soul-violet">
-              <span className="flex flex-col">
+              <span className="flex min-w-0 flex-col">
                 <span className="text-xs uppercase tracking-wide text-soul-bronze">{t("next")}</span>
                 <span className="line-clamp-1 font-medium">{next.title}</span>
               </span>
