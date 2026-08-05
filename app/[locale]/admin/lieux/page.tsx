@@ -21,18 +21,23 @@ export default async function AdminVenuesPage() {
         )}
         {venues.map((v) => (
           <Link key={v.id} href={`/admin/lieux/${v.id}`}
-            className="flex flex-wrap items-center justify-between gap-3 p-4 text-sm transition hover:bg-soul-sand/40">
+            className="group flex flex-wrap items-center justify-between gap-3 p-4 text-sm transition hover:bg-soul-sand/40">
             <div>
-              <p className="font-medium text-soul-brown underline decoration-soul-bronze/30 underline-offset-2">{v.name}</p>
+              <p className="font-medium text-soul-brown">{v.name}</p>
               <p className="text-xs text-soul-bronze">
                 {v.address} · {v.city ? `${v.city}, ` : ""}{v.canton ?? v.country}
               </p>
             </div>
-            <span className={`rounded-full px-3 py-1 text-xs ${
-              v.lat !== null ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-            }`}>
-              {v.lat !== null ? "Géocodé ✓" : "Non géocodé !"}
-            </span>
+            <div className="flex items-center gap-3">
+              <span className={`rounded-full px-3 py-1 text-xs ${
+                v.lat !== null ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+              }`}>
+                {v.lat !== null ? "Géocodé ✓" : "Non géocodé !"}
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full border border-soul-violet/30 bg-soul-violet/5 px-3 py-1 text-xs font-medium text-soul-violet">
+                ✎ Modifier
+              </span>
+            </div>
           </Link>
         ))}
       </div>

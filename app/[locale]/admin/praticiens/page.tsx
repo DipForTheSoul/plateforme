@@ -57,6 +57,10 @@ export default async function AdminPractitionersPage() {
                   </button>
                 </div>
               </form>
+              <Link href={`/admin/praticiens/${p.id}`}
+                className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-soul-violet underline">
+                ✎ Modifier la fiche
+              </Link>
             </div>
           ))}
         </div>
@@ -78,6 +82,10 @@ export default async function AdminPractitionersPage() {
               </div>
               <div className="flex items-center gap-3">
                 <StatusBadge status={p.status} />
+                <Link href={`/admin/praticiens/${p.id}`}
+                  className="inline-flex items-center gap-1 rounded-full border border-soul-violet/30 bg-soul-violet/5 px-3 py-1 text-xs font-medium text-soul-violet">
+                  ✎ Modifier
+                </Link>
                 <form action={moderatePractitioner}>
                   <input type="hidden" name="practitioner_id" value={p.id} />
                   <button type="submit" name="decision"
