@@ -37,7 +37,7 @@ export async function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-soul-bronze/15 bg-soul-cream/90 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 sm:gap-4">
         <Link
           href="/"
           className="flex shrink-0 items-center gap-2.5"
@@ -49,9 +49,9 @@ export async function Header() {
             width={40}
             height={34}
             priority
-            className="h-9 w-auto"
+            className="h-7 w-auto sm:h-9"
           />
-          <span className="font-serif text-2xl leading-none text-soul-brown">
+          <span className="font-serif text-lg leading-none text-soul-brown sm:text-2xl">
             ForTheSoul
           </span>
         </Link>
@@ -87,7 +87,7 @@ export async function Header() {
         </div>
 
         {/* Accès direct langue + devise sur mobile (hors menu) — version compacte. */}
-        <div className="flex items-center gap-1.5 md:hidden">
+        <div className="flex items-center gap-1 md:hidden">
           <CurrencySwitcher compact />
           <LocaleSwitcher compact />
           <MobileNav

@@ -16,7 +16,7 @@ export async function EventCard({ event }: { event: EventWithRelations }) {
   const visual = categoryVisual(event.category?.slug);
 
   return (
-    <article className="card group relative flex flex-col">
+    <article className="card group relative flex h-full flex-col">
       <Link href={`/experiences/${event.slug}`} className="absolute inset-0 z-10">
         <span className="sr-only">{event.title}</span>
       </Link>
