@@ -98,6 +98,40 @@ export async function toggleTopListing(formData: FormData): Promise<void> {
     .update({ is_top: !isTop, featured_until })
     .eq("id", eventId);
   revalidatePath("/admin/soumissions");
+  revalidatePath("/admin/mises-en-avant");
+}
+
+/** Durée par défaut (jours) d'une mise en avant, depuis les paramètres. */
+async function featuredDefaultDays(
+  supabase: Awaited<ReturnType<typeof createClient>>
+): Promise<number> {
+  const { data } = await supabase
+    .from("settings")
+    .select("value")
+    .eq("key", "featured_default_days")
+    .maybeSingle();
+  return Number((data as { value: string } | null)?.value) || 30;
+}
+
+/**
+ * Prolonge une mise en avant (§6.1) : repousse `featured_until` à
+ * maintenant + durée par défaut, sans changer `is_top`.
+ */
+export async function extendFeatured(formData: FormData): Promise<void> {
+  await assertAdmin();
+  const eventId = String(formData.get("event_id") ?? "");
+  if (!eventId) return;
+
+  const supabase = await createClient();
+  const days = await featuredDefaultDays(supabase);
+  const featured_until = new Date(Date.now() + days * 86400_000).toISOString();
+
+  await supabase
+    .from("events")
+    .update({ is_top: true, featured_until })
+    .eq("id", eventId);
+  revalidatePath("/admin/mises-en-avant");
+  revalidatePath("/admin/soumissions");
 }
 
 /** Validation / refus d'une fiche praticien. */

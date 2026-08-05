@@ -30,35 +30,6 @@ export function SettingsForm({ values }: { values: Record<string, string> }) {
         </p>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <div>
-          <label htmlFor="featured_default_days" className="label">
-            Durée par défaut d&apos;une mise en avant (jours)
-          </label>
-          <input
-            id="featured_default_days"
-            name="featured_default_days"
-            type="number"
-            min={1}
-            defaultValue={values.featured_default_days ?? "30"}
-            className="field !max-w-40"
-          />
-        </div>
-        <div>
-          <label htmlFor="pack_default_valid_days" className="label">
-            Durée de validité par défaut d&apos;un pack (jours)
-          </label>
-          <input
-            id="pack_default_valid_days"
-            name="pack_default_valid_days"
-            type="number"
-            min={1}
-            defaultValue={values.pack_default_valid_days ?? "365"}
-            className="field !max-w-40"
-          />
-        </div>
-      </div>
-
       {state.error && <p className="text-sm text-red-700">{state.error}</p>}
       {state.success && <p className="text-sm text-green-700">{state.success}</p>}
 

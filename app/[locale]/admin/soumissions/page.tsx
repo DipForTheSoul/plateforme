@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { Link } from "@/i18n/navigation";
-import { moderateEvent, toggleTopListing } from "@/app/actions/admin";
+import { moderateEvent } from "@/app/actions/admin";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatDate, formatTime } from "@/lib/utils";
 import type { EventWithRelations } from "@/types/database";
@@ -107,22 +107,8 @@ function SubmissionCard({
         </form>
       ) : (
         <div className="mt-4 flex items-center gap-4">
-          {event.status === "approved" && (
-            <div className="flex flex-col gap-0.5">
-              <form action={toggleTopListing}>
-                <input type="hidden" name="event_id" value={event.id} />
-                <input type="hidden" name="is_top" value={String(event.is_top)} />
-                <button type="submit" className="text-sm text-soul-violet underline">
-                  {event.is_top ? "★ Retirer du top" : "☆ Mettre en top listing"}
-                </button>
-              </form>
-              {event.is_top && event.featured_until && (
-                <span className="text-xs text-soul-bronze">
-                  Jusqu&apos;au {formatDate(event.featured_until)}
-                  {new Date(event.featured_until) < new Date() && " (expiré)"}
-                </span>
-              )}
-            </div>
+          {event.status === "approved" && event.is_top && (
+            <span className="text-xs font-medium text-soul-violet">★ En avant</span>
           )}
           <form action={moderateEvent}>
             <input type="hidden" name="event_id" value={event.id} />

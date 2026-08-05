@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { grantCreditsManually } from "@/app/actions/admin";
+import { SettingNumberForm } from "@/components/admin/SettingNumberForm";
 import { formatDate } from "@/lib/utils";
 import type { CreditTransaction, Practitioner } from "@/types/database";
 
@@ -11,7 +12,7 @@ export const dynamic = "force-dynamic";
  */
 export default async function AdminCreditsPage() {
   const supabase = await createClient();
-  const [{ data: practitionersData }, { data: transactionsData }] =
+  const [{ data: practitionersData }, { data: transactionsData }, { data: settingData }] =
     await Promise.all([
       supabase.from("practitioners").select("*").order("name"),
       supabase
@@ -19,9 +20,11 @@ export default async function AdminCreditsPage() {
         .select("*, practitioner:practitioners(name)")
         .order("created_at", { ascending: false })
         .limit(50),
+      supabase.from("settings").select("value").eq("key", "pack_default_valid_days").maybeSingle(),
     ]);
 
   const practitioners = (practitionersData as Practitioner[]) ?? [];
+  const packValidDays = (settingData as { value: string } | null)?.value ?? "365";
   const transactions =
     (transactionsData as (CreditTransaction & {
       practitioner: { name: string } | null;
@@ -29,6 +32,16 @@ export default async function AdminCreditsPage() {
 
   return (
     <div className="flex flex-col gap-8">
+      <section className="card p-6">
+        <h2 className="mb-3 font-serif text-lg text-soul-brown">Validité des packs</h2>
+        <SettingNumberForm
+          settingKey="pack_default_valid_days"
+          label="Durée de validité par défaut d'un pack de publications"
+          hint="Au-delà de cette durée, un pack passe automatiquement en « expiré » et ses crédits ne sont plus utilisables."
+          defaultValue={packValidDays}
+        />
+      </section>
+
       <section className="card p-6">
         <h2 className="mb-1 font-serif text-lg text-soul-brown">
           Attribuer des crédits manuellement

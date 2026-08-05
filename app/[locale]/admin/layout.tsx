@@ -19,6 +19,7 @@ export default async function AdminLayout({
   const nav = [
     { href: "/admin", label: "Tableau de bord" },
     { href: "/admin/soumissions", label: "Soumissions" },
+    { href: "/admin/mises-en-avant", label: "Mises en avant" },
     { href: "/admin/praticiens", label: "Praticien·nes" },
     { href: "/admin/lieux", label: "Lieux" },
     { href: "/admin/credits", label: "Crédits" },

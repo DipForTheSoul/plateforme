@@ -20,7 +20,8 @@ export default async function AdminSettingsPage() {
       <div>
         <h2 className="text-xl text-soul-brown">Paramètres</h2>
         <p className="mt-1 text-sm text-soul-bronze">
-          Réglages généraux de la plateforme (taux de change, durées par défaut).
+          Réglage du taux de change CHF → EUR (§4.4). La durée des mises en avant se
+          règle dans l&apos;onglet « Mises en avant », celle des packs dans « Crédits ».
         </p>
       </div>
       <SettingsForm values={values} />
