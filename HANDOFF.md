@@ -5,7 +5,22 @@
 
 ---
 
-## ⭐ ÉTAT ACTUEL — v2 en cours (2026-07-23)
+## ⭐ ÉTAT ACTUEL — V2 LIVRÉE & DÉPLOYÉE (2026-08-05)
+
+**Le lot V2 (PDF client « Suites données à vos demandes » — sections 1 & 2) est CODÉ,
+committé (`ad43172`) et POUSSÉ** sur `main` + `refonte-landing` → **déployé en prod Vercel**
+(https://plateforme-pi-rouge.vercel.app). Migrations `0012` (multi-univers) et `0013`
+(champs V2 + settings + credit_packs) **appliquées sur la base en ligne**. Build de prod OK,
+lint + typecheck clean. Détail complet des points dans `PROGRESS.md`.
+
+**Reste hors code** : clés à fournir par Didier — `MAILERLITE_API_KEY` + `MAILERLITE_GROUP_ID`,
+`NEXT_PUBLIC_GA_ID` (à coller dans les variables d'env Vercel ; le code s'active tout seul).
+Lien de paiement Revolut (hors PDF) en attente de confirmation. Section 3 du PDF =
+prochaine version, **volontairement non codée**.
+
+---
+
+## Historique — v2 en cours (2026-07-23)
 
 **MODE : on code la « colonne A » EN LOCAL. ⚠️ NE RIEN POUSSER** (`git push`) ni
 déployer sans **feu vert explicite de Rodrigue**. Il veut voir les changements en
