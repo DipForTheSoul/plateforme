@@ -18,6 +18,8 @@ interface Props {
   selectedCategoryIds?: string[];
   /** Action serveur alternative (ex. édition/création côté admin, §3). */
   action?: (prev: ActionState, formData: FormData) => Promise<ActionState>;
+  /** Liste des praticien·nes (mode admin création : choix du propriétaire). */
+  practitioners?: { id: string; name: string }[];
 }
 
 /** Convertit un ISO en valeur pour <input type="datetime-local">. */
@@ -35,6 +37,7 @@ export function EventForm({
   event,
   selectedCategoryIds = [],
   action: actionOverride,
+  practitioners,
 }: Props) {
   const action =
     actionOverride ?? (event ? updateEvent.bind(null, event.id) : createEvent);
@@ -102,6 +105,24 @@ export function EventForm({
   return (
     <div className="flex flex-col gap-8">
       <form action={formAction} className="flex flex-col gap-5">
+        {practitioners && !event && (
+          <div className="rounded-2xl border border-soul-violet/20 bg-soul-violet/5 p-4">
+            <label htmlFor="owner_practitioner_id" className="label">
+              Praticien·ne propriétaire *
+            </label>
+            <select id="owner_practitioner_id" name="owner_practitioner_id" required
+              className="field" defaultValue="">
+              <option value="" disabled>Choisir…</option>
+              {practitioners.map((p) => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
+            <p className="mt-1 text-xs text-soul-bronze">
+              L&apos;expérience sera publiée directement (aucun crédit consommé).
+            </p>
+          </div>
+        )}
+
         <div>
           <label htmlFor="title" className="label">Titre de l&apos;expérience *</label>
           <input id="title" name="title" required minLength={3} maxLength={140}

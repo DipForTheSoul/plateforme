@@ -28,6 +28,13 @@ export default async function SubmissionsPage() {
 
   return (
     <div className="flex flex-col gap-8">
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl text-soul-brown">Soumissions</h1>
+        <Link href="/admin/soumissions/nouveau" className="btn-primary">
+          + Créer un événement
+        </Link>
+      </div>
+
       <section>
         <h2 className="mb-4 text-xl text-soul-brown">
           En attente ({pending.length})

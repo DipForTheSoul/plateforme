@@ -238,6 +238,90 @@ export async function updateEvent(
 }
 
 /**
+ * Création d'un événement par l'ADMIN (§8) — même formulaire que les praticiens,
+ * mais l'admin choisit le/la praticien·ne propriétaire, aucun crédit consommé,
+ * et l'événement est publié directement (statut `approved`).
+ */
+export async function adminCreateEvent(
+  _prev: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  const profile = await getCurrentProfile();
+  if (!profile || profile.role !== "admin") {
+    return { error: "Réservé à l'administrateur." };
+  }
+
+  const ownerId = String(formData.get("owner_practitioner_id") ?? "");
+  if (!ownerId) return { error: "Choisissez le/la praticien·ne propriétaire." };
+
+  const parsed = parseEventForm(formData);
+  if (!parsed.success) {
+    return { error: "Formulaire incomplet — vérifiez les champs obligatoires." };
+  }
+  const input = parsed.data;
+
+  const supabase = await createClient();
+  const base = {
+    description: input.description,
+    category_id: input.category_ids[0],
+    practitioner_id: ownerId,
+    venue_id: input.venue_id,
+    duration_minutes: input.duration_minutes,
+    price: input.price,
+    languages: input.languages,
+    included: input.included,
+    to_bring: input.to_bring,
+    video_url: input.video_url,
+    images: input.images,
+    status: "approved" as const, // créé par l'admin → directement en ligne
+  };
+
+  const { data: parent, error } = await supabase
+    .from("events")
+    .insert({
+      ...base,
+      title: input.title,
+      slug: uniqueSlug(input.title),
+      start_date: new Date(input.start_date).toISOString(),
+      end_date: input.end_date ? new Date(input.end_date).toISOString() : null,
+      recurrence: input.recurrence,
+      recurrence_count: input.recurrence ? input.recurrence_count ?? 4 : null,
+    })
+    .select("id, start_date, end_date")
+    .single();
+
+  if (error || !parent) return { error: "Enregistrement impossible." };
+
+  await syncEventCategories(supabase, parent.id, input.category_ids);
+
+  if (input.recurrence) {
+    const count = input.recurrence_count ?? 4;
+    const occurrences = Array.from({ length: count - 1 }, (_, i) => ({
+      ...base,
+      title: input.title,
+      slug: uniqueSlug(input.title),
+      start_date: shiftDate(parent.start_date, input.recurrence!, i + 1),
+      end_date: parent.end_date
+        ? shiftDate(parent.end_date, input.recurrence!, i + 1)
+        : null,
+      parent_event_id: parent.id,
+    }));
+    if (occurrences.length) {
+      const { data: children } = await supabase
+        .from("events")
+        .insert(occurrences)
+        .select("id");
+      for (const child of children ?? []) {
+        await syncEventCategories(supabase, child.id, input.category_ids);
+      }
+    }
+  }
+
+  revalidatePath("/admin/soumissions");
+  redirect("/admin/soumissions?cree=1");
+}
+
+/**
  * Édition d'un événement par l'ADMIN (§3/§8) — non limitée au propriétaire.
  * Didier peut modifier n'importe quelle expérience ; le statut n'est pas touché.
  */
