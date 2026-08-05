@@ -67,16 +67,18 @@ export async function EventCard({ event }: { event: EventWithRelations }) {
         {event.rating_count > 0 && (
           <StarRating avg={event.rating_avg} count={event.rating_count} />
         )}
-        <div className="mt-auto flex items-center justify-between pt-2 text-sm">
-          <span className="flex items-center gap-1 text-soul-bronze">
+        <div className="mt-auto flex items-center justify-between gap-2 pt-2 text-sm">
+          <span className="flex min-w-0 items-center gap-1 text-soul-bronze">
             {event.venue && (
               <>
-                <MapPin className="h-3.5 w-3.5" />
-                {formatVenueLocation(event.venue.city, event.venue.country)}
+                <MapPin className="h-3.5 w-3.5 shrink-0" />
+                <span className="truncate">
+                  {formatVenueLocation(event.venue.city, event.venue.country)}
+                </span>
               </>
             )}
           </span>
-          <span className="font-semibold text-soul-brown">
+          <span className="shrink-0 whitespace-nowrap font-semibold text-soul-brown">
             <Price value={event.price} baseCurrency={event.currency} freeLabel={t("free")} />
           </span>
         </div>

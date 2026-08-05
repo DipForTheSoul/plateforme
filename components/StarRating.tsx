@@ -19,8 +19,8 @@ export function StarRating({
   const text = size === "lg" ? "text-sm" : "text-xs";
 
   return (
-    <div className="flex items-center gap-1.5">
-      <div className="flex" aria-hidden>
+    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
+      <div className="flex shrink-0" aria-hidden>
         {[1, 2, 3, 4, 5].map((i) => (
           <Star
             key={i}
