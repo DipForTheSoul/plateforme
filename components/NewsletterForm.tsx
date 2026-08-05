@@ -51,13 +51,13 @@ export function NewsletterForm({
           name="email"
           required
           placeholder={placeholder}
-          className="w-full rounded-full border-0 bg-soul-cream/15 px-4 py-2.5 text-sm text-soul-cream placeholder:text-soul-sand/50 focus:outline-none focus:ring-2 focus:ring-soul-amber/50"
+          className="w-full rounded-full border border-soul-bronze/25 bg-white px-4 py-2.5 text-sm text-soul-brown placeholder:text-soul-bronze/60 focus:outline-none focus:ring-2 focus:ring-soul-violet/40"
         />
         <button type="submit" disabled={pending} className="btn-accent shrink-0 !py-2.5">
           {buttonLabel}
         </button>
       </div>
-      <label className="flex items-start gap-2 text-xs text-soul-sand/70">
+      <label className="flex items-start gap-2 text-xs text-soul-brown/70">
         <input type="checkbox" name="consent" required className="mt-0.5" />
         {consentLabel}
       </label>

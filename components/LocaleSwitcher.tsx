@@ -5,22 +5,24 @@ import { routing } from "@/i18n/routing";
 import { usePathname, useRouter } from "@/i18n/navigation";
 
 /** Sélecteur FR / DE / EN — conserve la page courante en changeant de langue. */
-export function LocaleSwitcher() {
+export function LocaleSwitcher({ compact = false }: { compact?: boolean }) {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
 
   return (
-    <div className="flex items-center gap-0.5 rounded-full border border-soul-bronze/25 bg-white p-0.5">
+    <div className={`flex items-center gap-0.5 rounded-full border border-soul-bronze/25 bg-white ${compact ? "p-0.5" : "p-1"}`}>
       {routing.locales.map((l) => (
         <button
           key={l}
           type="button"
           onClick={() => router.replace(pathname, { locale: l })}
-          className={`rounded-full px-2.5 py-1 text-xs font-semibold uppercase transition ${
+          className={`rounded-full font-semibold uppercase transition ${
+            compact ? "px-1.5 py-0.5 text-xs" : "px-3 py-1.5 text-sm"
+          } ${
             l === locale
-              ? "bg-soul-brown text-soul-cream"
-              : "text-soul-bronze hover:text-soul-brown"
+              ? "bg-soul-violet text-white"
+              : "text-soul-bronze hover:text-soul-violet"
           }`}
         >
           {l}

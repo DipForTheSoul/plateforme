@@ -8,7 +8,7 @@ export async function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-16 border-t border-soul-bronze/15 bg-soul-brown text-soul-cream">
+    <footer className="mt-16 border-t border-soul-bronze/15 bg-soul-sand text-soul-brown">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 md:grid-cols-3">
         <div>
           <div className="flex items-center gap-2.5">
@@ -21,21 +21,21 @@ export async function Footer() {
             />
             <p className="font-serif text-2xl">ForTheSoul</p>
           </div>
-          <p className="mt-3 text-sm text-soul-sand/80">{t("tagline")}</p>
+          <p className="mt-3 text-sm text-soul-brown/70">{t("tagline")}</p>
           <p className="mt-4 text-sm italic text-soul-bronze">{t("footer.curated")}</p>
         </div>
 
         <nav className="flex flex-col gap-2 text-sm">
-          <Link href="/experiences" className="hover:text-soul-amber">
+          <Link href="/experiences" className="hover:text-soul-violet">
             {t("nav.experiences")}
           </Link>
-          <Link href="/praticiens" className="hover:text-soul-amber">
+          <Link href="/praticiens" className="hover:text-soul-violet">
             {t("nav.practitioners")}
           </Link>
-          <Link href="/a-propos" className="hover:text-soul-amber">
+          <Link href="/a-propos" className="hover:text-soul-violet">
             {t("nav.about")}
           </Link>
-          <Link href="/inscription" className="hover:text-soul-amber">
+          <Link href="/inscription" className="hover:text-soul-violet">
             {t("footer.becomePractitioner")}
           </Link>
         </nav>
@@ -51,7 +51,7 @@ export async function Footer() {
           />
         </div>
       </div>
-      <div className="border-t border-soul-cream/10 py-4 text-center text-xs text-soul-sand/60">
+      <div className="border-t border-soul-brown/10 py-4 text-center text-xs text-soul-brown/50">
         {t("footer.legal", { year })}
       </div>
     </footer>

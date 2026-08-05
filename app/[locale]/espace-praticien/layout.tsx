@@ -1,5 +1,5 @@
 import { setRequestLocale } from "next-intl/server";
-import { requireRole } from "@/lib/auth";
+import { requireRole, getCurrentPractitioner } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
 
 export const dynamic = "force-dynamic";
@@ -20,6 +20,11 @@ export default async function PractitionerLayout({
   setRequestLocale(locale);
   await requireRole(["practitioner", "admin"]);
 
+  // §8 — intitulé personnalisé « Espace de [Prénom] ».
+  const practitioner = await getCurrentPractitioner();
+  const firstName = practitioner?.name?.trim().split(/\s+/)[0];
+  const spaceTitle = firstName ? `Espace de ${firstName}` : "Espace praticien";
+
   const nav = [
     { href: "/espace-praticien", label: "Tableau de bord" },
     { href: "/espace-praticien/evenements", label: "Mes expériences" },
@@ -30,7 +35,7 @@ export default async function PractitionerLayout({
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl text-soul-brown">Espace praticien</h1>
+        <h1 className="text-2xl text-soul-brown">{spaceTitle}</h1>
         {/* Lien direct (pas <Link>) : on veut atteindre la route serveur qui
             vide la session et redirige — insensible au cache d'un onglet périmé. */}
         {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}

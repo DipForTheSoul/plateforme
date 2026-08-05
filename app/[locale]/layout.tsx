@@ -8,7 +8,10 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MobileTabBar } from "@/components/MobileTabBar";
 import { PageViewTracker } from "@/components/PageViewTracker";
+import { CurrencyProvider } from "@/components/CurrencyProvider";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { getCurrentProfile } from "@/lib/auth";
+import { getExchangeRateEur } from "@/lib/queries";
 import "../globals.css";
 
 const playfair = Playfair_Display({
@@ -66,7 +69,10 @@ export default async function LocaleLayout({
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
 
-  const profile = await getCurrentProfile();
+  const [profile, rateEur] = await Promise.all([
+    getCurrentProfile(),
+    getExchangeRateEur(),
+  ]);
   const accountHref = !profile
     ? "/connexion"
     : profile.role === "admin"
@@ -78,12 +84,15 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={`${playfair.variable} ${workSans.variable}`}>
       <body className="flex min-h-screen flex-col antialiased pb-20 md:pb-0">
+        <GoogleAnalytics />
         <NextIntlClientProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <MobileTabBar accountHref={accountHref} />
-          <PageViewTracker />
+          <CurrencyProvider rateEur={rateEur}>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <MobileTabBar accountHref={accountHref} />
+            <PageViewTracker />
+          </CurrencyProvider>
         </NextIntlClientProvider>
       </body>
     </html>

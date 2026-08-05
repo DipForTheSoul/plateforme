@@ -46,18 +46,18 @@
     "searchPlaceholder": "Search an experience (dance, gong, retreat…)",
     "categoriesTitle": "Explore by universe",
     "topTitle": "Current selection",
-    "topSubtitle": "Experiences highlighted by Didier",
+    "topSubtitle": "Highlighted experiences",
     "didierTitle": "Chosen with heart, reviewed by Didier",
     "didierText": "ForTheSoul is not just another directory: every practitioner and every experience is personally reviewed by Didier Picamoles, founder of the platform and creator of Humanic Dance. What you book has been lived, met, chosen.",
     "didierCta": "Discover the ForTheSoul story",
     "upcomingTitle": "Upcoming experiences",
     "heroBadge1": "Reviewed one by one by Didier",
-    "heroBadge2": "Rooted in Switzerland",
+    "heroBadge2": "In Switzerland and beyond",
     "heroBadge3": "No algorithm, chosen with heart",
     "categoriesSubtitle": "Find the practice that calls you",
     "upcomingSubtitle": "The next dates near you",
     "upcomingCta": "See all experiences",
-    "didierEyebrow": "Didier's curation",
+    "didierEyebrow": "Every experience tested and approved by Didier",
     "didierQuote": "I only share experiences I've lived and people I've met. That's ForTheSoul.",
     "didierSignature": "Didier Picamoles, founder",
     "faq": {
@@ -89,7 +89,8 @@
           "a": "Mostly across French- and German-speaking Switzerland, with a few immersions abroad. Use the 'near me' search to find experiences close to you."
         }
       ]
-    }
+    },
+    "heroEyebrow": "Carefully selected, tested by Didier"
   },
   "events": {
     "title": "All experiences",
@@ -146,7 +147,9 @@
     "calOther": "Apple / Outlook (.ics)",
     "included": "What’s included",
     "toBring": "What to bring",
-    "reserveNote": "No online payment: clicking “Book” contacts the practitioner directly by email. Payment (any deposit or on-site) is arranged directly with them."
+    "reserveNote": "No online payment: clicking “Book” contacts the practitioner directly by email. Payment (any deposit or on-site) is arranged directly with them.",
+    "previous": "Previous",
+    "next": "Next"
   },
   "practitioners": {
     "title": "The practitioners",

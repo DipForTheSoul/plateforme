@@ -123,25 +123,24 @@ export function ExplorerControls({ categories, practitioners, regions, eventDays
         </div>
       </div>
 
-      {/* Bouton Filtres (replie/déplie) + réinitialiser */}
+      {/* Bouton Filtres — sur mobile uniquement (desktop : filtres toujours ouverts) + réinitialiser */}
       <div className="flex items-center justify-between gap-3">
         <button type="button" onClick={() => setShowFilters((v) => !v)}
           aria-expanded={showFilters}
-          className={showFilters ? "btn-primary !py-2" : "btn-secondary !py-2"}>
+          className={`md:hidden ${showFilters ? "btn-primary !py-2" : "btn-secondary !py-2"}`}>
           <SlidersHorizontal className="h-4 w-4" />
           {t("filters.title")}{activeCount > 0 ? ` (${activeCount})` : ""}
         </button>
         {hasAnyFilter && (
           <button type="button" onClick={resetAll}
-            className="text-sm text-soul-terracotta underline">
+            className="text-sm text-soul-violet underline">
             {t("filters.reset")}
           </button>
         )}
       </div>
 
-      {/* Filtres repliables */}
-      {showFilters && (
-        <div className="flex flex-col gap-4 rounded-2xl border border-soul-bronze/15 bg-white p-4">
+      {/* Filtres : repliés par défaut sur mobile, toujours visibles sur desktop (§8) */}
+      <div className={`${showFilters ? "flex" : "hidden"} flex-col gap-4 rounded-2xl border border-soul-bronze/15 bg-white p-4 md:flex`}>
           <div className="grid gap-3 sm:grid-cols-2">
             <select value={searchParams.get("categorie") ?? ""}
               onChange={(e) => setParams({ categorie: e.target.value || undefined })}
@@ -227,7 +226,6 @@ export function ExplorerControls({ categories, practitioners, regions, eventDays
             onSelect={(from, to) => setParams({ du: from, au: to })}
           />
         </div>
-      )}
     </div>
   );
 }

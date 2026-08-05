@@ -46,18 +46,18 @@
     "searchPlaceholder": "Rechercher une expérience (danse, gong, retraite…)",
     "categoriesTitle": "Explorer par univers",
     "topTitle": "Sélection du moment",
-    "topSubtitle": "Les expériences mises en avant par Didier",
+    "topSubtitle": "Les expériences mises en avant",
     "didierTitle": "Choisi avec cœur, validé par Didier",
     "didierText": "ForTheSoul n'est pas un annuaire de plus : chaque praticien·ne et chaque expérience sont validés personnellement par Didier Picamoles, fondateur de la plateforme et créateur de la Humanic Dance. Vous savez que ce que vous réservez a été vécu, rencontré, choisi.",
     "didierCta": "Découvrir l'histoire de ForTheSoul",
     "upcomingTitle": "Prochaines expériences",
     "heroBadge1": "Validé un à un par Didier",
-    "heroBadge2": "Ancré en Suisse",
+    "heroBadge2": "En Suisse et au-delà",
     "heroBadge3": "Sans algorithme, avec le cœur",
     "categoriesSubtitle": "Trouvez la pratique qui vous appelle",
     "upcomingSubtitle": "Les prochaines dates près de chez vous",
     "upcomingCta": "Voir toutes les expériences",
-    "didierEyebrow": "La curation de Didier",
+    "didierEyebrow": "Chaque expérience testée et approuvée par Didier",
     "didierQuote": "Je ne partage que les expériences que j'ai vécues et les personnes que j'ai rencontrées. C'est ça, ForTheSoul.",
     "didierSignature": "Didier Picamoles, fondateur",
     "faq": {
@@ -89,7 +89,8 @@
           "a": "Principalement en Suisse romande et alémanique, avec quelques immersions à l'étranger. Utilisez la recherche « autour de moi » pour trouver près de chez vous."
         }
       ]
-    }
+    },
+    "heroEyebrow": "Sélectionné avec soin, testé par Didier"
   },
   "events": {
     "title": "Toutes les expériences",
@@ -141,6 +142,8 @@
     "share": "Partager",
     "notFound": "Cette expérience n'existe pas ou n'est plus en ligne.",
     "reserve": "Réserver",
+    "previous": "Précédente",
+    "next": "Suivante",
     "addToCalendar": "Ajouter à mon agenda",
     "calGoogle": "Google Agenda",
     "calOther": "Apple / Outlook (.ics)",

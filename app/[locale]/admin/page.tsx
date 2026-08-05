@@ -14,17 +14,26 @@ export default async function AdminDashboard() {
     pendingEvents,
     pendingPractitioners,
     approvedEvents,
+    rejectedEvents,
+    activePractitioners,
+    creditsConsumed,
     contacts,
     views,
     topPages,
+    topExperiences,
   ] = await Promise.all([
     supabase.from("events").select("id", { count: "exact", head: true }).eq("status", "pending").is("parent_event_id", null),
     supabase.from("practitioners").select("id", { count: "exact", head: true }).eq("status", "pending"),
     supabase.from("events").select("id", { count: "exact", head: true }).eq("status", "approved"),
+    supabase.from("events").select("id", { count: "exact", head: true }).eq("status", "rejected"),
+    supabase.from("practitioners").select("id", { count: "exact", head: true }).eq("status", "approved"),
+    supabase.from("credit_transactions").select("id", { count: "exact", head: true }).eq("type", "consumption").gte("created_at", since.toISOString()),
     supabase.from("contacts").select("id", { count: "exact", head: true }),
     supabase.from("page_views").select("id", { count: "exact", head: true }).gte("created_at", since.toISOString()),
     supabase.from("page_views").select("path").gte("created_at", since.toISOString()).limit(2000),
+    supabase.from("events").select("title, slug, view_count").eq("status", "approved").order("view_count", { ascending: false }).limit(8),
   ]);
+  const topExp = (topExperiences.data as { title: string; slug: string; view_count: number }[] ?? []).filter((e) => e.view_count > 0);
 
   // Top 8 des pages les plus vues (30 jours).
   const counts = new Map<string, number>();
@@ -37,6 +46,9 @@ export default async function AdminDashboard() {
     { label: "Soumissions en attente", value: pendingEvents.count ?? 0, href: "/admin/soumissions", accent: true },
     { label: "Praticien·nes à valider", value: pendingPractitioners.count ?? 0, href: "/admin/praticiens", accent: true },
     { label: "Expériences en ligne", value: approvedEvents.count ?? 0, href: "/admin/soumissions" },
+    { label: "Publications refusées", value: rejectedEvents.count ?? 0, href: "/admin/soumissions" },
+    { label: "Praticien·nes actifs", value: activePractitioners.count ?? 0, href: "/admin/praticiens" },
+    { label: "Crédits consommés (30 j)", value: creditsConsumed.count ?? 0, href: "/admin/credits" },
     { label: "Contacts newsletter", value: contacts.count ?? 0, href: "/admin/newsletter" },
   ];
 
@@ -51,6 +63,28 @@ export default async function AdminDashboard() {
           </Link>
         ))}
       </div>
+
+      {topExp.length > 0 && (
+        <div className="card p-6">
+          <h2 className="mb-4 font-serif text-lg text-soul-brown">
+            Expériences les plus consultées
+          </h2>
+          <ul className="flex flex-col gap-2">
+            {topExp.map((e) => (
+              <li key={e.slug} className="flex items-center gap-3 text-sm">
+                <span className="w-14 shrink-0 text-right font-medium text-soul-brown">
+                  {e.view_count}
+                </span>
+                <div className="h-2 rounded-full bg-soul-violet/70"
+                  style={{ width: `${Math.max(4, (e.view_count / topExp[0].view_count) * 60)}%` }} />
+                <Link href={`/experiences/${e.slug}`} className="truncate text-soul-bronze hover:text-soul-violet">
+                  {e.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="card p-6">
         <div className="mb-4 flex items-baseline justify-between">

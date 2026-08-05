@@ -97,7 +97,7 @@ export default async function ExperiencesPage({
       <h1 className="text-3xl text-soul-brown">{t("title")}</h1>
       <p className="mt-2 max-w-2xl text-soul-bronze">{t("subtitle")}</p>
 
-      <div className="mt-8 grid gap-10 lg:grid-cols-[320px_1fr]">
+      <div className="mt-8 grid gap-10 lg:grid-cols-[240px_1fr]">
         <aside>
           <ExplorerControls
             categories={categories}
@@ -141,7 +141,7 @@ export default async function ExperiencesPage({
               }, [])}
             />
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-6 sm:grid-cols-2">
               {events.map((event) => (
                 <EventCard key={event.id} event={event} />
               ))}

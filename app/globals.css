@@ -14,9 +14,10 @@
   --color-soul-sand: #fdead2;       /* sable clair */
   --color-soul-cream: #fef6ed;      /* crème (fonds) */
   --color-soul-ivory: #fffeed;      /* ivoire */
-  --color-soul-terracotta: #ff8044; /* terracotta (CTA chaleureux) */
-  --color-soul-amber: #f9ad4d;      /* ambre */
-  --color-soul-violet: #5e4d9e;     /* violet spirituel (touches) */
+  --color-soul-terracotta: #5e4d9e; /* ex-terracotta → violet de marque (plus d'orange) */
+  --color-soul-amber: #7a6ab5;      /* ex-ambre → violet clair (plus d'orange) */
+  --color-soul-violet: #5e4d9e;     /* violet de marque (boutons, bascule langue, section Didier) */
+  --color-soul-violet-dark: #4b3d80; /* violet foncé (hover) */
 
   --font-sans: var(--font-work-sans), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-playfair), ui-serif, Georgia, serif;
@@ -42,7 +43,7 @@ h1, h2, h3 {
 }
 
 .btn-primary {
-  @apply inline-flex items-center justify-center gap-2 rounded-full bg-soul-brown px-6 py-2.5 text-sm font-medium text-soul-cream transition hover:bg-soul-ink disabled:cursor-not-allowed disabled:opacity-50;
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-soul-violet px-6 py-2.5 text-sm font-medium text-white transition hover:bg-soul-violet-dark disabled:cursor-not-allowed disabled:opacity-50;
 }
 
 .btn-secondary {
@@ -50,7 +51,7 @@ h1, h2, h3 {
 }
 
 .btn-accent {
-  @apply inline-flex items-center justify-center gap-2 rounded-full bg-soul-terracotta px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-soul-amber;
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-soul-violet px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-soul-violet-dark;
 }
 
 .card {

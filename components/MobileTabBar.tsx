@@ -41,8 +41,8 @@ export function MobileTabBar({ accountHref }: { accountHref: string }) {
             <span
               className={`flex h-14 w-14 items-center justify-center rounded-full shadow-lg ring-4 ring-soul-cream transition ${
                 isActive("/experiences")
-                  ? "bg-soul-brown text-soul-cream"
-                  : "bg-soul-terracotta text-white"
+                  ? "bg-soul-violet-dark text-white"
+                  : "bg-soul-violet text-white"
               }`}
             >
               <Compass className="h-6 w-6" />

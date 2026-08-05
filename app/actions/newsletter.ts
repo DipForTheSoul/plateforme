@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
+import { upsertSubscriber } from "@/lib/mailerlite";
 
 const schema = z.object({
   email: z.string().email(),
@@ -47,6 +48,14 @@ export async function subscribeToNewsletter(
     });
     // Doublon d'e-mail (unique) : on considère l'inscription réussie.
     if (error && !error.message.includes("duplicate")) return { status: "error" };
+
+    // Synchronisation MailerLite avec les étiquettes d'intérêt (§7.1).
+    // No-op si la clé n'est pas encore configurée — n'échoue jamais l'inscription.
+    await upsertSubscriber({
+      email: parsed.data.email,
+      interests: parsed.data.interests ?? [],
+    });
+
     return { status: "success" };
   } catch {
     return { status: "error" };

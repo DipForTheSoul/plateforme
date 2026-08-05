@@ -7,12 +7,22 @@ import { ImageUploader } from "@/components/forms/ImageUploader";
 import { LANGUAGE_LABELS } from "@/lib/utils";
 import type { Practitioner } from "@/types/database";
 
-export function ProfileForm({ practitioner }: { practitioner: Practitioner }) {
+export function ProfileForm({
+  practitioner,
+  action,
+}: {
+  practitioner: Practitioner;
+  /** Action serveur alternative (édition admin d'une autre fiche, §3). */
+  action?: (prev: ActionState, formData: FormData) => Promise<ActionState>;
+}) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
-    updatePractitionerProfile,
+    action ?? updatePractitionerProfile,
     {}
   );
   const [photos, setPhotos] = useState<string[]>(practitioner.photos);
+  const [logo, setLogo] = useState<string[]>(
+    practitioner.logo_url ? [practitioner.logo_url] : []
+  );
 
   return (
     <form action={formAction} className="flex flex-col gap-5">
@@ -78,6 +88,15 @@ export function ProfileForm({ practitioner }: { practitioner: Practitioner }) {
         </div>
       </div>
 
+      <div>
+        <label htmlFor="review_url" className="label">Lien vers vos avis (Google, Trustpilot ou autre)</label>
+        <input id="review_url" name="review_url" type="url" placeholder="https://…"
+          defaultValue={practitioner.review_url ?? ""} className="field" />
+        <p className="mt-1 text-xs text-soul-bronze">
+          Affiché sur votre fiche publique sous forme de bouton « Voir mes avis ».
+        </p>
+      </div>
+
       <div className="rounded-2xl border border-soul-bronze/15 bg-soul-sand/20 p-5">
         <p className="font-serif text-lg text-soul-brown">Avis Google</p>
         <p className="mb-4 mt-1 text-xs text-soul-bronze">
@@ -102,6 +121,12 @@ export function ProfileForm({ practitioner }: { practitioner: Practitioner }) {
               defaultValue={practitioner.links.googleCount ?? ""} className="field" />
           </div>
         </div>
+      </div>
+
+      <div>
+        <span className="label">Logo (facultatif — affiché à côté de votre nom)</span>
+        <ImageUploader prefix="practitioner-logo" images={logo} onChange={setLogo} max={1} />
+        <input type="hidden" name="logo_url" value={logo[0] ?? ""} />
       </div>
 
       <div>

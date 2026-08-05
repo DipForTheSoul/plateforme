@@ -1,7 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import {
   EVENT_WITH_RELATIONS,
+  mapEventRow,
   type Category,
+  type EventRowRaw,
   type EventWithRelations,
   type Practitioner,
   type Venue,
@@ -29,6 +31,28 @@ export interface EventFilters {
   lat?: number;
   lng?: number;
   radiusKm?: number;
+}
+
+/** Lit un paramètre éditable en admin (table `settings`). */
+export async function getSetting(key: string): Promise<string | null> {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("settings")
+      .select("value")
+      .eq("key", key)
+      .maybeSingle();
+    return (data as { value: string } | null)?.value ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Taux 1 CHF = X EUR (§4.4), saisi par l'admin ; repli 1.05. */
+export async function getExchangeRateEur(): Promise<number> {
+  const raw = await getSetting("exchange_rate_eur");
+  const n = Number(raw);
+  return Number.isFinite(n) && n > 0 ? n : 1.05;
 }
 
 export async function getCategories(): Promise<Category[]> {
@@ -86,11 +110,13 @@ export async function getApprovedEvents(
     if (filters.q) query = query.ilike("title", `%${filters.q}%`);
 
     const { data } = await query;
-    let events = ((data as unknown as EventWithRelations[]) ?? []);
+    let events = ((data as unknown as EventRowRaw[]) ?? []).map(mapEventRow);
 
     // Filtres sur les relations (appliqués après jointure).
     if (filters.category)
-      events = events.filter((e) => e.category?.slug === filters.category);
+      events = events.filter((e) =>
+        e.categories.some((c) => c.slug === filters.category)
+      );
     if (filters.practitioner)
       events = events.filter((e) => e.practitioner?.slug === filters.practitioner);
     if (filters.canton)
@@ -107,15 +133,18 @@ export async function getApprovedEvents(
 export async function getTopEvents(limit = 3): Promise<EventWithRelations[]> {
   try {
     const supabase = await createClient();
+    const now = new Date().toISOString();
     const { data } = await supabase
       .from("events")
       .select(EVENT_WITH_RELATIONS)
       .eq("status", "approved")
       .eq("is_top", true)
-      .gte("start_date", new Date().toISOString())
+      // §6.1 — mise en avant expirée à la lecture (featured_until dépassé).
+      .or(`featured_until.is.null,featured_until.gt.${now}`)
+      .gte("start_date", now)
       .order("start_date")
       .limit(limit);
-    return ((data as unknown as EventWithRelations[]) ?? []);
+    return ((data as unknown as EventRowRaw[]) ?? []).map(mapEventRow);
   } catch {
     return [];
   }
@@ -131,9 +160,48 @@ export async function getEventBySlug(
       .select(EVENT_WITH_RELATIONS)
       .eq("slug", slug)
       .maybeSingle();
-    return (data as unknown as EventWithRelations) ?? null;
+    return data ? mapEventRow(data as unknown as EventRowRaw) : null;
   } catch {
     return null;
+  }
+}
+
+/**
+ * Expériences précédente / suivante (§8) — navigation sur la fiche détail.
+ * Ordre chronologique (start_date) parmi les événements approuvés à venir.
+ */
+export async function getAdjacentEvents(
+  currentStartDate: string,
+  currentId: string
+): Promise<{ prev: { slug: string; title: string } | null; next: { slug: string; title: string } | null }> {
+  try {
+    const supabase = await createClient();
+    const [{ data: prev }, { data: next }] = await Promise.all([
+      supabase
+        .from("events")
+        .select("slug, title")
+        .eq("status", "approved")
+        .lt("start_date", currentStartDate)
+        .neq("id", currentId)
+        .order("start_date", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      supabase
+        .from("events")
+        .select("slug, title")
+        .eq("status", "approved")
+        .gt("start_date", currentStartDate)
+        .neq("id", currentId)
+        .order("start_date", { ascending: true })
+        .limit(1)
+        .maybeSingle(),
+    ]);
+    return {
+      prev: (prev as { slug: string; title: string } | null) ?? null,
+      next: (next as { slug: string; title: string } | null) ?? null,
+    };
+  } catch {
+    return { prev: null, next: null };
   }
 }
 
@@ -202,7 +270,7 @@ export async function getEventsByIds(
       .select(EVENT_WITH_RELATIONS)
       .in("id", ids)
       .eq("status", "approved");
-    return ((data as unknown as EventWithRelations[]) ?? []);
+    return ((data as unknown as EventRowRaw[]) ?? []).map(mapEventRow);
   } catch {
     return [];
   }

@@ -11,6 +11,69 @@ const DATE_LOCALES: Record<Locale, string> = {
   en: "en-GB",
 };
 
+/** Noms de pays (FR) pour les codes ISO courants du catalogue (§5.1). */
+const COUNTRY_NAMES: Record<string, string> = {
+  CH: "Suisse",
+  FR: "France",
+  DE: "Allemagne",
+  IT: "Italie",
+  ES: "Espagne",
+  PT: "Portugal",
+  MA: "Maroc",
+  CR: "Costa Rica",
+  GR: "Grèce",
+  IN: "Inde",
+};
+
+export function countryName(code: string | null | undefined): string {
+  if (!code) return "";
+  return COUNTRY_NAMES[code.toUpperCase()] ?? code;
+}
+
+/**
+ * Localisation d'un lieu (§5.1) : « Ville, Pays » ; si la ville est absente
+ * (retraite itinérante / à l'étranger), afficher seulement le pays.
+ */
+export function formatVenueLocation(
+  city: string | null | undefined,
+  country: string | null | undefined
+): string {
+  const pays = countryName(country);
+  return city ? `${city}, ${pays}` : pays;
+}
+
+/**
+ * Convertit une URL YouTube/Vimeo en URL d'iframe intégrable (§4.1).
+ * Renvoie null si l'URL n'est pas reconnue → aucun bloc vidéo affiché.
+ */
+export function videoEmbedUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  try {
+    const u = new URL(url);
+    const host = u.hostname.replace(/^www\./, "");
+    // YouTube : youtu.be/ID, youtube.com/watch?v=ID, /embed/ID, /shorts/ID
+    if (host === "youtu.be") {
+      const id = u.pathname.slice(1);
+      return id ? `https://www.youtube-nocookie.com/embed/${id}` : null;
+    }
+    if (host.endsWith("youtube.com")) {
+      const id =
+        u.searchParams.get("v") ??
+        u.pathname.match(/\/(embed|shorts)\/([\w-]+)/)?.[2] ??
+        null;
+      return id ? `https://www.youtube-nocookie.com/embed/${id}` : null;
+    }
+    // Vimeo : vimeo.com/ID
+    if (host.endsWith("vimeo.com")) {
+      const id = u.pathname.split("/").filter(Boolean).pop();
+      return id && /^\d+$/.test(id) ? `https://player.vimeo.com/video/${id}` : null;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export function formatDate(iso: string, locale: Locale = "fr"): string {
   return new Intl.DateTimeFormat(DATE_LOCALES[locale], {
     weekday: "short",

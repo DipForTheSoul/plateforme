@@ -28,6 +28,10 @@ export interface Practitioner {
   specialties: string[];
   languages: string[];
   links: Record<string, string>;
+  /** §4.2 — lien vers des avis externes (Google, Trustpilot…). */
+  review_url: string | null;
+  /** §4.3 — logo du praticien (URL image, même pipeline que les photos). */
+  logo_url: string | null;
   credits: number;
   status: ModerationStatus;
   created_at: string;
@@ -41,7 +45,9 @@ export interface Venue {
   lat: number | null;
   lng: number | null;
   canton: string | null;
+  /** §5.1 — pays (obligatoire) et ville (optionnelle). */
   country: string;
+  city: string | null;
   description: string | null;
   capacity: number | null;
   rooms: number | null;
@@ -78,6 +84,10 @@ export interface Event {
   status: ModerationStatus;
   admin_message: string | null;
   is_top: boolean;
+  /** §4.1 — lien vidéo YouTube/Vimeo (lecteur intégré sur la fiche). */
+  video_url: string | null;
+  /** §6.1 — fin de mise en avant ; expiration appliquée à la lecture. */
+  featured_until: string | null;
   /** Ce qui est inclus (prix, matériel, repas…). */
   included: string | null;
   /** Ce que le/la participant·e doit apporter. */
@@ -88,6 +98,23 @@ export interface Event {
   rating_count: number;
   created_at: string;
   updated_at: string;
+}
+
+export interface Setting {
+  key: string;
+  value: string;
+  updated_at: string;
+}
+
+export interface CreditPack {
+  id: string;
+  practitioner_id: string;
+  credits_total: number;
+  credits_remaining: number;
+  expires_at: string | null;
+  source: "purchase" | "manual";
+  stripe_session_id: string | null;
+  created_at: string;
 }
 
 export interface Review {
@@ -101,9 +128,41 @@ export interface Review {
 
 /** Événement avec ses relations chargées (select avec jointures). */
 export interface EventWithRelations extends Event {
+  /** Catégorie principale (dégradé/visuel, 1er badge). Vient de `category_id`. */
   category: Category | null;
+  /** Tous les univers rattachés (multi-univers §2.1) — source de vérité filtres/badges. */
+  categories: Category[];
   practitioner: Pick<Practitioner, "id" | "name" | "slug"> | null;
   venue: Venue | null;
+}
+
+/** Forme brute renvoyée par Supabase (table de liaison imbriquée). */
+export interface EventRowRaw extends Event {
+  category: Category | null;
+  event_categories: { category: Category | null }[] | null;
+  practitioner: Pick<Practitioner, "id" | "name" | "slug"> | null;
+  venue: Venue | null;
+}
+
+/** Aplati la table de liaison en un tableau `categories` propre et dédupliqué. */
+export function mapEventRow(row: EventRowRaw): EventWithRelations {
+  const linked = (row.event_categories ?? [])
+    .map((ec) => ec.category)
+    .filter((c): c is Category => Boolean(c));
+  // Catégorie principale d'abord si présente, puis les autres, sans doublon.
+  const seen = new Set<string>();
+  const categories: Category[] = [];
+  for (const c of [row.category, ...linked].filter(
+    (c): c is Category => Boolean(c)
+  )) {
+    if (!seen.has(c.id)) {
+      seen.add(c.id);
+      categories.push(c);
+    }
+  }
+  const { event_categories: _ec, ...rest } = row;
+  void _ec;
+  return { ...rest, categories };
 }
 
 export interface Favorite {
@@ -139,6 +198,7 @@ export interface CreditTransaction {
 
 /** Select standard d'un événement avec relations (réutilisé partout). */
 export const EVENT_WITH_RELATIONS = `*,
-  category:categories(*),
+  category:categories!events_category_id_fkey(*),
+  event_categories(category:categories(*)),
   practitioner:practitioners(id, name, slug),
   venue:venues(*)`;

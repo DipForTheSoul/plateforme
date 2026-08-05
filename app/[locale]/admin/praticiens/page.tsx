@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { Link } from "@/i18n/navigation";
 import { moderatePractitioner } from "@/app/actions/admin";
 import { StatusBadge } from "@/components/StatusBadge";
 import type { Practitioner } from "@/types/database";
@@ -28,7 +29,10 @@ export default async function AdminPractitionersPage() {
             <div key={p.id} className="card p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="font-serif text-lg text-soul-brown">{p.name}</p>
+                  <Link href={`/admin/praticiens/${p.id}`}
+                    className="font-serif text-lg text-soul-brown underline decoration-soul-bronze/30 underline-offset-2 hover:decoration-soul-violet">
+                    {p.name}
+                  </Link>
                   <p className="text-sm text-soul-bronze">
                     {p.specialties.join(" · ") || "Spécialités non renseignées"} ·{" "}
                     {p.contact.email ?? "e-mail inconnu"}
@@ -64,7 +68,10 @@ export default async function AdminPractitionersPage() {
           {others.map((p) => (
             <div key={p.id} className="flex flex-wrap items-center justify-between gap-3 p-4 text-sm">
               <div>
-                <p className="font-medium text-soul-brown">{p.name}</p>
+                <Link href={`/admin/praticiens/${p.id}`}
+                  className="font-medium text-soul-brown underline decoration-soul-bronze/30 underline-offset-2 hover:decoration-soul-violet">
+                  {p.name}
+                </Link>
                 <p className="text-xs text-soul-bronze">
                   {p.credits} crédit{p.credits > 1 ? "s" : ""} · {p.contact.email ?? "—"}
                 </p>

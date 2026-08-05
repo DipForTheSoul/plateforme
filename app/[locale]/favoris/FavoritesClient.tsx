@@ -32,7 +32,7 @@ export function FavoritesClient({
           eventIds.length
             ? supabase
                 .from("events")
-                .select("*, category:categories(slug, name)")
+                .select("*, category:categories!events_category_id_fkey(slug, name)")
                 .in("id", eventIds)
                 .eq("status", "approved")
             : Promise.resolve({ data: [] }),

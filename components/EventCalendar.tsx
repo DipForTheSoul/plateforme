@@ -110,7 +110,7 @@ export function EventCalendar({ eventDays, from, to, onSelect }: Props) {
               className={[
                 "relative rounded-lg py-1.5 transition",
                 inMonth ? "text-soul-ink" : "text-soul-bronze/40",
-                selected ? "bg-soul-brown font-semibold !text-soul-cream" : "hover:bg-soul-sand/60",
+                selected ? "bg-soul-violet font-semibold !text-white" : "hover:bg-soul-sand/60",
                 key === todayKey && !selected ? "ring-1 ring-soul-bronze/50" : "",
               ].join(" ")}
             >

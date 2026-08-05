@@ -2,7 +2,7 @@ import { getCurrentPractitioner } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { CREDIT_PACKS, STATIC_PAYMENT } from "@/lib/credits";
 import { formatDate } from "@/lib/utils";
-import type { CreditTransaction } from "@/types/database";
+import type { CreditPack, CreditTransaction } from "@/types/database";
 import { BuyPackButton } from "./BuyPackButton";
 
 export const dynamic = "force-dynamic";
@@ -23,13 +23,22 @@ export default async function CreditsPage({
   }
 
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("credit_transactions")
-    .select("*")
-    .eq("practitioner_id", practitioner.id)
-    .order("created_at", { ascending: false })
-    .limit(30);
+  const [{ data }, { data: packData }] = await Promise.all([
+    supabase
+      .from("credit_transactions")
+      .select("*")
+      .eq("practitioner_id", practitioner.id)
+      .order("created_at", { ascending: false })
+      .limit(30),
+    supabase
+      .from("credit_packs")
+      .select("*")
+      .eq("practitioner_id", practitioner.id)
+      .gt("credits_remaining", 0)
+      .order("expires_at", { ascending: true, nullsFirst: false }),
+  ]);
   const transactions = (data as CreditTransaction[]) ?? [];
+  const packs = (packData as CreditPack[]) ?? [];
 
   return (
     <div className="flex flex-col gap-8">
@@ -59,6 +68,48 @@ export default async function CreditsPage({
           </p>
         )}
       </div>
+
+      {packs.length > 0 && (
+        <section className="card p-6">
+          <h2 className="mb-3 font-serif text-lg text-soul-brown">Vos packs</h2>
+          <ul className="divide-y divide-soul-bronze/10">
+            {packs.map((pack) => {
+              const expired = pack.expires_at
+                ? new Date(pack.expires_at) < new Date()
+                : false;
+              return (
+                <li key={pack.id} className="flex items-center justify-between py-3 text-sm">
+                  <div>
+                    <p className="font-medium text-soul-brown">
+                      {pack.credits_remaining} / {pack.credits_total} publication
+                      {pack.credits_total > 1 ? "s" : ""} restante
+                      {pack.credits_remaining > 1 ? "s" : ""}
+                    </p>
+                    <p className="text-xs text-soul-bronze">
+                      {pack.expires_at
+                        ? `Valable jusqu'au ${formatDate(pack.expires_at)}`
+                        : "Sans date d'échéance"}
+                    </p>
+                  </div>
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                      expired
+                        ? "bg-red-100 text-red-700"
+                        : "bg-soul-violet/10 text-soul-violet"
+                    }`}
+                  >
+                    {expired ? "Expiré" : "Actif"}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+          <p className="mt-3 text-xs text-soul-bronze">
+            Un pack dont la date est dépassée passe automatiquement en « expiré » ;
+            ses crédits ne sont plus utilisables.
+          </p>
+        </section>
+      )}
 
       <section>
         <h2 className="mb-4 text-xl text-soul-brown">Packs de publications</h2>

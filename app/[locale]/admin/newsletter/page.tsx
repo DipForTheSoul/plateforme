@@ -3,6 +3,7 @@ import { deleteContact, updateContactInterests } from "@/app/actions/contacts";
 import { getCategories } from "@/lib/queries";
 import type { Contact } from "@/types/database";
 import { ImportForm } from "./ImportForm";
+import { MailerLiteSync } from "./MailerLiteSync";
 
 export const dynamic = "force-dynamic";
 
@@ -65,6 +66,8 @@ export default async function AdminNewsletterPage() {
             </div>
           </div>
         )}
+
+        <MailerLiteSync />
       </section>
 
       <ImportForm />

@@ -4,8 +4,9 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { EventCard } from "@/components/EventCard";
 import { getVenueById } from "@/lib/queries";
 import { createClient } from "@/lib/supabase/server";
-import { EVENT_WITH_RELATIONS, type EventWithRelations } from "@/types/database";
-import { MapPin, Users } from "lucide-react";
+import { EVENT_WITH_RELATIONS, mapEventRow, type EventRowRaw } from "@/types/database";
+import { formatVenueLocation } from "@/lib/utils";
+import { MapPin, Navigation, Users } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -42,15 +43,27 @@ export default async function VenuePage({
     .eq("status", "approved")
     .gte("start_date", new Date().toISOString())
     .order("start_date");
-  const events = ((data as unknown as EventWithRelations[]) ?? []);
+  const events = ((data as unknown as EventRowRaw[]) ?? []).map(mapEventRow);
+  const mapsDirections = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+    `${venue.address}, ${venue.city ?? ""} ${venue.country}`
+  )}`;
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
       <h1 className="text-3xl text-soul-brown sm:text-4xl">{venue.name}</h1>
       <p className="mt-2 flex items-center gap-2 text-soul-bronze">
-        <MapPin className="h-4 w-4" /> {venue.address}
-        {venue.canton && <> — {venue.canton}</>}
+        <MapPin className="h-4 w-4" /> {formatVenueLocation(venue.city, venue.country)}
+        {venue.canton && <> · {venue.canton}</>}
       </p>
+      <p className="mt-1 text-sm text-soul-bronze/80">{venue.address}</p>
+      <a
+        href={mapsDirections}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn-primary mt-4 !py-2"
+      >
+        <Navigation className="h-4 w-4" /> Comment s&apos;y rendre
+      </a>
       {venue.capacity && (
         <p className="mt-1 flex items-center gap-2 text-sm text-soul-bronze">
           <Users className="h-4 w-4" /> {t("capacity", { count: venue.capacity })}

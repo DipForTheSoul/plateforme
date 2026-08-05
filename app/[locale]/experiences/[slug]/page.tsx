@@ -9,17 +9,18 @@ import { StarRating } from "@/components/StarRating";
 import { JsonLd } from "@/components/JsonLd";
 import { createClient } from "@/lib/supabase/server";
 import { categoryVisual } from "@/lib/gradients";
-import { getEventBySlug } from "@/lib/queries";
+import { getEventBySlug, getAdjacentEvents } from "@/lib/queries";
 import { eventJsonLd } from "@/lib/seo";
 import {
   formatDateRange,
   formatDuration,
-  formatPrice,
   formatTime,
+  videoEmbedUrl,
   LANGUAGE_LABELS,
 } from "@/lib/utils";
+import { Price } from "@/components/Price";
 import type { Event, Locale, Review } from "@/types/database";
-import { Backpack, Calendar, Clock, Globe, Info, MapPin, PackageCheck, User } from "lucide-react";
+import { ArrowLeft, ArrowRight, Backpack, Calendar, Clock, Globe, Info, MapPin, PackageCheck, User } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -85,11 +86,23 @@ export default async function EventPage({
       .maybeSingle();
     practitionerEmail = (pr?.contact as { email?: string } | null)?.email ?? undefined;
   }
-  const mailtoHref = practitionerEmail
-    ? `mailto:${practitionerEmail}?subject=${encodeURIComponent(`Réservation — ${event.title}`)}&body=${encodeURIComponent(`Bonjour,\n\nJe souhaite réserver ou avoir des informations sur « ${event.title} ».\n\nMerci !`)}`
-    : null;
   const venueLocation = event.venue
     ? `${event.venue.name}, ${event.venue.address}`
+    : null;
+  // §8 — message de réservation pré-rempli (titre + date + lieu).
+  const reservationDate = `${formatDateRange(event.start_date, event.end_date, currentLocale)}${
+    event.end_date ? "" : ` à ${formatTime(event.start_date, currentLocale)}`
+  }`;
+  const mailtoBody =
+    `Bonjour,\n\n` +
+    `Je souhaite réserver ou avoir des informations sur « ${event.title} ».\n\n` +
+    `• Date : ${reservationDate}\n` +
+    (venueLocation ? `• Lieu : ${venueLocation}\n` : "") +
+    `\nMerci !`;
+  const mailtoHref = practitionerEmail
+    ? `mailto:${practitionerEmail}?subject=${encodeURIComponent(
+        `Réservation — ${event.title}`
+      )}&body=${encodeURIComponent(mailtoBody)}`
     : null;
 
   // Avis de l'expérience.
@@ -102,6 +115,8 @@ export default async function EventPage({
   const reviews = (reviewsData as Review[]) ?? [];
 
   const visual = categoryVisual(event.category?.slug);
+  const videoEmbed = videoEmbedUrl(event.video_url);
+  const { prev, next } = await getAdjacentEvents(event.start_date, event.id);
 
   return (
     <article className="mx-auto max-w-4xl px-4 py-10">
@@ -122,9 +137,30 @@ export default async function EventPage({
         </div>
       </div>
 
+      {videoEmbed && (
+        <div className="mt-6 overflow-hidden rounded-3xl bg-black shadow-sm">
+          <div className="relative aspect-video">
+            <iframe
+              src={videoEmbed}
+              title={event.title}
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="absolute inset-0 h-full w-full"
+            />
+          </div>
+        </div>
+      )}
+
       <div className="mt-8 flex flex-wrap items-start justify-between gap-4">
         <div>
-          {event.category && <span className="badge">{event.category.name}</span>}
+          {event.categories.length > 0 && (
+            <span className="flex flex-wrap gap-1.5">
+              {event.categories.map((c) => (
+                <span key={c.id} className="badge">{c.name}</span>
+              ))}
+            </span>
+          )}
           <h1 className="mt-2 text-3xl text-soul-brown sm:text-4xl">{event.title}</h1>
           {event.practitioner && (
             <p className="mt-2 text-soul-bronze">
@@ -143,7 +179,7 @@ export default async function EventPage({
           )}
         </div>
         <p className="font-serif text-2xl text-soul-brown">
-          {formatPrice(event.price, event.currency, tCommon("free"))}
+          <Price value={event.price} baseCurrency={event.currency} freeLabel={tCommon("free")} />
         </p>
       </div>
 
@@ -279,6 +315,32 @@ export default async function EventPage({
             ))}
           </div>
         </section>
+      )}
+
+      {/* Navigation expérience précédente / suivante (§8) */}
+      {(prev || next) && (
+        <nav className="mt-12 flex items-stretch justify-between gap-3 border-t border-soul-bronze/15 pt-6">
+          {prev ? (
+            <Link href={`/experiences/${prev.slug}`}
+              className="group flex max-w-[48%] items-center gap-2 text-left text-sm text-soul-brown transition hover:text-soul-violet">
+              <ArrowLeft className="h-4 w-4 shrink-0" />
+              <span className="flex flex-col">
+                <span className="text-xs uppercase tracking-wide text-soul-bronze">{t("previous")}</span>
+                <span className="line-clamp-1 font-medium">{prev.title}</span>
+              </span>
+            </Link>
+          ) : <span />}
+          {next ? (
+            <Link href={`/experiences/${next.slug}`}
+              className="group flex max-w-[48%] items-center gap-2 text-right text-sm text-soul-brown transition hover:text-soul-violet">
+              <span className="flex flex-col">
+                <span className="text-xs uppercase tracking-wide text-soul-bronze">{t("next")}</span>
+                <span className="line-clamp-1 font-medium">{next.title}</span>
+              </span>
+              <ArrowRight className="h-4 w-4 shrink-0" />
+            </Link>
+          ) : <span />}
+        </nav>
       )}
     </article>
   );

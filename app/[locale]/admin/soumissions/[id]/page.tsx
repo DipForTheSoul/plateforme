@@ -1,33 +1,31 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { EventForm } from "@/components/forms/EventForm";
-import { getCurrentPractitioner } from "@/lib/auth";
+import { adminUpdateEvent } from "@/app/actions/events";
+import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getCategories, getVenues } from "@/lib/queries";
 import type { Event } from "@/types/database";
 
 export const dynamic = "force-dynamic";
 
-/** Modification d'une expérience existante (repart en relecture). */
-export default async function EditEventPage({
+/** Édition d'une expérience par l'admin (§3/§8) — Didier édite n'importe quelle fiche. */
+export default async function AdminEditEventPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requireRole(["admin"]);
   const { id } = await params;
-  const practitioner = await getCurrentPractitioner();
-  if (!practitioner) redirect("/espace-praticien");
 
   const supabase = await createClient();
   const { data } = await supabase
     .from("events")
     .select("*, event_categories(category_id)")
     .eq("id", id)
-    .eq("practitioner_id", practitioner.id)
     .maybeSingle();
   const event = data as (Event & { event_categories?: { category_id: string }[] }) | null;
   if (!event) notFound();
 
-  // Univers rattachés (multi-univers §2.1) ; repli sur la catégorie principale.
   const selectedCategoryIds = (event.event_categories ?? []).map((r) => r.category_id);
   if (!selectedCategoryIds.length && event.category_id) {
     selectedCategoryIds.push(event.category_id);
@@ -37,13 +35,14 @@ export default async function EditEventPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="text-xl text-soul-brown">Modifier « {event.title} »</h2>
+      <h2 className="text-xl text-soul-brown">Modifier « {event.title} » (admin)</h2>
       <EventForm
         categories={categories}
         venues={venues}
-        defaultLanguages={practitioner.languages}
+        defaultLanguages={event.languages}
         event={event}
         selectedCategoryIds={selectedCategoryIds}
+        action={adminUpdateEvent.bind(null, event.id)}
       />
     </div>
   );

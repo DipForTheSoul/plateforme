@@ -80,3 +80,32 @@ export async function deleteContact(formData: FormData): Promise<void> {
   await supabase.from("contacts").delete().eq("id", id);
   revalidatePath("/admin/newsletter");
 }
+
+/**
+ * Synchronise tous les contacts consentants vers MailerLite (§7.1 — import
+ * des contacts existants). No-op si la clé API n'est pas configurée.
+ * Renvoie un message indiquant le nombre de contacts synchronisés.
+ */
+export async function syncContactsToMailerLite(): Promise<ActionState> {
+  await assertAdmin();
+
+  const { mailerliteEnabled, upsertSubscriber } = await import("@/lib/mailerlite");
+  if (!mailerliteEnabled()) {
+    return { error: "MailerLite non configuré — ajoutez MAILERLITE_API_KEY." };
+  }
+
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("contacts")
+    .select("email, interests")
+    .eq("consent", true)
+    .limit(1000);
+  const contacts = (data as { email: string; interests: string[] }[]) ?? [];
+
+  let ok = 0;
+  for (const c of contacts) {
+    if (await upsertSubscriber({ email: c.email, interests: c.interests })) ok++;
+  }
+  revalidatePath("/admin/newsletter");
+  return { success: `${ok}/${contacts.length} contacts synchronisés vers MailerLite.` };
+}

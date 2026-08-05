@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { getCurrentPractitioner } from "@/lib/auth";
+import { getCurrentPractitioner, getCurrentProfile } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
 import { submissionReceivedEmail } from "@/lib/email-templates";
 import { uniqueSlug } from "@/lib/utils";
@@ -18,7 +18,7 @@ export interface ActionState {
 const eventSchema = z.object({
   title: z.string().min(3).max(140),
   description: z.string().min(20).max(8000),
-  category_id: z.string().uuid(),
+  category_ids: z.array(z.string().uuid()).min(1).max(5),
   venue_id: z.string().uuid().nullable(),
   start_date: z.string().min(10),
   end_date: z.string().optional().nullable(),
@@ -29,6 +29,7 @@ const eventSchema = z.object({
   recurrence_count: z.coerce.number().int().min(2).max(26).optional().nullable(),
   included: z.string().max(2000).optional().nullable(),
   to_bring: z.string().max(2000).optional().nullable(),
+  video_url: z.string().url().optional().nullable(),
   images: z.array(z.string().url()).max(6),
 });
 
@@ -36,7 +37,7 @@ function parseEventForm(formData: FormData) {
   return eventSchema.safeParse({
     title: String(formData.get("title") ?? "").trim(),
     description: String(formData.get("description") ?? "").trim(),
-    category_id: formData.get("category_id"),
+    category_ids: formData.getAll("category_ids").map(String).filter(Boolean),
     venue_id: String(formData.get("venue_id") ?? "") || null,
     start_date: formData.get("start_date"),
     end_date: String(formData.get("end_date") ?? "") || null,
@@ -47,8 +48,27 @@ function parseEventForm(formData: FormData) {
     recurrence_count: String(formData.get("recurrence_count") ?? "") || null,
     included: String(formData.get("included") ?? "").trim() || null,
     to_bring: String(formData.get("to_bring") ?? "").trim() || null,
+    video_url: String(formData.get("video_url") ?? "").trim() || null,
     images: formData.getAll("images").map(String).filter(Boolean),
   });
+}
+
+/**
+ * Synchronise les univers d'un événement dans la table de liaison
+ * `event_categories` (multi-univers §2.1) : on repart d'une table propre
+ * (remplacement complet), et `events.category_id` garde le 1er comme principal.
+ */
+async function syncEventCategories(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  eventId: string,
+  categoryIds: string[]
+) {
+  await supabase.from("event_categories").delete().eq("event_id", eventId);
+  if (categoryIds.length) {
+    await supabase
+      .from("event_categories")
+      .insert(categoryIds.map((category_id) => ({ event_id: eventId, category_id })));
+  }
 }
 
 /** Décale une date ISO selon la récurrence choisie. */
@@ -100,7 +120,7 @@ export async function createEvent(
   // 2. Événement parent.
   const base = {
     description: input.description,
-    category_id: input.category_id,
+    category_id: input.category_ids[0], // catégorie principale (dégradé/1er badge)
     practitioner_id: practitioner.id,
     venue_id: input.venue_id,
     duration_minutes: input.duration_minutes,
@@ -108,6 +128,7 @@ export async function createEvent(
     languages: input.languages,
     included: input.included,
     to_bring: input.to_bring,
+    video_url: input.video_url,
     images: input.images,
     status: "pending" as const,
   };
@@ -130,6 +151,9 @@ export async function createEvent(
     return { error: "Enregistrement impossible. Réessayez." };
   }
 
+  // 2b. Univers du parent (multi-univers §2.1).
+  await syncEventCategories(supabase, parent.id, input.category_ids);
+
   // 3. Occurrences récurrentes (générées à la création — BUILD-BRIEF.md Phase 2).
   if (input.recurrence) {
     const count = input.recurrence_count ?? 4;
@@ -144,7 +168,14 @@ export async function createEvent(
       parent_event_id: parent.id,
     }));
     if (occurrences.length) {
-      await supabase.from("events").insert(occurrences);
+      const { data: children } = await supabase
+        .from("events")
+        .insert(occurrences)
+        .select("id");
+      // Chaque occurrence est une ligne à part → ses propres univers.
+      for (const child of children ?? []) {
+        await syncEventCategories(supabase, child.id, input.category_ids);
+      }
     }
   }
 
@@ -180,7 +211,7 @@ export async function updateEvent(
     .update({
       title: input.title,
       description: input.description,
-      category_id: input.category_id,
+      category_id: input.category_ids[0], // catégorie principale
       venue_id: input.venue_id,
       start_date: new Date(input.start_date).toISOString(),
       end_date: input.end_date ? new Date(input.end_date).toISOString() : null,
@@ -189,6 +220,7 @@ export async function updateEvent(
       languages: input.languages,
       included: input.included,
       to_bring: input.to_bring,
+      video_url: input.video_url,
       images: input.images,
       // Toute modification repart en relecture (le trigger SQL empêche de
       // toute façon un praticien de changer lui-même le statut vers approved).
@@ -198,8 +230,60 @@ export async function updateEvent(
 
   if (error) return { error: "Mise à jour impossible." };
 
+  // Univers (multi-univers §2.1).
+  await syncEventCategories(supabase, eventId, input.category_ids);
+
   revalidatePath("/espace-praticien/evenements");
   redirect("/espace-praticien/evenements?modifie=1");
+}
+
+/**
+ * Édition d'un événement par l'ADMIN (§3/§8) — non limitée au propriétaire.
+ * Didier peut modifier n'importe quelle expérience ; le statut n'est pas touché.
+ */
+export async function adminUpdateEvent(
+  eventId: string,
+  _prev: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  const profile = await getCurrentProfile();
+  if (!profile || profile.role !== "admin") {
+    return { error: "Réservé à l'administrateur." };
+  }
+
+  const parsed = parseEventForm(formData);
+  if (!parsed.success) {
+    return { error: "Formulaire incomplet — vérifiez les champs obligatoires." };
+  }
+  const input = parsed.data;
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("events")
+    .update({
+      title: input.title,
+      description: input.description,
+      category_id: input.category_ids[0],
+      venue_id: input.venue_id,
+      start_date: new Date(input.start_date).toISOString(),
+      end_date: input.end_date ? new Date(input.end_date).toISOString() : null,
+      duration_minutes: input.duration_minutes,
+      price: input.price,
+      languages: input.languages,
+      included: input.included,
+      to_bring: input.to_bring,
+      video_url: input.video_url,
+      images: input.images,
+    })
+    .eq("id", eventId);
+
+  if (error) return { error: "Mise à jour impossible." };
+
+  await syncEventCategories(supabase, eventId, input.category_ids);
+
+  revalidatePath("/admin/soumissions");
+  revalidatePath(`/experiences/${input.title}`);
+  return { success: "Expérience mise à jour." };
 }
 
 /** Suppression d'un événement par son praticien (occurrences en cascade). */

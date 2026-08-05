@@ -21,7 +21,7 @@ export function ViewToggle() {
   }
 
   const base = "flex items-center gap-1.5 rounded-full px-4 py-1.5 font-medium transition";
-  const active = "bg-soul-brown text-soul-cream";
+  const active = "bg-soul-violet text-white";
   const idle = "text-soul-brown hover:text-soul-terracotta";
 
   return (

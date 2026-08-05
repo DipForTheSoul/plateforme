@@ -4,12 +4,14 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { geocodeAddress } from "@/lib/geocode";
+import { getCurrentProfile } from "@/lib/auth";
 import type { ActionState } from "@/app/actions/events";
 
 const venueSchema = z.object({
   name: z.string().min(2).max(140),
   address: z.string().min(5).max(300),
   country: z.string().length(2).default("CH"),
+  city: z.string().max(120).optional().nullable(),
   canton: z.string().max(2).optional().nullable(),
   description: z.string().max(2000).optional().nullable(),
   capacity: z.coerce.number().int().positive().optional().nullable(),
@@ -34,6 +36,7 @@ export async function createVenue(
     name: String(formData.get("name") ?? "").trim(),
     address: String(formData.get("address") ?? "").trim(),
     country: String(formData.get("country") ?? "CH").toUpperCase(),
+    city: String(formData.get("city") ?? "").trim() || null,
     canton: String(formData.get("canton") ?? "").toUpperCase() || null,
     description: String(formData.get("description") ?? "").trim() || null,
     capacity: String(formData.get("capacity") ?? "") || null,
@@ -58,6 +61,7 @@ export async function createVenue(
       address: input.address,
       lat: geo.lat,
       lng: geo.lng,
+      city: input.city,
       canton: input.canton,
       country: input.country,
       description: input.description,
@@ -72,4 +76,56 @@ export async function createVenue(
 
   revalidatePath("/admin/lieux");
   return { success: "Lieu créé et géocodé.", venueId: data.id };
+}
+
+/**
+ * Édition d'un lieu par l'admin (§3) — re-géocode l'adresse à chaque
+ * enregistrement (elle a pu changer). Réservé au rôle admin.
+ */
+export async function adminUpdateVenue(
+  venueId: string,
+  _prev: ActionState & { venueId?: string },
+  formData: FormData
+): Promise<ActionState & { venueId?: string }> {
+  const supabase = await createClient();
+  const profile = await getCurrentProfile();
+  if (!profile || profile.role !== "admin") return { error: "Réservé à l'administrateur." };
+
+  const parsed = venueSchema.safeParse({
+    name: String(formData.get("name") ?? "").trim(),
+    address: String(formData.get("address") ?? "").trim(),
+    country: String(formData.get("country") ?? "CH").toUpperCase(),
+    city: String(formData.get("city") ?? "").trim() || null,
+    canton: String(formData.get("canton") ?? "").toUpperCase() || null,
+    description: String(formData.get("description") ?? "").trim() || null,
+    capacity: String(formData.get("capacity") ?? "") || null,
+    rooms: String(formData.get("rooms") ?? "") || null,
+  });
+  if (!parsed.success) return { error: "Nom et adresse complète requis." };
+  const input = parsed.data;
+
+  const geo = await geocodeAddress(input.address, input.country);
+  if (!geo) return { error: "Adresse introuvable — précisez rue, code postal et ville." };
+
+  const { error } = await supabase
+    .from("venues")
+    .update({
+      name: input.name,
+      address: input.address,
+      lat: geo.lat,
+      lng: geo.lng,
+      city: input.city,
+      canton: input.canton,
+      country: input.country,
+      description: input.description,
+      capacity: input.capacity,
+      rooms: input.rooms,
+    })
+    .eq("id", venueId);
+
+  if (error) return { error: "Mise à jour du lieu impossible." };
+
+  revalidatePath("/admin/lieux");
+  revalidatePath(`/lieux/${venueId}`);
+  return { success: "Lieu mis à jour.", venueId };
 }

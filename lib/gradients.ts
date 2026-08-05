@@ -37,6 +37,11 @@ const VISUALS: Record<string, CategoryVisual> = {
     emoji: "🔔",
     image: "/cat-son.jpg",
   },
+  chamanisme: {
+    gradient: "linear-gradient(135deg, #171200 0%, #7a4a2a 55%, #f9ad4d 100%)",
+    emoji: "🔥",
+    image: "/cat-chamanisme.jpg",
+  },
 };
 
 const FALLBACK: CategoryVisual = {

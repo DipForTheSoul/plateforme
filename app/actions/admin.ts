@@ -68,7 +68,12 @@ export async function moderateEvent(formData: FormData): Promise<void> {
   revalidatePath("/experiences");
 }
 
-/** Mise en avant (top listing) en 1 clic. */
+/**
+ * Mise en avant (top listing) en 1 clic (§6.1).
+ * À l'activation : pose une date de fin (`featured_until`) = maintenant +
+ * durée par défaut (réglable dans `settings.featured_default_days`).
+ * Au retrait : efface la date. L'expiration est appliquée à la lecture.
+ */
 export async function toggleTopListing(formData: FormData): Promise<void> {
   await assertAdmin();
   const eventId = String(formData.get("event_id") ?? "");
@@ -76,7 +81,22 @@ export async function toggleTopListing(formData: FormData): Promise<void> {
   if (!eventId) return;
 
   const supabase = await createClient();
-  await supabase.from("events").update({ is_top: !isTop }).eq("id", eventId);
+
+  let featured_until: string | null = null;
+  if (!isTop) {
+    const { data: setting } = await supabase
+      .from("settings")
+      .select("value")
+      .eq("key", "featured_default_days")
+      .maybeSingle();
+    const days = Number((setting as { value: string } | null)?.value) || 30;
+    featured_until = new Date(Date.now() + days * 86400_000).toISOString();
+  }
+
+  await supabase
+    .from("events")
+    .update({ is_top: !isTop, featured_until })
+    .eq("id", eventId);
   revalidatePath("/admin/soumissions");
 }
 

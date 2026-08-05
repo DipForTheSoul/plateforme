@@ -20,11 +20,12 @@ export default async function AdminVenuesPage() {
           <p className="p-4 text-sm text-soul-bronze">Aucun lieu enregistré.</p>
         )}
         {venues.map((v) => (
-          <div key={v.id} className="flex flex-wrap items-center justify-between gap-3 p-4 text-sm">
+          <Link key={v.id} href={`/admin/lieux/${v.id}`}
+            className="flex flex-wrap items-center justify-between gap-3 p-4 text-sm transition hover:bg-soul-sand/40">
             <div>
-              <p className="font-medium text-soul-brown">{v.name}</p>
+              <p className="font-medium text-soul-brown underline decoration-soul-bronze/30 underline-offset-2">{v.name}</p>
               <p className="text-xs text-soul-bronze">
-                {v.address} · {v.canton ?? v.country}
+                {v.address} · {v.city ? `${v.city}, ` : ""}{v.canton ?? v.country}
               </p>
             </div>
             <span className={`rounded-full px-3 py-1 text-xs ${
@@ -32,7 +33,7 @@ export default async function AdminVenuesPage() {
             }`}>
               {v.lat !== null ? "Géocodé ✓" : "Non géocodé !"}
             </span>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

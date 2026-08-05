@@ -1,6 +1,32 @@
 # PROGRESS — ForTheSoul
 
-> Suivi d'avancement lisible par Victor & Rodrigue. Dernière mise à jour : 2026-07-21.
+> Suivi d'avancement lisible par Victor & Rodrigue. Dernière mise à jour : 2026-07-30.
+
+## 🚀 LOT V2 (périmètre validé — PDF client « Suites données à vos demandes » + TASKS-V2)
+
+**Fait en local (port 3100), RIEN poussé (git/Vercel) sans feu vert.**
+
+- **Multi-univers §2.1** : table `event_categories` (migration `0012`), N-N, backfill, RLS. Requêtes/filtres/badges/formulaire (cases à cocher) câblés. `category_id` = catégorie principale. ⚠️ embedding désambiguïsé (`categories!events_category_id_fkey`).
+- **Catégorie Chamanisme** ajoutée (6ᵉ), image `public/cat-chamanisme.jpg`, tuile câblée. Grille univers 6/ligne PC-tablette, 2/2 mobile.
+- **Champs V2 §2.2** (migration `0013`) : `events.video_url`, `events.featured_until`, `practitioners.review_url/logo_url`, `venues.city`, table `settings` (taux change, durées défaut), table `credit_packs` (échéance). Types TS à jour.
+- **§4.1 Vidéo** : champ formulaire + lecteur intégré lazy sur la fiche (`videoEmbedUrl` YouTube/Vimeo).
+- **§4.2 Lien d'avis externe** + **§4.3 Logo praticien** : formulaire profil + affichage fiche (logo à côté du nom).
+- **§5.1 Ville/pays** : `formatVenueLocation` (« Berne, Suisse »), cartes + fiche lieu + formulaire lieu. Fiche lieu : bouton **« Comment s'y rendre »** (itinéraire Google Maps).
+- **§6.1 Expiration mises en avant** : `featured_until` posé à l'activation (durée `settings.featured_default_days`), filtré à la lecture (`getTopEvents`), affiché en admin.
+- **§8 Finitions** : violet #5e4d9e partout (boutons/CTA/menu/bascule/section Didier/toggles), **zéro orange** (tokens terracotta/amber redéfinis en violet), footer beige, textes adoucis (« testée et approuvée par Didier », héros « En Suisse et au-delà »), logo « The » normal, menu agrandi, filtres ouverts desktop/repliés mobile, cartes élargies/aérées, nav précédent/suivant, mailto pré-rempli, « Espace de [Prénom] », durées « 1 h 02 ». Sélection/Prochaines = 4 items, 2/2 mobile.
+
+- **§4.4 Sélecteur devise CHF/EUR** : `CurrencyProvider` + switcher header + composant `Price` (taux `settings.exchange_rate_eur`, persistance localStorage, EUR indicatif).
+- **§7.2 Google Analytics** : composant `GoogleAnalytics` (gtag), actif si `NEXT_PUBLIC_GA_ID` défini.
+- **§7.1 MailerLite** : `lib/mailerlite.ts` + synchro à l'inscription newsletter (étiquettes d'intérêt) + bouton admin « Synchroniser » (import contacts). Actif si `MAILERLITE_API_KEY`. Transactionnel reste Supabase/Resend.
+- **§7.3 Tableau de bord activité admin** : + publications refusées, praticiens actifs, crédits consommés (30 j), expériences les plus consultées.
+- **§6.2 Tableau de bord packs** : section « Vos packs » (restant/total + échéance + statut actif/expiré) sur la page crédits praticien.
+- **§3 Édition admin** : événement (`/admin/soumissions/[id]`, `adminUpdateEvent`), praticien (`/admin/praticiens/[id]`, `adminUpdatePractitioner`), lieu (`/admin/lieux/[id]`, `adminUpdateVenue`) — lignes cliquables, actions non scopées, formulaires réutilisables via prop `action`.
+
+**RESTE V2 à coder** : lien de paiement Revolut sur la page crédits (à confirmer par Didier). Tout le reste du doc est codé.
+**Favoris sans compte (§3)** : déjà en place (localStorage, aucun login) — à retester en clic réel.
+**En attente client** : tarifs+durée packs, décision paiement (Revolut manuel fourni vs Stripe), accès Wix, liste catégories définitive, clés GA/MailerLite, contenus réels.
+
+
 
 ## RESTE À FAIRE (au 2026-07-21)
 

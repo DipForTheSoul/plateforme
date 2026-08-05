@@ -96,7 +96,18 @@ export default async function PractitionerPage({
 
         <div>
           <span className="badge">✓ {tCommon("validatedByDidier")}</span>
-          <h1 className="mt-2 text-3xl text-soul-brown sm:text-4xl">{practitioner.name}</h1>
+          <div className="mt-2 flex items-center gap-3">
+            {practitioner.logo_url && (
+              <Image
+                src={practitioner.logo_url}
+                alt={`Logo ${practitioner.name}`}
+                width={56}
+                height={56}
+                className="h-14 w-14 shrink-0 rounded-full border border-soul-bronze/20 bg-white object-contain p-1"
+              />
+            )}
+            <h1 className="text-3xl text-soul-brown sm:text-4xl">{practitioner.name}</h1>
+          </div>
 
           {practitioner.specialties.length > 0 && (
             <p className="mt-2 text-soul-bronze">
@@ -129,7 +140,19 @@ export default async function PractitionerPage({
                   · {practitioner.links.googleCount} avis
                 </span>
               )}
-              <span className="text-soul-terracotta">Voir sur Google ↗</span>
+              <span className="text-soul-violet">Voir sur Google ↗</span>
+            </a>
+          )}
+
+          {practitioner.review_url && (
+            <a
+              href={practitioner.review_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 ml-0 inline-flex items-center gap-2 rounded-full border border-soul-violet/30 bg-soul-violet/5 px-4 py-2 text-sm font-medium text-soul-violet shadow-sm transition hover:bg-soul-violet/10 sm:ml-3"
+            >
+              <Star className="h-4 w-4" />
+              Voir mes avis ↗
             </a>
           )}
 

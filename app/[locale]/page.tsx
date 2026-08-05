@@ -20,11 +20,11 @@ export default async function HomePage({
   const t = await getTranslations("home");
 
   const [topEvents, upcoming, categories] = await Promise.all([
-    getTopEvents(3),
+    getTopEvents(4),
     getApprovedEvents(),
     getCategories(),
   ]);
-  const upcomingNonTop = upcoming.filter((e) => !e.is_top).slice(0, 6);
+  const upcomingNonTop = upcoming.filter((e) => !e.is_top).slice(0, 8);
 
   const badges = [
     { icon: ShieldCheck, label: t("heroBadge1") },
@@ -63,7 +63,7 @@ export default async function HomePage({
         <div className="relative mx-auto max-w-3xl px-4 py-24 text-center md:py-32">
           <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-soul-cream backdrop-blur">
             <Sparkles className="h-3.5 w-3.5" />
-            {t("didierEyebrow")}
+            {t("heroEyebrow")}
           </p>
 
           <h1 className="font-serif text-4xl leading-[1.1] text-soul-cream drop-shadow-md sm:text-5xl lg:text-6xl">
@@ -73,7 +73,7 @@ export default async function HomePage({
             {t("heroSubtitle")}
           </p>
 
-          <form action="/experiences" className="mx-auto mt-9 max-w-xl">
+          <form action="/experiences" className="mx-auto mt-9 max-w-2xl">
             <div className="flex flex-col gap-3 sm:relative">
               <div className="relative">
                 <Search className="absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-soul-bronze" />
@@ -82,7 +82,7 @@ export default async function HomePage({
                   name="q"
                   placeholder={t("searchPlaceholder")}
                   aria-label={t("searchPlaceholder")}
-                  className="w-full rounded-full border border-white/20 bg-white py-4 pl-13 pr-5 text-sm text-soul-ink shadow-xl shadow-soul-ink/20 outline-none transition placeholder:text-soul-bronze/50 focus:border-soul-bronze focus:ring-2 focus:ring-soul-bronze/30 sm:pr-52"
+                  className="w-full rounded-full border border-white/20 bg-white py-4 pl-13 pr-5 text-sm text-soul-ink shadow-xl shadow-soul-ink/20 outline-none transition placeholder:text-soul-bronze/50 focus:border-soul-bronze focus:ring-2 focus:ring-soul-bronze/30 sm:pr-64"
                 />
               </div>
               <button
@@ -129,7 +129,7 @@ export default async function HomePage({
           <h2 className="font-serif text-3xl text-soul-brown">{t("categoriesTitle")}</h2>
           <p className="text-soul-bronze">{t("categoriesSubtitle")}</p>
         </div>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-6">
           {categories.map((category) => {
             const visual = categoryVisual(category.slug);
             return (
@@ -144,7 +144,7 @@ export default async function HomePage({
                     src={visual.image}
                     alt=""
                     fill
-                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                    sizes="(max-width: 768px) 50vw, 16vw"
                     className="object-cover transition duration-500 group-hover:scale-105"
                   />
                 ) : (
@@ -176,7 +176,7 @@ export default async function HomePage({
               <h2 className="font-serif text-3xl text-soul-brown">{t("topTitle")}</h2>
               <p className="text-soul-bronze">{t("topSubtitle")}</p>
             </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 grid-cols-2 lg:grid-cols-4">
               {topEvents.map((event) => (
                 <EventCard key={event.id} event={event} />
               ))}
@@ -203,7 +203,7 @@ export default async function HomePage({
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 grid-cols-2 lg:grid-cols-4">
             {upcomingNonTop.map((event) => (
               <EventCard key={event.id} event={event} />
             ))}
@@ -238,7 +238,7 @@ export default async function HomePage({
       {/* ------------------------------------------------------------------ */}
       {/* La curation de Didier — bandeau incarné */}
       {/* ------------------------------------------------------------------ */}
-      <section className="bg-soul-brown text-soul-cream">
+      <section className="bg-soul-violet text-soul-cream">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-[1fr_1.1fr] md:py-20">
           <div className="relative mx-auto w-full max-w-sm">
             <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] shadow-2xl ring-1 ring-soul-cream/15">
@@ -253,14 +253,14 @@ export default async function HomePage({
           </div>
 
           <div>
-            <p className="mb-3 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-soul-amber">
+            <p className="mb-3 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-soul-bronze">
               <Sparkles className="h-3.5 w-3.5" />
               {t("didierEyebrow")}
             </p>
             <h2 className="font-serif text-3xl leading-tight text-soul-cream sm:text-4xl">
               {t("didierTitle")}
             </h2>
-            <blockquote className="mt-6 border-l-2 border-soul-amber/60 pl-5 font-serif text-xl italic leading-relaxed text-soul-sand">
+            <blockquote className="mt-6 border-l-2 border-soul-bronze/60 pl-5 font-serif text-xl italic leading-relaxed text-soul-sand">
               « {t("didierQuote")} »
             </blockquote>
             <p className="mt-3 text-sm text-soul-bronze">{t("didierSignature")}</p>

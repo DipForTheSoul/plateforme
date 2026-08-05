@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCurrentProfile } from "@/lib/auth";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
+import { CurrencySwitcher } from "@/components/CurrencySwitcher";
 import { MobileNav } from "@/components/MobileNav";
 import { Heart } from "lucide-react";
 
@@ -51,23 +52,23 @@ export async function Header() {
             className="h-9 w-auto"
           />
           <span className="font-serif text-2xl leading-none text-soul-brown">
-            For<span className="text-soul-bronze">The</span>Soul
+            ForTheSoul
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center gap-7 md:flex">
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-soul-brown transition hover:text-soul-terracotta"
+              className="text-base font-medium text-soul-brown transition hover:text-soul-violet"
             >
               {link.label}
             </Link>
           ))}
           <Link
             href="/favoris"
-            className="text-soul-brown transition hover:text-soul-terracotta"
+            className="text-soul-brown transition hover:text-soul-violet"
             aria-label={t("nav.favorites")}
           >
             <Heart className="h-5 w-5" />
@@ -75,19 +76,25 @@ export async function Header() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
+          <CurrencySwitcher />
           <LocaleSwitcher />
           <Link
             href={account.href}
-            className={`${profile ? "btn-secondary" : "btn-primary"} !px-4 !py-2`}
+            className={`${profile ? "btn-secondary" : "btn-primary"} !px-4 !py-2 text-sm`}
           >
             {account.label}
           </Link>
         </div>
 
-        <MobileNav
-          links={[...links, { href: "/favoris", label: t("nav.favorites") }]}
-          authLink={account}
-        />
+        {/* Accès direct langue + devise sur mobile (hors menu) — version compacte. */}
+        <div className="flex items-center gap-1.5 md:hidden">
+          <CurrencySwitcher compact />
+          <LocaleSwitcher compact />
+          <MobileNav
+            links={[...links, { href: "/favoris", label: t("nav.favorites") }]}
+            authLink={account}
+          />
+        </div>
       </div>
     </header>
   );

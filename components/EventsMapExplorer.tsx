@@ -147,11 +147,6 @@ export function EventsMapExplorer({
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={it.image} alt="" className="h-full w-full object-cover" />
               ) : null}
-              {it.featured && (
-                <span className="absolute left-1 top-1 rounded-full bg-soul-terracotta px-1.5 py-0.5 text-[10px] font-semibold text-white">
-                  ★
-                </span>
-              )}
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-[11px] font-medium uppercase tracking-wide text-soul-bronze">

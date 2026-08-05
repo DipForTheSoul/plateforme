@@ -14,6 +14,10 @@ interface Props {
   defaultLanguages: string[];
   /** Événement existant en mode édition. */
   event?: Event;
+  /** Univers déjà rattachés (multi-univers §2.1) en mode édition. */
+  selectedCategoryIds?: string[];
+  /** Action serveur alternative (ex. édition/création côté admin, §3). */
+  action?: (prev: ActionState, formData: FormData) => Promise<ActionState>;
 }
 
 /** Convertit un ISO en valeur pour <input type="datetime-local">. */
@@ -24,8 +28,16 @@ function toLocalInput(iso: string | null | undefined): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-export function EventForm({ categories, venues, defaultLanguages, event }: Props) {
-  const action = event ? updateEvent.bind(null, event.id) : createEvent;
+export function EventForm({
+  categories,
+  venues,
+  defaultLanguages,
+  event,
+  selectedCategoryIds = [],
+  action: actionOverride,
+}: Props) {
+  const action =
+    actionOverride ?? (event ? updateEvent.bind(null, event.id) : createEvent);
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
     action,
     {}
@@ -120,14 +132,25 @@ export function EventForm({ categories, venues, defaultLanguages, event }: Props
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <label htmlFor="category_id" className="label">Catégorie *</label>
-            <select id="category_id" name="category_id" required
-              defaultValue={event?.category_id ?? ""} className="field">
-              <option value="" disabled>Choisir…</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
+            <span className="label">Univers * <span className="font-normal text-soul-bronze">(un ou plusieurs)</span></span>
+            <div className="flex flex-wrap gap-2 pt-1.5">
+              {categories.map((c) => {
+                const checked = event
+                  ? selectedCategoryIds.includes(c.id)
+                  : false;
+                return (
+                  <label key={c.id}
+                    className="flex items-center gap-1.5 rounded-full border border-soul-bronze/30 bg-white px-3 py-1.5 text-sm text-soul-brown cursor-pointer has-[:checked]:border-soul-violet has-[:checked]:bg-soul-violet/10">
+                    <input type="checkbox" name="category_ids" value={c.id}
+                      defaultChecked={checked} />
+                    {c.name}
+                  </label>
+                );
+              })}
+            </div>
+            <p className="mt-1 text-xs text-soul-bronze">
+              Ex. : une expérience « Méditation » <em>et</em> « Danse » apparaîtra dans les deux sections.
+            </p>
           </div>
           <div>
             <label htmlFor="venue_id" className="label">Lieu</label>
@@ -149,11 +172,11 @@ export function EventForm({ categories, venues, defaultLanguages, event }: Props
           <span className="label">Quand a lieu l&apos;expérience&nbsp;?</span>
           <div className="mb-3 inline-flex rounded-full border border-soul-bronze/30 bg-white p-1 text-sm">
             <button type="button" onClick={() => setMultiDay(false)}
-              className={`rounded-full px-4 py-1.5 font-medium transition ${!multiDay ? "bg-soul-brown text-soul-cream" : "text-soul-brown hover:text-soul-terracotta"}`}>
+              className={`rounded-full px-4 py-1.5 font-medium transition ${!multiDay ? "bg-soul-violet text-white" : "text-soul-brown hover:text-soul-terracotta"}`}>
               Sur une journée
             </button>
             <button type="button" onClick={() => setMultiDay(true)}
-              className={`rounded-full px-4 py-1.5 font-medium transition ${multiDay ? "bg-soul-brown text-soul-cream" : "text-soul-brown hover:text-soul-terracotta"}`}>
+              className={`rounded-full px-4 py-1.5 font-medium transition ${multiDay ? "bg-soul-violet text-white" : "text-soul-brown hover:text-soul-terracotta"}`}>
               Sur plusieurs jours
             </button>
           </div>
@@ -240,6 +263,15 @@ export function EventForm({ categories, venues, defaultLanguages, event }: Props
         )}
 
         <div>
+          <label htmlFor="video_url" className="label">Lien vidéo (YouTube ou Vimeo) — facultatif</label>
+          <input id="video_url" name="video_url" type="url" placeholder="https://youtu.be/… ou https://vimeo.com/…"
+            defaultValue={event?.video_url ?? ""} className="field" />
+          <p className="mt-1 text-xs text-soul-bronze">
+            La vidéo s&apos;affichera intégrée sur la page de l&apos;expérience.
+          </p>
+        </div>
+
+        <div>
           <span className="label">Photos (max 6 — compressées automatiquement)</span>
           <ImageUploader prefix="event" images={images} onChange={setImages} max={6} />
           {images.map((url) => (
@@ -286,8 +318,12 @@ export function EventForm({ categories, venues, defaultLanguages, event }: Props
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
-              <label className="label" htmlFor="v-country">Pays (code)</label>
-              <input id="v-country" name="country" defaultValue="CH" maxLength={2} className="field" />
+              <label className="label" htmlFor="v-city">Ville</label>
+              <input id="v-city" name="city" className="field" placeholder="Ex. : Berne" />
+            </div>
+            <div>
+              <label className="label" htmlFor="v-country">Pays (code) *</label>
+              <input id="v-country" name="country" defaultValue="CH" maxLength={2} required className="field" />
             </div>
             <div>
               <label className="label" htmlFor="v-capacity">Capacité</label>

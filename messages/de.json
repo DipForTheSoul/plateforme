@@ -46,18 +46,18 @@
     "searchPlaceholder": "Erlebnis suchen (Tanz, Gong, Retreat…)",
     "categoriesTitle": "Nach Welten stöbern",
     "topTitle": "Aktuelle Auswahl",
-    "topSubtitle": "Von Didier hervorgehobene Erlebnisse",
+    "topSubtitle": "Hervorgehobene Erlebnisse",
     "didierTitle": "Mit Herz gewählt, von Didier geprüft",
     "didierText": "ForTheSoul ist kein weiteres Verzeichnis: Jede:r Anbieter:in und jedes Erlebnis wird von Didier Picamoles, Gründer der Plattform und Schöpfer der Humanic Dance, persönlich geprüft. Was du buchst, wurde erlebt, getroffen, ausgewählt.",
     "didierCta": "Die Geschichte von ForTheSoul entdecken",
     "upcomingTitle": "Nächste Erlebnisse",
     "heroBadge1": "Einzeln von Didier geprüft",
-    "heroBadge2": "In der Schweiz verwurzelt",
+    "heroBadge2": "In der Schweiz und darüber hinaus",
     "heroBadge3": "Ohne Algorithmus, mit Herz",
     "categoriesSubtitle": "Finde die Praxis, die dich ruft",
     "upcomingSubtitle": "Die nächsten Termine in deiner Nähe",
     "upcomingCta": "Alle Erlebnisse ansehen",
-    "didierEyebrow": "Didiers Kuratierung",
+    "didierEyebrow": "Jedes Erlebnis von Didier getestet und geprüft",
     "didierQuote": "Ich teile nur Erlebnisse, die ich selbst gelebt habe, und Menschen, die ich getroffen habe. Das ist ForTheSoul.",
     "didierSignature": "Didier Picamoles, Gründer",
     "faq": {
@@ -89,7 +89,8 @@
           "a": "Hauptsächlich in der Deutsch- und Westschweiz, mit einigen Reisen ins Ausland. Nutze die Umkreissuche, um Angebote in deiner Nähe zu finden."
         }
       ]
-    }
+    },
+    "heroEyebrow": "Mit Sorgfalt ausgewählt, von Didier getestet"
   },
   "events": {
     "title": "Alle Erlebnisse",
@@ -146,7 +147,9 @@
     "calOther": "Apple / Outlook (.ics)",
     "included": "Inbegriffen",
     "toBring": "Mitzubringen",
-    "reserveNote": "Keine Online-Zahlung: Mit einem Klick auf «Reservieren» kontaktierst du die anbietende Person direkt per E-Mail. Die Bezahlung (allfällige Anzahlung oder vor Ort) wird direkt mit ihr vereinbart."
+    "reserveNote": "Keine Online-Zahlung: Mit einem Klick auf «Reservieren» kontaktierst du die anbietende Person direkt per E-Mail. Die Bezahlung (allfällige Anzahlung oder vor Ort) wird direkt mit ihr vereinbart.",
+    "previous": "Vorherige",
+    "next": "Nächste"
   },
   "practitioners": {
     "title": "Die Anbieter:innen",
