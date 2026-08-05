@@ -65,12 +65,7 @@ function SubmissionCard({
     <div className="card p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <Link
-            href={`/admin/soumissions/${event.id}`}
-            className="font-serif text-lg text-soul-brown underline decoration-soul-bronze/30 underline-offset-2 hover:decoration-soul-violet"
-          >
-            {event.title}
-          </Link>
+          <p className="font-serif text-lg text-soul-brown">{event.title}</p>
           <p className="text-sm text-soul-bronze">
             {event.practitioner?.name ?? "?"} · {event.category?.name ?? "—"} ·{" "}
             {formatDate(event.start_date)} {formatTime(event.start_date)}
@@ -78,7 +73,15 @@ function SubmissionCard({
             {event.recurrence && <> · récurrent ({event.recurrence_count}×)</>}
           </p>
         </div>
-        <StatusBadge status={event.status} />
+        <div className="flex shrink-0 items-center gap-2">
+          <StatusBadge status={event.status} />
+          <Link
+            href={`/admin/soumissions/${event.id}`}
+            className="inline-flex items-center gap-1 rounded-full border border-soul-violet/30 bg-soul-violet/5 px-3 py-1 text-xs font-medium text-soul-violet"
+          >
+            ✎ Modifier
+          </Link>
+        </div>
       </div>
 
       {event.description && (
