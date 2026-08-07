@@ -108,9 +108,9 @@ export default async function AdminDashboard() {
           </ul>
         )}
         <p className="mt-4 text-xs text-soul-bronze">
-          {/* PLACEHOLDER — brancher Google Analytics 4 en mode cookieless si souhaité
-              (aucune bannière nécessaire tant que la mesure reste sans cookies). */}
-          Connexion Google Analytics : à brancher ultérieurement (mesure sans cookies).
+          Ceci est un aperçu interne. Les statistiques détaillées (provenance des
+          visiteurs, trafic, pages) se consultent dans <strong>Google Analytics</strong>,
+          désormais connecté.
         </p>
       </div>
     </div>
