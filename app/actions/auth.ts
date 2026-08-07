@@ -45,10 +45,7 @@ export async function signIn(
   if (profile?.role === "practitioner") {
     redirect(next.startsWith("/espace-praticien") ? next : "/espace-praticien");
   }
-  // Participant connecté → son espace (favoris + agenda).
-  if (profile?.role === "participant") {
-    redirect(next.startsWith("/") ? next : "/espace-participant");
-  }
+  // Pas de compte visiteur en V2 : un éventuel rôle participant retombe sur l'accueil.
   if (next.startsWith("/")) redirect(next);
   redirect("/");
 }
@@ -69,7 +66,7 @@ export async function signUp(
   const parsed = signUpSchema.safeParse({
     email: String(formData.get("email") ?? "").trim(),
     password: String(formData.get("password") ?? ""),
-    role: formData.get("role") ?? "participant",
+    role: formData.get("role") ?? "practitioner",
     name: String(formData.get("name") ?? "").trim() || undefined,
     website: String(formData.get("website") ?? ""),
   });

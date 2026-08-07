@@ -1,13 +1,12 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { signUp, type AuthState } from "@/app/actions/auth";
 
 export function SignupForm() {
   const t = useTranslations("auth");
-  const [role, setRole] = useState<"participant" | "practitioner">("participant");
   const [state, formAction, pending] = useActionState<AuthState, FormData>(
     signUp,
     {}
@@ -29,43 +28,18 @@ export function SignupForm() {
         className="absolute -left-[9999px] h-0 w-0 opacity-0"
       />
 
-      <fieldset className="flex flex-col gap-2">
-        {(["participant", "practitioner"] as const).map((r) => (
-          <label
-            key={r}
-            className={`flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-sm transition ${
-              role === r
-                ? "border-soul-brown bg-soul-sand/40"
-                : "border-soul-bronze/25"
-            }`}
-          >
-            <input
-              type="radio"
-              name="role"
-              value={r}
-              checked={role === r}
-              onChange={() => setRole(r)}
-            />
-            {r === "participant"
-              ? t("signupAsParticipant")
-              : t("signupAsPractitioner")}
-          </label>
-        ))}
-      </fieldset>
+      {/* V2 : inscription réservée aux praticien·nes (pas de compte visiteur). */}
+      <input type="hidden" name="role" value="practitioner" />
 
-      {role === "practitioner" && (
-        <>
-          <div>
-            <label htmlFor="name" className="label">
-              Nom public / nom d&apos;artiste
-            </label>
-            <input id="name" name="name" type="text" className="field" />
-          </div>
-          <p className="rounded-xl bg-soul-sand/40 px-4 py-3 text-xs text-soul-brown">
-            {t("practitionerNote")}
-          </p>
-        </>
-      )}
+      <div>
+        <label htmlFor="name" className="label">
+          Nom public / nom d&apos;artiste
+        </label>
+        <input id="name" name="name" type="text" className="field" />
+      </div>
+      <p className="rounded-xl bg-soul-sand/40 px-4 py-3 text-xs text-soul-brown">
+        {t("practitionerNote")}
+      </p>
 
       <div>
         <label htmlFor="email" className="label">

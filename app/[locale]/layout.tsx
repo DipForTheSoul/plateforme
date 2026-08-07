@@ -79,7 +79,7 @@ export default async function LocaleLayout({
       ? "/admin"
       : profile.role === "practitioner"
         ? "/espace-praticien"
-        : "/espace-participant";
+        : "/";
 
   return (
     <html lang={locale} className={`${playfair.variable} ${workSans.variable}`}>

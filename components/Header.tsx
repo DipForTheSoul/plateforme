@@ -17,21 +17,14 @@ export async function Header() {
     { href: "/a-propos", label: t("nav.about") },
   ];
 
-  // Lien « compte » selon le rôle (participant inclus).
+  // Lien « compte » : réservé aux praticiens et à l'admin (pas de compte visiteur).
   const account = profile
     ? {
-        href:
-          profile.role === "admin"
-            ? "/admin"
-            : profile.role === "practitioner"
-              ? "/espace-praticien"
-              : "/espace-participant",
+        href: profile.role === "admin" ? "/admin" : "/espace-praticien",
         label:
           profile.role === "admin"
             ? t("nav.admin")
-            : profile.role === "practitioner"
-              ? t("nav.practitionerSpace")
-              : t("nav.participantSpace"),
+            : t("nav.practitionerSpace"),
       }
     : { href: "/connexion", label: t("nav.login") };
 
