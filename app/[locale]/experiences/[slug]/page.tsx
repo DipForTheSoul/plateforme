@@ -118,6 +118,32 @@ export default async function EventPage({
   const videoEmbed = videoEmbedUrl(event.video_url);
   const { prev, next } = await getAdjacentEvents(event.start_date, event.id);
 
+  // Affichage date/heure adapté (remarque Didier) :
+  // - sur une journée : « de 16h30 → 18h00 · durée 1 h 30 »
+  // - sur plusieurs jours : « du … → … · durée N jours » (l'heure n'est pas pertinente)
+  const start = new Date(event.start_date);
+  const end = event.end_date ? new Date(event.end_date) : null;
+  const isMultiDay = Boolean(end) && start.toDateString() !== end!.toDateString();
+  const startTime = formatTime(event.start_date, currentLocale);
+  const endTime = event.duration_minutes
+    ? formatTime(
+        new Date(start.getTime() + event.duration_minutes * 60000).toISOString(),
+        currentLocale
+      )
+    : null;
+  const durationLabel = formatDuration(event.duration_minutes);
+  const dayCount =
+    end && isMultiDay
+      ? Math.max(
+          1,
+          Math.round(
+            (new Date(end.getFullYear(), end.getMonth(), end.getDate()).getTime() -
+              new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime()) /
+              86_400_000
+          )
+        )
+      : null;
+
   return (
     <article className="mx-auto max-w-4xl px-4 py-10">
       <JsonLd data={eventJsonLd(event)} />
@@ -209,14 +235,18 @@ export default async function EventPage({
 
       <div className="mt-6 grid gap-4 rounded-2xl bg-white p-6 sm:grid-cols-2">
         <p className="flex items-center gap-3 text-sm text-soul-ink">
-          <Calendar className="h-4 w-4 shrink-0 text-soul-bronze" />
+          <Calendar className="h-4 w-4 shrink-0 text-soul-violet" />
           {formatDateRange(event.start_date, event.end_date, currentLocale)}
         </p>
         <p className="flex items-center gap-3 text-sm text-soul-ink">
-          <Clock className="h-4 w-4 shrink-0 text-soul-bronze" />
-          {formatTime(event.start_date, currentLocale)}
-          {formatDuration(event.duration_minutes) && (
-            <> · {formatDuration(event.duration_minutes)}</>
+          <Clock className="h-4 w-4 shrink-0 text-soul-violet" />
+          {isMultiDay ? (
+            dayCount ? `Durée : ${dayCount} jours` : "Sur plusieurs jours"
+          ) : (
+            <>
+              {endTime ? `de ${startTime} → ${endTime}` : startTime}
+              {durationLabel && <> · durée {durationLabel}</>}
+            </>
           )}
         </p>
         {event.venue && (
