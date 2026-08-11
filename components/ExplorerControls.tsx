@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import { EventCalendar } from "@/components/EventCalendar";
 import { LANGUAGE_LABELS } from "@/lib/utils";
 import type { Category } from "@/types/database";
-import { LocateFixed, Search, SlidersHorizontal } from "lucide-react";
+import { LocateFixed, Search, SlidersHorizontal, X } from "lucide-react";
 
 interface Props {
   categories: Category[];
@@ -69,6 +69,64 @@ export function ExplorerControls({ categories, practitioners, regions, eventDays
     setQ("");
     router.replace(pathname, { scroll: false });
   }
+
+  // §8 — puces des filtres actifs (visibles + retirables) pour voir d'un coup d'œil
+  // quels filtres sont appliqués.
+  const durationLabels: Record<string, string> = {
+    "90": "≤ 1 h 30",
+    "180": "≤ 3 h",
+    "480": "≤ 1 jour",
+  };
+  const activeChips: { key: string; label: string; clear: () => void }[] = [];
+  const gp = (k: string) => searchParams.get(k);
+  if (gp("categorie"))
+    activeChips.push({
+      key: "categorie",
+      label: categories.find((c) => c.slug === gp("categorie"))?.name ?? gp("categorie")!,
+      clear: () => setParams({ categorie: undefined }),
+    });
+  if (gp("langue"))
+    activeChips.push({
+      key: "langue",
+      label: LANGUAGE_LABELS[gp("langue")!] ?? gp("langue")!,
+      clear: () => setParams({ langue: undefined }),
+    });
+  if (gp("praticien"))
+    activeChips.push({
+      key: "praticien",
+      label: practitioners.find((p) => p.slug === gp("praticien"))?.name ?? gp("praticien")!,
+      clear: () => setParams({ praticien: undefined }),
+    });
+  if (gp("region"))
+    activeChips.push({
+      key: "region",
+      label: gp("region")!,
+      clear: () => setParams({ region: undefined }),
+    });
+  if (gp("prix"))
+    activeChips.push({
+      key: "prix",
+      label: `≤ CHF ${gp("prix")}`,
+      clear: () => setParams({ prix: undefined }),
+    });
+  if (gp("duree"))
+    activeChips.push({
+      key: "duree",
+      label: durationLabels[gp("duree")!] ?? `≤ ${gp("duree")} min`,
+      clear: () => setParams({ duree: undefined }),
+    });
+  if (radiusActive)
+    activeChips.push({
+      key: "rayon",
+      label: `${gp("rayon")} km`,
+      clear: () => setParams({ rayon: undefined, lat: undefined, lng: undefined }),
+    });
+  if (gp("du") || gp("au"))
+    activeChips.push({
+      key: "dates",
+      label: `${gp("du") ?? "…"} → ${gp("au") ?? "…"}`,
+      clear: () => setParams({ du: undefined, au: undefined }),
+    });
 
   function toggleRadius() {
     if (radiusActive) {
@@ -138,6 +196,23 @@ export function ExplorerControls({ categories, practitioners, regions, eventDays
           </button>
         )}
       </div>
+
+      {/* Puces des filtres actifs — cliquer pour retirer (§8). */}
+      {activeChips.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {activeChips.map((chip) => (
+            <button
+              key={chip.key}
+              type="button"
+              onClick={chip.clear}
+              className="inline-flex items-center gap-1 rounded-full bg-soul-violet/10 px-3 py-1 text-xs font-medium text-soul-violet transition hover:bg-soul-violet/20"
+            >
+              {chip.label}
+              <X className="h-3 w-3" />
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Filtres : repliés par défaut sur mobile, toujours visibles sur desktop (§8) */}
       <div className={`${showFilters ? "flex" : "hidden"} flex-col gap-4 rounded-2xl border border-soul-bronze/15 bg-white p-4 md:flex`}>
