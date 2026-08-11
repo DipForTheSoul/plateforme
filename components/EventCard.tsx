@@ -4,7 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { StarRating } from "@/components/StarRating";
 import { categoryVisual } from "@/lib/gradients";
-import { formatDateNumeric, formatTime, formatVenueLocation } from "@/lib/utils";
+import { formatDate, formatTime, formatVenueLocationFull } from "@/lib/utils";
 import { Price } from "@/components/Price";
 import type { EventWithRelations, Locale } from "@/types/database";
 import { MapPin } from "lucide-react";
@@ -47,9 +47,9 @@ export async function EventCard({ event }: { event: EventWithRelations }) {
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-6">
-        <div className="flex items-center gap-2 text-sm">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
           <span className="font-semibold text-soul-brown">
-            {formatDateNumeric(event.start_date, locale)}
+            {formatDate(event.start_date, locale)}
           </span>
           <span className="rounded-full bg-soul-violet/10 px-2.5 py-0.5 text-xs font-semibold text-soul-violet">
             {formatTime(event.start_date, locale)}
@@ -78,7 +78,7 @@ export async function EventCard({ event }: { event: EventWithRelations }) {
               <>
                 <MapPin className="h-3.5 w-3.5 shrink-0" />
                 <span className="truncate">
-                  {formatVenueLocation(event.venue.city, event.venue.country)}
+                  {formatVenueLocationFull(event.venue.city, event.venue.canton, event.venue.country)}
                 </span>
               </>
             )}

@@ -43,6 +43,18 @@ export function formatVenueLocation(
 }
 
 /**
+ * Localisation détaillée : Ville · Canton · Pays (uniquement les parties
+ * renseignées). Ex. « Lugano · TI · Suisse », ou « Suisse » si rien d'autre.
+ */
+export function formatVenueLocationFull(
+  city: string | null | undefined,
+  canton: string | null | undefined,
+  country: string | null | undefined
+): string {
+  return [city, canton, countryName(country)].filter(Boolean).join(" · ");
+}
+
+/**
  * Convertit une URL YouTube/Vimeo en URL d'iframe intégrable (§4.1).
  * Renvoie null si l'URL n'est pas reconnue → aucun bloc vidéo affiché.
  */
@@ -74,29 +86,27 @@ export function videoEmbedUrl(url: string | null | undefined): string | null {
   }
 }
 
+/**
+ * Format de date UNIQUE et uniforme partout (jour de la semaine + JJ.MM.AAAA) :
+ *   fr → « Vendredi 05.02.2027 », de → « Freitag 05.02.2027 », en → « Friday 05.02.2027 ».
+ * Séparateur par points (format suisse), jour de semaine avec majuscule initiale.
+ */
 export function formatDate(iso: string, locale: Locale = "fr"): string {
-  return new Intl.DateTimeFormat(DATE_LOCALES[locale], {
-    weekday: "short",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(new Date(iso));
+  const d = new Date(iso);
+  const weekday = new Intl.DateTimeFormat(DATE_LOCALES[locale], {
+    weekday: "long",
+  }).format(d);
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const cap = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+  return `${cap} ${dd}.${mm}.${d.getFullYear()}`;
 }
 
-/** Date en chiffres JJ/MM/AAAA (ex. 05/09/2026) — compact pour les cartes. */
-export function formatDateNumeric(iso: string, locale: Locale = "fr"): string {
-  return new Intl.DateTimeFormat(DATE_LOCALES[locale], {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  }).format(new Date(iso));
-}
-
+/** Heure au format 24h « 16:00 » (deux-points, uniforme partout). */
 export function formatTime(iso: string, locale: Locale = "fr"): string {
-  return new Intl.DateTimeFormat(DATE_LOCALES[locale], {
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(iso));
+  const d = new Date(iso);
+  void locale;
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }
 
 export function formatDateRange(
