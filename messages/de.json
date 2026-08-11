@@ -11,7 +11,8 @@
       "logout": "Abmelden",
       "practitionerSpace": "Anbieterbereich",
       "admin": "Administration",
-      "participantSpace": "Mein Bereich"
+      "participantSpace": "Mein Bereich",
+      "venues": "Orte"
     },
     "footer": {
       "curated": "Jedes Erlebnis wird von Didier persönlich geprüft.",
@@ -164,7 +165,10 @@
   "venues": {
     "capacity": "Kapazität: {count} Personen",
     "upcoming": "Erlebnisse an diesem Ort",
-    "notFound": "Dieser Ort existiert nicht."
+    "notFound": "Dieser Ort existiert nicht.",
+    "pageTitle": "Die Orte",
+    "pageSubtitle": "Die Räume, die die ForTheSoul-Erlebnisse beherbergen, in der Schweiz und darüber hinaus.",
+    "empty": "Noch keine Orte."
   },
   "favorites": {
     "title": "Meine Favoriten",

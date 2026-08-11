@@ -11,7 +11,8 @@
       "logout": "Log out",
       "practitionerSpace": "Practitioner space",
       "admin": "Admin",
-      "participantSpace": "My space"
+      "participantSpace": "My space",
+      "venues": "Venues"
     },
     "footer": {
       "curated": "Every experience is personally reviewed by Didier.",
@@ -164,7 +165,10 @@
   "venues": {
     "capacity": "Capacity: {count} people",
     "upcoming": "Experiences at this venue",
-    "notFound": "This venue doesn't exist."
+    "notFound": "This venue doesn't exist.",
+    "pageTitle": "The venues",
+    "pageSubtitle": "The spaces hosting ForTheSoul experiences, in Switzerland and beyond.",
+    "empty": "No venues yet."
   },
   "favorites": {
     "title": "My favourites",

@@ -14,6 +14,7 @@ export async function Header() {
   const links = [
     { href: "/experiences", label: t("nav.experiences") },
     { href: "/praticiens", label: t("nav.practitioners") },
+    { href: "/lieux", label: t("nav.venues") },
     { href: "/a-propos", label: t("nav.about") },
   ];
 
