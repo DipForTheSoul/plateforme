@@ -1,7 +1,7 @@
-import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCurrentProfile } from "@/lib/auth";
+import { LogoLink } from "@/components/LogoLink";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { CurrencySwitcher } from "@/components/CurrencySwitcher";
 import { MobileNav } from "@/components/MobileNav";
@@ -32,23 +32,7 @@ export async function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-soul-bronze/15 bg-soul-cream/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 sm:gap-4">
-        <Link
-          href="/"
-          className="flex shrink-0 items-center gap-2.5"
-          aria-label="ForTheSoul — accueil"
-        >
-          <Image
-            src="/logo-icon.png"
-            alt=""
-            width={40}
-            height={34}
-            priority
-            className="h-7 w-auto sm:h-9"
-          />
-          <span className="font-serif text-lg leading-none text-soul-brown sm:text-2xl">
-            ForTheSoul
-          </span>
-        </Link>
+        <LogoLink />
 
         <nav className="hidden items-center gap-7 md:flex">
           {links.map((link) => (

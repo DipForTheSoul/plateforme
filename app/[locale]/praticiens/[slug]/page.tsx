@@ -69,29 +69,6 @@ export default async function PractitionerPage({
               <FavoriteButton kind="practitioner" id={practitioner.id} />
             </div>
           </div>
-
-          <div className="mt-4 flex flex-col gap-2 text-sm">
-            {practitioner.contact.email && (
-              <a href={`mailto:${practitioner.contact.email}`}
-                className="flex items-center gap-2 text-soul-brown hover:underline">
-                <Mail className="h-4 w-4 text-soul-bronze" /> {practitioner.contact.email}
-              </a>
-            )}
-            {practitioner.contact.website && (
-              <a href={practitioner.contact.website} target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-2 text-soul-brown hover:underline">
-                <Globe className="h-4 w-4 text-soul-bronze" /> Site web
-              </a>
-            )}
-            {Object.entries(practitioner.links)
-              .filter(([name]) => !name.startsWith("google"))
-              .map(([name, url]) => (
-                <a key={name} href={url} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 capitalize text-soul-brown hover:underline">
-                  <LinkIcon className="h-4 w-4 text-soul-bronze" /> {name}
-                </a>
-              ))}
-          </div>
         </div>
 
         <div>
@@ -133,6 +110,33 @@ export default async function PractitionerPage({
 
           {practitioner.bio && (
             <p className="mt-6 whitespace-pre-line text-soul-ink/85">{practitioner.bio}</p>
+          )}
+
+          {(practitioner.contact.email ||
+            practitioner.contact.website ||
+            Object.keys(practitioner.links).some((n) => !n.startsWith("google"))) && (
+            <div className="mt-8 flex flex-col gap-2 border-t border-soul-bronze/15 pt-6 text-sm">
+              {practitioner.contact.email && (
+                <a href={`mailto:${practitioner.contact.email}`}
+                  className="flex items-center gap-2 text-soul-brown hover:underline">
+                  <Mail className="h-4 w-4 text-soul-violet" /> {practitioner.contact.email}
+                </a>
+              )}
+              {practitioner.contact.website && (
+                <a href={practitioner.contact.website} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-soul-brown hover:underline">
+                  <Globe className="h-4 w-4 text-soul-violet" /> Site web
+                </a>
+              )}
+              {Object.entries(practitioner.links)
+                .filter(([name]) => !name.startsWith("google"))
+                .map(([name, url]) => (
+                  <a key={name} href={url} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-2 capitalize text-soul-brown hover:underline">
+                    <LinkIcon className="h-4 w-4 text-soul-violet" /> {name}
+                  </a>
+                ))}
+            </div>
           )}
         </div>
       </div>
