@@ -50,31 +50,43 @@ export default async function VenuePage({
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
-      <h1 className="text-3xl text-soul-brown sm:text-4xl">{venue.name}</h1>
-      <p className="mt-2 flex items-center gap-2 text-soul-bronze">
-        <MapPin className="h-4 w-4" /> {formatVenueLocation(venue.city, venue.country)}
-        {venue.canton && <> · {venue.canton}</>}
-      </p>
-      <p className="mt-1 text-sm text-soul-bronze/80">{venue.address}</p>
-      <a
-        href={mapsDirections}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="btn-primary mt-4 !py-2"
-      >
-        <Navigation className="h-4 w-4" /> Comment s&apos;y rendre
-      </a>
-      {venue.capacity && (
-        <p className="mt-1 flex items-center gap-2 text-sm text-soul-bronze">
-          <Users className="h-4 w-4" /> {t("capacity", { count: venue.capacity })}
-        </p>
-      )}
+      <header className="max-w-3xl">
+        <h1 className="text-3xl text-soul-brown sm:text-4xl">{venue.name}</h1>
 
-      {venue.description && (
-        <p className="mt-6 max-w-3xl whitespace-pre-line text-soul-ink/85">
-          {venue.description}
-        </p>
-      )}
+        {venue.description && (
+          <p className="mt-4 whitespace-pre-line text-lg leading-relaxed text-soul-ink/85">
+            {venue.description}
+          </p>
+        )}
+
+        <div className="mt-6 flex flex-col gap-2 text-soul-bronze">
+          <p className="flex items-center gap-2">
+            <MapPin className="h-4 w-4 shrink-0 text-soul-violet" />
+            {venue.address}
+          </p>
+          <p className="flex items-center gap-2 text-sm text-soul-bronze/80">
+            <span className="inline-block w-4 shrink-0" aria-hidden />
+            {formatVenueLocation(venue.city, venue.country)}
+            {venue.canton && <> · {venue.canton}</>}
+          </p>
+          {venue.capacity && (
+            <p className="flex items-center gap-2 text-sm">
+              <Users className="h-4 w-4 shrink-0 text-soul-violet" />
+              {t("capacity", { count: venue.capacity })}
+            </p>
+          )}
+        </div>
+
+        <a
+          href={mapsDirections}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-primary mt-6 !py-2.5"
+        >
+          <Navigation className="h-4 w-4" /> Comment s&apos;y rendre
+        </a>
+      </header>
+
 
       {venue.lat !== null && venue.lng !== null && (
         <div className="mt-6 max-w-3xl">
