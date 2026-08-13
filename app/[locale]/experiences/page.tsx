@@ -4,7 +4,7 @@ import { EventCard } from "@/components/EventCard";
 import { EventsMapExplorer, type MapItem } from "@/components/EventsMapExplorer";
 import { ExplorerControls } from "@/components/ExplorerControls";
 import { ViewToggle } from "@/components/ViewToggle";
-import { formatDate, formatPrice } from "@/lib/utils";
+import { countryName, formatDate, formatPrice } from "@/lib/utils";
 import type { Locale } from "@/types/database";
 import {
   getApprovedEvents,
@@ -30,7 +30,8 @@ interface SearchParams {
   categorie?: string;
   langue?: string;
   praticien?: string;
-  region?: string;
+  pays?: string;
+  canton?: string;
   prix?: string;
   duree?: string;
   du?: string;
@@ -61,8 +62,9 @@ export default async function ExperiencesPage({
     category: sp.categorie,
     language: sp.langue,
     practitioner: sp.praticien,
-    canton: sp.region && sp.region.length === 2 ? sp.region : undefined,
-    country: sp.region && sp.region.length > 2 ? sp.region : undefined,
+    // §2.1 (arbitrage Victor) : Pays + Canton séparés (canton uniquement si Suisse).
+    country: sp.pays || undefined,
+    canton: sp.canton || undefined,
     priceMax: sp.prix ? Number(sp.prix) : undefined,
     durationMax: sp.duree ? Number(sp.duree) : undefined,
     dateFrom: sp.du ? new Date(`${sp.du}T00:00:00`).toISOString() : undefined,
@@ -84,11 +86,24 @@ export default async function ExperiencesPage({
   ]);
 
   const eventDays = [...new Set(allEvents.map((e) => e.start_date.slice(0, 10)))];
-  const regions = [
+
+  // §2.1 — Pays (tous) + Cantons (uniquement pour la Suisse).
+  const countries = [
+    ...new Map(
+      allEvents
+        .map((e) => e.venue?.country)
+        .filter((c): c is string => Boolean(c))
+        .map((code) => [code, countryName(code)] as const)
+    ),
+  ]
+    .map(([code, name]) => ({ code, name }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  const cantons = [
     ...new Set(
       allEvents
-        .map((e) => e.venue?.canton ?? e.venue?.country)
-        .filter((r): r is string => Boolean(r))
+        .filter((e) => e.venue?.country === "CH")
+        .map((e) => e.venue?.canton)
+        .filter((c): c is string => Boolean(c))
     ),
   ].sort();
 
@@ -102,7 +117,8 @@ export default async function ExperiencesPage({
           <ExplorerControls
             categories={categories}
             practitioners={practitioners.map((p) => ({ slug: p.slug, name: p.name }))}
-            regions={regions}
+            countries={countries}
+            cantons={cantons}
             eventDays={eventDays}
           />
         </aside>

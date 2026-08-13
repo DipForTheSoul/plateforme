@@ -116,7 +116,11 @@
       "reset": "Reset",
       "apply": "Filter",
       "from": "From",
-      "to": "To"
+      "to": "To",
+      "country": "Country",
+      "allCountries": "All countries",
+      "canton": "Canton",
+      "allCantons": "All cantons"
     },
     "calendar": {
       "title": "Calendar",

@@ -116,7 +116,11 @@
       "reset": "Réinitialiser",
       "apply": "Filtrer",
       "from": "Du",
-      "to": "Au"
+      "to": "Au",
+      "country": "Pays",
+      "allCountries": "Tous les pays",
+      "canton": "Canton",
+      "allCantons": "Tous les cantons"
     },
     "calendar": {
       "title": "Calendrier",

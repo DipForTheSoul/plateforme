@@ -12,7 +12,8 @@ import { LocateFixed, Search, SlidersHorizontal, X } from "lucide-react";
 interface Props {
   categories: Category[];
   practitioners: Array<{ slug: string; name: string }>;
-  regions: string[];
+  countries: Array<{ code: string; name: string }>;
+  cantons: string[];
   eventDays: string[];
 }
 
@@ -21,7 +22,7 @@ interface Props {
  * filtres, calendrier et rayon km — tout est piloté par l'URL (partageable,
  * SSR, SEO-friendly).
  */
-export function ExplorerControls({ categories, practitioners, regions, eventDays }: Props) {
+export function ExplorerControls({ categories, practitioners, countries, cantons, eventDays }: Props) {
   const t = useTranslations("events");
   const router = useRouter();
   const pathname = usePathname();
@@ -60,7 +61,8 @@ export function ExplorerControls({ categories, practitioners, regions, eventDays
   const radiusActive = Boolean(searchParams.get("rayon"));
   const [showFilters, setShowFilters] = useState(false);
 
-  const filterKeys = ["categorie", "langue", "praticien", "region", "prix", "duree", "rayon"];
+  const filterKeys = ["categorie", "langue", "praticien", "pays", "canton", "prix", "duree", "rayon"];
+  const isSwitzerland = searchParams.get("pays") === "CH";
   const activeCount = filterKeys.filter((k) => searchParams.get(k)).length;
   const hasAnyFilter =
     activeCount > 0 || q || searchParams.get("du") || searchParams.get("au");
@@ -97,11 +99,18 @@ export function ExplorerControls({ categories, practitioners, regions, eventDays
       label: practitioners.find((p) => p.slug === gp("praticien"))?.name ?? gp("praticien")!,
       clear: () => setParams({ praticien: undefined }),
     });
-  if (gp("region"))
+  if (gp("pays"))
     activeChips.push({
-      key: "region",
-      label: gp("region")!,
-      clear: () => setParams({ region: undefined }),
+      key: "pays",
+      label: countries.find((c) => c.code === gp("pays"))?.name ?? gp("pays")!,
+      // Retirer le pays retire aussi le canton (canton dépend du pays).
+      clear: () => setParams({ pays: undefined, canton: undefined }),
+    });
+  if (gp("canton"))
+    activeChips.push({
+      key: "canton",
+      label: gp("canton")!,
+      clear: () => setParams({ canton: undefined }),
     });
   if (gp("prix"))
     activeChips.push({
@@ -244,14 +253,26 @@ export function ExplorerControls({ categories, practitioners, regions, eventDays
               ))}
             </select>
 
-            <select value={searchParams.get("region") ?? ""}
-              onChange={(e) => setParams({ region: e.target.value || undefined })}
-              className="field" aria-label={t("filters.region")}>
-              <option value="">{t("filters.allRegions")}</option>
-              {regions.map((r) => (
-                <option key={r} value={r}>{r}</option>
+            <select value={searchParams.get("pays") ?? ""}
+              onChange={(e) => setParams({ pays: e.target.value || undefined, canton: undefined })}
+              className="field" aria-label={t("filters.country")}>
+              <option value="">{t("filters.allCountries")}</option>
+              {countries.map((c) => (
+                <option key={c.code} value={c.code}>{c.name}</option>
               ))}
             </select>
+
+            {/* Canton uniquement si la Suisse est sélectionnée (§2.1). */}
+            {isSwitzerland && cantons.length > 0 && (
+              <select value={searchParams.get("canton") ?? ""}
+                onChange={(e) => setParams({ canton: e.target.value || undefined })}
+                className="field" aria-label={t("filters.canton")}>
+                <option value="">{t("filters.allCantons")}</option>
+                {cantons.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            )}
 
             <select value={searchParams.get("prix") ?? ""}
               onChange={(e) => setParams({ prix: e.target.value || undefined })}
