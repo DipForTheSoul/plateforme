@@ -242,10 +242,10 @@ export default async function HomePage({
       {/* ------------------------------------------------------------------ */}
       {/* La curation de Didier — bandeau incarné */}
       {/* ------------------------------------------------------------------ */}
-      <section className="bg-soul-violet text-soul-cream">
+      <section className="bg-soul-sand text-soul-brown">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-[1fr_1.1fr] md:py-20">
           <div className="relative mx-auto w-full max-w-sm">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] shadow-2xl ring-1 ring-soul-cream/15">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] shadow-2xl ring-1 ring-soul-brown/15">
               <Image
                 src="/didier-yoga.jpg"
                 alt="Didier Picamoles en méditation"
@@ -261,17 +261,17 @@ export default async function HomePage({
               <Sparkles className="h-3.5 w-3.5" />
               {t("didierEyebrow")}
             </p>
-            <h2 className="font-serif text-3xl leading-tight text-soul-cream sm:text-4xl">
+            <h2 className="font-serif text-3xl leading-tight text-soul-brown sm:text-4xl">
               {t("didierTitle")}
             </h2>
-            <blockquote className="mt-6 border-l-2 border-soul-bronze/60 pl-5 font-serif text-xl italic leading-relaxed text-soul-sand">
+            <blockquote className="mt-6 border-l-2 border-soul-bronze/60 pl-5 font-serif text-xl italic leading-relaxed text-soul-brown">
               « {t("didierQuote")} »
             </blockquote>
             <p className="mt-3 text-sm text-soul-bronze">{t("didierSignature")}</p>
-            <p className="mt-6 max-w-xl text-soul-sand/80">{t("didierText")}</p>
+            <p className="mt-6 max-w-xl text-soul-brown/80">{t("didierText")}</p>
             <Link
               href="/a-propos"
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-soul-cream px-6 py-3 text-sm font-semibold text-soul-brown transition hover:bg-soul-amber"
+              className="mt-8 inline-flex items-center gap-2 rounded-full bg-soul-violet px-6 py-3 text-sm font-semibold text-white transition hover:bg-soul-violet-dark"
             >
               {t("didierCta")}
               <ArrowRight className="h-4 w-4" />
