@@ -114,6 +114,10 @@ export default async function EventPage({
     .limit(20);
   const reviews = (reviewsData as Review[]) ?? [];
 
+  // Module d'avis = Section 3 (pas vendu en V2) : on masque l'affichage des avis
+  // tant qu'il n'est pas livré. Repasser à true pour le rétablir (arbitrage Victor).
+  const SHOW_REVIEWS = false;
+
   const visual = categoryVisual(event.category?.slug);
   const videoEmbed = videoEmbedUrl(event.video_url);
   const { prev, next } = await getAdjacentEvents(event.start_date, event.id);
@@ -198,11 +202,7 @@ export default async function EventPage({
               · <span className="text-xs">✓ {tCommon("validatedByDidier")}</span>
             </p>
           )}
-          {event.rating_count > 0 && (
-            <div className="mt-2">
-              <StarRating avg={event.rating_avg} count={event.rating_count} size="lg" />
-            </div>
-          )}
+          {/* Note/avis masqués — module d'avis = Section 3 (arbitrage Victor). */}
         </div>
         <p className="font-serif text-2xl text-soul-brown">
           <Price value={event.price} baseCurrency={event.currency} freeLabel={tCommon("free")} />
@@ -333,7 +333,7 @@ export default async function EventPage({
         </div>
       )}
 
-      {reviews.length > 0 && (
+      {SHOW_REVIEWS && reviews.length > 0 && (
         <section className="mt-12">
           <div className="mb-5 flex flex-wrap items-center gap-3">
             <h2 className="text-2xl text-soul-brown">Avis</h2>

@@ -2,7 +2,6 @@ import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { FavoriteButton } from "@/components/FavoriteButton";
-import { StarRating } from "@/components/StarRating";
 import { categoryVisual } from "@/lib/gradients";
 import { formatDate, formatTime, formatVenueLocationFull } from "@/lib/utils";
 import { Price } from "@/components/Price";
@@ -69,9 +68,8 @@ export async function EventCard({ event }: { event: EventWithRelations }) {
             {event.description}
           </p>
         )}
-        {event.rating_count > 0 && (
-          <StarRating avg={event.rating_avg} count={event.rating_count} />
-        )}
+        {/* Notes/avis masqués tant que le module d'avis n'est pas livré (Section 3
+            du PDF — arbitrage Victor). À rétablir quand la fonctionnalité sera vendue. */}
         <div className="mt-auto flex items-center justify-between gap-2 pt-2 text-sm">
           <span className="flex min-w-0 items-center gap-1 text-soul-bronze">
             {event.venue && (
