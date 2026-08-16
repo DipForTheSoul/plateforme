@@ -45,3 +45,8 @@ next-env.d.ts
 image de Didier/
 Images/
 image experiences test/
+
+# Images sources brutes à la racine (ne pas versionner)
+/*.png
+/*.jpg
+/*.jpeg
