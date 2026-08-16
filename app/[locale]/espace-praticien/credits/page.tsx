@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getCurrentPractitioner } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { CREDIT_PACKS, STATIC_PAYMENT } from "@/lib/credits";
@@ -129,19 +130,46 @@ export default async function CreditsPage({
 
       <section className="card p-6">
         <h2 className="mb-2 font-serif text-lg text-soul-brown">
-          Paiement par virement (QR / IBAN)
+          Paiement par Revolut / virement
         </h2>
         <p className="text-sm text-soul-ink/80">
-          Vous préférez un virement bancaire ? Versez le montant du pack choisi à :
+          Vous préférez payer par Revolut ou par virement ? Réglez le montant du pack
+          choisi à {STATIC_PAYMENT.beneficiary} :
         </p>
-        <div className="mt-3 rounded-xl bg-soul-sand/40 p-4 font-mono text-sm text-soul-brown">
-          <p>{STATIC_PAYMENT.beneficiary}</p>
-          <p className="mt-1">{STATIC_PAYMENT.iban}</p>
+
+        <div className="mt-4 grid gap-6 sm:grid-cols-[auto_1fr] sm:items-center">
+          <div className="flex flex-col items-center gap-3">
+            <Image
+              src={STATIC_PAYMENT.revolutQr}
+              alt="QR code Revolut ForTheSoul"
+              width={160}
+              height={160}
+              className="rounded-xl border border-soul-bronze/20 bg-white p-2"
+            />
+            <a
+              href={STATIC_PAYMENT.revolutUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-soul-violet px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-soul-violet-dark"
+            >
+              Payer via Revolut
+            </a>
+          </div>
+
+          <div className="text-sm text-soul-ink/80">
+            <p>Scannez le QR code ou cliquez sur « Payer via Revolut ».</p>
+            {STATIC_PAYMENT.iban && (
+              <div className="mt-3 rounded-xl bg-soul-sand/40 p-4 font-mono text-sm text-soul-brown">
+                <p>{STATIC_PAYMENT.beneficiary}</p>
+                <p className="mt-1">IBAN&nbsp;: {STATIC_PAYMENT.iban}</p>
+              </div>
+            )}
+            <p className="mt-3 text-xs text-soul-bronze">
+              {STATIC_PAYMENT.note} Les crédits sont ajoutés manuellement par Didier à
+              réception du paiement (1-2 jours ouvrés).
+            </p>
+          </div>
         </div>
-        <p className="mt-3 text-xs text-soul-bronze">
-          {STATIC_PAYMENT.note} Les crédits sont ajoutés manuellement par Didier à
-          réception du virement (1-2 jours ouvrés).
-        </p>
       </section>
 
       <section>

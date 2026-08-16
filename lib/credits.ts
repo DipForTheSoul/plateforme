@@ -23,12 +23,14 @@ export function getPack(id: string): CreditPack | undefined {
 }
 
 /**
- * Paiement statique (repli sans Stripe) : coordonnées affichées avec un
- * QR-code Swiss QR / IBAN. L'admin attribue ensuite les crédits à la main.
- * // PLACEHOLDER — IBAN réel de l'association/entreprise de Didier à renseigner.
+ * Paiement manuel (en plus de Stripe) : lien Revolut + QR. L'admin attribue
+ * ensuite les crédits à la main à réception.
+ * // iban: optionnel — à renseigner si Didier veut aussi le virement IBAN classique.
  */
 export const STATIC_PAYMENT = {
-  iban: "CH00 0000 0000 0000 0000 0", // PLACEHOLDER — IBAN à remplacer
-  beneficiary: "ForTheSoul — Didier Picamoles", // PLACEHOLDER — raison sociale exacte
+  beneficiary: "ForTheSoul — Didier Picamoles",
+  revolutUrl: "https://revolut.me/didierma4i/pocket/3enbaV62Rx",
+  revolutQr: "/revolut-qr.png",
+  iban: "", // optionnel — laisser vide tant que Didier ne fournit pas d'IBAN de virement
   note: "Indiquez votre nom de praticien·ne et le pack choisi en communication.",
 };
