@@ -23,6 +23,8 @@ export async function updateSettings(
     "exchange_rate_eur",
     "featured_default_days",
     "pack_default_valid_days",
+    "payment_beneficiary",
+    "payment_iban",
   ];
 
   const rows = keys

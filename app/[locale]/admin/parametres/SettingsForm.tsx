@@ -30,6 +30,36 @@ export function SettingsForm({ values }: { values: Record<string, string> }) {
         </p>
       </div>
 
+      <div>
+        <label htmlFor="payment_beneficiary" className="label">
+          Paiement — bénéficiaire (nom affiché)
+        </label>
+        <input
+          id="payment_beneficiary"
+          name="payment_beneficiary"
+          defaultValue={values.payment_beneficiary ?? "ForTheSoul — Didier Picamoles"}
+          className="field"
+          placeholder="ForTheSoul — Didier Picamoles"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="payment_iban" className="label">
+          Paiement — IBAN (virement / Revolut)
+        </label>
+        <input
+          id="payment_iban"
+          name="payment_iban"
+          defaultValue={values.payment_iban ?? ""}
+          className="field"
+          placeholder="CH00 0000 0000 0000 0000 0"
+        />
+        <p className="mt-1 text-xs text-soul-bronze">
+          Affiché sur la page « Crédits » du praticien, à côté du QR Revolut. Laissez
+          vide pour n&apos;afficher que le bouton/QR Revolut.
+        </p>
+      </div>
+
       {state.error && <p className="text-sm text-red-700">{state.error}</p>}
       {state.success && <p className="text-sm text-green-700">{state.success}</p>}
 

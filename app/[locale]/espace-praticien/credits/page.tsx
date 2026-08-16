@@ -24,7 +24,7 @@ export default async function CreditsPage({
   }
 
   const supabase = await createClient();
-  const [{ data }, { data: packData }] = await Promise.all([
+  const [{ data }, { data: packData }, { data: settingsData }] = await Promise.all([
     supabase
       .from("credit_transactions")
       .select("*")
@@ -37,9 +37,16 @@ export default async function CreditsPage({
       .eq("practitioner_id", practitioner.id)
       .gt("credits_remaining", 0)
       .order("expires_at", { ascending: true, nullsFirst: false }),
+    supabase.from("settings").select("key, value"),
   ]);
   const transactions = (data as CreditTransaction[]) ?? [];
   const packs = (packData as CreditPack[]) ?? [];
+  const settings = Object.fromEntries(
+    ((settingsData as { key: string; value: string }[]) ?? []).map((s) => [s.key, s.value])
+  );
+  // IBAN / bénéficiaire : éditables par l'admin (Didier) depuis /admin/parametres.
+  const beneficiary = settings.payment_beneficiary?.trim() || STATIC_PAYMENT.beneficiary;
+  const iban = settings.payment_iban?.trim() || STATIC_PAYMENT.iban;
 
   return (
     <div className="flex flex-col gap-8">
@@ -134,7 +141,7 @@ export default async function CreditsPage({
         </h2>
         <p className="text-sm text-soul-ink/80">
           Vous préférez payer par Revolut ou par virement ? Réglez le montant du pack
-          choisi à {STATIC_PAYMENT.beneficiary} :
+          choisi à {beneficiary} :
         </p>
 
         <div className="mt-4 grid gap-6 sm:grid-cols-[auto_1fr] sm:items-center">
@@ -158,10 +165,10 @@ export default async function CreditsPage({
 
           <div className="text-sm text-soul-ink/80">
             <p>Scannez le QR code ou cliquez sur « Payer via Revolut ».</p>
-            {STATIC_PAYMENT.iban && (
+            {iban && (
               <div className="mt-3 rounded-xl bg-soul-sand/40 p-4 font-mono text-sm text-soul-brown">
-                <p>{STATIC_PAYMENT.beneficiary}</p>
-                <p className="mt-1">IBAN&nbsp;: {STATIC_PAYMENT.iban}</p>
+                <p>{beneficiary}</p>
+                <p className="mt-1">IBAN&nbsp;: {iban}</p>
               </div>
             )}
             <p className="mt-3 text-xs text-soul-bronze">
