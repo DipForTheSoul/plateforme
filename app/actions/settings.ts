@@ -23,18 +23,35 @@ export async function updateSettings(
     "exchange_rate_eur",
     "featured_default_days",
     "pack_default_valid_days",
+    "event_delist_days",
     "payment_beneficiary",
     "payment_iban",
+    "price_pack_1",
+    "price_pack_5",
+    "price_pack_10",
+    "promo_label",
+    "promo_discount_percent",
   ];
 
+  // Ces clés doivent pouvoir être VIDÉES (ex. arrêter une promo) → on les écrit
+  // même vides ; les autres, une valeur vide = « ne pas changer ».
+  const alwaysWritable = new Set(["promo_label", "promo_discount_percent"]);
   const rows = keys
     .map((key) => ({ key, value: String(formData.get(key) ?? "").trim() }))
-    .filter((r) => r.value !== "");
+    .filter((r) => r.value !== "" || alwaysWritable.has(r.key));
 
   // Validation légère : le taux doit être un nombre > 0.
   const rate = rows.find((r) => r.key === "exchange_rate_eur");
   if (rate && !(Number(rate.value) > 0)) {
     return { error: "Le taux de change doit être un nombre positif (ex. 1.05)." };
+  }
+  // Le % de remise, si renseigné, doit être entre 1 et 99.
+  const promoPct = rows.find((r) => r.key === "promo_discount_percent");
+  if (promoPct && promoPct.value !== "") {
+    const n = Number(promoPct.value);
+    if (!Number.isFinite(n) || n < 1 || n > 99) {
+      return { error: "La remise doit être un pourcentage entre 1 et 99." };
+    }
   }
 
   const supabase = await createClient();

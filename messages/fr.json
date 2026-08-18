@@ -23,7 +23,8 @@
       "newsletterSuccess": "Merci ! Vous êtes bien inscrit·e.",
       "newsletterError": "Inscription impossible pour le moment. Réessayez plus tard.",
       "legal": "© {year} ForTheSoul — Suisse",
-      "becomePractitioner": "Devenir praticien·ne"
+      "becomePractitioner": "Devenir praticien·ne",
+      "terms": "Conditions générales"
     },
     "noResults": "Aucun résultat pour le moment.",
     "loading": "Chargement…",
@@ -41,7 +42,7 @@
   },
   "home": {
     "heroTitle": "Des expériences qui nourrissent l'âme",
-    "heroSubtitle": "Danse libre, méditation, yoga, voyages sonores et retraites — en Suisse et au-delà, choisies une à une par Didier.",
+    "heroSubtitle": "Danse libre, méditation, yoga, voyages sonores et retraites.",
     "heroCta": "Explorer les expériences",
     "heroSecondary": "Rencontrer les praticien·nes",
     "searchPlaceholder": "Rechercher une expérience (danse, gong, retraite…)",
@@ -113,6 +114,9 @@
       "radius": "Autour de moi",
       "radiusOff": "Désactivé",
       "radiusHelp": "Recherche par distance (géolocalisation du navigateur)",
+      "geoDenied": "Localisation refusée par le navigateur. Autorisez l'accès à votre position (icône de cadenas dans la barre d'adresse → Autoriser la localisation), puis réessayez.",
+      "geoUnavailable": "Impossible de récupérer votre position pour le moment. Vérifiez que la localisation est activée sur votre appareil, puis réessayez.",
+      "geoUnsupported": "Votre navigateur ne prend pas en charge la géolocalisation.",
       "reset": "Réinitialiser",
       "apply": "Filtrer",
       "from": "Du",

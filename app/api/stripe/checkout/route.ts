@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getPack } from "@/lib/credits";
+import { getPack, resolvePackPriceChf, getPromo, discountedChf } from "@/lib/credits";
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -41,17 +41,34 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Pack inconnu." }, { status: 400 });
   }
 
+  // Prix éditables par l'admin (table `settings`) + éventuelle promo (étiquette + %).
+  // Le montant est envoyé à la volée → Didier change tout dans son admin, jamais sur Stripe.
+  const { data: settingsRows } = await supabase.from("settings").select("key, value");
+  const settings = Object.fromEntries(
+    ((settingsRows as { key: string; value: string }[]) ?? []).map((s) => [s.key, s.value])
+  );
+  const priceChf = resolvePackPriceChf(pack, settings);
+  const promo = getPromo(settings);
+  const finalChf = promo && promo.percent > 0 ? discountedChf(priceChf, promo.percent) : priceChf;
+  const unitAmount = Math.round(finalChf * 100);
+  const productName = promo
+    ? `ForTheSoul — ${pack.labelFr} · ${promo.label}`
+    : `ForTheSoul — ${pack.labelFr}`;
+
   const stripe = getStripe();
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     payment_method_types: ["card"],
+    // Managed Payments désactivé pour cette session : le prix est facturé tel quel,
+    // sans TVA ajoutée automatiquement (décision réunion 18/08 : prix tout compris).
+    managed_payments: { enabled: false },
     line_items: [
       {
         price_data: {
           currency: "chf",
-          unit_amount: pack.amountCents,
+          unit_amount: unitAmount,
           product_data: {
-            name: `ForTheSoul — ${pack.labelFr}`,
+            name: productName,
             description: `${pack.credits} crédit(s) de publication pour ${practitioner.name}`,
           },
         },
@@ -67,7 +84,7 @@ export async function POST(request: NextRequest) {
     customer_email: user.email,
     success_url: `${SITE_URL}/espace-praticien/credits?achat=succes`,
     cancel_url: `${SITE_URL}/espace-praticien/credits?achat=annule`,
-  });
+  } as Parameters<typeof stripe.checkout.sessions.create>[0]);
 
   return NextResponse.json({ url: session.url });
 }

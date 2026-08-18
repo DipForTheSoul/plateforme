@@ -23,7 +23,8 @@
       "newsletterSuccess": "Thank you! You're subscribed.",
       "newsletterError": "Subscription unavailable right now. Please try again later.",
       "legal": "© {year} ForTheSoul — Switzerland",
-      "becomePractitioner": "Become a practitioner"
+      "becomePractitioner": "Become a practitioner",
+      "terms": "Terms & Conditions"
     },
     "noResults": "No results for now.",
     "loading": "Loading…",
@@ -41,7 +42,7 @@
   },
   "home": {
     "heroTitle": "Experiences that nourish the soul",
-    "heroSubtitle": "Free dance, meditation, yoga, sound journeys and retreats — in Switzerland and beyond, hand-picked one by one by Didier.",
+    "heroSubtitle": "Free dance, meditation, yoga, sound journeys and retreats.",
     "heroCta": "Explore experiences",
     "heroSecondary": "Meet the practitioners",
     "searchPlaceholder": "Search an experience (dance, gong, retreat…)",
@@ -113,6 +114,9 @@
       "radius": "Near me",
       "radiusOff": "Off",
       "radiusHelp": "Distance search (browser location)",
+      "geoDenied": "Location blocked by your browser. Allow access to your location (lock icon in the address bar → Allow location), then try again.",
+      "geoUnavailable": "Couldn't get your location right now. Check that location is enabled on your device, then try again.",
+      "geoUnsupported": "Your browser doesn't support geolocation.",
       "reset": "Reset",
       "apply": "Filter",
       "from": "From",

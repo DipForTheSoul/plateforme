@@ -62,6 +62,11 @@ export function VenueForm({ venue, action }: Props) {
         <label className="label" htmlFor="description">Description</label>
         <textarea id="description" name="description" rows={4} defaultValue={venue?.description ?? ""} className="field" />
       </div>
+      <div>
+        <label className="label" htmlFor="website">Site web (optionnel)</label>
+        <input id="website" name="website" type="url" inputMode="url"
+          defaultValue={venue?.contact?.website ?? ""} placeholder="https://…" className="field" />
+      </div>
       {state.error && <p className="text-sm text-red-700">{state.error}</p>}
       {state.success && <p className="text-sm text-green-700">{state.success}</p>}
       <button type="submit" disabled={pending} className="btn-primary self-start">

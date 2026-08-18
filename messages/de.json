@@ -23,7 +23,8 @@
       "newsletterSuccess": "Danke! Du bist angemeldet.",
       "newsletterError": "Anmeldung derzeit nicht möglich. Bitte versuche es später erneut.",
       "legal": "© {year} ForTheSoul — Schweiz",
-      "becomePractitioner": "Anbieter:in werden"
+      "becomePractitioner": "Anbieter:in werden",
+      "terms": "Allgemeine Geschäftsbedingungen"
     },
     "noResults": "Zurzeit keine Ergebnisse.",
     "loading": "Wird geladen…",
@@ -41,7 +42,7 @@
   },
   "home": {
     "heroTitle": "Erlebnisse, die die Seele nähren",
-    "heroSubtitle": "Freier Tanz, Meditation, Yoga, Klangreisen und Retreats — in der Schweiz und darüber hinaus, einzeln von Didier ausgewählt.",
+    "heroSubtitle": "Freier Tanz, Meditation, Yoga, Klangreisen und Retreats.",
     "heroCta": "Erlebnisse entdecken",
     "heroSecondary": "Anbieter:innen kennenlernen",
     "searchPlaceholder": "Erlebnis suchen (Tanz, Gong, Retreat…)",
@@ -113,6 +114,9 @@
       "radius": "In meiner Nähe",
       "radiusOff": "Deaktiviert",
       "radiusHelp": "Umkreissuche (Standort des Browsers)",
+      "geoDenied": "Standortzugriff vom Browser verweigert. Erlauben Sie den Zugriff auf Ihren Standort (Schloss-Symbol in der Adressleiste → Standort zulassen) und versuchen Sie es erneut.",
+      "geoUnavailable": "Ihr Standort konnte momentan nicht ermittelt werden. Prüfen Sie, ob die Ortung auf Ihrem Gerät aktiviert ist, und versuchen Sie es erneut.",
+      "geoUnsupported": "Ihr Browser unterstützt keine Standortbestimmung.",
       "reset": "Zurücksetzen",
       "apply": "Filtern",
       "from": "Ab",

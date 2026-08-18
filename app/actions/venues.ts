@@ -16,6 +16,7 @@ const venueSchema = z.object({
   description: z.string().max(2000).optional().nullable(),
   capacity: z.coerce.number().int().positive().optional().nullable(),
   rooms: z.coerce.number().int().positive().optional().nullable(),
+  website: z.string().max(300).optional().nullable(),
 });
 
 /**
@@ -41,6 +42,7 @@ export async function createVenue(
     description: String(formData.get("description") ?? "").trim() || null,
     capacity: String(formData.get("capacity") ?? "") || null,
     rooms: String(formData.get("rooms") ?? "") || null,
+    website: String(formData.get("website") ?? "").trim() || null,
   });
   if (!parsed.success) return { error: "Nom et adresse complète requis." };
   const input = parsed.data;
@@ -67,6 +69,7 @@ export async function createVenue(
       description: input.description,
       capacity: input.capacity,
       rooms: input.rooms,
+      contact: input.website ? { website: input.website } : {},
       created_by: user.id,
     })
     .select("id")
@@ -100,6 +103,7 @@ export async function adminUpdateVenue(
     description: String(formData.get("description") ?? "").trim() || null,
     capacity: String(formData.get("capacity") ?? "") || null,
     rooms: String(formData.get("rooms") ?? "") || null,
+    website: String(formData.get("website") ?? "").trim() || null,
   });
   if (!parsed.success) return { error: "Nom et adresse complète requis." };
   const input = parsed.data;
@@ -120,6 +124,7 @@ export async function adminUpdateVenue(
       description: input.description,
       capacity: input.capacity,
       rooms: input.rooms,
+      contact: input.website ? { website: input.website } : {},
     })
     .eq("id", venueId);
 

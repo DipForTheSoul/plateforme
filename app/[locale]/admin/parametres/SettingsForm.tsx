@@ -31,6 +31,76 @@ export function SettingsForm({ values }: { values: Record<string, string> }) {
       </div>
 
       <div>
+        <label htmlFor="event_delist_days" className="label">
+          Retrait auto des annonces (jours après l&apos;événement)
+        </label>
+        <input
+          id="event_delist_days"
+          name="event_delist_days"
+          inputMode="numeric"
+          defaultValue={values.event_delist_days ?? "15"}
+          className="field !max-w-40"
+          placeholder="15"
+        />
+        <p className="mt-1 text-xs text-soul-bronze">
+          Une annonce disparaît de la recherche ce nombre de jours après la date de
+          l&apos;événement. Sa page reste accessible (référencement). Par défaut&nbsp;: 15.
+        </p>
+      </div>
+
+      <div className="rounded-xl border border-soul-bronze/15 p-4">
+        <p className="label mb-3">Tarifs des packs (CHF)</p>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <div>
+            <label htmlFor="price_pack_1" className="text-xs text-soul-bronze">1 publication</label>
+            <input id="price_pack_1" name="price_pack_1" inputMode="decimal"
+              defaultValue={values.price_pack_1 ?? "25"} className="field" placeholder="25" />
+          </div>
+          <div>
+            <label htmlFor="price_pack_5" className="text-xs text-soul-bronze">Pack 5</label>
+            <input id="price_pack_5" name="price_pack_5" inputMode="decimal"
+              defaultValue={values.price_pack_5 ?? "100"} className="field" placeholder="100" />
+          </div>
+          <div>
+            <label htmlFor="price_pack_10" className="text-xs text-soul-bronze">Pack 10</label>
+            <input id="price_pack_10" name="price_pack_10" inputMode="decimal"
+              defaultValue={values.price_pack_10 ?? "180"} className="field" placeholder="180" />
+          </div>
+        </div>
+        <p className="mt-2 text-xs text-soul-bronze">
+          Prix facturés aux praticien·nes. Modifiables ici uniquement — aucune action à
+          faire sur Stripe.
+        </p>
+      </div>
+
+      <div className="rounded-xl border border-soul-bronze/15 p-4">
+        <p className="label mb-3">Promotion (optionnel)</p>
+        <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+          <div>
+            <label htmlFor="promo_label" className="text-xs text-soul-bronze">
+              Étiquette (ex. « Spécial Noël 🎅 »)
+            </label>
+            <input id="promo_label" name="promo_label" maxLength={40}
+              defaultValue={values.promo_label ?? ""} className="field"
+              placeholder="Prix de lancement" />
+          </div>
+          <div>
+            <label htmlFor="promo_discount_percent" className="text-xs text-soul-bronze">
+              Remise %
+            </label>
+            <input id="promo_discount_percent" name="promo_discount_percent"
+              inputMode="numeric" defaultValue={values.promo_discount_percent ?? ""}
+              className="field !max-w-24" placeholder="—" />
+          </div>
+        </div>
+        <p className="mt-2 text-xs text-soul-bronze">
+          L&apos;étiquette s&apos;affiche sur les packs et au paiement. Avec une remise,
+          le prix normal est barré et le prix réduit est facturé. Laissez l&apos;étiquette
+          vide pour arrêter la promotion.
+        </p>
+      </div>
+
+      <div>
         <label htmlFor="payment_beneficiary" className="label">
           Paiement — bénéficiaire (nom affiché)
         </label>

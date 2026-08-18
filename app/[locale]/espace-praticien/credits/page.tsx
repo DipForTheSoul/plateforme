@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { getCurrentPractitioner } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { CREDIT_PACKS, STATIC_PAYMENT } from "@/lib/credits";
+import { CREDIT_PACKS, STATIC_PAYMENT, resolvePackPriceChf, getPromo, discountedChf } from "@/lib/credits";
 import { formatDate } from "@/lib/utils";
 import type { CreditPack, CreditTransaction } from "@/types/database";
 import { BuyPackButton } from "./BuyPackButton";
@@ -47,6 +47,7 @@ export default async function CreditsPage({
   // IBAN / bénéficiaire : éditables par l'admin (Didier) depuis /admin/parametres.
   const beneficiary = settings.payment_beneficiary?.trim() || STATIC_PAYMENT.beneficiary;
   const iban = settings.payment_iban?.trim() || STATIC_PAYMENT.iban;
+  const promo = getPromo(settings);
 
   return (
     <div className="flex flex-col gap-8">
@@ -112,7 +113,10 @@ export default async function CreditsPage({
           </ul>
           <p className="mt-3 text-xs text-soul-bronze">
             Un pack dont la date est dépassée passe automatiquement en « expiré » ;
-            ses crédits ne sont plus utilisables.
+            ses crédits ne sont plus utilisables. En revanche, les expériences que vous
+            avez publiées pendant la validité de votre pack <strong>restent en ligne
+            jusqu&apos;à leur date</strong> (puis se retirent automatiquement peu après),
+            même si le pack a expiré entre-temps.
           </p>
         </section>
       )}
@@ -120,18 +124,35 @@ export default async function CreditsPage({
       <section>
         <h2 className="mb-4 text-xl text-soul-brown">Packs de publications</h2>
         <div className="grid gap-4 sm:grid-cols-3">
-          {CREDIT_PACKS.map((pack) => (
-            <div key={pack.id} className="card flex flex-col p-6">
-              <p className="font-serif text-lg text-soul-brown">{pack.labelFr}</p>
-              <p className="mt-2 font-serif text-3xl text-soul-brown">
-                CHF {(pack.amountCents / 100).toFixed(0)}.–
-              </p>
-              <p className="mt-1 text-xs text-soul-bronze">
-                {(pack.amountCents / 100 / pack.credits).toFixed(0)}.– / publication
-              </p>
-              <BuyPackButton packId={pack.id} />
-            </div>
-          ))}
+          {CREDIT_PACKS.map((pack) => {
+            const priceChf = resolvePackPriceChf(pack, settings);
+            const hasDiscount = promo !== null && promo.percent > 0;
+            const finalChf = hasDiscount ? discountedChf(priceChf, promo!.percent) : priceChf;
+            return (
+              <div key={pack.id} className="card flex flex-col p-6">
+                <div className="flex items-start justify-between gap-2">
+                  <p className="font-serif text-lg text-soul-brown">{pack.labelFr}</p>
+                  {promo && (
+                    <span className="rounded-full bg-soul-violet/10 px-2.5 py-0.5 text-xs font-semibold text-soul-violet">
+                      {promo.label}
+                    </span>
+                  )}
+                </div>
+                <p className="mt-2 font-serif text-3xl text-soul-brown">
+                  {hasDiscount && (
+                    <span className="mr-2 align-middle text-xl text-soul-bronze/60 line-through">
+                      {priceChf.toFixed(0)}.–
+                    </span>
+                  )}
+                  CHF {finalChf.toFixed(0)}.–
+                </p>
+                <p className="mt-1 text-xs text-soul-bronze">
+                  {(finalChf / pack.credits).toFixed(0)}.– / publication
+                </p>
+                <BuyPackButton packId={pack.id} />
+              </div>
+            );
+          })}
         </div>
       </section>
 

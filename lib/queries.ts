@@ -74,6 +74,19 @@ export async function getApprovedEvents(
   try {
     const supabase = await createClient();
 
+    // Auto-délistage : un événement reste listé jusqu'à N jours après sa date
+    // (réglé par l'admin via `settings.event_delist_days`, défaut 15). Au-delà,
+    // il n'apparaît plus dans le catalogue/la recherche — mais sa PAGE reste en
+    // ligne (accessible par URL, pour le référencement).
+    const { data: delistRow } = await supabase
+      .from("settings")
+      .select("value")
+      .eq("key", "event_delist_days")
+      .maybeSingle();
+    const delistDays = Number((delistRow as { value: string } | null)?.value);
+    const floorDays = Number.isFinite(delistDays) && delistDays >= 0 ? delistDays : 15;
+    const delistFloor = new Date(Date.now() - floorDays * 86_400_000).toISOString();
+
     // Rayon km : on résout d'abord les lieux dans le périmètre (PostGIS).
     let venueIds: string[] | null = null;
     if (
@@ -96,7 +109,12 @@ export async function getApprovedEvents(
       .from("events")
       .select(EVENT_WITH_RELATIONS)
       .eq("status", "approved")
-      .gte("start_date", filters.dateFrom ?? new Date().toISOString())
+      .gte(
+        "start_date",
+        filters.dateFrom && filters.dateFrom > delistFloor
+          ? filters.dateFrom
+          : delistFloor
+      )
       .order("is_top", { ascending: false })
       .order("start_date", { ascending: true })
       .limit(100);

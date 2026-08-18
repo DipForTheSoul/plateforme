@@ -32,6 +32,7 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
   const [q, setQ] = useState(searchParams.get("q") ?? "");
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [locating, setLocating] = useState(false);
+  const [geoError, setGeoError] = useState<string | null>(null);
 
   const setParams = useCallback(
     (updates: Record<string, string | undefined>) => {
@@ -142,6 +143,11 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
       setParams({ rayon: undefined, lat: undefined, lng: undefined });
       return;
     }
+    setGeoError(null);
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setGeoError(t("filters.geoUnsupported"));
+      return;
+    }
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -152,8 +158,15 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
           lng: position.coords.longitude.toFixed(5),
         });
       },
-      () => setLocating(false),
-      { timeout: 8000 }
+      (error) => {
+        setLocating(false);
+        setGeoError(
+          error.code === error.PERMISSION_DENIED
+            ? t("filters.geoDenied")
+            : t("filters.geoUnavailable")
+        );
+      },
+      { timeout: 8000, enableHighAccuracy: false }
     );
   }
 
@@ -225,7 +238,9 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
 
       {/* Filtres : repliés par défaut sur mobile, toujours visibles sur desktop (§8) */}
       <div className={`${showFilters ? "flex" : "hidden"} flex-col gap-4 rounded-2xl border border-soul-bronze/15 bg-white p-4 md:flex`}>
-          <div className="grid gap-3 sm:grid-cols-2">
+          {/* Filtres empilés (1 colonne) : la colonne latérale est étroite,
+              en 2 colonnes le texte des menus était tronqué. */}
+          <div className="grid gap-3">
             <select value={searchParams.get("categorie") ?? ""}
               onChange={(e) => setParams({ categorie: e.target.value || undefined })}
               className="field" aria-label={t("filters.category")}>
@@ -314,6 +329,12 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
             )}
             <span className="text-xs text-soul-bronze">{t("filters.radiusHelp")}</span>
           </div>
+
+          {geoError && (
+            <p className="rounded-lg bg-soul-sand/60 px-3 py-2 text-xs text-soul-brown">
+              {geoError}
+            </p>
+          )}
 
           <EventCalendar
             eventDays={eventDays}

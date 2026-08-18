@@ -6,7 +6,7 @@ import { getVenueById } from "@/lib/queries";
 import { createClient } from "@/lib/supabase/server";
 import { EVENT_WITH_RELATIONS, mapEventRow, type EventRowRaw } from "@/types/database";
 import { formatVenueLocation } from "@/lib/utils";
-import { MapPin, Navigation, Users } from "lucide-react";
+import { Globe, MapPin, Navigation, Users } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +47,12 @@ export default async function VenuePage({
   const mapsDirections = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
     `${venue.address}, ${venue.city ?? ""} ${venue.country}`
   )}`;
+  const rawWebsite = venue.contact?.website?.trim();
+  const websiteUrl = rawWebsite
+    ? /^https?:\/\//i.test(rawWebsite)
+      ? rawWebsite
+      : `https://${rawWebsite}`
+    : null;
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
@@ -77,19 +83,31 @@ export default async function VenuePage({
           )}
         </div>
 
-        <a
-          href={mapsDirections}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-primary mt-6 !py-2.5"
-        >
-          <Navigation className="h-4 w-4" /> Comment s&apos;y rendre
-        </a>
+        <div className="mt-6 flex flex-wrap items-center gap-4">
+          {websiteUrl && (
+            <a
+              href={websiteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm font-medium text-soul-violet underline underline-offset-2 hover:text-soul-violet-dark"
+            >
+              <Globe className="h-4 w-4" /> Site web
+            </a>
+          )}
+          <a
+            href={mapsDirections}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-primary !py-2.5 sm:ml-auto"
+          >
+            <Navigation className="h-4 w-4" /> Comment s&apos;y rendre
+          </a>
+        </div>
       </header>
 
 
       {venue.lat !== null && venue.lng !== null && (
-        <div className="mt-6 max-w-3xl">
+        <div className="mt-6">
           <div className="overflow-hidden rounded-2xl border border-soul-bronze/20 shadow-sm">
             <iframe
               title={`Carte — ${venue.name}`}
