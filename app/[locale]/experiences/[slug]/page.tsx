@@ -241,10 +241,10 @@ export default async function EventPage({
         <p className="flex items-center gap-3 text-sm text-soul-ink">
           <Clock className="h-4 w-4 shrink-0 text-soul-violet" />
           {isMultiDay ? (
-            dayCount ? `Durée : ${dayCount} jours` : "Sur plusieurs jours"
+            dayCount ? t("durationDays", { count: dayCount }) : t("multiDay")
           ) : (
             <>
-              {endTime ? `de ${startTime} → ${endTime}` : startTime}
+              {endTime ? t("timeFromTo", { from: startTime, to: endTime }) : startTime}
               {durationLabel && <> · durée {durationLabel}</>}
             </>
           )}

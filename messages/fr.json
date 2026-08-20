@@ -141,6 +141,9 @@
     "date": "Date",
     "schedule": "Horaire",
     "duration": "Durée",
+    "durationDays": "Durée : {count} jours",
+    "multiDay": "Sur plusieurs jours",
+    "timeFromTo": "de {from} → {to}",
     "price": "Prix",
     "languages": "Langues",
     "venue": "Lieu",
@@ -176,7 +179,10 @@
     "notFound": "Ce lieu n'existe pas.",
     "pageTitle": "Les lieux",
     "pageSubtitle": "Les espaces qui accueillent les expériences ForTheSoul, en Suisse et au-delà.",
-    "empty": "Aucun lieu pour le moment."
+    "empty": "Aucun lieu pour le moment.",
+    "website": "Site web",
+    "directions": "Comment s'y rendre",
+    "openInOsm": "Ouvrir dans OpenStreetMap"
   },
   "favorites": {
     "title": "Mes favoris",

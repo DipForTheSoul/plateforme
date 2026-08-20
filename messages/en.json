@@ -141,6 +141,9 @@
     "date": "Date",
     "schedule": "Time",
     "duration": "Duration",
+    "durationDays": "Duration: {count} days",
+    "multiDay": "Over several days",
+    "timeFromTo": "{from} → {to}",
     "price": "Price",
     "languages": "Languages",
     "venue": "Venue",
@@ -176,7 +179,10 @@
     "notFound": "This venue doesn't exist.",
     "pageTitle": "The venues",
     "pageSubtitle": "The spaces hosting ForTheSoul experiences, in Switzerland and beyond.",
-    "empty": "No venues yet."
+    "empty": "No venues yet.",
+    "website": "Website",
+    "directions": "How to get there",
+    "openInOsm": "Open in OpenStreetMap"
   },
   "favorites": {
     "title": "My favourites",

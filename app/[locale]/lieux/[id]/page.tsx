@@ -91,7 +91,7 @@ export default async function VenuePage({
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm font-medium text-soul-violet underline underline-offset-2 hover:text-soul-violet-dark"
             >
-              <Globe className="h-4 w-4" /> Site web
+              <Globe className="h-4 w-4" /> {t("website")}
             </a>
           )}
           <a
@@ -100,7 +100,7 @@ export default async function VenuePage({
             rel="noopener noreferrer"
             className="btn-primary !py-2.5 sm:ml-auto"
           >
-            <Navigation className="h-4 w-4" /> Comment s&apos;y rendre
+            <Navigation className="h-4 w-4" /> {t("directions")}
           </a>
         </div>
       </header>
@@ -123,7 +123,7 @@ export default async function VenuePage({
             rel="noopener noreferrer"
             className="mt-2 inline-flex items-center gap-1 text-sm text-soul-terracotta underline"
           >
-            Ouvrir dans OpenStreetMap ↗
+            {t("openInOsm")} ↗
           </a>
         </div>
       )}
