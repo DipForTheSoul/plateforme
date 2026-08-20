@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getVenues } from "@/lib/queries";
-import { formatVenueLocation } from "@/lib/utils";
+import { formatVenueLocationFull } from "@/lib/utils";
 import { MapPin, Users } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -46,10 +46,9 @@ export default async function VenuesPage({
               className="card group flex h-full flex-col p-6 transition hover:shadow-lg"
             >
               <h2 className="font-serif text-xl text-soul-brown">{v.name}</h2>
-              <p className="mt-1 flex items-center gap-1.5 text-sm text-soul-bronze">
+              <p className="mt-2.5 flex items-center gap-1.5 text-sm text-soul-bronze">
                 <MapPin className="h-3.5 w-3.5 shrink-0 text-soul-violet" />
-                {formatVenueLocation(v.city, v.country)}
-                {v.canton && <> · {v.canton}</>}
+                {formatVenueLocationFull(v.city, v.canton, v.country)}
               </p>
               {v.description && (
                 <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-soul-ink/70">

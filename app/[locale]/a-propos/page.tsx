@@ -55,30 +55,39 @@ export default async function AboutPage({
 
         <div className="flex flex-col gap-5 text-soul-ink/85">
           <p>
-            ForTheSoul est née d&apos;une conviction simple : les expériences qui
-            transforment ne se choisissent pas avec un algorithme, mais avec le
-            cœur. Créateur de la <strong>Humanic Dance</strong> et facilitateur
-            de voyages sonores depuis Neuchâtel, Didier Picamoles a rencontré,
-            dansé et respiré avec chacune des personnes présentes sur cette
-            plateforme.
+            ForTheSoul est née d’un besoin : rassembler en un même lieu celles et
+            ceux qui proposent des expériences, celles et ceux qui recherchent des
+            expériences authentiques qui nourrissent l’âme, et celles et ceux qui
+            proposent des lieux pour les accueillir.
           </p>
           <p>
-            Ici, pas de catalogue infini ni de places achetées : chaque
-            praticien·ne et chaque expérience sont <strong>validés
-            personnellement par Didier</strong>. C&apos;est plus lent, c&apos;est
-            plus exigeant — et c&apos;est exactement pour cela que vous pouvez
-            réserver les yeux fermés.
+            L’objectif est de faciliter les connexions entre ces trois univers et
+            de faire émerger une véritable communauté suisse, avec la possibilité
+            de proposer également des expériences et des événements à l’étranger.
           </p>
           <p>
-            De la danse extatique aux bains de gongs, des retraites de silence en
-            Valais aux immersions dans la jungle du Costa Rica, ForTheSoul
-            rassemble une communauté suisse et internationale qui partage la même
-            intention : se retrouver, ensemble, en profondeur.
+            Créateur de la <strong>Humanic Dance</strong> et d’expériences
+            immersives, Didier a rencontré, dansé et partagé de nombreuses
+            expériences avec les personnes présentes sur cette plateforme, comme
+            co-créateur, danseur ou participant.
           </p>
+          <p>
+            C’est aussi ce qui fait la particularité de ForTheSoul : chaque
+            praticien·ne et chaque expérience sont personnellement validés. Un
+            choix plus lent et plus exigeant, mais qui permet de privilégier la
+            qualité plutôt que la quantité.
+          </p>
+          <p>
+            Retraites, danse extatique, méditation, voyages sonores, cercles,
+            expériences immersives en Suisse ou à l’étranger : ForTheSoul rassemble
+            des propositions qui invitent à ralentir, ressentir, explorer et
+            revenir à ce qui compte vraiment.
+          </p>
+          <p>Merci de soutenir ForTheSoul par ta présence, tes expériences ou ton lieu.</p>
           <p className="rounded-2xl bg-soul-sand/40 p-5 font-serif text-lg italic text-soul-brown">
-            « Ce que je valide, je l&apos;ai vécu. Ce que je recommande, je le
-            recommanderais à mes proches. » — Didier
-            {/* PLACEHOLDER — citation à valider avec Didier */}
+            « Je te souhaite de vivre les mêmes magnifiques expériences que celles
+            que j’ai vécues. »
+            <span className="mt-2 block text-sm not-italic text-soul-bronze">Didier</span>
           </p>
           <div className="mt-2 flex flex-wrap gap-3">
             <Link href="/experiences" className="btn-accent">

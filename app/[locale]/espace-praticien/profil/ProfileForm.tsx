@@ -66,7 +66,9 @@ export function ProfileForm({
         </div>
         <div>
           <label htmlFor="phone" className="label">Téléphone</label>
-          <input id="phone" name="phone" defaultValue={practitioner.contact.phone ?? ""} className="field" />
+          <input id="phone" name="phone" defaultValue={practitioner.contact.phone ?? ""}
+            placeholder="+41 78 123 45 67" className="field" />
+          <p className="mt-1 text-xs text-soul-bronze">Avec l&apos;indicatif pays (ex. +41 78 123 45 67).</p>
         </div>
         <div>
           <label htmlFor="website" className="label">Site web</label>

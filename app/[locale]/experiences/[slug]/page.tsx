@@ -182,31 +182,29 @@ export default async function EventPage({
         </div>
       )}
 
-      <div className="mt-8 flex flex-wrap items-start justify-between gap-4">
-        <div>
-          {event.categories.length > 0 && (
-            <span className="flex flex-wrap gap-1.5">
-              {event.categories.map((c) => (
-                <span key={c.id} className="badge">{c.name}</span>
-              ))}
-            </span>
-          )}
-          <h1 className="mt-2 text-3xl text-soul-brown sm:text-4xl">{event.title}</h1>
-          {event.practitioner && (
-            <p className="mt-2 text-soul-bronze">
-              {t("practitioner")}{" "}
-              <Link href={`/praticiens/${event.practitioner.slug}`}
-                className="font-medium text-soul-brown underline">
-                {event.practitioner.name}
-              </Link>{" "}
-              · <span className="text-xs">✓ {tCommon("validatedByDidier")}</span>
-            </p>
-          )}
-          {/* Note/avis masqués — module d'avis = Section 3 (arbitrage Victor). */}
-        </div>
-        <p className="font-serif text-2xl text-soul-brown">
+      <div className="mt-8">
+        {event.categories.length > 0 && (
+          <span className="flex flex-wrap gap-1.5">
+            {event.categories.map((c) => (
+              <span key={c.id} className="badge">{c.name}</span>
+            ))}
+          </span>
+        )}
+        <h1 className="mt-2 text-3xl text-soul-brown sm:text-4xl">{event.title}</h1>
+        {event.practitioner && (
+          <p className="mt-2 text-soul-bronze">
+            {t("practitioner")}{" "}
+            <Link href={`/praticiens/${event.practitioner.slug}`}
+              className="font-medium text-soul-brown underline">
+              {event.practitioner.name}
+            </Link>{" "}
+            · <span className="text-xs">✓ {tCommon("validatedByDidier")}</span>
+          </p>
+        )}
+        <p className="mt-4 font-serif text-2xl text-soul-brown">
           <Price value={event.price} baseCurrency={event.currency} freeLabel={tCommon("free")} />
         </p>
+        {/* Note/avis masqués — module d'avis = Section 3 (arbitrage Victor). */}
       </div>
 
       {/* Actions : réserver + ajouter à l'agenda */}

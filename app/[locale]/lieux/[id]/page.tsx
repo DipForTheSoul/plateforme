@@ -5,7 +5,7 @@ import { EventCard } from "@/components/EventCard";
 import { getVenueById } from "@/lib/queries";
 import { createClient } from "@/lib/supabase/server";
 import { EVENT_WITH_RELATIONS, mapEventRow, type EventRowRaw } from "@/types/database";
-import { formatVenueLocation } from "@/lib/utils";
+import { formatVenueLocationFull } from "@/lib/utils";
 import { Globe, MapPin, Navigation, Users } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -72,8 +72,7 @@ export default async function VenuePage({
           </p>
           <p className="flex items-center gap-2 text-sm text-soul-bronze/80">
             <span className="inline-block w-4 shrink-0" aria-hidden />
-            {formatVenueLocation(venue.city, venue.country)}
-            {venue.canton && <> · {venue.canton}</>}
+            {formatVenueLocationFull(venue.city, venue.canton, venue.country)}
           </p>
           {venue.capacity && (
             <p className="flex items-center gap-2 text-sm">
