@@ -61,10 +61,6 @@ export default async function HomePage({
         <div aria-hidden className="absolute inset-0 bg-soul-terracotta/15 mix-blend-multiply" />
 
         <div className="relative mx-auto max-w-3xl px-4 py-24 text-center md:py-32">
-          <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-soul-cream backdrop-blur">
-            <Sparkles className="h-3.5 w-3.5" />
-            {t("heroEyebrow")}
-          </p>
 
           <h1 className="font-serif text-4xl leading-[1.1] text-soul-cream drop-shadow-md sm:text-5xl lg:text-6xl">
             {t("heroTitle")}

@@ -1,0 +1,746 @@
+{
+ "title": "Politique de confidentialité",
+ "updated": "20 août 2026",
+ "blocks": [
+  {
+   "t": "h2",
+   "x": "1. Responsable du traitement"
+  },
+  {
+   "t": "p",
+   "x": "Le responsable du traitement des données personnelles collectées et traitées dans le cadre de ForTheSoul.ch est : ForTheSoul.ch Didier Picamoles Suisse welcome@forthesoul.ch ForTheSoul.ch est une plateforme exploitée depuis la Suisse. La présente Politique de confidentialité explique quelles données personnelles peuvent être collectées, pourquoi elles sont utilisées, avec quels tiers elles peuvent être partagées et quels sont les droits des personnes concernées. Elle s'applique au site ForTheSoul.ch , à ses fonctionnalités ainsi qu'aux services associés."
+  },
+  {
+   "t": "h2",
+   "x": "2. Principes applicables"
+  },
+  {
+   "t": "p",
+   "x": "ForTheSoul traite les données personnelles conformément à la législation suisse applicable en matière de protection des données, notamment à la Loi fédérale sur la protection des données (LPD) et à son ordonnance d'application. ForTheSoul applique notamment les principes de :"
+  },
+  {
+   "t": "li",
+   "x": "transparence"
+  },
+  {
+   "t": "li",
+   "x": "finalité"
+  },
+  {
+   "t": "li",
+   "x": "proportionnalité"
+  },
+  {
+   "t": "li",
+   "x": "sécurité"
+  },
+  {
+   "t": "li",
+   "x": "minimisation des données"
+  },
+  {
+   "t": "li",
+   "x": "conservation limitée des données lorsque cela est approprié."
+  },
+  {
+   "t": "p",
+   "x": "La LPD suisse protège les données personnelles des personnes physiques."
+  },
+  {
+   "t": "h2",
+   "x": "3. Données personnelles susceptibles d'être collectées"
+  },
+  {
+   "t": "p",
+   "x": "Selon l'utilisation de la plateforme, ForTheSoul peut traiter différentes catégories de données."
+  },
+  {
+   "t": "h3",
+   "x": "3.1 Données fournies directement par l'utilisateur"
+  },
+  {
+   "t": "p",
+   "x": "Il peut notamment s'agir de :"
+  },
+  {
+   "t": "li",
+   "x": "prénom et nom"
+  },
+  {
+   "t": "li",
+   "x": "adresse e-mail"
+  },
+  {
+   "t": "li",
+   "x": "numéro de téléphone"
+  },
+  {
+   "t": "li",
+   "x": "adresse ou région"
+  },
+  {
+   "t": "li",
+   "x": "langue préférée"
+  },
+  {
+   "t": "li",
+   "x": "informations relatives au profil"
+  },
+  {
+   "t": "li",
+   "x": "photographie ou autre image lorsque l'utilisateur choisit d'en publier une"
+  },
+  {
+   "t": "li",
+   "x": "informations communiquées dans un formulaire"
+  },
+  {
+   "t": "li",
+   "x": "messages échangés avec ForTheSoul ou avec un Prestataire"
+  },
+  {
+   "t": "li",
+   "x": "informations relatives à une inscription ou réservation."
+  },
+  {
+   "t": "p",
+   "x": "Les données effectivement demandées dépendent de la fonctionnalité utilisée."
+  },
+  {
+   "t": "h3",
+   "x": "3.2 Données relatives aux Prestataires"
+  },
+  {
+   "t": "p",
+   "x": "Lorsqu'une personne crée un profil de Prestataire, ForTheSoul peut également traiter :"
+  },
+  {
+   "t": "li",
+   "x": "nom ou nom commercial"
+  },
+  {
+   "t": "li",
+   "x": "coordonnées professionnelles"
+  },
+  {
+   "t": "li",
+   "x": "adresse professionnelle"
+  },
+  {
+   "t": "li",
+   "x": "site Internet"
+  },
+  {
+   "t": "li",
+   "x": "description de l'activité"
+  },
+  {
+   "t": "li",
+   "x": "informations relatives aux expériences proposées"
+  },
+  {
+   "t": "li",
+   "x": "photographies, logos et autres contenus"
+  },
+  {
+   "t": "li",
+   "x": "informations nécessaires à la facturation"
+  },
+  {
+   "t": "li",
+   "x": "informations relatives aux paiements lorsque celles-ci sont nécessaires."
+  },
+  {
+   "t": "h3",
+   "x": "3.3 Données techniques"
+  },
+  {
+   "t": "p",
+   "x": "Lorsqu'une personne visite le site, certaines données techniques peuvent être automatiquement enregistrées, notamment :"
+  },
+  {
+   "t": "li",
+   "x": "adresse IP"
+  },
+  {
+   "t": "li",
+   "x": "date et heure de connexion"
+  },
+  {
+   "t": "li",
+   "x": "pages consultées"
+  },
+  {
+   "t": "li",
+   "x": "navigateur et système d'exploitation"
+  },
+  {
+   "t": "li",
+   "x": "type d'appareil"
+  },
+  {
+   "t": "li",
+   "x": "langue du navigateur"
+  },
+  {
+   "t": "li",
+   "x": "informations relatives à la session"
+  },
+  {
+   "t": "li",
+   "x": "données techniques nécessaires à la sécurité et au fonctionnement du site."
+  },
+  {
+   "t": "h2",
+   "x": "4. Finalités du traitement"
+  },
+  {
+   "t": "p",
+   "x": "ForTheSoul utilise les données personnelles notamment pour :"
+  },
+  {
+   "t": "li",
+   "x": "fournir et faire fonctionner la plateforme"
+  },
+  {
+   "t": "li",
+   "x": "créer et gérer les comptes utilisateurs"
+  },
+  {
+   "t": "li",
+   "x": "publier et administrer les profils et offres des Prestataires"
+  },
+  {
+   "t": "li",
+   "x": "permettre la mise en relation entre utilisateurs et Prestataires"
+  },
+  {
+   "t": "li",
+   "x": "gérer les demandes, inscriptions ou réservations lorsqu'elles sont effectuées via la"
+  },
+  {
+   "t": "p",
+   "x": "plateforme ;"
+  },
+  {
+   "t": "li",
+   "x": "communiquer avec les utilisateurs"
+  },
+  {
+   "t": "li",
+   "x": "répondre aux demandes envoyées à ForTheSoul"
+  },
+  {
+   "t": "li",
+   "x": "assurer la sécurité de la plateforme"
+  },
+  {
+   "t": "li",
+   "x": "prévenir les abus et les utilisations frauduleuses"
+  },
+  {
+   "t": "li",
+   "x": "améliorer les fonctionnalités et l'expérience utilisateur"
+  },
+  {
+   "t": "li",
+   "x": "analyser l'utilisation de la plateforme"
+  },
+  {
+   "t": "li",
+   "x": "assurer la facturation et la gestion administrative"
+  },
+  {
+   "t": "li",
+   "x": "envoyer des communications relatives au fonctionnement du service"
+  },
+  {
+   "t": "li",
+   "x": "envoyer, lorsque cela est autorisé, des communications marketing"
+  },
+  {
+   "t": "li",
+   "x": "promouvoir ForTheSoul et les expériences proposées sur la plateforme"
+  },
+  {
+   "t": "li",
+   "x": "respecter les obligations légales applicables."
+  },
+  {
+   "t": "p",
+   "x": "La collecte et l'utilisation des données sont limitées aux finalités pertinentes pour lesquelles elles sont traitées. Le PFPDT recommande notamment que la déclaration de confidentialité indique clairement quelles données sont collectées, pourquoi elles sont utilisées, qui peut y accéder, où elles sont conservées et si elles sont transmises à l'étranger."
+  },
+  {
+   "t": "h2",
+   "x": "5. Création d'un compte"
+  },
+  {
+   "t": "p",
+   "x": "Lorsqu'un utilisateur crée un compte, ForTheSoul traite les données nécessaires à la création et à la gestion de celui-ci. Ces données peuvent notamment comprendre le nom, l'adresse e-mail, les informations de connexion et les informations ajoutées au profil. L'utilisateur peut modifier les informations de son profil lorsque cette fonctionnalité est disponible. Certaines données peuvent toutefois devoir être conservées pendant une durée déterminée pour des raisons légales, contractuelles ou administratives."
+  },
+  {
+   "t": "h2",
+   "x": "6. Profils et contenus publiés"
+  },
+  {
+   "t": "p",
+   "x": "ForTheSoul permet aux Prestataires de publier des informations relatives à leurs activités. Certaines informations publiées sur un profil peuvent être accessibles publiquement, notamment :"
+  },
+  {
+   "t": "li",
+   "x": "nom ou nom commercial"
+  },
+  {
+   "t": "li",
+   "x": "description"
+  },
+  {
+   "t": "li",
+   "x": "photographie"
+  },
+  {
+   "t": "li",
+   "x": "logo"
+  },
+  {
+   "t": "li",
+   "x": "site Internet"
+  },
+  {
+   "t": "li",
+   "x": "coordonnées professionnelles"
+  },
+  {
+   "t": "li",
+   "x": "événements ou expériences proposés"
+  },
+  {
+   "t": "li",
+   "x": "localisation de l'activité."
+  },
+  {
+   "t": "p",
+   "x": "Les utilisateurs doivent éviter de publier sur leur profil ou dans des contenus publics des données personnelles de tiers sans disposer des droits ou autorisations nécessaires."
+  },
+  {
+   "t": "h2",
+   "x": "7. Mise en relation entre utilisateurs et Prestataires"
+  },
+  {
+   "t": "p",
+   "x": "L'une des fonctions principales de ForTheSoul est de permettre la découverte et la mise en relation entre personnes recherchant des expériences et personnes proposant ces expériences. Lorsque cela est nécessaire au fonctionnement de cette mise en relation, certaines informations peuvent être transmises au Prestataire concerné. ForTheSoul ne transmet pas davantage de données que nécessaire à la finalité concernée, sous réserve des obligations légales et des fonctionnalités choisies par l'utilisateur."
+  },
+  {
+   "t": "h2",
+   "x": "8. Communications"
+  },
+  {
+   "t": "p",
+   "x": "ForTheSoul peut utiliser l'adresse e-mail ou d'autres coordonnées fournies par l'utilisateur pour :"
+  },
+  {
+   "t": "li",
+   "x": "répondre à une demande"
+  },
+  {
+   "t": "li",
+   "x": "envoyer des informations nécessaires au fonctionnement d'un compte"
+  },
+  {
+   "t": "li",
+   "x": "confirmer ou modifier une opération"
+  },
+  {
+   "t": "li",
+   "x": "informer d'un changement important affectant la plateforme"
+  },
+  {
+   "t": "li",
+   "x": "assurer la sécurité du compte."
+  },
+  {
+   "t": "p",
+   "x": "Les communications commerciales sont traitées conformément aux exigences légales applicables. Lorsqu'un consentement est nécessaire, l'utilisateur peut le retirer à tout moment."
+  },
+  {
+   "t": "h2",
+   "x": "9. Newsletter et communications marketing"
+  },
+  {
+   "t": "p",
+   "x": "Lorsque ForTheSoul propose une newsletter ou des communications marketing, l'inscription peut nécessiter un consentement lorsque celui-ci est requis par la législation applicable. L'utilisateur peut se désinscrire à tout moment au moyen du lien prévu dans les communications ou en contactant ForTheSoul. Le retrait du consentement n'affecte pas la licéité des traitements effectués avant ce retrait."
+  },
+  {
+   "t": "h2",
+   "x": "10. Cookies et technologies similaires"
+  },
+  {
+   "t": "p",
+   "x": "ForTheSoul peut utiliser des cookies et technologies similaires. Les cookies peuvent notamment servir à :"
+  },
+  {
+   "t": "li",
+   "x": "assurer le fonctionnement technique du site"
+  },
+  {
+   "t": "li",
+   "x": "maintenir une session"
+  },
+  {
+   "t": "li",
+   "x": "mémoriser certaines préférences"
+  },
+  {
+   "t": "li",
+   "x": "mesurer l'utilisation du site"
+  },
+  {
+   "t": "li",
+   "x": "améliorer les services"
+  },
+  {
+   "t": "li",
+   "x": "comprendre l'origine des visiteurs"
+  },
+  {
+   "t": "li",
+   "x": "mesurer l'efficacité de campagnes publicitaires"
+  },
+  {
+   "t": "li",
+   "x": "personnaliser certaines communications ou publicités lorsque cela est applicable."
+  },
+  {
+   "t": "p",
+   "x": "Les cookies strictement nécessaires au fonctionnement du site peuvent être utilisés sans consentement lorsqu'ils sont nécessaires à la fourniture du service concerné. Les cookies et technologies de suivi non nécessaires sont traités conformément aux exigences applicables en matière de protection des données et, lorsque nécessaire, avec le consentement de l'utilisateur. Le PFPDT précise que les cookies et technologies similaires peuvent permettre un suivi important des utilisateurs et que certains usages, notamment certains traitements à des fins de publicité personnalisée et de profilage, peuvent nécessiter un consentement selon les circonstances. L'utilisateur peut gérer ses préférences au moyen du mécanisme de gestion des cookies proposé sur le site, lorsque celui-ci est disponible."
+  },
+  {
+   "t": "h2",
+   "x": "11. Google Analytics"
+  },
+  {
+   "t": "p",
+   "x": "ForTheSoul peut utiliser Google Analytics afin de comprendre comment les visiteurs utilisent la plateforme et d'améliorer celle-ci. Google Analytics peut notamment traiter des informations relatives :"
+  },
+  {
+   "t": "li",
+   "x": "aux pages consultées"
+  },
+  {
+   "t": "li",
+   "x": "aux interactions avec le site"
+  },
+  {
+   "t": "li",
+   "x": "au type d'appareil"
+  },
+  {
+   "t": "li",
+   "x": "au navigateur"
+  },
+  {
+   "t": "li",
+   "x": "à la région approximative"
+  },
+  {
+   "t": "li",
+   "x": "à la provenance du trafic"
+  },
+  {
+   "t": "li",
+   "x": "à des identifiants en ligne."
+  },
+  {
+   "t": "p",
+   "x": "Les modalités concrètes de traitement dépendent de la configuration mise en place par ForTheSoul. Lorsque l'utilisation de Google Analytics repose sur le consentement de l'utilisateur, celui-ci peut être donné, refusé ou retiré au moyen du mécanisme de gestion des cookies. Les données peuvent être traitées par Google dans des pays situés hors de Suisse."
+  },
+  {
+   "t": "h2",
+   "x": "12. Google Tag Manager"
+  },
+  {
+   "t": "p",
+   "x": "ForTheSoul peut utiliser Google Tag Manager afin de gérer techniquement les balises et outils intégrés au site. Google Tag Manager est principalement un système de gestion technique des balises. Les données effectivement transmises à des tiers dépendent notamment des balises qui sont configurées dans le système. ForTheSoul veille à ce que les balises non nécessaires au fonctionnement du site soient déclenchées conformément aux préférences de l'utilisateur et aux exigences applicables."
+  },
+  {
+   "t": "h2",
+   "x": "13. Google Ads"
+  },
+  {
+   "t": "p",
+   "x": "ForTheSoul peut utiliser des services publicitaires de Google, notamment Google Ads , afin de promouvoir la plateforme et de mesurer l'efficacité des campagnes publicitaires. Selon la configuration utilisée, ces services peuvent notamment permettre :"
+  },
+  {
+   "t": "li",
+   "x": "de mesurer les conversions"
+  },
+  {
+   "t": "li",
+   "x": "d'identifier l'origine d'une visite"
+  },
+  {
+   "t": "li",
+   "x": "de mesurer les campagnes publicitaires"
+  },
+  {
+   "t": "li",
+   "x": "de créer des audiences"
+  },
+  {
+   "t": "li",
+   "x": "de proposer de la publicité personnalisée."
+  },
+  {
+   "t": "p",
+   "x": "Lorsque le traitement nécessite un consentement, les technologies concernées ne sont activées qu'après obtention de celui-ci."
+  },
+  {
+   "t": "h2",
+   "x": "14. Meta / Facebook et Instagram"
+  },
+  {
+   "t": "p",
+   "x": "ForTheSoul peut utiliser les services publicitaires et analytiques de Meta , notamment pour mesurer l'efficacité de campagnes publicitaires et promouvoir ForTheSoul sur Facebook et Instagram. Selon la configuration utilisée, Meta peut recevoir notamment des informations relatives à :"
+  },
+  {
+   "t": "li",
+   "x": "la visite du site"
+  },
+  {
+   "t": "li",
+   "x": "certaines interactions"
+  },
+  {
+   "t": "li",
+   "x": "l'appareil utilisé"
+  },
+  {
+   "t": "li",
+   "x": "des identifiants en ligne"
+  },
+  {
+   "t": "li",
+   "x": "des événements liés aux conversions."
+  },
+  {
+   "t": "p",
+   "x": "Lorsque le traitement nécessite un consentement, les technologies concernées sont activées conformément aux préférences exprimées par l'utilisateur. Meta peut traiter des données en dehors de la Suisse."
+  },
+  {
+   "t": "h2",
+   "x": "15. Autres services et prestataires"
+  },
+  {
+   "t": "p",
+   "x": "techniques ForTheSoul peut faire appel à des prestataires externes nécessaires au fonctionnement de la plateforme, notamment pour :"
+  },
+  {
+   "t": "li",
+   "x": "l'hébergement"
+  },
+  {
+   "t": "li",
+   "x": "les bases de données"
+  },
+  {
+   "t": "li",
+   "x": "l'envoi d'e-mails"
+  },
+  {
+   "t": "li",
+   "x": "les paiements"
+  },
+  {
+   "t": "li",
+   "x": "l'analyse technique"
+  },
+  {
+   "t": "li",
+   "x": "la sécurité"
+  },
+  {
+   "t": "li",
+   "x": "la gestion des comptes"
+  },
+  {
+   "t": "li",
+   "x": "les services cartographiques"
+  },
+  {
+   "t": "li",
+   "x": "les outils de communication"
+  },
+  {
+   "t": "li",
+   "x": "les services marketing."
+  },
+  {
+   "t": "p",
+   "x": "Ces prestataires peuvent traiter des données personnelles pour le compte de ForTheSoul dans la mesure nécessaire à leurs services. Lorsque cela est requis, ForTheSoul prend les mesures contractuelles et organisationnelles appropriées."
+  },
+  {
+   "t": "h2",
+   "x": "16. Paiements"
+  },
+  {
+   "t": "p",
+   "x": "Lorsque ForTheSoul permet le paiement en ligne, les données nécessaires au traitement du paiement peuvent être transmises au prestataire de paiement concerné. ForTheSoul ne conserve pas nécessairement les données complètes de carte bancaire. Le traitement des paiements est également soumis aux conditions et politiques de confidentialité du prestataire de paiement utilisé."
+  },
+  {
+   "t": "h2",
+   "x": "17. Transmission de données à l'étranger"
+  },
+  {
+   "t": "p",
+   "x": "Certains prestataires techniques utilisés par ForTheSoul peuvent être établis en dehors de la Suisse. Des données personnelles peuvent ainsi être transférées ou accessibles depuis l'étranger. Lorsque les données sont transférées vers un pays ne bénéficiant pas d'un niveau de protection reconnu comme adéquat par la Suisse, ForTheSoul met en œuvre les garanties prévues par la législation applicable lorsque celles-ci sont nécessaires. La LPD prévoit notamment un cadre spécifique pour les communications de données personnelles vers l'étranger."
+  },
+  {
+   "t": "h2",
+   "x": "18. Durée de conservation"
+  },
+  {
+   "t": "p",
+   "x": "ForTheSoul conserve les données personnelles uniquement pendant la durée nécessaire à la réalisation des finalités pour lesquelles elles ont été collectées. Certaines données peuvent être conservées plus longtemps lorsqu'une obligation légale, comptable, fiscale ou contractuelle l'exige ou lorsqu'elles sont nécessaires à la constatation, à l'exercice ou à la défense de droits. Les données d'un compte peuvent notamment être supprimées ou anonymisées lorsque le compte est supprimé, sous réserve des obligations de conservation applicables."
+  },
+  {
+   "t": "h2",
+   "x": "19. Sécurité"
+  },
+  {
+   "t": "p",
+   "x": "ForTheSoul prend des mesures techniques et organisationnelles appropriées afin de protéger les données personnelles contre notamment :"
+  },
+  {
+   "t": "li",
+   "x": "la perte"
+  },
+  {
+   "t": "li",
+   "x": "la destruction"
+  },
+  {
+   "t": "li",
+   "x": "l'accès non autorisé"
+  },
+  {
+   "t": "li",
+   "x": "la modification non autorisée"
+  },
+  {
+   "t": "li",
+   "x": "la divulgation non autorisée."
+  },
+  {
+   "t": "p",
+   "x": "Aucune transmission ou conservation de données sur Internet ne peut toutefois être garantie comme étant absolument sûre."
+  },
+  {
+   "t": "h2",
+   "x": "20. Droits des personnes concernées"
+  },
+  {
+   "t": "p",
+   "x": "Dans les limites prévues par la législation suisse, toute personne concernée peut notamment demander :"
+  },
+  {
+   "t": "li",
+   "x": "si ForTheSoul traite des données personnelles la concernant"
+  },
+  {
+   "t": "li",
+   "x": "quelles données sont traitées"
+  },
+  {
+   "t": "li",
+   "x": "dans quel but elles sont traitées"
+  },
+  {
+   "t": "li",
+   "x": "à qui elles sont communiquées"
+  },
+  {
+   "t": "li",
+   "x": "pendant combien de temps elles sont conservées"
+  },
+  {
+   "t": "li",
+   "x": "la rectification de données inexactes"
+  },
+  {
+   "t": "li",
+   "x": "l'effacement de certaines données"
+  },
+  {
+   "t": "li",
+   "x": "la remise ou la transmission de certaines données lorsque les conditions légales sont"
+  },
+  {
+   "t": "p",
+   "x": "réunies. La LPD prévoit notamment un droit d'accès renforcé ainsi qu'un droit à la remise ou à la transmission de certaines données personnelles sous forme électronique lorsque les conditions légales sont remplies. Pour exercer ses droits, il est possible de contacter : [E-mail de contact à compléter] ForTheSoul peut demander des informations permettant de vérifier l'identité de la personne effectuant la demande."
+  },
+  {
+   "t": "h2",
+   "x": "21. Retrait d'un consentement"
+  },
+  {
+   "t": "p",
+   "x": "Lorsqu'un traitement repose sur le consentement de la personne concernée, celle-ci peut retirer son consentement à tout moment. Le retrait n'affecte pas la licéité des traitements effectués avant celui-ci. Pour les cookies et technologies similaires, les préférences peuvent être modifiées au moyen du mécanisme de gestion des cookies proposé sur le site lorsque celui-ci est disponible."
+  },
+  {
+   "t": "h2",
+   "x": "22. Liens vers des sites tiers"
+  },
+  {
+   "t": "p",
+   "x": "ForTheSoul peut contenir des liens vers des sites Internet ou services exploités par des tiers. ForTheSoul n'est pas responsable du traitement des données effectué sur ces sites. Il appartient à l'utilisateur de consulter les politiques de confidentialité des services concernés."
+  },
+  {
+   "t": "h2",
+   "x": "23. Modifications de la présente politique"
+  },
+  {
+   "t": "p",
+   "x": "ForTheSoul peut modifier la présente Politique de confidentialité afin de tenir compte notamment :"
+  },
+  {
+   "t": "li",
+   "x": "de l'évolution de la plateforme"
+  },
+  {
+   "t": "li",
+   "x": "de nouveaux services ou fonctionnalités"
+  },
+  {
+   "t": "li",
+   "x": "de nouveaux prestataires techniques"
+  },
+  {
+   "t": "li",
+   "x": "de modifications légales ou réglementaires"
+  },
+  {
+   "t": "li",
+   "x": "de l'évolution des pratiques en matière de protection des données."
+  },
+  {
+   "t": "p",
+   "x": "La version publiée sur ForTheSoul.ch est la version applicable. La date de dernière mise à jour figure en haut du présent document."
+  },
+  {
+   "t": "h2",
+   "x": "24. Contact"
+  },
+  {
+   "t": "p",
+   "x": "Pour toute question relative à la protection des données ou pour exercer vos droits : ForTheSoul.ch [Nom / raison sociale à compléter] [Adresse en Suisse à compléter] [Suisse] [E-mail de contact à compléter]"
+  },
+  {
+   "t": "h2",
+   "x": "25. Droit applicable"
+  },
+  {
+   "t": "p",
+   "x": "La présente Politique de confidentialité est régie par le droit suisse, sous réserve des dispositions impératives éventuellement applicables. Version : 1.0 — 20 août 2026"
+  }
+ ]
+}

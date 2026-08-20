@@ -22,7 +22,6 @@ export async function Footer() {
             <p className="font-serif text-2xl">ForTheSoul</p>
           </div>
           <p className="mt-3 text-sm text-soul-brown/70">{t("tagline")}</p>
-          <p className="mt-4 text-sm italic text-soul-bronze">{t("footer.curated")}</p>
         </div>
 
         <nav className="flex flex-col gap-2 text-sm">
@@ -41,8 +40,11 @@ export async function Footer() {
           <Link href="/inscription" className="hover:text-soul-violet">
             {t("footer.becomePractitioner")}
           </Link>
-          <Link href="/cgv" className="hover:text-soul-violet">
+          <Link href="/cgu" className="hover:text-soul-violet">
             {t("footer.terms")}
+          </Link>
+          <Link href="/confidentialite" className="hover:text-soul-violet">
+            {t("footer.privacy")}
           </Link>
         </nav>
 

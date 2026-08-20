@@ -245,7 +245,7 @@ export default async function EventPage({
           ) : (
             <>
               {endTime ? t("timeFromTo", { from: startTime, to: endTime }) : startTime}
-              {durationLabel && <> · durée {durationLabel}</>}
+              {durationLabel && <> · {t("durationInline", { value: durationLabel })}</>}
             </>
           )}
         </p>
@@ -328,7 +328,7 @@ export default async function EventPage({
             rel="noopener noreferrer"
             className="btn-primary mt-4 !py-2"
           >
-            <MapPin className="h-4 w-4" /> Voir sur Google Maps
+            <MapPin className="h-4 w-4" /> {t("viewOnMap")}
           </a>
         </div>
       )}

@@ -33,7 +33,7 @@ export function SignupForm() {
 
       <div>
         <label htmlFor="name" className="label">
-          Nom public / nom d&apos;artiste
+          {t("signupName")}
         </label>
         <input id="name" name="name" type="text" className="field" />
       </div>
