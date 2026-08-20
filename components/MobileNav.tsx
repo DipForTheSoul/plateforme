@@ -27,7 +27,7 @@ export function MobileNav({
         aria-expanded={open}
         className="rounded-lg p-2 text-soul-brown"
       >
-        {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        {open ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
       </button>
 
       {open && (
