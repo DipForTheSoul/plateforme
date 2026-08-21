@@ -5,6 +5,7 @@ import { NewsletterForm } from "@/components/NewsletterForm";
 
 export async function Footer() {
   const t = await getTranslations("common");
+  const tContact = await getTranslations("contact");
   const year = new Date().getFullYear();
 
   return (
@@ -39,6 +40,9 @@ export async function Footer() {
           </Link>
           <Link href="/inscription" className="hover:text-soul-violet">
             {t("footer.becomePractitioner")}
+          </Link>
+          <Link href="/contact" className="hover:text-soul-violet">
+            {tContact("title")}
           </Link>
           <Link href="/cgu" className="hover:text-soul-violet">
             {t("footer.terms")}

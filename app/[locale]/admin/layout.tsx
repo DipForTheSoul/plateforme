@@ -24,6 +24,7 @@ export default async function AdminLayout({
     { href: "/admin/lieux", label: "Lieux" },
     { href: "/admin/credits", label: "Crédits" },
     { href: "/admin/newsletter", label: "Newsletter" },
+    { href: "/admin/contact", label: "Messages" },
     { href: "/admin/parametres", label: "Paramètres" },
   ];
 
