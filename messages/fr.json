@@ -225,6 +225,7 @@
     "signupAsPractitioner": "Je suis praticien·ne et souhaite publier",
     "practitionerNote": "Votre fiche sera relue et validée par Didier avant publication.",
     "checkEmail": "Vérifiez votre boîte mail : un lien de confirmation vient de vous être envoyé.",
+    "checkEmailSpam": "Pensez à vérifier vos courriers indésirables (spam) si vous ne le trouvez pas.",
     "resetTitle": "Mot de passe oublié",
     "resetHelp": "Indiquez votre e-mail : nous vous enverrons un lien de réinitialisation.",
     "resetButton": "Envoyer le lien",

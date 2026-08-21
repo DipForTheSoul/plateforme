@@ -225,6 +225,7 @@
     "signupAsPractitioner": "I'm a practitioner and want to publish",
     "practitionerNote": "Your profile will be reviewed by Didier before publication.",
     "checkEmail": "Check your inbox: a confirmation link has just been sent.",
+    "checkEmailSpam": "Please check your spam or junk folder if you don't see it.",
     "resetTitle": "Forgot password",
     "resetHelp": "Enter your email: we'll send you a reset link.",
     "resetButton": "Send the link",

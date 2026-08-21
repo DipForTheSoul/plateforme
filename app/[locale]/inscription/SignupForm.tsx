@@ -13,7 +13,14 @@ export function SignupForm() {
   );
 
   if (state.success) {
-    return <p className="text-center text-sm text-soul-brown">{t("checkEmail")}</p>;
+    return (
+      <div className="flex flex-col items-center gap-3 text-center">
+        <p className="text-sm text-soul-brown">{t("checkEmail")}</p>
+        <p className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-xs text-amber-800">
+          {t("checkEmailSpam")}
+        </p>
+      </div>
+    );
   }
 
   return (

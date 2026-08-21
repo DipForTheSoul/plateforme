@@ -94,11 +94,11 @@ export async function signUp(
     },
   });
   if (error) {
-    return {
-      error: error.message.toLowerCase().includes("already")
-        ? "emailInUse"
-        : "generic",
-    };
+    console.error("[signUp] Supabase auth error:", error.message, error.status);
+    if (error.message.toLowerCase().includes("already")) return { error: "emailInUse" };
+    if (error.message.toLowerCase().includes("rate") || error.status === 429)
+      return { error: "rateLimited" };
+    return { error: "generic" };
   }
 
   // Praticien : on crée immédiatement la fiche (statut pending — validée par Didier).

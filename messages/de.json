@@ -225,6 +225,7 @@
     "signupAsPractitioner": "Ich bin Anbieter:in und möchte publizieren",
     "practitionerNote": "Dein Profil wird vor der Veröffentlichung von Didier geprüft.",
     "checkEmail": "Prüfe dein Postfach: Ein Bestätigungslink wurde soeben gesendet.",
+    "checkEmailSpam": "Bitte prüfe auch deinen Spam-Ordner, falls du die E-Mail nicht findest.",
     "resetTitle": "Passwort vergessen",
     "resetHelp": "Gib deine E-Mail an: Wir senden dir einen Link zum Zurücksetzen.",
     "resetButton": "Link senden",

@@ -16,8 +16,9 @@ function layout(title: string, body: string): string {
       <tr><td align="center">
         <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;">
           <tr>
-            <td style="background:#443420;padding:24px 32px;">
-              <span style="color:#fef6ed;font-size:22px;letter-spacing:1px;">ForTheSoul</span>
+            <td style="background:#443420;padding:24px 32px;text-align:center;">
+              <img src="${SITE_URL}/logo-icon.png" alt="ForTheSoul" width="48" height="48" style="display:inline-block;vertical-align:middle;margin-right:12px;" />
+              <span style="color:#fef6ed;font-size:22px;letter-spacing:1px;vertical-align:middle;">ForTheSoul</span>
             </td>
           </tr>
           <tr>
