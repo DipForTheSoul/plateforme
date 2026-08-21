@@ -49,52 +49,27 @@ export default async function AboutPage({
           </div>
           <figcaption className="mt-3 text-center">
             <p className="font-serif text-lg text-soul-brown">Didier Picamoles</p>
-            <p className="text-sm text-soul-bronze">Fondateur de ForTheSoul</p>
+            <p className="text-sm text-soul-bronze">{t("role")}</p>
           </figcaption>
         </figure>
 
         <div className="flex flex-col gap-5 text-soul-ink/85">
-          <p>
-            ForTheSoul est née d’un besoin : rassembler en un même lieu celles et
-            ceux qui proposent des expériences, celles et ceux qui recherchent des
-            expériences authentiques qui nourrissent l’âme, et celles et ceux qui
-            proposent des lieux pour les accueillir.
-          </p>
-          <p>
-            L’objectif est de faciliter les connexions entre ces trois univers et
-            de faire émerger une véritable communauté suisse, avec la possibilité
-            de proposer également des expériences et des événements à l’étranger.
-          </p>
-          <p>
-            Créateur de la <strong>Humanic Dance</strong> et d’expériences
-            immersives, Didier a rencontré, dansé et partagé de nombreuses
-            expériences avec les personnes présentes sur cette plateforme, comme
-            co-créateur, danseur ou participant.
-          </p>
-          <p>
-            C’est aussi ce qui fait la particularité de ForTheSoul : chaque
-            praticien·ne et chaque expérience sont personnellement validés. Un
-            choix plus lent et plus exigeant, mais qui permet de privilégier la
-            qualité plutôt que la quantité.
-          </p>
-          <p>
-            Retraites, danse extatique, méditation, voyages sonores, cercles,
-            expériences immersives en Suisse ou à l’étranger : ForTheSoul rassemble
-            des propositions qui invitent à ralentir, ressentir, explorer et
-            revenir à ce qui compte vraiment.
-          </p>
-          <p>Merci de soutenir ForTheSoul par ta présence, tes expériences ou ton lieu.</p>
+          <p>{t("p1")}</p>
+          <p>{t("p2")}</p>
+          <p>{t.rich("p3", { b: (chunks) => <strong>{chunks}</strong> })}</p>
+          <p>{t("p4")}</p>
+          <p>{t("p5")}</p>
+          <p>{t("thanks")}</p>
           <p className="rounded-2xl bg-soul-sand/40 p-5 font-serif text-lg italic text-soul-brown">
-            « Je te souhaite de vivre les mêmes magnifiques expériences que celles
-            que j’ai vécues. »
-            <span className="mt-2 block text-sm not-italic text-soul-bronze">Didier</span>
+            « {t("quote")} »
+            <span className="mt-2 block text-sm not-italic text-soul-bronze">{t("quoteAuthor")}</span>
           </p>
           <div className="mt-2 flex flex-wrap gap-3">
             <Link href="/experiences" className="btn-accent">
-              Découvrir les expériences
+              {t("ctaDiscover")}
             </Link>
             <Link href="/inscription" className="btn-secondary">
-              Rejoindre en tant que praticien·ne
+              {t("ctaJoin")}
             </Link>
           </div>
         </div>

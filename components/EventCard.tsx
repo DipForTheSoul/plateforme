@@ -12,6 +12,7 @@ import { MapPin } from "lucide-react";
 export async function EventCard({ event }: { event: EventWithRelations }) {
   const locale = (await getLocale()) as Locale;
   const t = await getTranslations("common");
+  const tCat = await getTranslations("categories");
   const visual = categoryVisual(event.category?.slug);
 
   return (
@@ -60,7 +61,7 @@ export async function EventCard({ event }: { event: EventWithRelations }) {
         <p className="text-sm text-soul-bronze">
           {event.practitioner?.name}
           {event.categories.length > 0 && (
-            <> · {event.categories.map((c) => c.name).join(" · ")}</>
+            <> · {event.categories.map((c) => (tCat.has(c.slug as never) ? tCat(c.slug as never) : c.name)).join(" · ")}</>
           )}
         </p>
         {event.description && (

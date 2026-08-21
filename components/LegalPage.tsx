@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 
 type Block = { t: "h2" | "h3" | "li" | "p"; x: string };
 
@@ -15,6 +16,7 @@ export function LegalPage({
   updated?: string;
   blocks: Block[];
 }) {
+  const t = useTranslations("common");
   const nodes: ReactNode[] = [];
   let list: string[] = [];
 
@@ -62,7 +64,7 @@ export function LegalPage({
     <div className="mx-auto max-w-3xl px-4 py-12">
       <h1 className="font-serif text-3xl text-soul-brown sm:text-4xl">{title}</h1>
       {updated && (
-        <p className="mt-2 text-sm text-soul-bronze">Dernière mise à jour : {updated}</p>
+        <p className="mt-2 text-sm text-soul-bronze">{t("lastUpdated")} : {updated}</p>
       )}
       <div className="mt-8 flex flex-col gap-3">{nodes}</div>
     </div>

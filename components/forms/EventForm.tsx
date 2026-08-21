@@ -41,6 +41,7 @@ export function EventForm({
   practitioners,
 }: Props) {
   const t = useTranslations("eventForm");
+  const tCat = useTranslations("categories");
   const action =
     actionOverride ?? (event ? updateEvent.bind(null, event.id) : createEvent);
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
@@ -166,7 +167,7 @@ export function EventForm({
                     className="flex items-center gap-1.5 rounded-full border border-soul-bronze/30 bg-white px-3 py-1.5 text-sm text-soul-brown cursor-pointer has-[:checked]:border-soul-violet has-[:checked]:bg-soul-violet/10">
                     <input type="checkbox" name="category_ids" value={c.id}
                       defaultChecked={checked} />
-                    {c.name}
+                    {tCat.has(c.slug as never) ? tCat(c.slug as never) : c.name}
                   </label>
                 );
               })}
@@ -283,7 +284,7 @@ export function EventForm({
 
         <div>
           <label htmlFor="video_url" className="label">{t("videoLabel")}</label>
-          <input id="video_url" name="video_url" type="url" placeholder="https://youtu.be/… ou https://vimeo.com/…"
+          <input id="video_url" name="video_url" type="url" placeholder={t("videoPlaceholder")}
             defaultValue={event?.video_url ?? ""} className="field" />
           <p className="mt-1 text-xs text-soul-bronze">
             {t("videoHint")}

@@ -18,6 +18,7 @@ export default async function HomePage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("home");
+  const tCat = await getTranslations("categories");
 
   const [topEvents, upcoming, categories] = await Promise.all([
     getTopEvents(4),
@@ -153,7 +154,7 @@ export default async function HomePage({
                 )}
                 <div className="relative w-full bg-gradient-to-t from-black/70 via-black/25 to-transparent p-4">
                   <span className="font-serif text-lg font-medium leading-tight text-white drop-shadow">
-                    {category.name}
+                    {tCat.has(category.slug as never) ? tCat(category.slug as never) : category.name}
                   </span>
                 </div>
               </Link>

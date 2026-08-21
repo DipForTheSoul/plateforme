@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 
 /**
@@ -9,6 +10,7 @@ import { Link, usePathname } from "@/i18n/navigation";
  */
 export function LogoLink() {
   const pathname = usePathname();
+  const t = useTranslations("common.tabbar");
 
   return (
     <Link
@@ -19,7 +21,7 @@ export function LogoLink() {
         }
       }}
       className="flex shrink-0 items-center gap-2.5"
-      aria-label="ForTheSoul — accueil"
+      aria-label={`ForTheSoul — ${t("home")}`}
     >
       <Image
         src="/logo-icon.png"

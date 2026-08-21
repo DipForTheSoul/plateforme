@@ -53,6 +53,7 @@ export default async function EventPage({
   setRequestLocale(locale);
   const t = await getTranslations("event");
   const tCommon = await getTranslations("common");
+  const tCat = await getTranslations("categories");
   const currentLocale = (await getLocale()) as Locale;
 
   const event = await getEventBySlug(slug);
@@ -186,7 +187,7 @@ export default async function EventPage({
         {event.categories.length > 0 && (
           <span className="flex flex-wrap gap-1.5">
             {event.categories.map((c) => (
-              <span key={c.id} className="badge">{c.name}</span>
+              <span key={c.id} className="badge">{tCat.has(c.slug as never) ? tCat(c.slug as never) : c.name}</span>
             ))}
           </span>
         )}

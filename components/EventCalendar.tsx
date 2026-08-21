@@ -78,12 +78,12 @@ export function EventCalendar({ eventDays, from, to, onSelect }: Props) {
       <div className="mb-2 flex items-center justify-between">
         <p className="text-sm font-semibold capitalize text-soul-brown">{monthLabel}</p>
         <div className="flex gap-1">
-          <button type="button" aria-label="Mois précédent"
+          <button type="button" aria-label={t("prevMonth")}
             onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
             className="rounded-lg p-1 text-soul-bronze hover:bg-soul-sand/50">
             <ChevronLeft className="h-4 w-4" />
           </button>
-          <button type="button" aria-label="Mois suivant"
+          <button type="button" aria-label={t("nextMonth")}
             onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
             className="rounded-lg p-1 text-soul-bronze hover:bg-soul-sand/50">
             <ChevronRight className="h-4 w-4" />

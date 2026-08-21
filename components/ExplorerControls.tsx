@@ -24,6 +24,7 @@ interface Props {
  */
 export function ExplorerControls({ categories, practitioners, countries, cantons, eventDays }: Props) {
   const t = useTranslations("events");
+  const tCat = useTranslations("categories");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -76,16 +77,18 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
   // §8 — puces des filtres actifs (visibles + retirables) pour voir d'un coup d'œil
   // quels filtres sont appliqués.
   const durationLabels: Record<string, string> = {
-    "90": "≤ 1 h 30",
-    "180": "≤ 3 h",
-    "480": "≤ 1 jour",
+    "90": t("filters.dur90"),
+    "180": t("filters.dur180"),
+    "480": t("filters.dur480"),
   };
   const activeChips: { key: string; label: string; clear: () => void }[] = [];
   const gp = (k: string) => searchParams.get(k);
   if (gp("categorie"))
     activeChips.push({
       key: "categorie",
-      label: categories.find((c) => c.slug === gp("categorie"))?.name ?? gp("categorie")!,
+      label: tCat.has(gp("categorie")! as never)
+        ? tCat(gp("categorie")! as never)
+        : (categories.find((c) => c.slug === gp("categorie"))?.name ?? gp("categorie")!),
       clear: () => setParams({ categorie: undefined }),
     });
   if (gp("langue"))
@@ -184,22 +187,24 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
         />
       </div>
 
-      {/* Dates — primordial, toujours visible (de / à) */}
+      {/* Dates — primordial, toujours visible (de / à).
+          min-w-0 sur la cellule ET l'input : sans ça, les <input type="date">
+          iOS gardent leur largeur native intrinsèque et débordent de la grille. */}
       <div className="grid grid-cols-2 gap-3">
-        <div>
+        <div className="min-w-0">
           <label htmlFor="date-from" className="label">{t("filters.from")}</label>
           <input id="date-from" type="date"
             value={searchParams.get("du") ?? ""}
             onChange={(e) => setParams({ du: e.target.value || undefined })}
-            className="field" />
+            className="field min-w-0 max-w-full appearance-none" />
         </div>
-        <div>
+        <div className="min-w-0">
           <label htmlFor="date-to" className="label">{t("filters.to")}</label>
           <input id="date-to" type="date"
             value={searchParams.get("au") ?? ""}
             min={searchParams.get("du") ?? undefined}
             onChange={(e) => setParams({ au: e.target.value || undefined })}
-            className="field" />
+            className="field min-w-0 max-w-full appearance-none" />
         </div>
       </div>
 
@@ -246,7 +251,7 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
               className="field" aria-label={t("filters.category")}>
               <option value="">{t("filters.allCategories")}</option>
               {categories.map((c) => (
-                <option key={c.slug} value={c.slug}>{c.name}</option>
+                <option key={c.slug} value={c.slug}>{tCat.has(c.slug as never) ? tCat(c.slug as never) : c.name}</option>
               ))}
             </select>
 
@@ -302,9 +307,9 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
               onChange={(e) => setParams({ duree: e.target.value || undefined })}
               className="field" aria-label={t("filters.durationMax")}>
               <option value="">{t("filters.anyDuration")}</option>
-              <option value="90">≤ 1 h 30</option>
-              <option value="180">≤ 3 h</option>
-              <option value="480">≤ 1 jour</option>
+              <option value="90">{t("filters.dur90")}</option>
+              <option value="180">{t("filters.dur180")}</option>
+              <option value="480">{t("filters.dur480")}</option>
             </select>
           </div>
 

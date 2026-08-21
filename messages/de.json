@@ -32,8 +32,10 @@
     "from": "ab",
     "free": "Freiwilliger Beitrag",
     "back": "Zurück",
+    "lastUpdated": "Zuletzt aktualisiert",
     "validatedByDidier": "Von Didier geprüft",
     "tabbar": {
+      "mainNav": "Hauptnavigation",
       "home": "Start",
       "favorites": "Favoriten",
       "explore": "Erlebnisse",
@@ -112,6 +114,9 @@
       "priceMax": "Max. Preis (CHF)",
       "durationMax": "Max. Dauer",
       "anyDuration": "Alle Dauern",
+      "dur90": "≤ 1 Std. 30",
+      "dur180": "≤ 3 Std.",
+      "dur480": "≤ 1 Tag",
       "radius": "In meiner Nähe",
       "radiusOff": "Deaktiviert",
       "radiusHelp": "Umkreissuche (Standort des Browsers)",
@@ -130,7 +135,9 @@
     "calendar": {
       "title": "Kalender",
       "help": "Markierte Tage bieten mindestens ein Erlebnis. Klicke zum Filtern, zwei Daten für einen Zeitraum.",
-      "clear": "Alle Daten"
+      "clear": "Alle Daten",
+      "prevMonth": "Voriger Monat",
+      "nextMonth": "Nächster Monat"
     },
     "resultCount": "{count, plural, =0 {Keine Erlebnisse} one {# Erlebnis} other {# Erlebnisse}}",
     "empty": "Kein Erlebnis entspricht diesen Kriterien — erweitere die Suche oder schau bald wieder vorbei.",
@@ -234,7 +241,18 @@
   },
   "about": {
     "title": "Die Geschichte von ForTheSoul",
-    "metaDescription": "ForTheSoul entstand aus der Überzeugung von Didier Picamoles: Erlebnisse, die verwandeln, wählt man mit dem Herzen — nicht mit einem Algorithmus."
+    "metaDescription": "ForTheSoul entstand aus der Überzeugung von Didier Picamoles: Erlebnisse, die verwandeln, wählt man mit dem Herzen — nicht mit einem Algorithmus.",
+    "role": "Gründer von ForTheSoul",
+    "p1": "ForTheSoul entstand aus einem Bedürfnis: an einem Ort all jene zusammenzubringen, die Erlebnisse anbieten, jene, die authentische, seelennährende Erlebnisse suchen, und jene, die Orte bereitstellen, um sie zu empfangen.",
+    "p2": "Ziel ist es, die Verbindungen zwischen diesen drei Welten zu erleichtern und eine echte Schweizer Gemeinschaft entstehen zu lassen — mit der Möglichkeit, auch Erlebnisse und Veranstaltungen im Ausland anzubieten.",
+    "p3": "Als Schöpfer der <b>Humanic Dance</b> und immersiver Erlebnisse hat Didier viele Erfahrungen mit den Menschen auf dieser Plattform getroffen, getanzt und geteilt — als Mitgestalter, Tänzer oder Teilnehmer.",
+    "p4": "Das macht ForTheSoul besonders: jede·r Anbieter·in und jedes Erlebnis werden persönlich geprüft. Eine langsamere und anspruchsvollere Wahl, die aber Qualität vor Quantität stellt.",
+    "p5": "Retreats, ekstatischer Tanz, Meditation, Klangreisen, Kreise, immersive Erlebnisse in der Schweiz oder im Ausland: ForTheSoul versammelt Angebote, die einladen, langsamer zu werden, zu fühlen, zu erkunden und zu dem zurückzukehren, was wirklich zählt.",
+    "thanks": "Danke, dass du ForTheSoul mit deiner Präsenz, deinen Erlebnissen oder deinem Ort unterstützt.",
+    "quote": "Ich wünsche dir, dieselben wunderbaren Erlebnisse zu erleben wie ich.",
+    "quoteAuthor": "Didier",
+    "ctaDiscover": "Erlebnisse entdecken",
+    "ctaJoin": "Als Anbieter·in beitreten"
   },
   "practitioner": {
     "spaceTitle": "Bereich von {name}",
@@ -353,6 +371,7 @@
     "occurrencesLabel": "Anzahl der Termine",
     "occurrencesHint": "Alle Daten werden automatisch erzeugt — nur 1 Guthaben verbraucht.",
     "videoLabel": "Video-Link (YouTube oder Vimeo) — optional",
+    "videoPlaceholder": "https://youtu.be/… oder https://vimeo.com/…",
     "videoHint": "Das Video wird eingebettet auf der Erlebnis-Seite angezeigt.",
     "photosLabel": "Fotos (max. 6 — automatisch komprimiert)",
     "saving": "Wird gespeichert…",
@@ -381,6 +400,14 @@
     "approved": "Online",
     "pending": "In Prüfung",
     "rejected": "Abgelehnt"
+  },
+  "categories": {
+    "chamanisme": "(Neo-)Schamanismus",
+    "danse-mouvement": "Tanz & Bewegung",
+    "meditation": "Meditation & Achtsamkeit",
+    "son-vibration": "Klang & Vibration",
+    "voyages-spirituels": "Spirituelle Reisen",
+    "yoga-somatique": "Yoga & Somatik"
   },
   "contact": {
     "title": "Kontakt",

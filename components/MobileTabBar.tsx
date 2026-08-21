@@ -24,7 +24,7 @@ export function MobileTabBar({ accountHref }: { accountHref: string }) {
 
   return (
     <nav
-      aria-label="Navigation principale"
+      aria-label={t("mainNav")}
       className="fixed inset-x-0 bottom-0 z-50 border-t border-soul-bronze/15 bg-soul-cream/95 backdrop-blur md:hidden"
     >
       <ul className="mx-auto grid max-w-md grid-cols-5 items-end px-1 pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-1.5">

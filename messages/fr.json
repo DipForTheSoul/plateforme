@@ -32,8 +32,10 @@
     "from": "dès",
     "free": "Prix libre",
     "back": "Retour",
+    "lastUpdated": "Dernière mise à jour",
     "validatedByDidier": "Validé par Didier",
     "tabbar": {
+      "mainNav": "Navigation principale",
       "home": "Accueil",
       "favorites": "Favoris",
       "explore": "Expériences",
@@ -112,6 +114,9 @@
       "priceMax": "Prix max (CHF)",
       "durationMax": "Durée max",
       "anyDuration": "Toutes durées",
+      "dur90": "≤ 1 h 30",
+      "dur180": "≤ 3 h",
+      "dur480": "≤ 1 jour",
       "radius": "Autour de moi",
       "radiusOff": "Désactivé",
       "radiusHelp": "Recherche par distance (géolocalisation du navigateur)",
@@ -130,7 +135,9 @@
     "calendar": {
       "title": "Calendrier",
       "help": "Les jours pastillés proposent au moins une expérience. Cliquez pour filtrer, cliquez deux dates pour une période.",
-      "clear": "Toutes les dates"
+      "clear": "Toutes les dates",
+      "prevMonth": "Mois précédent",
+      "nextMonth": "Mois suivant"
     },
     "resultCount": "{count, plural, =0 {Aucune expérience} one {# expérience} other {# expériences}}",
     "empty": "Aucune expérience ne correspond à ces critères — élargissez la recherche ou revenez bientôt : la programmation vit chaque semaine.",
@@ -234,7 +241,18 @@
   },
   "about": {
     "title": "L'histoire de ForTheSoul",
-    "metaDescription": "ForTheSoul est née de la conviction de Didier Picamoles : les expériences qui transforment se choisissent avec le cœur, pas avec un algorithme."
+    "metaDescription": "ForTheSoul est née de la conviction de Didier Picamoles : les expériences qui transforment se choisissent avec le cœur, pas avec un algorithme.",
+    "role": "Fondateur de ForTheSoul",
+    "p1": "ForTheSoul est née d'un besoin : rassembler en un même lieu celles et ceux qui proposent des expériences, celles et ceux qui recherchent des expériences authentiques qui nourrissent l'âme, et celles et ceux qui proposent des lieux pour les accueillir.",
+    "p2": "L'objectif est de faciliter les connexions entre ces trois univers et de faire émerger une véritable communauté suisse, avec la possibilité de proposer également des expériences et des événements à l'étranger.",
+    "p3": "Créateur de la <b>Humanic Dance</b> et d'expériences immersives, Didier a rencontré, dansé et partagé de nombreuses expériences avec les personnes présentes sur cette plateforme, comme co-créateur, danseur ou participant.",
+    "p4": "C'est aussi ce qui fait la particularité de ForTheSoul : chaque praticien·ne et chaque expérience sont personnellement validés. Un choix plus lent et plus exigeant, mais qui permet de privilégier la qualité plutôt que la quantité.",
+    "p5": "Retraites, danse extatique, méditation, voyages sonores, cercles, expériences immersives en Suisse ou à l'étranger : ForTheSoul rassemble des propositions qui invitent à ralentir, ressentir, explorer et revenir à ce qui compte vraiment.",
+    "thanks": "Merci de soutenir ForTheSoul par ta présence, tes expériences ou ton lieu.",
+    "quote": "Je te souhaite de vivre les mêmes magnifiques expériences que celles que j'ai vécues.",
+    "quoteAuthor": "Didier",
+    "ctaDiscover": "Découvrir les expériences",
+    "ctaJoin": "Rejoindre en tant que praticien·ne"
   },
   "practitioner": {
     "spaceTitle": "Espace de {name}",
@@ -353,6 +371,7 @@
     "occurrencesLabel": "Nombre d'occurrences",
     "occurrencesHint": "Toutes les dates sont générées automatiquement — 1 seul crédit consommé.",
     "videoLabel": "Lien vidéo (YouTube ou Vimeo) — facultatif",
+    "videoPlaceholder": "https://youtu.be/… ou https://vimeo.com/…",
     "videoHint": "La vidéo s'affichera intégrée sur la page de l'expérience.",
     "photosLabel": "Photos (max 6 — compressées automatiquement)",
     "saving": "Enregistrement…",
@@ -381,6 +400,14 @@
     "approved": "En ligne",
     "pending": "En relecture",
     "rejected": "Refusée"
+  },
+  "categories": {
+    "chamanisme": "(Néo) Chamanisme",
+    "danse-mouvement": "Danse & Mouvement",
+    "meditation": "Méditation & Pleine conscience",
+    "son-vibration": "Son & Vibration",
+    "voyages-spirituels": "Voyages spirituels",
+    "yoga-somatique": "Yoga & Somatique"
   },
   "contact": {
     "title": "Contact",
