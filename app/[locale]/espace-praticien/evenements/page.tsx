@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { StatusBadge } from "@/components/StatusBadge";
 import { getCurrentPractitioner } from "@/lib/auth";
@@ -14,10 +15,11 @@ export default async function MyEventsPage({
 }: {
   searchParams: Promise<{ depose?: string; modifie?: string }>;
 }) {
+  const t = await getTranslations("practitioner");
   const practitioner = await getCurrentPractitioner();
   const flags = await searchParams;
   if (!practitioner) {
-    return <p className="text-sm text-soul-bronze">Aucune fiche praticien.</p>;
+    return <p className="text-sm text-soul-bronze">{t("noProfileShort")}</p>;
   }
 
   const supabase = await createClient();
@@ -33,29 +35,26 @@ export default async function MyEventsPage({
     <div className="flex flex-col gap-6">
       {flags.depose && (
         <div className="rounded-2xl border border-green-300 bg-green-50 p-4 text-sm text-green-800">
-          Expérience déposée ! Didier la relit personnellement — vous recevrez un
-          e-mail dès sa validation.
+          {t("flagDeposited")}
         </div>
       )}
       {flags.modifie && (
         <div className="rounded-2xl border border-green-300 bg-green-50 p-4 text-sm text-green-800">
-          Modifications enregistrées.
+          {t("flagModified")}
         </div>
       )}
 
       <div className="flex items-center justify-between">
-        <h2 className="text-xl text-soul-brown">Mes expériences</h2>
+        <h2 className="text-xl text-soul-brown">{t("navEvents")}</h2>
         {practitioner.credits > 0 && practitioner.status === "approved" && (
           <Link href="/espace-praticien/evenements/nouveau" className="btn-primary">
-            Déposer une expérience
+            {t("submitExperience")}
           </Link>
         )}
       </div>
 
       {events.length === 0 && (
-        <p className="text-sm text-soul-bronze">
-          Aucune expérience pour l&apos;instant — déposez la première !
-        </p>
+        <p className="text-sm text-soul-bronze">{t("noEventsFirst")}</p>
       )}
 
       <div className="flex flex-col gap-3">
@@ -67,20 +66,20 @@ export default async function MyEventsPage({
                 {formatDate(event.start_date)} · {formatTime(event.start_date)}
                 {event.recurrence && (
                   <span className="ml-2 rounded-full bg-soul-sand px-2 py-0.5">
-                    récurrent ({event.recurrence_count ?? "?"}×)
+                    {t("recurrent", { count: event.recurrence_count ?? "?" })}
                   </span>
                 )}
               </p>
               {event.status === "rejected" && event.admin_message && (
                 <p className="mt-1 text-xs italic text-red-700">
-                  Message de Didier : {event.admin_message}
+                  {t("messageFromDidier", { message: event.admin_message })}
                 </p>
               )}
             </div>
             <div className="flex flex-wrap items-center justify-end gap-3">
               {event.is_top && event.status === "approved" && (
                 <span className="text-xs font-medium text-soul-terracotta">
-                  ★ Mise en avant
+                  {t("featured")}
                 </span>
               )}
               <StatusBadge status={event.status} />
@@ -88,12 +87,12 @@ export default async function MyEventsPage({
                 href={`/espace-praticien/evenements/${event.id}`}
                 className="text-sm text-soul-brown underline"
               >
-                Modifier
+                {t("edit")}
               </Link>
               <form action={deleteEvent}>
                 <input type="hidden" name="event_id" value={event.id} />
                 <button type="submit" className="text-sm text-red-700 underline">
-                  Supprimer
+                  {t("delete")}
                 </button>
               </form>
             </div>

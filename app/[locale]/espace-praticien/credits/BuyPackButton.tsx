@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 /** Rachat en 1 clic : crée la session Stripe Checkout et redirige. */
 export function BuyPackButton({ packId }: { packId: string }) {
+  const t = useTranslations("practitioner");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,11 +22,11 @@ export function BuyPackButton({ packId }: { packId: string }) {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        setError(data.error ?? "Paiement indisponible pour le moment.");
+        setError(data.error ?? t("creditsPaymentUnavailable"));
         setBusy(false);
       }
     } catch {
-      setError("Paiement indisponible pour le moment.");
+      setError(t("creditsPaymentUnavailable"));
       setBusy(false);
     }
   }
@@ -32,7 +34,7 @@ export function BuyPackButton({ packId }: { packId: string }) {
   return (
     <div className="mt-auto pt-4">
       <button type="button" onClick={buy} disabled={busy} className="btn-primary w-full">
-        {busy ? "Redirection…" : "Acheter"}
+        {busy ? t("creditsRedirecting") : t("creditsBuy")}
       </button>
       {error && <p className="mt-2 text-xs text-red-700">{error}</p>}
     </div>

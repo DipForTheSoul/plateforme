@@ -6,6 +6,20 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth";
 import { isRateLimited } from "@/lib/rate-limit";
+import { sendEmail } from "@/lib/email";
+
+/** Destinataire des notifications du formulaire de contact (Didier). */
+const CONTACT_NOTIFY_EMAIL =
+  process.env.CONTACT_NOTIFY_EMAIL ?? "welcome@forthesoul.ch";
+
+/** Échappe le HTML pour éviter toute injection dans l'e-mail de notification. */
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
 
 const schema = z.object({
   name: z.string().min(2).max(120),
@@ -43,14 +57,34 @@ export async function sendContactMessage(
   if (isRateLimited(`contact:${ip}`)) return { status: "error" };
 
   try {
+    const name = parsed.data.name.trim();
+    const email = parsed.data.email.toLowerCase();
+    const message = parsed.data.message.trim();
+
     const supabase = await createClient();
     const { error } = await supabase.from("contact_messages").insert({
-      name: parsed.data.name.trim(),
-      email: parsed.data.email.toLowerCase(),
-      message: parsed.data.message.trim(),
+      name,
+      email,
+      message,
       locale: parsed.data.locale ?? null,
     });
     if (error) return { status: "error" };
+
+    // Notification e-mail à Didier (choix retenu : réception par e-mail).
+    // Le message reste aussi consultable dans le back-office (secours).
+    // « replyTo » = l'e-mail du visiteur → Didier répond directement.
+    await sendEmail({
+      to: CONTACT_NOTIFY_EMAIL,
+      replyTo: email,
+      subject: `Nouveau message de ${name} — ForTheSoul`,
+      html: `<p><strong>Nouveau message via le formulaire de contact</strong></p>
+<p><strong>Nom :</strong> ${escapeHtml(name)}<br/>
+<strong>E-mail :</strong> ${escapeHtml(email)}</p>
+<p style="white-space:pre-wrap">${escapeHtml(message)}</p>
+<hr/>
+<p style="color:#888;font-size:12px">Répondez directement à cet e-mail pour joindre ${escapeHtml(name)}. Message aussi disponible dans le back-office ForTheSoul.</p>`,
+    });
+
     return { status: "success" };
   } catch {
     return { status: "error" };

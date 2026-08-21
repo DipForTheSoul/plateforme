@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { uploadImage } from "@/lib/image";
 
@@ -14,6 +15,7 @@ interface Props {
 
 /** Upload d'images avec compression client (WebP ≤1600px) vers Supabase Storage. */
 export function ImageUploader({ prefix, images, onChange, max = 6 }: Props) {
+  const t = useTranslations("uploader");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,7 +28,7 @@ export function ImageUploader({ prefix, images, onChange, max = 6 }: Props) {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (!user) throw new Error("Connexion requise pour téléverser.");
+      if (!user) throw new Error(t("loginRequired"));
 
       const remaining = max - images.length;
       const urls: string[] = [];
@@ -35,7 +37,7 @@ export function ImageUploader({ prefix, images, onChange, max = 6 }: Props) {
       }
       onChange([...images, ...urls]);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Téléversement impossible.");
+      setError(e instanceof Error ? e.message : t("uploadFailed"));
     } finally {
       setBusy(false);
     }
@@ -51,7 +53,7 @@ export function ImageUploader({ prefix, images, onChange, max = 6 }: Props) {
               type="button"
               onClick={() => onChange(images.filter((u) => u !== url))}
               className="absolute right-1 top-1 rounded-full bg-black/60 px-1.5 text-xs text-white"
-              aria-label="Retirer cette image"
+              aria-label={t("removeImage")}
             >
               ✕
             </button>

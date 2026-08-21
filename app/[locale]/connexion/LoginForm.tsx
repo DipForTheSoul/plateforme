@@ -49,7 +49,7 @@ export function LoginForm({ next }: { next?: string }) {
           {t("forgotPassword")}
         </Link>
         <p>
-          {t("noAccount")}{" "}
+          {t("practitionerQuestion")}{" "}
           <Link
             href="/inscription"
             className="font-medium text-soul-brown underline"
@@ -57,6 +57,7 @@ export function LoginForm({ next }: { next?: string }) {
             {t("signupTitle")}
           </Link>
         </p>
+        <p className="text-xs text-soul-bronze/80">{t("visitorNoAccount")}</p>
       </div>
     </form>
   );

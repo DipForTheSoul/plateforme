@@ -54,7 +54,7 @@ export async function generateMetadata({
       type: "website",
       locale,
     },
-    icons: { icon: "/favicon.ico" },
+    // Icônes auto-détectées via app/favicon.ico, app/icon.png et app/apple-icon.png (logo ForTheSoul).
   };
 }
 

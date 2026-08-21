@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { EventForm } from "@/components/forms/EventForm";
 import { getCurrentPractitioner } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
@@ -14,6 +15,7 @@ export default async function EditEventPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const t = await getTranslations("practitioner");
   const practitioner = await getCurrentPractitioner();
   if (!practitioner) redirect("/espace-praticien");
 
@@ -37,7 +39,7 @@ export default async function EditEventPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="text-xl text-soul-brown">Modifier « {event.title} »</h2>
+      <h2 className="text-xl text-soul-brown">{t("editEventTitle", { title: event.title })}</h2>
       <EventForm
         categories={categories}
         venues={venues}

@@ -1,14 +1,10 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { requireRole, getCurrentPractitioner } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
 
 export const dynamic = "force-dynamic";
 
-/**
- * Espace praticien — réservé aux rôles practitioner & admin.
- * (Interface en français : les praticiens de la V1 sont francophones ;
- * les clés DE/EN pourront être ajoutées dans messages/*.json.)
- */
+/** Espace praticien — réservé aux rôles practitioner & admin (interface FR/DE/EN). */
 export default async function PractitionerLayout({
   children,
   params,
@@ -19,17 +15,20 @@ export default async function PractitionerLayout({
   const { locale } = await params;
   setRequestLocale(locale);
   await requireRole(["practitioner", "admin"]);
+  const t = await getTranslations("practitioner");
 
   // §8 — intitulé personnalisé « Espace de [Prénom] ».
   const practitioner = await getCurrentPractitioner();
   const firstName = practitioner?.name?.trim().split(/\s+/)[0];
-  const spaceTitle = firstName ? `Espace de ${firstName}` : "Espace praticien";
+  const spaceTitle = firstName
+    ? t("spaceTitle", { name: firstName })
+    : t("spaceTitleGeneric");
 
   const nav = [
-    { href: "/espace-praticien", label: "Tableau de bord" },
-    { href: "/espace-praticien/evenements", label: "Mes expériences" },
-    { href: "/espace-praticien/profil", label: "Ma fiche" },
-    { href: "/espace-praticien/credits", label: "Mes crédits" },
+    { href: "/espace-praticien", label: t("navDashboard") },
+    { href: "/espace-praticien/evenements", label: t("navEvents") },
+    { href: "/espace-praticien/profil", label: t("navProfile") },
+    { href: "/espace-praticien/credits", label: t("navCredits") },
   ];
 
   return (
@@ -40,7 +39,7 @@ export default async function PractitionerLayout({
             vide la session et redirige — insensible au cache d'un onglet périmé. */}
         {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a href="/api/logout" className="text-sm text-soul-bronze underline">
-          Se déconnecter
+          {t("logout")}
         </a>
       </div>
       <div className="grid gap-8 md:grid-cols-[200px_1fr]">

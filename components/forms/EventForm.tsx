@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { createEvent, updateEvent, type ActionState } from "@/app/actions/events";
 import { createVenue } from "@/app/actions/venues";
 import { ImageUploader } from "@/components/forms/ImageUploader";
@@ -39,6 +40,7 @@ export function EventForm({
   action: actionOverride,
   practitioners,
 }: Props) {
+  const t = useTranslations("eventForm");
   const action =
     actionOverride ?? (event ? updateEvent.bind(null, event.id) : createEvent);
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
@@ -108,52 +110,52 @@ export function EventForm({
         {practitioners && !event && (
           <div className="rounded-2xl border border-soul-violet/20 bg-soul-violet/5 p-4">
             <label htmlFor="owner_practitioner_id" className="label">
-              Praticien·ne propriétaire *
+              {t("ownerLabel")}
             </label>
             <select id="owner_practitioner_id" name="owner_practitioner_id" required
               className="field" defaultValue="">
-              <option value="" disabled>Choisir…</option>
+              <option value="" disabled>{t("choose")}</option>
               {practitioners.map((p) => (
                 <option key={p.id} value={p.id}>{p.name}</option>
               ))}
             </select>
             <p className="mt-1 text-xs text-soul-bronze">
-              L&apos;expérience sera publiée directement (aucun crédit consommé).
+              {t("ownerHint")}
             </p>
           </div>
         )}
 
         <div>
-          <label htmlFor="title" className="label">Titre de l&apos;expérience *</label>
+          <label htmlFor="title" className="label">{t("titleLabel")}</label>
           <input id="title" name="title" required minLength={3} maxLength={140}
             defaultValue={event?.title} className="field" />
         </div>
 
         <div>
-          <label htmlFor="description" className="label">Description *</label>
+          <label htmlFor="description" className="label">{t("descriptionLabel")}</label>
           <textarea id="description" name="description" required minLength={20} rows={8}
             defaultValue={event?.description ?? ""} className="field"
-            placeholder="Décrivez l'expérience : déroulé, à qui elle s'adresse…" />
+            placeholder={t("descriptionPlaceholder")} />
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <label htmlFor="included" className="label">Ce qui est inclus</label>
+            <label htmlFor="included" className="label">{t("includedLabel")}</label>
             <textarea id="included" name="included" rows={4} maxLength={2000}
               defaultValue={event?.included ?? ""} className="field"
-              placeholder="Ex. : tapis fournis, tisane, prêt du matériel, repas du midi…" />
+              placeholder={t("includedPlaceholder")} />
           </div>
           <div>
-            <label htmlFor="to_bring" className="label">Ce que le/la participant·e doit apporter</label>
+            <label htmlFor="to_bring" className="label">{t("toBringLabel")}</label>
             <textarea id="to_bring" name="to_bring" rows={4} maxLength={2000}
               defaultValue={event?.to_bring ?? ""} className="field"
-              placeholder="Ex. : tenue confortable, bouteille d'eau, plaid, carnet…" />
+              placeholder={t("toBringPlaceholder")} />
           </div>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <span className="label">Univers * <span className="font-normal text-soul-bronze">(un ou plusieurs)</span></span>
+            <span className="label">{t("universeLabel")} <span className="font-normal text-soul-bronze">{t("universeMulti")}</span></span>
             <div className="flex flex-wrap gap-2 pt-1.5">
               {categories.map((c) => {
                 const checked = event
@@ -169,61 +171,57 @@ export function EventForm({
                 );
               })}
             </div>
-            <p className="mt-1 text-xs text-soul-bronze">
-              Ex. : une expérience « Méditation » <em>et</em> « Danse » apparaîtra dans les deux sections.
-            </p>
+            <p className="mt-1 text-xs text-soul-bronze">{t("universeHint")}</p>
           </div>
           <div>
-            <label htmlFor="venue_id" className="label">Lieu</label>
+            <label htmlFor="venue_id" className="label">{t("venueLabel")}</label>
             <select id="venue_id" name="venue_id" value={selectedVenue}
               onChange={(e) => setSelectedVenue(e.target.value)} className="field">
-              <option value="">— À définir —</option>
+              <option value="">{t("venueToDefine")}</option>
               {venueList.map((v) => (
                 <option key={v.id} value={v.id}>{v.name}</option>
               ))}
             </select>
             <button type="button" onClick={toggleNewVenue}
               className="mt-1 text-xs font-medium text-soul-terracotta underline">
-              {showNewVenue ? "− Fermer le nouveau lieu" : "+ Ajouter un nouveau lieu"}
+              {showNewVenue ? t("closeNewVenue") : t("addNewVenue")}
             </button>
           </div>
         </div>
 
         <div>
-          <span className="label">Quand a lieu l&apos;expérience&nbsp;?</span>
+          <span className="label">{t("whenLabel")}</span>
           <div className="mb-3 inline-flex rounded-full border border-soul-bronze/30 bg-white p-1 text-sm">
             <button type="button" onClick={() => setMultiDay(false)}
               className={`rounded-full px-4 py-1.5 font-medium transition ${!multiDay ? "bg-soul-violet text-white" : "text-soul-brown hover:text-soul-terracotta"}`}>
-              Sur une journée
+              {t("oneDay")}
             </button>
             <button type="button" onClick={() => setMultiDay(true)}
               className={`rounded-full px-4 py-1.5 font-medium transition ${multiDay ? "bg-soul-violet text-white" : "text-soul-brown hover:text-soul-terracotta"}`}>
-              Sur plusieurs jours
+              {t("multiDay")}
             </button>
           </div>
 
           {!multiDay ? (
             <div className="grid gap-5 sm:grid-cols-2">
               <div>
-                <label htmlFor="start_date" className="label">Date et heure de début *</label>
+                <label htmlFor="start_date" className="label">{t("startLabel")}</label>
                 <input id="start_date" name="start_date" type="datetime-local" required
                   defaultValue={toLocalInput(event?.start_date)} className="field" />
               </div>
               <p className="self-end pb-2.5 text-xs text-soul-bronze">
-                Un cours, un atelier, une soirée… La durée se règle juste en dessous.
-                Pour un rendez-vous qui revient (chaque semaine, chaque mois),
-                utilisez la récurrence plus bas.
+                {t("oneDayHint")}
               </p>
             </div>
           ) : (
             <div className="grid gap-5 sm:grid-cols-2">
               <div>
-                <label htmlFor="start_date" className="label">Arrivée (jour &amp; heure) *</label>
+                <label htmlFor="start_date" className="label">{t("arrivalLabel")}</label>
                 <input id="start_date" name="start_date" type="datetime-local" required
                   defaultValue={toLocalInput(event?.start_date)} className="field" />
               </div>
               <div>
-                <label htmlFor="end_date" className="label">Départ (jour &amp; heure) *</label>
+                <label htmlFor="end_date" className="label">{t("departureLabel")}</label>
                 <input id="end_date" name="end_date" type="datetime-local" required
                   defaultValue={toLocalInput(event?.end_date)} className="field" />
               </div>
@@ -233,17 +231,17 @@ export function EventForm({
 
         <div className="grid gap-5 sm:grid-cols-3">
           <div>
-            <label htmlFor="duration_minutes" className="label">Durée (minutes)</label>
+            <label htmlFor="duration_minutes" className="label">{t("durationLabel")}</label>
             <input id="duration_minutes" name="duration_minutes" type="number" min={15}
               defaultValue={event?.duration_minutes ?? ""} className="field" />
           </div>
           <div>
-            <label htmlFor="price" className="label">Prix (CHF — 0 = prix libre)</label>
+            <label htmlFor="price" className="label">{t("priceLabel")}</label>
             <input id="price" name="price" type="number" min={0} step="0.05"
               defaultValue={event?.price ?? ""} className="field" />
           </div>
           <div>
-            <span className="label">Langues *</span>
+            <span className="label">{t("languagesLabel")}</span>
             <div className="flex flex-wrap gap-3 pt-1.5">
               {Object.entries(LANGUAGE_LABELS).slice(0, 4).map(([code, label]) => (
                 <label key={code} className="flex items-center gap-1.5 text-sm text-soul-brown">
@@ -261,22 +259,22 @@ export function EventForm({
         {!event && (
           <div className="grid gap-5 rounded-2xl bg-soul-sand/30 p-5 sm:grid-cols-2">
             <div>
-              <label htmlFor="recurrence" className="label">Récurrence</label>
+              <label htmlFor="recurrence" className="label">{t("recurrenceLabel")}</label>
               <select id="recurrence" name="recurrence" value={recurrence}
                 onChange={(e) => setRecurrence(e.target.value)} className="field">
-                <option value="">Événement unique</option>
-                <option value="weekly">Chaque semaine</option>
-                <option value="biweekly">Toutes les deux semaines</option>
-                <option value="monthly">Chaque mois</option>
+                <option value="">{t("recurrenceNone")}</option>
+                <option value="weekly">{t("recurrenceWeekly")}</option>
+                <option value="biweekly">{t("recurrenceBiweekly")}</option>
+                <option value="monthly">{t("recurrenceMonthly")}</option>
               </select>
             </div>
             {recurrence && (
               <div>
-                <label htmlFor="recurrence_count" className="label">Nombre d&apos;occurrences</label>
+                <label htmlFor="recurrence_count" className="label">{t("occurrencesLabel")}</label>
                 <input id="recurrence_count" name="recurrence_count" type="number"
                   min={2} max={26} defaultValue={4} className="field" />
                 <p className="mt-1 text-xs text-soul-bronze">
-                  Toutes les dates sont générées automatiquement — 1 seul crédit consommé.
+                  {t("occurrencesHint")}
                 </p>
               </div>
             )}
@@ -284,16 +282,16 @@ export function EventForm({
         )}
 
         <div>
-          <label htmlFor="video_url" className="label">Lien vidéo (YouTube ou Vimeo) — facultatif</label>
+          <label htmlFor="video_url" className="label">{t("videoLabel")}</label>
           <input id="video_url" name="video_url" type="url" placeholder="https://youtu.be/… ou https://vimeo.com/…"
             defaultValue={event?.video_url ?? ""} className="field" />
           <p className="mt-1 text-xs text-soul-bronze">
-            La vidéo s&apos;affichera intégrée sur la page de l&apos;expérience.
+            {t("videoHint")}
           </p>
         </div>
 
         <div>
-          <span className="label">Photos (max 6 — compressées automatiquement)</span>
+          <span className="label">{t("photosLabel")}</span>
           <ImageUploader prefix="event" images={images} onChange={setImages} max={6} />
           {images.map((url) => (
             <input key={url} type="hidden" name="images" value={url} />
@@ -304,10 +302,10 @@ export function EventForm({
 
         <button type="submit" disabled={pending} className="btn-primary self-start">
           {pending
-            ? "Enregistrement…"
+            ? t("saving")
             : event
-              ? "Enregistrer les modifications"
-              : "Déposer pour validation (1 crédit)"}
+              ? t("saveChanges")
+              : t("submitForValidation")}
         </button>
       </form>
 
@@ -315,45 +313,45 @@ export function EventForm({
         <form ref={venueFormRef} action={venueAction}
           className="card flex flex-col gap-4 border-2 border-soul-terracotta/40 p-6">
           <div className="flex items-center justify-between">
-            <p className="font-serif text-lg text-soul-brown">Nouveau lieu</p>
+            <p className="font-serif text-lg text-soul-brown">{t("newVenueTitle")}</p>
             <button type="button" onClick={() => setShowNewVenue(false)}
-              className="text-xs text-soul-bronze underline">Fermer</button>
+              className="text-xs text-soul-bronze underline">{t("close")}</button>
           </div>
           <p className="text-xs text-soul-bronze">
-            L&apos;adresse est géolocalisée automatiquement (recherche par distance).
+            {t("newVenueHint")}
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="label" htmlFor="v-name">Nom du lieu *</label>
+              <label className="label" htmlFor="v-name">{t("venueNameLabel")}</label>
               <input id="v-name" name="name" required className="field" />
             </div>
             <div>
-              <label className="label" htmlFor="v-canton">Canton (ex. VD)</label>
+              <label className="label" htmlFor="v-canton">{t("cantonLabel")}</label>
               <input id="v-canton" name="canton" maxLength={2} className="field" />
             </div>
           </div>
           <div>
-            <label className="label" htmlFor="v-address">Adresse complète *</label>
+            <label className="label" htmlFor="v-address">{t("fullAddressLabel")}</label>
             <input id="v-address" name="address" required className="field"
-              placeholder="Rue, numéro, code postal, ville" />
+              placeholder={t("fullAddressPlaceholder")} />
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
-              <label className="label" htmlFor="v-city">Ville</label>
-              <input id="v-city" name="city" className="field" placeholder="Ex. : Berne" />
+              <label className="label" htmlFor="v-city">{t("cityLabel")}</label>
+              <input id="v-city" name="city" className="field" placeholder={t("cityPlaceholder")} />
             </div>
             <div>
-              <label className="label" htmlFor="v-country">Pays (code) *</label>
+              <label className="label" htmlFor="v-country">{t("countryLabel")}</label>
               <input id="v-country" name="country" defaultValue="CH" maxLength={2} required className="field" />
             </div>
             <div>
-              <label className="label" htmlFor="v-capacity">Capacité</label>
+              <label className="label" htmlFor="v-capacity">{t("capacityLabel")}</label>
               <input id="v-capacity" name="capacity" type="number" min={1} className="field" />
             </div>
           </div>
           {venueState.error && <p className="text-sm text-red-700">{venueState.error}</p>}
           <button type="submit" disabled={venuePending} className="btn-secondary self-start">
-            {venuePending ? "Géocodage…" : "Créer le lieu"}
+            {venuePending ? t("geocoding") : t("createVenue")}
           </button>
         </form>
       )}

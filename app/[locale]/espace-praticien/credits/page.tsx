@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 import { getCurrentPractitioner } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { CREDIT_PACKS, STATIC_PAYMENT, resolvePackPriceChf, getPromo, discountedChf } from "@/lib/credits";
@@ -17,10 +18,11 @@ export default async function CreditsPage({
 }: {
   searchParams: Promise<{ achat?: string }>;
 }) {
+  const tr = await getTranslations("practitioner");
   const practitioner = await getCurrentPractitioner();
   const { achat } = await searchParams;
   if (!practitioner) {
-    return <p className="text-sm text-soul-bronze">Aucune fiche praticien.</p>;
+    return <p className="text-sm text-soul-bronze">{tr("noProfileShort")}</p>;
   }
 
   const supabase = await createClient();
@@ -53,34 +55,33 @@ export default async function CreditsPage({
     <div className="flex flex-col gap-8">
       {achat === "succes" && (
         <div className="rounded-2xl border border-green-300 bg-green-50 p-4 text-sm text-green-800">
-          Merci ! Le paiement est confirmé — vos crédits apparaissent dès
-          réception du webhook Stripe (quelques secondes).
+          {tr("creditsAchatSuccess")}
         </div>
       )}
       {achat === "annule" && (
         <div className="rounded-2xl border border-soul-amber/50 bg-soul-ivory p-4 text-sm text-soul-brown">
-          Paiement annulé — aucun montant débité.
+          {tr("creditsAchatCancelled")}
         </div>
       )}
 
       <div className="card p-6">
-        <p className="text-sm text-soul-bronze">Solde actuel</p>
+        <p className="text-sm text-soul-bronze">{tr("creditsCurrentBalance")}</p>
         <p className="font-serif text-5xl text-soul-brown">
           {practitioner.credits}
           <span className="ml-2 text-lg text-soul-bronze">
-            publication{practitioner.credits > 1 ? "s" : ""}
+            {tr("creditsPublications", { count: practitioner.credits })}
           </span>
         </p>
         {practitioner.credits === 0 && (
           <p className="mt-2 text-sm text-soul-terracotta">
-            Solde épuisé : le dépôt d&apos;expériences est bloqué. Rechargez ci-dessous.
+            {tr("creditsBalanceEmptyInline")}
           </p>
         )}
       </div>
 
       {packs.length > 0 && (
         <section className="card p-6">
-          <h2 className="mb-3 font-serif text-lg text-soul-brown">Vos packs</h2>
+          <h2 className="mb-3 font-serif text-lg text-soul-brown">{tr("creditsYourPacks")}</h2>
           <ul className="divide-y divide-soul-bronze/10">
             {packs.map((pack) => {
               const expired = pack.expires_at
@@ -90,12 +91,12 @@ export default async function CreditsPage({
                 <li key={pack.id} className="flex items-center justify-between py-3 text-sm">
                   <div>
                     <p className="font-medium text-soul-brown">
-                      Pack de {pack.credits_total} publication{pack.credits_total > 1 ? "s" : ""}
+                      {tr("creditsPackOf", { count: pack.credits_total })}
                     </p>
                     <p className="text-xs text-soul-bronze">
                       {pack.expires_at
-                        ? `Valable jusqu'au ${formatDate(pack.expires_at)}`
-                        : "Sans date d'échéance"}
+                        ? tr("creditsValidUntil", { date: formatDate(pack.expires_at) })
+                        : tr("creditsNoExpiry")}
                     </p>
                   </div>
                   <span
@@ -105,24 +106,18 @@ export default async function CreditsPage({
                         : "bg-soul-violet/10 text-soul-violet"
                     }`}
                   >
-                    {expired ? "Expiré" : "Actif"}
+                    {expired ? tr("creditsExpired") : tr("creditsActive")}
                   </span>
                 </li>
               );
             })}
           </ul>
-          <p className="mt-3 text-xs text-soul-bronze">
-            Un pack dont la date est dépassée passe automatiquement en « expiré » ;
-            ses crédits ne sont plus utilisables. En revanche, les expériences que vous
-            avez publiées pendant la validité de votre pack <strong>restent en ligne
-            jusqu&apos;à leur date</strong> (puis se retirent automatiquement peu après),
-            même si le pack a expiré entre-temps.
-          </p>
+          <p className="mt-3 text-xs text-soul-bronze">{tr("creditsPacksNote")}</p>
         </section>
       )}
 
       <section>
-        <h2 className="mb-4 text-xl text-soul-brown">Packs de publications</h2>
+        <h2 className="mb-4 text-xl text-soul-brown">{tr("creditsPacksHeading")}</h2>
         <div className="grid gap-4 sm:grid-cols-3">
           {CREDIT_PACKS.map((pack) => {
             const priceChf = resolvePackPriceChf(pack, settings);
@@ -147,7 +142,7 @@ export default async function CreditsPage({
                   CHF {finalChf.toFixed(0)}.–
                 </p>
                 <p className="mt-1 text-xs text-soul-bronze">
-                  {(finalChf / pack.credits).toFixed(0)}.– / publication
+                  {tr("creditsPerPublication", { price: (finalChf / pack.credits).toFixed(0) })}
                 </p>
                 <BuyPackButton packId={pack.id} />
               </div>
@@ -158,18 +153,17 @@ export default async function CreditsPage({
 
       <section className="card p-6">
         <h2 className="mb-2 font-serif text-lg text-soul-brown">
-          Paiement par Revolut / virement
+          {tr("creditsPaymentTitle")}
         </h2>
         <p className="text-sm text-soul-ink/80">
-          Vous préférez payer par Revolut ou par virement ? Réglez le montant du pack
-          choisi à {beneficiary} :
+          {tr("creditsPaymentIntro", { beneficiary })}
         </p>
 
         <div className="mt-4 grid gap-6 sm:grid-cols-[auto_1fr] sm:items-center">
           <div className="flex flex-col items-center gap-3">
             <Image
               src={STATIC_PAYMENT.revolutQr}
-              alt="QR code Revolut ForTheSoul"
+              alt={tr("creditsQrAlt")}
               width={160}
               height={160}
               className="rounded-xl border border-soul-bronze/20 bg-white p-2"
@@ -180,37 +174,40 @@ export default async function CreditsPage({
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-soul-violet px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-soul-violet-dark"
             >
-              Payer via Revolut
+              {tr("creditsPayViaRevolut")}
             </a>
           </div>
 
           <div className="text-sm text-soul-ink/80">
-            <p>Scannez le QR code ou cliquez sur « Payer via Revolut ».</p>
+            <p>{tr("creditsScanQr")}</p>
             {iban && (
               <div className="mt-3 rounded-xl bg-soul-sand/40 p-4 font-mono text-sm text-soul-brown">
                 <p>{beneficiary}</p>
-                <p className="mt-1">IBAN&nbsp;: {iban}</p>
+                <p className="mt-1">{tr("creditsIban")}&nbsp;: {iban}</p>
               </div>
             )}
             <p className="mt-3 text-xs text-soul-bronze">
-              {STATIC_PAYMENT.note} Les crédits sont ajoutés manuellement par Didier à
-              réception du paiement (1-2 jours ouvrés).
+              {tr("creditsPaymentNote", { note: STATIC_PAYMENT.note })}
             </p>
           </div>
         </div>
       </section>
 
       <section>
-        <h2 className="mb-4 text-xl text-soul-brown">Historique</h2>
+        <h2 className="mb-4 text-xl text-soul-brown">{tr("creditsHistory")}</h2>
         <div className="card divide-y divide-soul-bronze/10">
           {transactions.length === 0 && (
-            <p className="p-4 text-sm text-soul-bronze">Aucune transaction.</p>
+            <p className="p-4 text-sm text-soul-bronze">{tr("creditsNoTransactions")}</p>
           )}
           {transactions.map((t) => (
             <div key={t.id} className="flex items-center justify-between p-4 text-sm">
               <div>
                 <p className="text-soul-brown">
-                  {t.type === "purchase" ? "Achat de pack" : t.type === "manual" ? "Crédit manuel" : t.note ?? "Publication"}
+                  {t.type === "purchase"
+                    ? tr("creditsTxPurchase")
+                    : t.type === "manual"
+                      ? tr("creditsTxManual")
+                      : t.note ?? tr("creditsTxPublication")}
                 </p>
                 <p className="text-xs text-soul-bronze">{formatDate(t.created_at)}</p>
               </div>

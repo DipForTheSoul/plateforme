@@ -14,9 +14,11 @@ interface SendEmailInput {
   to: string;
   subject: string;
   html: string;
+  /** Adresse de réponse (ex. l'e-mail de la personne qui écrit via le formulaire). */
+  replyTo?: string;
 }
 
-export async function sendEmail({ to, subject, html }: SendEmailInput): Promise<void> {
+export async function sendEmail({ to, subject, html, replyTo }: SendEmailInput): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM ?? "ForTheSoul <welcome@forthesoul.ch>";
 
@@ -29,7 +31,7 @@ export async function sendEmail({ to, subject, html }: SendEmailInput): Promise<
 
   try {
     const resend = new Resend(apiKey);
-    await resend.emails.send({ from, to, subject, html });
+    await resend.emails.send({ from, to, subject, html, replyTo });
   } catch (error) {
     // Un e-mail qui échoue ne doit jamais casser le parcours utilisateur.
     console.error("[email] Échec d'envoi Resend:", error);
