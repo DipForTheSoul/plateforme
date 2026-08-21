@@ -16,11 +16,11 @@ export async function Footer() {
             <Image
               src="/logo-icon.png"
               alt=""
-              width={36}
-              height={30}
-              className="h-8 w-auto"
+              width={44}
+              height={37}
+              className="h-11 w-auto"
             />
-            <p className="font-serif text-2xl">ForTheSoul</p>
+            <p className="font-serif text-3xl">ForTheSoul</p>
           </div>
           <p className="mt-3 text-sm text-soul-brown/70">{t("tagline")}</p>
         </div>

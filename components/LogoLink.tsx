@@ -27,9 +27,9 @@ export function LogoLink() {
         width={40}
         height={34}
         priority
-        className="h-8 w-auto sm:h-9"
+        className="h-8 w-auto sm:h-11"
       />
-      <span className="font-serif text-xl leading-none text-soul-brown sm:text-2xl">
+      <span className="font-serif text-xl leading-none text-soul-brown sm:text-3xl">
         ForTheSoul
       </span>
     </Link>
