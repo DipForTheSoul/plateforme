@@ -12,18 +12,17 @@ function layout(title: string, body: string): string {
   return `<!doctype html>
 <html lang="fr">
   <body style="margin:0;padding:0;background:#fef6ed;font-family:Georgia,'Times New Roman',serif;color:#171200;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fef6ed;padding:32px 16px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fef6ed;padding:40px 16px;">
       <tr><td align="center">
-        <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;">
+        <table role="presentation" width="520" cellpadding="0" cellspacing="0" style="max-width:520px;width:100%;">
           <tr>
-            <td style="background:#443420;padding:24px 32px;text-align:center;">
-              <img src="${SITE_URL}/logo-icon.png" alt="ForTheSoul" width="48" height="48" style="display:inline-block;vertical-align:middle;margin-right:12px;" />
-              <span style="color:#fef6ed;font-size:22px;letter-spacing:1px;vertical-align:middle;">ForTheSoul</span>
+            <td style="text-align:center;padding-bottom:32px;">
+              <img src="${SITE_URL}/logo.png" alt="ForTheSoul" width="180" style="display:block;margin:0 auto;" />
             </td>
           </tr>
           <tr>
-            <td style="padding:32px;">
-              <h1 style="margin:0 0 16px;font-size:20px;color:#443420;">${title}</h1>
+            <td style="background:#ffffff;border-radius:16px;padding:40px 32px;">
+              <h1 style="margin:0 0 16px;font-size:22px;color:#443420;">${title}</h1>
               ${body}
               <p style="margin:32px 0 0;font-size:14px;color:#9e7c52;">
                 Avec cœur,<br/>Didier &amp; l'équipe ForTheSoul
@@ -31,8 +30,8 @@ function layout(title: string, body: string): string {
             </td>
           </tr>
           <tr>
-            <td style="padding:16px 32px;background:#fef6ed;font-size:12px;color:#9e7c52;">
-              <a href="${SITE_URL}" style="color:#9e7c52;">forthesoul.ch</a> — Expériences conscientes, validées avec soin.
+            <td style="text-align:center;padding-top:24px;font-size:12px;color:#9e7c52;">
+              <a href="${SITE_URL}" style="color:#9e7c52;text-decoration:none;">forthesoul.ch</a> — Expériences conscientes, validées avec soin.
             </td>
           </tr>
         </table>
@@ -46,7 +45,7 @@ const p = (text: string) =>
   `<p style="margin:0 0 12px;font-size:15px;line-height:1.6;">${text}</p>`;
 
 const button = (href: string, label: string) =>
-  `<p style="margin:24px 0;"><a href="${href}" style="background:#443420;color:#fef6ed;padding:12px 24px;border-radius:999px;text-decoration:none;font-size:15px;">${label}</a></p>`;
+  `<p style="margin:24px 0;text-align:center;"><a href="${href}" style="display:inline-block;background:#5D4D9E;color:#ffffff;padding:14px 32px;border-radius:50px;text-decoration:none;font-size:15px;font-weight:600;">${label}</a></p>`;
 
 /** Confirmation de dépôt d'un événement (praticien). */
 export function submissionReceivedEmail(practitionerName: string, eventTitle: string) {
@@ -140,6 +139,19 @@ export function practitionerApprovedEmail(practitionerName: string, slug: string
           "Votre fiche a été validée par Didier : elle est désormais visible dans l'annuaire ForTheSoul, et vous pouvez publier vos premières expériences."
         ) +
         button(`${SITE_URL}/praticiens/${slug}`, "Voir ma fiche publique")
+    ),
+  };
+}
+
+/** Notification de message de contact (envoyée à Didier). */
+export function contactNotificationEmail(name: string, email: string, message: string) {
+  return {
+    subject: `Nouveau message de ${name} — ForTheSoul`,
+    html: layout(
+      "Nouveau message de contact",
+      p(`<strong>${name}</strong> (${email}) vous a écrit :`) +
+        `<div style="margin:16px 0;padding:16px;background:#fef6ed;border-radius:12px;font-size:15px;line-height:1.6;white-space:pre-wrap;">${message}</div>` +
+        p(`<em style="font-size:13px;color:#9e7c52;">Répondez directement à cet e-mail pour joindre ${name}. Message aussi disponible dans le back-office.</em>`)
     ),
   };
 }

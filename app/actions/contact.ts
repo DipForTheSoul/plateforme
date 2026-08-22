@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth";
 import { isRateLimited } from "@/lib/rate-limit";
 import { sendEmail } from "@/lib/email";
+import { contactNotificationEmail } from "@/lib/email-templates";
 
 /** Destinataire des notifications du formulaire de contact (Didier). */
 const CONTACT_NOTIFY_EMAIL =
@@ -73,17 +74,8 @@ export async function sendContactMessage(
     // Notification e-mail à Didier (choix retenu : réception par e-mail).
     // Le message reste aussi consultable dans le back-office (secours).
     // « replyTo » = l'e-mail du visiteur → Didier répond directement.
-    await sendEmail({
-      to: CONTACT_NOTIFY_EMAIL,
-      replyTo: email,
-      subject: `Nouveau message de ${name} — ForTheSoul`,
-      html: `<p><strong>Nouveau message via le formulaire de contact</strong></p>
-<p><strong>Nom :</strong> ${escapeHtml(name)}<br/>
-<strong>E-mail :</strong> ${escapeHtml(email)}</p>
-<p style="white-space:pre-wrap">${escapeHtml(message)}</p>
-<hr/>
-<p style="color:#888;font-size:12px">Répondez directement à cet e-mail pour joindre ${escapeHtml(name)}. Message aussi disponible dans le back-office ForTheSoul.</p>`,
-    });
+    const tpl = contactNotificationEmail(escapeHtml(name), escapeHtml(email), escapeHtml(message));
+    await sendEmail({ to: CONTACT_NOTIFY_EMAIL, replyTo: email, ...tpl });
 
     return { status: "success" };
   } catch {
