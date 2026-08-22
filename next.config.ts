@@ -6,9 +6,17 @@ const withNextIntl = createNextIntlPlugin();
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
-      // Images servies par Supabase Storage (bucket public `images`).
       { protocol: "https", hostname: "*.supabase.co", pathname: "/storage/v1/object/public/**" },
     ],
+  },
+  async redirects() {
+    return [
+      {
+        source: "/auth/callback",
+        destination: "/api/auth/callback",
+        permanent: true,
+      },
+    ];
   },
 };
 
