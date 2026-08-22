@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { slugify } from "@/lib/utils";
 
@@ -89,7 +90,7 @@ export async function signUp(
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
-      emailRedirectTo: `${SITE_URL}/auth/callback`,
+      emailRedirectTo: `${SITE_URL}/api/auth/callback`,
       data: { role: parsed.data.role, preferred_lang: "fr" },
     },
   });
@@ -102,9 +103,11 @@ export async function signUp(
   }
 
   // Praticien : on crée immédiatement la fiche (statut pending — validée par Didier).
+  // Client admin (service role) car l'utilisateur n'a pas encore de session à ce stade.
   if (parsed.data.role === "practitioner" && data.user) {
     const name = parsed.data.name || parsed.data.email.split("@")[0];
-    await supabase.from("practitioners").insert({
+    const admin = createAdminClient();
+    await admin.from("practitioners").insert({
       user_id: data.user.id,
       name,
       slug: `${slugify(name)}-${data.user.id.slice(0, 6)}`,
@@ -130,7 +133,7 @@ export async function requestPasswordReset(
 
   const supabase = await createClient();
   await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${SITE_URL}/auth/callback?next=/reinitialiser-mot-de-passe`,
+    redirectTo: `${SITE_URL}/api/auth/callback?next=/reinitialiser-mot-de-passe`,
   });
   // Toujours succès : ne révèle pas l'existence d'un compte.
   return { success: "resetSent" };
@@ -151,6 +154,40 @@ export async function updatePassword(
   const { error } = await supabase.auth.updateUser({ password });
   if (error) return { error: "generic" };
   redirect("/connexion");
+}
+
+/** Crée la fiche praticien manquante pour l'utilisateur connecté. */
+export async function createMissingPractitioner(): Promise<void> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/connexion");
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+  if (profile?.role !== "practitioner") redirect("/");
+
+  const admin = createAdminClient();
+  const { data: existing } = await admin
+    .from("practitioners")
+    .select("id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (existing) redirect("/espace-praticien");
+
+  const name = (user.user_metadata as Record<string, string>)?.name || user.email?.split("@")[0] || "Praticien";
+  await admin.from("practitioners").insert({
+    user_id: user.id,
+    name,
+    slug: `${slugify(name)}-${user.id.slice(0, 6)}`,
+    contact: { email: user.email },
+    status: "pending",
+  });
+  redirect("/espace-praticien");
 }
 
 export async function signOut(): Promise<void> {

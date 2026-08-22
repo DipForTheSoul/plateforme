@@ -4,6 +4,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { getCurrentPractitioner } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate } from "@/lib/utils";
+import { createMissingPractitioner } from "@/app/actions/auth";
 import type { Event } from "@/types/database";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +18,11 @@ export default async function PractitionerDashboard() {
     return (
       <div className="card p-8 text-sm text-soul-brown">
         <p className="mb-4">{t("noProfile")}</p>
+        <form action={createMissingPractitioner}>
+          <button type="submit" className="btn-primary">
+            {t("createProfile")}
+          </button>
+        </form>
       </div>
     );
   }
