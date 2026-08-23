@@ -57,30 +57,33 @@ export async function POST(request: NextRequest) {
 
   try {
     const stripe = getStripe();
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      line_items: [
-        {
-          price_data: {
-            currency: "chf",
-            unit_amount: unitAmount,
-            product_data: {
-              name: productName,
-              description: `${pack.credits} crédit(s) de publication pour ${practitioner.name}`,
+    const session = await stripe.checkout.sessions.create(
+      {
+        mode: "payment",
+        line_items: [
+          {
+            price_data: {
+              currency: "chf",
+              unit_amount: unitAmount,
+              product_data: {
+                name: productName,
+                description: `${pack.credits} crédit(s) de publication pour ${practitioner.name}`,
+              },
             },
+            quantity: 1,
           },
-          quantity: 1,
+        ],
+        managed_payments: { enabled: false },
+        metadata: {
+          practitioner_id: practitioner.id,
+          credits: String(pack.credits),
+          pack_id: pack.id,
         },
-      ],
-      metadata: {
-        practitioner_id: practitioner.id,
-        credits: String(pack.credits),
-        pack_id: pack.id,
-      },
-      customer_email: user.email,
-      success_url: `${SITE_URL}/espace-praticien/credits?achat=succes`,
-      cancel_url: `${SITE_URL}/espace-praticien/credits?achat=annule`,
-    });
+        customer_email: user.email,
+        success_url: `${SITE_URL}/espace-praticien/credits?achat=succes`,
+        cancel_url: `${SITE_URL}/espace-praticien/credits?achat=annule`,
+      } as Parameters<typeof stripe.checkout.sessions.create>[0]
+    );
 
     return NextResponse.json({ url: session.url });
   } catch (err) {
