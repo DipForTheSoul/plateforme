@@ -55,32 +55,38 @@ export async function POST(request: NextRequest) {
     ? `ForTheSoul — ${pack.labelFr} · ${promo.label}`
     : `ForTheSoul — ${pack.labelFr}`;
 
-  const stripe = getStripe();
-  const session = await stripe.checkout.sessions.create({
-    mode: "payment",
-    payment_method_types: ["card"],
-    line_items: [
-      {
-        price_data: {
-          currency: "chf",
-          unit_amount: unitAmount,
-          product_data: {
-            name: productName,
-            description: `${pack.credits} crédit(s) de publication pour ${practitioner.name}`,
+  try {
+    const stripe = getStripe();
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "chf",
+            unit_amount: unitAmount,
+            product_data: {
+              name: productName,
+              description: `${pack.credits} crédit(s) de publication pour ${practitioner.name}`,
+            },
           },
+          quantity: 1,
         },
-        quantity: 1,
+      ],
+      metadata: {
+        practitioner_id: practitioner.id,
+        credits: String(pack.credits),
+        pack_id: pack.id,
       },
-    ],
-    metadata: {
-      practitioner_id: practitioner.id,
-      credits: String(pack.credits),
-      pack_id: pack.id,
-    },
-    customer_email: user.email,
-    success_url: `${SITE_URL}/espace-praticien/credits?achat=succes`,
-    cancel_url: `${SITE_URL}/espace-praticien/credits?achat=annule`,
-  });
+      customer_email: user.email,
+      success_url: `${SITE_URL}/espace-praticien/credits?achat=succes`,
+      cancel_url: `${SITE_URL}/espace-praticien/credits?achat=annule`,
+    });
 
-  return NextResponse.json({ url: session.url });
+    return NextResponse.json({ url: session.url });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Erreur Stripe inconnue";
+    console.error("[stripe/checkout] Erreur:", msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
 }
