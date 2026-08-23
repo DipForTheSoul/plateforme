@@ -179,10 +179,16 @@ export async function createEvent(
     }
   }
 
-  // 4. Confirmation de dépôt.
+  // 4. Confirmation de dépôt (dans la langue du praticien).
   const email = practitioner.contact?.email;
   if (email) {
-    const tpl = submissionReceivedEmail(practitioner.name, input.title);
+    const { data: prof } = await supabase
+      .from("profiles")
+      .select("preferred_lang")
+      .eq("id", practitioner.user_id!)
+      .maybeSingle();
+    const lang = (prof?.preferred_lang as "fr" | "de" | "en") ?? "fr";
+    const tpl = submissionReceivedEmail(practitioner.name, input.title, lang);
     await sendEmail({ to: email, ...tpl });
   }
 

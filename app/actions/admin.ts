@@ -10,6 +10,21 @@ import {
   practitionerApprovedEmail,
   practitionerRejectedEmail,
 } from "@/lib/email-templates";
+import type { Locale } from "@/types/database";
+
+/** Récupère la langue préférée d'un praticien via son profil. */
+async function getPractitionerLang(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string | null | undefined
+): Promise<Locale> {
+  if (!userId) return "fr";
+  const { data } = await supabase
+    .from("profiles")
+    .select("preferred_lang")
+    .eq("id", userId)
+    .maybeSingle();
+  return (data?.preferred_lang as Locale) ?? "fr";
+}
 
 /** Vérification systématique du rôle admin (en plus de la RLS). */
 async function assertAdmin() {
@@ -35,7 +50,7 @@ export async function moderateEvent(formData: FormData): Promise<void> {
 
   const { data: event } = await supabase
     .from("events")
-    .select("id, title, slug, practitioner:practitioners(name, contact)")
+    .select("id, title, slug, practitioner:practitioners(name, contact, user_id)")
     .eq("id", eventId)
     .single();
   if (!event) return;
@@ -54,13 +69,15 @@ export async function moderateEvent(formData: FormData): Promise<void> {
   const practitioner = event.practitioner as unknown as {
     name: string;
     contact: { email?: string };
+    user_id: string | null;
   } | null;
   const to = practitioner?.contact?.email;
   if (to) {
+    const lang = await getPractitionerLang(supabase, practitioner?.user_id);
     const tpl =
       decision === "approved"
-        ? eventApprovedEmail(practitioner!.name, event.title, event.slug, message)
-        : eventRejectedEmail(practitioner!.name, event.title, message);
+        ? eventApprovedEmail(practitioner!.name, event.title, event.slug, message, lang)
+        : eventRejectedEmail(practitioner!.name, event.title, message, lang);
     await sendEmail({ to, ...tpl });
   }
 
@@ -145,7 +162,7 @@ export async function moderatePractitioner(formData: FormData): Promise<void> {
   const supabase = await createClient();
   const { data: practitioner } = await supabase
     .from("practitioners")
-    .select("name, slug, contact")
+    .select("name, slug, contact, user_id")
     .eq("id", practitionerId)
     .single();
 
@@ -156,10 +173,11 @@ export async function moderatePractitioner(formData: FormData): Promise<void> {
 
   const to = (practitioner?.contact as { email?: string } | null)?.email;
   if (to && practitioner) {
+    const lang = await getPractitionerLang(supabase, practitioner.user_id);
     const tpl =
       decision === "approved"
-        ? practitionerApprovedEmail(practitioner.name, practitioner.slug)
-        : practitionerRejectedEmail(practitioner.name, message);
+        ? practitionerApprovedEmail(practitioner.name, practitioner.slug, lang)
+        : practitionerRejectedEmail(practitioner.name, message, lang);
     await sendEmail({ to, ...tpl });
   }
 

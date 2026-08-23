@@ -59,9 +59,6 @@ export async function POST(request: NextRequest) {
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     payment_method_types: ["card"],
-    // Managed Payments désactivé pour cette session : le prix est facturé tel quel,
-    // sans TVA ajoutée automatiquement (décision réunion 18/08 : prix tout compris).
-    managed_payments: { enabled: false },
     line_items: [
       {
         price_data: {
@@ -75,7 +72,6 @@ export async function POST(request: NextRequest) {
         quantity: 1,
       },
     ],
-    // La metadata est la source de vérité du webhook.
     metadata: {
       practitioner_id: practitioner.id,
       credits: String(pack.credits),
@@ -84,7 +80,7 @@ export async function POST(request: NextRequest) {
     customer_email: user.email,
     success_url: `${SITE_URL}/espace-praticien/credits?achat=succes`,
     cancel_url: `${SITE_URL}/espace-praticien/credits?achat=annule`,
-  } as Parameters<typeof stripe.checkout.sessions.create>[0]);
+  });
 
   return NextResponse.json({ url: session.url });
 }
