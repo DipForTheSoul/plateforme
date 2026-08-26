@@ -1,9 +1,15 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { isRateLimited } from "@/lib/rate-limit";
 
 /** Ping analytics sans cookies — insert best-effort dans page_views. */
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    if (isRateLimited(`views:${ip}`)) {
+      return NextResponse.json({ ok: false }, { status: 429 });
+    }
+
     const { path, locale } = (await request.json()) as {
       path?: string;
       locale?: string;
