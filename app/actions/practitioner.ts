@@ -80,6 +80,9 @@ export async function updatePractitionerProfile(
       review_url: input.review_url,
       logo_url: input.logo_url,
       photos: input.photos,
+      ...(practitioner.status === "rejected"
+        ? { status: "pending", admin_message: null }
+        : {}),
     })
     .eq("id", practitioner.id);
 
@@ -87,6 +90,10 @@ export async function updatePractitionerProfile(
 
   revalidatePath("/espace-praticien/profil");
   revalidatePath(`/praticiens/${practitioner.slug}`);
+  if (practitioner.status === "rejected") {
+    revalidatePath("/admin/praticiens");
+    return { success: "Profil mis à jour et renvoyé en validation." };
+  }
   return { success: "Profil mis à jour." };
 }
 
