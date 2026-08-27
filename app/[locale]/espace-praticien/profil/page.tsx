@@ -23,6 +23,20 @@ export default async function PractitionerProfilePage() {
 
   return (
     <div className="flex flex-col gap-6">
+      {practitioner.status === "rejected" && (
+        <div className="rounded-2xl border border-red-300 bg-red-50 p-5 text-sm text-red-900">
+          <strong>{t("rejectedTitle")}</strong>{" "}
+          {t("rejectedProfileText")}
+          {practitioner.admin_message && (
+            <p className="mt-2 italic">{t("rejectedReason")} {practitioner.admin_message}</p>
+          )}
+        </div>
+      )}
+      {practitioner.status === "pending" && (
+        <div className="rounded-2xl border border-soul-amber/40 bg-soul-ivory p-5 text-sm text-soul-brown">
+          {t("pendingReview")}
+        </div>
+      )}
       <div>
         <h2 className="text-xl text-soul-brown">{t("profileTitle")}</h2>
         <p className="mt-1 text-sm text-soul-bronze">{t("profileSubtitle")}</p>

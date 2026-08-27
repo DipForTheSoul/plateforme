@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentPractitioner, getCurrentProfile } from "@/lib/auth";
 import type { ActionState } from "@/app/actions/events";
 
@@ -80,13 +81,18 @@ export async function updatePractitionerProfile(
       review_url: input.review_url,
       logo_url: input.logo_url,
       photos: input.photos,
-      ...(practitioner.status === "rejected"
-        ? { status: "pending", admin_message: null }
-        : {}),
     })
     .eq("id", practitioner.id);
 
   if (error) return { error: "Mise à jour impossible." };
+
+  if (practitioner.status === "rejected") {
+    const admin = createAdminClient();
+    await admin
+      .from("practitioners")
+      .update({ status: "pending", admin_message: null })
+      .eq("id", practitioner.id);
+  }
 
   revalidatePath("/espace-praticien/profil");
   revalidatePath(`/praticiens/${practitioner.slug}`);
