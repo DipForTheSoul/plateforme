@@ -8,6 +8,7 @@ import { getCurrentProfile } from "@/lib/auth";
 import { isRateLimited } from "@/lib/rate-limit";
 import { sendEmail } from "@/lib/email";
 import { contactNotificationEmail } from "@/lib/email-templates";
+import { upsertSubscriber } from "@/lib/mailerlite";
 
 /** Destinataire des notifications du formulaire de contact (Didier). */
 const CONTACT_NOTIFY_EMAIL =
@@ -29,6 +30,7 @@ const schema = z.object({
   // Pot-de-miel anti-spam : doit rester vide (rempli par les bots).
   website: z.string().max(0),
   locale: z.string().max(5).optional().nullable(),
+  newsletter_consent: z.enum(["on"]).optional().nullable(),
 });
 
 export interface ContactState {
@@ -50,6 +52,7 @@ export async function sendContactMessage(
     message: formData.get("message"),
     website: formData.get("website") ?? "",
     locale: formData.get("locale") ?? null,
+    newsletter_consent: formData.get("newsletter_consent") ?? null,
   });
   if (!parsed.success) return { status: "error" };
 
@@ -76,6 +79,26 @@ export async function sendContactMessage(
     // « replyTo » = l'e-mail du visiteur → Didier répond directement.
     const tpl = contactNotificationEmail(escapeHtml(name), escapeHtml(email), escapeHtml(message));
     await sendEmail({ to: CONTACT_NOTIFY_EMAIL, replyTo: email, ...tpl });
+
+    // Inscription newsletter si consentement explicite (RGPD/nLPD).
+    if (parsed.data.newsletter_consent === "on") {
+      const nameParts = name.split(/\s+/);
+      const firstName = nameParts[0] ?? name;
+      const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : null;
+      await supabase.from("contacts").upsert(
+        {
+          email,
+          first_name: firstName,
+          last_name: lastName,
+          interests: ["contact-form"],
+          consent: true,
+          opt_in_at: new Date().toISOString(),
+          source: "contact-form",
+        },
+        { onConflict: "email", ignoreDuplicates: true }
+      );
+      await upsertSubscriber({ email, interests: ["contact-form"] });
+    }
 
     return { status: "success" };
   } catch {

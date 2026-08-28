@@ -52,6 +52,11 @@ export function ContactForm() {
         <textarea id="message" name="message" required minLength={10} maxLength={4000} rows={6} className="field" />
       </div>
 
+      <label className="flex items-start gap-2 text-sm text-soul-ink/80">
+        <input type="checkbox" name="newsletter_consent" value="on" className="mt-0.5" />
+        <span>{t("newsletterConsent")}</span>
+      </label>
+
       {state.status === "error" && (
         <p className="text-sm text-red-700">{t("error")}</p>
       )}

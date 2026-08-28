@@ -423,6 +423,7 @@
     "sending": "Sending…",
     "success": "Thank you! Your message was sent — we'll get back to you soon.",
     "error": "Couldn't send right now. Please try again in a moment.",
+    "newsletterConsent": "I'd like to receive ForTheSoul news by email (unsubscribe anytime).",
     "whatsappTitle": "Prefer WhatsApp?",
     "whatsappButton": "Contact via WhatsApp",
     "whatsappHint": "Message me directly — my number stays hidden."

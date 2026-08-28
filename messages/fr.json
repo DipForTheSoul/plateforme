@@ -423,6 +423,7 @@
     "sending": "Envoi…",
     "success": "Merci ! Votre message a bien été envoyé — on vous répond vite.",
     "error": "Envoi impossible pour le moment. Réessayez dans un instant.",
+    "newsletterConsent": "Je souhaite recevoir les actualités ForTheSoul par e-mail (désinscription possible à tout moment).",
     "whatsappTitle": "Vous préférez WhatsApp ?",
     "whatsappButton": "Contacter par WhatsApp",
     "whatsappHint": "Écrivez-moi directement — mon numéro n'est pas affiché."
