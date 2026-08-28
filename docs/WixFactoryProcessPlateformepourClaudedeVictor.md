@@ -398,6 +398,51 @@ chiffrer** (nouvelle brique). Exemples réels ForTheSoul : mise en avant **self-
 **mini-CMS** (éditer prix/textes soi-même) ≈ 2-3 h ; auto-délistage ≈ inclus. → Aide Victor à
 **répondre vite** en RDV : inclus / prochaine version / à chiffrer.
 
+### 7.7 Triage systématique des demandes client post-livraison
+
+**Contexte.** Après la livraison, le client envoie des demandes (par email, groupe de
+discussion, téléphone). Certaines sont des **corrections** (ça devait marcher, ça ne marche
+pas), d'autres sont des **nouvelles fonctionnalités** (ça n'a jamais été prévu). Il faut un
+système de tri automatique pour ne pas mélanger les deux.
+
+**Règle générale.** Chaque demande client reçue après livraison passe par ce filtre :
+
+| Critère | Classification | Action |
+|---|---|---|
+| Le comportement est décrit dans le cahier des charges et ne fonctionne pas | **Correction / bug** | Rodrigue corrige directement, sans validation Victor |
+| Le comportement fonctionne mais pas exactement comme le client l'imaginait (UX, wording, couleur) | **Ajustement mineur** | Rodrigue corrige si < 30 min, sinon → Victor |
+| Le client demande quelque chose qui n'existe pas dans le cahier des charges | **Nouvelle fonctionnalité** | Rodrigue chiffre (estimation en heures), Victor décide du tarif et de la priorité |
+| Le client demande un changement d'architecture ou de stack | **Évolution majeure** | Victor arbitre avant tout chiffrage |
+
+**Processus concret :**
+
+1. **Le client envoie ses demandes** (email, message, liste de points).
+2. **Rodrigue trie** chaque point dans un document structuré (`.md` ou tableau) :
+   - Colonne 1 : demande du client (résumé)
+   - Colonne 2 : classification (correction / ajustement / nouvelle fonctionnalité / évolution)
+   - Colonne 3 : estimation (pour les nouvelles fonctionnalités uniquement)
+   - Colonne 4 : note technique (ce que ça implique)
+3. **Les corrections** → Rodrigue les traite directement (c'est de la garantie).
+4. **Les nouvelles fonctionnalités** → document d'arbitrage envoyé à Victor, qui décide :
+   quoi proposer au client, sous quelle forme, à quel tarif.
+5. **Victor revient au client** avec la proposition chiffrée pour le hors-cadre.
+
+**Pourquoi c'est important.** Sans ce tri, on risque soit de travailler gratuitement sur des
+fonctionnalités hors cahier des charges, soit de bloquer des corrections légitimes en
+attendant une validation inutile. Le tri protège à la fois l'agence (pas de travail gratuit)
+et le client (ses bugs sont corrigés vite).
+
+**Exemple réel (ForTheSoul, août 2026).** Didier envoie un email avec 16 points. Après tri :
+10 corrections (garantie, traitées directement) et 6 nouvelles fonctionnalités (TWINT,
+remboursements back-office, email confirmation, galerie photos, traduction admin, contacts
+newsletter — total estimé 18-27h, document d'arbitrage envoyé à Victor).
+
+**Intégration dans « confiance ».** Ce triage devrait être un **outil standard** dans l'espace
+plateforme : un formulaire ou template où Rodrigue colle les demandes du client et les classe.
+Le Claude de Victor peut **proposer** comment intégrer ce flux dans le suivi projet (tableau de
+bord des demandes post-livraison, avec statut par point : corrigé / en attente d'arbitrage /
+chiffré / accepté par le client / développé).
+
 ---
 
 ## 8. Mémo final — pour le Claude de Victor
