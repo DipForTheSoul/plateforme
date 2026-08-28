@@ -34,6 +34,7 @@ export interface Practitioner {
   logo_url: string | null;
   credits: number;
   status: ModerationStatus;
+  admin_message: string | null;
   created_at: string;
   updated_at: string;
 }
