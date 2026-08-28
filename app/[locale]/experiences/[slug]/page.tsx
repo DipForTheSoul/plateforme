@@ -5,6 +5,7 @@ import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { AddToCalendar } from "@/components/AddToCalendar";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { ImageGallery } from "@/components/ImageGallery";
 import { StarRating } from "@/components/StarRating";
 import { JsonLd } from "@/components/JsonLd";
 import { createClient } from "@/lib/supabase/server";
@@ -153,20 +154,24 @@ export default async function EventPage({
     <article className="mx-auto max-w-4xl px-4 py-10">
       <JsonLd data={eventJsonLd(event)} />
 
-      <div className="relative h-64 w-full overflow-hidden rounded-3xl sm:h-80">
-        {event.images[0] ? (
-          <Image src={event.images[0]} alt={event.title} fill priority
-            sizes="(max-width: 896px) 100vw, 896px" className="object-cover" />
-        ) : (
+      {event.images.length > 0 ? (
+        <div className="relative">
+          <ImageGallery images={event.images} alt={event.title} />
+          <div className="absolute right-4 top-4 z-10">
+            <FavoriteButton kind="event" id={event.id} />
+          </div>
+        </div>
+      ) : (
+        <div className="relative h-64 w-full overflow-hidden rounded-3xl sm:h-80">
           <div className="flex h-full w-full items-center justify-center text-7xl"
             style={{ background: visual.gradient }} aria-hidden="true">
             <span className="opacity-80">{visual.emoji}</span>
           </div>
-        )}
-        <div className="absolute right-4 top-4">
-          <FavoriteButton kind="event" id={event.id} />
+          <div className="absolute right-4 top-4">
+            <FavoriteButton kind="event" id={event.id} />
+          </div>
         </div>
-      </div>
+      )}
 
       {videoEmbed && (
         <div className="mt-6 overflow-hidden rounded-3xl bg-black shadow-sm">

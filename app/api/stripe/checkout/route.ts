@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
             quantity: 1,
           },
         ],
-        managed_payments: { enabled: false },
+        payment_method_types: ["card", "twint"],
         metadata: {
           practitioner_id: practitioner.id,
           credits: String(pack.credits),

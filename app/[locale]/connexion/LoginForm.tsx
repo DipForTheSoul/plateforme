@@ -44,20 +44,23 @@ export function LoginForm({ next }: { next?: string }) {
         {t("loginButton")}
       </button>
 
-      <div className="flex flex-col gap-1 text-center text-sm text-soul-bronze">
+      <div className="flex flex-col gap-2 text-center text-sm text-soul-bronze">
         <Link href="/mot-de-passe-oublie" className="hover:text-soul-brown">
           {t("forgotPassword")}
         </Link>
-        <p>
+        <div className="rounded-xl bg-soul-sand/50 px-4 py-3">
+          <p className="font-medium text-soul-brown">{t("visitorNoAccount")}</p>
+          <p className="mt-1 text-xs">{t("visitorNoAccountDetail")}</p>
+        </div>
+        <p className="text-xs">
           {t("practitionerQuestion")}{" "}
           <Link
             href="/inscription"
-            className="font-medium text-soul-brown underline"
+            className="text-soul-brown underline"
           >
             {t("signupTitle")}
           </Link>
         </p>
-        <p className="text-xs text-soul-bronze/80">{t("visitorNoAccount")}</p>
       </div>
     </form>
   );
