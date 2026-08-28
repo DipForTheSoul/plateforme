@@ -73,6 +73,7 @@ export function ImageUploader({ prefix, images, onChange, max = 6 }: Props) {
           </label>
         )}
       </div>
+      <p className="text-xs text-soul-bronze">{t("maxSizeHint")}</p>
       {error && <p className="text-xs text-red-700">{error}</p>}
     </div>
   );

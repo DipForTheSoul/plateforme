@@ -290,8 +290,8 @@
     "website": "Site web",
     "reviewLink": "Lien vers vos avis (Google, Trustpilot ou autre)",
     "reviewHint": "Affiché sur votre fiche publique sous forme de bouton « Voir mes avis ».",
-    "logoLabel": "Logo (facultatif — affiché à côté de votre nom)",
-    "photosLabel": "Photos (la première est votre portrait principal)",
+    "logoLabel": "Logo (facultatif — petit rond affiché à côté de votre nom)",
+    "photosLabel": "Photos (la première est votre grande photo de profil sur votre page publique)",
     "saving": "Enregistrement…",
     "saveProfile": "Enregistrer ma fiche",
     "instagram": "Instagram",
@@ -396,7 +396,8 @@
   "uploader": {
     "loginRequired": "Connexion requise pour téléverser.",
     "uploadFailed": "Téléversement impossible.",
-    "removeImage": "Retirer cette image"
+    "removeImage": "Retirer cette image",
+    "maxSizeHint": "Max 10 Mo par image. Les photos sont automatiquement compressées."
   },
   "status": {
     "approved": "En ligne",

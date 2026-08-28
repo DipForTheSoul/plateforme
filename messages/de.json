@@ -290,8 +290,8 @@
     "website": "Webseite",
     "reviewLink": "Link zu Ihren Bewertungen (Google, Trustpilot o. Ä.)",
     "reviewHint": "Wird auf Ihrem öffentlichen Profil als Button „Meine Bewertungen ansehen“ angezeigt.",
-    "logoLabel": "Logo (optional — neben Ihrem Namen angezeigt)",
-    "photosLabel": "Fotos (das erste ist Ihr Hauptporträt)",
+    "logoLabel": "Logo (optional — kleines Rundbild neben Ihrem Namen)",
+    "photosLabel": "Fotos (das erste ist Ihr grosses Profilbild auf Ihrer öffentlichen Seite)",
     "saving": "Wird gespeichert…",
     "saveProfile": "Profil speichern",
     "instagram": "Instagram",
@@ -396,7 +396,8 @@
   "uploader": {
     "loginRequired": "Anmeldung zum Hochladen erforderlich.",
     "uploadFailed": "Hochladen nicht möglich.",
-    "removeImage": "Dieses Bild entfernen"
+    "removeImage": "Dieses Bild entfernen",
+    "maxSizeHint": "Max. 10 MB pro Bild. Fotos werden automatisch komprimiert."
   },
   "status": {
     "approved": "Online",

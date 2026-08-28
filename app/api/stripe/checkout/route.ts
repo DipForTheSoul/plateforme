@@ -31,6 +31,14 @@ export async function POST(request: NextRequest) {
     .select("id, name")
     .eq("user_id", user.id)
     .maybeSingle();
+
+  // Langue préférée du praticien → locale Stripe Checkout.
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("preferred_lang")
+    .eq("id", user.id)
+    .maybeSingle();
+  const stripeLocale = (profile?.preferred_lang === "de" ? "de" : profile?.preferred_lang === "en" ? "en" : "fr") as "fr" | "de" | "en";
   if (!practitioner) {
     return NextResponse.json({ error: "Aucune fiche praticien." }, { status: 403 });
   }
@@ -59,6 +67,7 @@ export async function POST(request: NextRequest) {
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.create(
       {
+        locale: stripeLocale,
         mode: "payment",
         line_items: [
           {

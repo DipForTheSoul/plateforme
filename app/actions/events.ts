@@ -12,6 +12,7 @@ import type { Recurrence } from "@/types/database";
 
 export interface ActionState {
   error?: string;
+  fieldErrors?: Record<string, string>;
   success?: string;
 }
 
@@ -32,6 +33,25 @@ const eventSchema = z.object({
   video_url: z.string().url().optional().nullable(),
   images: z.array(z.string().url()).max(6),
 });
+
+const fieldLabels: Record<string, string> = {
+  title: "Titre",
+  description: "Description",
+  category_ids: "Univers",
+  venue_id: "Lieu",
+  start_date: "Date de début",
+  languages: "Langues",
+  images: "Photos",
+};
+
+function zodToFieldErrors(err: z.ZodError): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const issue of err.issues) {
+    const key = String(issue.path[0] ?? "");
+    if (!out[key]) out[key] = fieldLabels[key] ?? key;
+  }
+  return out;
+}
 
 function parseEventForm(formData: FormData) {
   return eventSchema.safeParse({
@@ -99,7 +119,12 @@ export async function createEvent(
 
   const parsed = parseEventForm(formData);
   if (!parsed.success) {
-    return { error: "Formulaire incomplet — vérifiez les champs obligatoires." };
+    const fieldErrors = zodToFieldErrors(parsed.error);
+    const fields = Object.values(fieldErrors).join(", ");
+    return {
+      error: `Champs invalides : ${fields}.`,
+      fieldErrors,
+    };
   }
   const input = parsed.data;
 
@@ -207,7 +232,9 @@ export async function updateEvent(
 
   const parsed = parseEventForm(formData);
   if (!parsed.success) {
-    return { error: "Formulaire incomplet — vérifiez les champs obligatoires." };
+    const fieldErrors = zodToFieldErrors(parsed.error);
+    const fields = Object.values(fieldErrors).join(", ");
+    return { error: `Champs invalides : ${fields}.`, fieldErrors };
   }
   const input = parsed.data;
 
@@ -262,7 +289,9 @@ export async function adminCreateEvent(
 
   const parsed = parseEventForm(formData);
   if (!parsed.success) {
-    return { error: "Formulaire incomplet — vérifiez les champs obligatoires." };
+    const fieldErrors = zodToFieldErrors(parsed.error);
+    const fields = Object.values(fieldErrors).join(", ");
+    return { error: `Champs invalides : ${fields}.`, fieldErrors };
   }
   const input = parsed.data;
 

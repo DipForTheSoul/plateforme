@@ -290,8 +290,8 @@
     "website": "Website",
     "reviewLink": "Link to your reviews (Google, Trustpilot or other)",
     "reviewHint": "Shown on your public profile as a “See my reviews” button.",
-    "logoLabel": "Logo (optional — shown next to your name)",
-    "photosLabel": "Photos (the first is your main portrait)",
+    "logoLabel": "Logo (optional — small round icon shown next to your name)",
+    "photosLabel": "Photos (the first is your main profile picture on your public page)",
     "saving": "Saving…",
     "saveProfile": "Save my profile",
     "instagram": "Instagram",
@@ -396,7 +396,8 @@
   "uploader": {
     "loginRequired": "Sign-in required to upload.",
     "uploadFailed": "Upload failed.",
-    "removeImage": "Remove this image"
+    "removeImage": "Remove this image",
+    "maxSizeHint": "Max 10 MB per image. Photos are automatically compressed."
   },
   "status": {
     "approved": "Online",
