@@ -24,10 +24,13 @@ export default async function PractitionerLayout({
     ? t("spaceTitle", { name: firstName })
     : t("spaceTitleGeneric");
 
+  const profileNeedsAttention =
+    practitioner?.status === "rejected" || practitioner?.status === "pending";
+
   const nav = [
     { href: "/espace-praticien", label: t("navDashboard") },
     { href: "/espace-praticien/evenements", label: t("navEvents") },
-    { href: "/espace-praticien/profil", label: t("navProfile") },
+    { href: "/espace-praticien/profil", label: t("navProfile"), badge: profileNeedsAttention },
     { href: "/espace-praticien/credits", label: t("navCredits") },
   ];
 
@@ -48,9 +51,14 @@ export default async function PractitionerLayout({
             <Link
               key={item.href}
               href={item.href}
-              className="whitespace-nowrap rounded-xl px-4 py-2 text-sm font-medium text-soul-brown hover:bg-soul-sand/50"
+              className="relative whitespace-nowrap rounded-xl px-4 py-2 text-sm font-medium text-soul-brown hover:bg-soul-sand/50"
             >
               {item.label}
+              {"badge" in item && item.badge && (
+                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">
+                  1
+                </span>
+              )}
             </Link>
           ))}
         </nav>
