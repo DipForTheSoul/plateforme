@@ -223,3 +223,46 @@ export async function grantCreditsManually(formData: FormData): Promise<void> {
   revalidatePath("/admin/credits");
   revalidatePath("/espace-praticien/credits");
 }
+
+/**
+ * Ajustement manuel de crédits (déduction / correction).
+ * Permet de retirer des crédits attribués par erreur.
+ */
+export async function adjustCreditsManually(formData: FormData): Promise<void> {
+  await assertAdmin();
+  const practitionerId = String(formData.get("practitioner_id") ?? "");
+  const amount = Number.parseInt(String(formData.get("amount") ?? "0"), 10);
+  const note = String(formData.get("note") ?? "").trim() || "Correction manuelle";
+  if (!practitionerId || !Number.isInteger(amount) || amount <= 0) return;
+
+  const supabase = await createClient();
+
+  const { error } = await supabase.from("credit_transactions").insert({
+    practitioner_id: practitionerId,
+    amount: -amount,
+    type: "manual",
+    note,
+  });
+  if (error) return;
+
+  await supabase
+    .from("practitioners")
+    .update({ credits: Math.max(0, -amount) })
+    .eq("id", practitionerId);
+
+  // Recalculate from transactions to be safe.
+  const { data: txs } = await supabase
+    .from("credit_transactions")
+    .select("amount")
+    .eq("practitioner_id", practitionerId);
+  if (txs) {
+    const total = txs.reduce((sum, t) => sum + t.amount, 0);
+    await supabase
+      .from("practitioners")
+      .update({ credits: Math.max(0, total) })
+      .eq("id", practitionerId);
+  }
+
+  revalidatePath("/admin/credits");
+  revalidatePath("/espace-praticien/credits");
+}

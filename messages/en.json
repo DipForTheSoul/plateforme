@@ -546,7 +546,12 @@
       "noTransactions": "No transactions.",
       "txStripe": "Stripe purchase",
       "txManual": "Manual",
-      "txConsumption": "Consumption"
+      "txConsumption": "Consumption",
+      "deductTitle": "Deduct credits (correction)",
+      "deductHint": "To correct an accidental grant (double-tap, error).",
+      "deductAmount": "To deduct",
+      "deductNotePlaceholder": "Correction: duplicate grant",
+      "deduct": "Deduct"
     },
     "newsletter": {
       "exportTitle": "CSV Export (MailerLite)",

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
-import { grantCreditsManually } from "@/app/actions/admin";
 import { SettingNumberForm } from "@/components/admin/SettingNumberForm";
+import { GrantCreditsForm } from "@/components/admin/GrantCreditsForm";
+import { AdjustCreditsForm } from "@/components/admin/AdjustCreditsForm";
 import { formatDate } from "@/lib/utils";
 import { getTranslations } from "next-intl/server";
 import type { CreditTransaction, Practitioner } from "@/types/database";
@@ -30,6 +31,12 @@ export default async function AdminCreditsPage() {
       practitioner: { name: string } | null;
     })[]) ?? [];
 
+  const practitionersList = practitioners.map((p) => ({
+    id: p.id,
+    name: p.name,
+    credits: p.credits,
+  }));
+
   return (
     <div className="flex flex-col gap-8">
       <section className="card p-6">
@@ -51,29 +58,17 @@ export default async function AdminCreditsPage() {
         <p className="mb-4 text-sm text-soul-bronze">
           {t("manualGrantHint")}
         </p>
-        <form action={grantCreditsManually} className="flex flex-wrap items-end gap-3">
-          <div className="min-w-48 flex-1">
-            <label className="label" htmlFor="practitioner_id">{t("practitioner")}</label>
-            <select id="practitioner_id" name="practitioner_id" required className="field">
-              <option value="" disabled>{t("choose")}</option>
-              {practitioners.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name} — {p.credits} {t("creditsLabel").toLowerCase()}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="w-28">
-            <label className="label" htmlFor="amount">{t("creditsLabel")}</label>
-            <input id="amount" name="amount" type="number" min={1} defaultValue={5}
-              required className="field" />
-          </div>
-          <div className="min-w-48 flex-1">
-            <label className="label" htmlFor="note">{t("note")}</label>
-            <input id="note" name="note" placeholder={t("notePlaceholder")} className="field" />
-          </div>
-          <button type="submit" className="btn-primary">{t("grant")}</button>
-        </form>
+        <GrantCreditsForm practitioners={practitionersList} />
+      </section>
+
+      <section className="card p-6">
+        <h2 className="mb-1 font-serif text-lg text-soul-brown">
+          {t("deductTitle")}
+        </h2>
+        <p className="mb-4 text-sm text-soul-bronze">
+          {t("deductHint")}
+        </p>
+        <AdjustCreditsForm practitioners={practitionersList} />
       </section>
 
       <section>

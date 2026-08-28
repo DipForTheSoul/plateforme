@@ -546,7 +546,12 @@
       "noTransactions": "Keine Transaktionen.",
       "txStripe": "Stripe-Kauf",
       "txManual": "Manuell",
-      "txConsumption": "Verbrauch"
+      "txConsumption": "Verbrauch",
+      "deductTitle": "Guthaben abziehen (Korrektur)",
+      "deductHint": "Um eine fehlerhafte Zuweisung zu korrigieren (Doppelklick, Fehler).",
+      "deductAmount": "Abzuziehen",
+      "deductNotePlaceholder": "Korrektur: doppelte Zuweisung",
+      "deduct": "Abziehen"
     },
     "newsletter": {
       "exportTitle": "CSV-Export (MailerLite)",

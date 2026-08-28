@@ -546,7 +546,12 @@
       "noTransactions": "Aucune transaction.",
       "txStripe": "Achat Stripe",
       "txManual": "Manuel",
-      "txConsumption": "Consommation"
+      "txConsumption": "Consommation",
+      "deductTitle": "Déduire des crédits (correction)",
+      "deductHint": "Pour corriger une attribution en trop (double-clic, erreur).",
+      "deductAmount": "À déduire",
+      "deductNotePlaceholder": "Correction : attribution en double",
+      "deduct": "Déduire"
     },
     "newsletter": {
       "exportTitle": "Export CSV (MailerLite)",
