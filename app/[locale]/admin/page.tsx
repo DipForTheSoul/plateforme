@@ -1,11 +1,13 @@
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
 /** Tableau de bord admin : compteurs clés + analytics interne sans cookies. */
 export default async function AdminDashboard() {
   const supabase = await createClient();
+  const t = await getTranslations("admin");
 
   const since = new Date();
   since.setDate(since.getDate() - 30);
@@ -35,7 +37,6 @@ export default async function AdminDashboard() {
   ]);
   const topExp = (topExperiences.data as { title: string; slug: string; view_count: number }[] ?? []).filter((e) => e.view_count > 0);
 
-  // Top 8 des pages les plus vues (30 jours).
   const counts = new Map<string, number>();
   for (const row of (topPages.data as { path: string }[]) ?? []) {
     counts.set(row.path, (counts.get(row.path) ?? 0) + 1);
@@ -43,13 +44,13 @@ export default async function AdminDashboard() {
   const top = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
 
   const cards = [
-    { label: "Soumissions en attente", value: pendingEvents.count ?? 0, href: "/admin/soumissions", accent: true },
-    { label: "Praticien·nes à valider", value: pendingPractitioners.count ?? 0, href: "/admin/praticiens", accent: true },
-    { label: "Expériences en ligne", value: approvedEvents.count ?? 0, href: "/admin/soumissions" },
-    { label: "Publications refusées", value: rejectedEvents.count ?? 0, href: "/admin/soumissions" },
-    { label: "Praticien·nes actifs", value: activePractitioners.count ?? 0, href: "/admin/praticiens" },
-    { label: "Crédits consommés (30 j)", value: creditsConsumed.count ?? 0, href: "/admin/credits" },
-    { label: "Contacts newsletter", value: contacts.count ?? 0, href: "/admin/newsletter" },
+    { label: t("dashboard.pendingSubmissions"), value: pendingEvents.count ?? 0, href: "/admin/soumissions", accent: true },
+    { label: t("dashboard.pendingPractitioners"), value: pendingPractitioners.count ?? 0, href: "/admin/praticiens", accent: true },
+    { label: t("dashboard.eventsOnline"), value: approvedEvents.count ?? 0, href: "/admin/soumissions" },
+    { label: t("dashboard.rejected"), value: rejectedEvents.count ?? 0, href: "/admin/soumissions" },
+    { label: t("dashboard.activePractitioners"), value: activePractitioners.count ?? 0, href: "/admin/praticiens" },
+    { label: t("dashboard.creditsConsumed30d"), value: creditsConsumed.count ?? 0, href: "/admin/credits" },
+    { label: t("dashboard.newsletterContacts"), value: contacts.count ?? 0, href: "/admin/newsletter" },
   ];
 
   return (
@@ -67,7 +68,7 @@ export default async function AdminDashboard() {
       {topExp.length > 0 && (
         <div className="card p-6">
           <h2 className="mb-4 font-serif text-lg text-soul-brown">
-            Expériences les plus consultées
+            {t("dashboard.topExperiences")}
           </h2>
           <ul className="flex flex-col gap-2">
             {topExp.map((e) => (
@@ -88,13 +89,13 @@ export default async function AdminDashboard() {
 
       <div className="card p-6">
         <div className="mb-4 flex items-baseline justify-between">
-          <h2 className="font-serif text-lg text-soul-brown">Audience (30 jours)</h2>
+          <h2 className="font-serif text-lg text-soul-brown">{t("dashboard.audience30d")}</h2>
           <p className="text-sm text-soul-bronze">
-            {views.count ?? 0} pages vues — mesure interne sans cookies
+            {t("dashboard.pageViews", { count: views.count ?? 0 })}
           </p>
         </div>
         {top.length === 0 ? (
-          <p className="text-sm text-soul-bronze">Pas encore de données.</p>
+          <p className="text-sm text-soul-bronze">{t("dashboard.noData")}</p>
         ) : (
           <ul className="flex flex-col gap-2">
             {top.map(([path, count]) => (
@@ -107,11 +108,9 @@ export default async function AdminDashboard() {
             ))}
           </ul>
         )}
-        <p className="mt-4 text-xs text-soul-bronze">
-          Ceci est un aperçu interne. Les statistiques détaillées (provenance des
-          visiteurs, trafic, pages) se consultent dans <strong>Google Analytics</strong>,
-          désormais connecté.
-        </p>
+        <p className="mt-4 text-xs text-soul-bronze"
+          dangerouslySetInnerHTML={{ __html: t.raw("dashboard.analyticsNote") }}
+        />
       </div>
     </div>
   );

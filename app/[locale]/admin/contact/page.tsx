@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate } from "@/lib/utils";
@@ -26,6 +26,7 @@ export default async function AdminContactPage({
   setRequestLocale(locale);
   await requireRole(["admin"]);
 
+  const t = await getTranslations("admin.contact");
   const supabase = await createClient();
   const { data } = await supabase
     .from("contact_messages")
@@ -36,11 +37,11 @@ export default async function AdminContactPage({
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
-      <h1 className="mb-6 text-2xl text-soul-brown">Messages de contact</h1>
+      <h1 className="mb-6 text-2xl text-soul-brown">{t("title")}</h1>
 
       {messages.length === 0 ? (
         <p className="rounded-2xl bg-soul-sand/40 p-6 text-sm text-soul-brown">
-          Aucun message pour le moment.
+          {t("empty")}
         </p>
       ) : (
         <ul className="flex flex-col gap-4">
@@ -73,7 +74,7 @@ export default async function AdminContactPage({
                         : "bg-soul-violet/10 text-soul-violet"
                     }`}
                   >
-                    {m.handled ? "Traité — rouvrir" : "Marquer traité"}
+                    {m.handled ? t("handled") : t("markHandled")}
                   </button>
                 </form>
               </div>

@@ -4,11 +4,11 @@ import { adminUpdateEvent } from "@/app/actions/events";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getCategories, getVenues } from "@/lib/queries";
+import { getTranslations } from "next-intl/server";
 import type { Event } from "@/types/database";
 
 export const dynamic = "force-dynamic";
 
-/** Édition d'une expérience par l'admin (§3/§8) — Didier édite n'importe quelle fiche. */
 export default async function AdminEditEventPage({
   params,
 }: {
@@ -16,6 +16,7 @@ export default async function AdminEditEventPage({
 }) {
   await requireRole(["admin"]);
   const { id } = await params;
+  const t = await getTranslations("admin.submissions");
 
   const supabase = await createClient();
   const { data } = await supabase
@@ -35,7 +36,7 @@ export default async function AdminEditEventPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="text-xl text-soul-brown">Modifier « {event.title} » (admin)</h2>
+      <h2 className="text-xl text-soul-brown">{t("editEvent", { title: event.title })}</h2>
       <EventForm
         categories={categories}
         venues={venues}

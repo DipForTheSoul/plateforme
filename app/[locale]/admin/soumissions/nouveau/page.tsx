@@ -2,12 +2,13 @@ import { EventForm } from "@/components/forms/EventForm";
 import { adminCreateEvent } from "@/app/actions/events";
 import { requireRole } from "@/lib/auth";
 import { getApprovedPractitioners, getCategories, getVenues } from "@/lib/queries";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
-/** Création d'un événement par l'admin (§8) — même formulaire que les praticiens. */
 export default async function AdminNewEventPage() {
   await requireRole(["admin"]);
+  const t = await getTranslations("admin.submissions");
 
   const [categories, venues, practitioners] = await Promise.all([
     getCategories(),
@@ -17,7 +18,7 @@ export default async function AdminNewEventPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="text-xl text-soul-brown">Créer un événement (admin)</h2>
+      <h2 className="text-xl text-soul-brown">{t("createEventTitle")}</h2>
       <EventForm
         categories={categories}
         venues={venues}

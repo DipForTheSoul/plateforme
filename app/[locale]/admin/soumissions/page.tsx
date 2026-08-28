@@ -3,22 +3,21 @@ import { Link } from "@/i18n/navigation";
 import { moderateEvent } from "@/app/actions/admin";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatDate, formatTime } from "@/lib/utils";
+import { getTranslations } from "next-intl/server";
 import type { EventWithRelations } from "@/types/database";
 import { EVENT_WITH_RELATIONS } from "@/types/database";
 
 export const dynamic = "force-dynamic";
 
-/**
- * File de validation des expériences : validation / refus / publication en
- * 1 clic, utilisable au pouce sur mobile (boutons larges).
- */
 export default async function SubmissionsPage() {
   const supabase = await createClient();
+  const t = await getTranslations("admin.submissions");
+
   const { data } = await supabase
     .from("events")
     .select(EVENT_WITH_RELATIONS)
     .is("parent_event_id", null)
-    .order("status", { ascending: true })   // pending d'abord (ordre alphabétique utile)
+    .order("status", { ascending: true })
     .order("created_at", { ascending: false })
     .limit(100);
 
@@ -29,31 +28,31 @@ export default async function SubmissionsPage() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl text-soul-brown">Soumissions</h1>
+        <h1 className="text-xl text-soul-brown">{t("title")}</h1>
         <Link href="/admin/soumissions/nouveau" className="btn-primary">
-          + Créer un événement
+          {t("createEvent")}
         </Link>
       </div>
 
       <section>
         <h2 className="mb-4 text-xl text-soul-brown">
-          En attente ({pending.length})
+          {t("pending", { count: pending.length })}
         </h2>
         {pending.length === 0 && (
-          <p className="text-sm text-soul-bronze">Rien à valider — tout est à jour ✨</p>
+          <p className="text-sm text-soul-bronze">{t("nothingPending")}</p>
         )}
         <div className="flex flex-col gap-4">
           {pending.map((event) => (
-            <SubmissionCard key={event.id} event={event} showActions />
+            <SubmissionCard key={event.id} event={event} t={t} showActions />
           ))}
         </div>
       </section>
 
       <section>
-        <h2 className="mb-4 text-xl text-soul-brown">Historique</h2>
+        <h2 className="mb-4 text-xl text-soul-brown">{t("history")}</h2>
         <div className="flex flex-col gap-4">
           {others.map((event) => (
-            <SubmissionCard key={event.id} event={event} />
+            <SubmissionCard key={event.id} event={event} t={t} />
           ))}
         </div>
       </section>
@@ -63,9 +62,11 @@ export default async function SubmissionsPage() {
 
 function SubmissionCard({
   event,
+  t,
   showActions = false,
 }: {
   event: EventWithRelations;
+  t: Awaited<ReturnType<typeof getTranslations<"admin.submissions">>>;
   showActions?: boolean;
 }) {
   return (
@@ -77,7 +78,7 @@ function SubmissionCard({
             {event.practitioner?.name ?? "?"} · {event.category?.name ?? "—"} ·{" "}
             {formatDate(event.start_date)} {formatTime(event.start_date)}
             {event.venue && <> · {event.venue.name}</>}
-            {event.recurrence && <> · récurrent ({event.recurrence_count}×)</>}
+            {event.recurrence && <> · {t("recurrent", { count: event.recurrence_count })}</>}
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
@@ -86,7 +87,7 @@ function SubmissionCard({
             href={`/admin/soumissions/${event.id}`}
             className="inline-flex items-center gap-1 rounded-full border border-soul-violet/30 bg-soul-violet/5 px-3 py-1 text-xs font-medium text-soul-violet"
           >
-            ✎ Modifier
+            ✎ {t("edit")}
           </Link>
         </div>
       </div>
@@ -101,31 +102,31 @@ function SubmissionCard({
           <input
             type="text"
             name="message"
-            placeholder="Message au praticien (optionnel — joint à l'e-mail)"
+            placeholder={t("messagePlaceholder")}
             className="field"
           />
           <div className="flex flex-wrap gap-3">
             <button type="submit" name="decision" value="approved"
               className="btn-primary min-h-12 flex-1 sm:flex-none">
-              ✓ Valider &amp; publier
+              ✓ {t("approve")}
             </button>
             <button type="submit" name="decision" value="rejected"
               className="min-h-12 flex-1 rounded-full border border-red-300 bg-white px-6 text-sm font-medium text-red-700 hover:bg-red-50 sm:flex-none">
-              ✕ Refuser
+              ✕ {t("reject")}
             </button>
           </div>
         </form>
       ) : (
         <div className="mt-4 flex items-center gap-4">
           {event.status === "approved" && event.is_top && (
-            <span className="text-xs font-medium text-soul-violet">★ En avant</span>
+            <span className="text-xs font-medium text-soul-violet">★ {t("featuredBadge")}</span>
           )}
           <form action={moderateEvent}>
             <input type="hidden" name="event_id" value={event.id} />
             <button type="submit" name="decision"
               value={event.status === "approved" ? "rejected" : "approved"}
               className="text-sm text-soul-bronze underline">
-              {event.status === "approved" ? "Dépublier" : "Republier"}
+              {event.status === "approved" ? t("unpublish") : t("republish")}
             </button>
           </form>
         </div>

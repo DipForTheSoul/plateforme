@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { requireRole } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
 
@@ -16,27 +16,27 @@ export default async function AdminLayout({
   setRequestLocale(locale);
   await requireRole(["admin"]);
 
+  const t = await getTranslations("admin");
+
   const nav = [
-    { href: "/admin", label: "Tableau de bord" },
-    { href: "/admin/soumissions", label: "Soumissions" },
-    { href: "/admin/mises-en-avant", label: "Mises en avant" },
-    { href: "/admin/praticiens", label: "Praticien·nes" },
-    { href: "/admin/lieux", label: "Lieux" },
-    { href: "/admin/credits", label: "Crédits" },
-    { href: "/admin/newsletter", label: "Newsletter" },
-    { href: "/admin/contact", label: "Messages" },
-    { href: "/admin/parametres", label: "Paramètres" },
+    { href: "/admin", label: t("nav.dashboard") },
+    { href: "/admin/soumissions", label: t("nav.submissions") },
+    { href: "/admin/mises-en-avant", label: t("nav.featured") },
+    { href: "/admin/praticiens", label: t("nav.practitioners") },
+    { href: "/admin/lieux", label: t("nav.venues") },
+    { href: "/admin/credits", label: t("nav.credits") },
+    { href: "/admin/newsletter", label: t("nav.newsletter") },
+    { href: "/admin/contact", label: t("nav.messages") },
+    { href: "/admin/parametres", label: t("nav.settings") },
   ];
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl text-soul-brown">Administration</h1>
-        {/* Lien direct (pas <Link>) : on veut atteindre la route serveur qui
-            vide la session et redirige — insensible au cache d'un onglet périmé. */}
+        <h1 className="text-2xl text-soul-brown">{t("title")}</h1>
         {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a href="/api/logout" className="text-sm text-soul-bronze underline">
-          Se déconnecter
+          {t("logout")}
         </a>
       </div>
       <nav className="mb-8 flex gap-2 overflow-x-auto pb-1">

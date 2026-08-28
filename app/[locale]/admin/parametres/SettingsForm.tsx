@@ -1,10 +1,12 @@
 "use client";
 
 import { useActionState } from "react";
+import { useTranslations } from "next-intl";
 import { updateSettings } from "@/app/actions/settings";
 import type { ActionState } from "@/app/actions/events";
 
 export function SettingsForm({ values }: { values: Record<string, string> }) {
+  const t = useTranslations("admin.settings");
   const [state, action, pending] = useActionState<ActionState, FormData>(
     updateSettings,
     {}
@@ -14,7 +16,7 @@ export function SettingsForm({ values }: { values: Record<string, string> }) {
     <form action={action} className="card flex flex-col gap-5 p-6">
       <div>
         <label htmlFor="exchange_rate_eur" className="label">
-          Taux de change — 1 CHF = ? EUR (§4.4)
+          {t("exchangeRate")}
         </label>
         <input
           id="exchange_rate_eur"
@@ -25,14 +27,13 @@ export function SettingsForm({ values }: { values: Record<string, string> }) {
           placeholder="1.05"
         />
         <p className="mt-1 text-xs text-soul-bronze">
-          Utilisé pour l&apos;affichage indicatif des prix en euros. Une mise à jour
-          par semaine suffit (aucun paiement en EUR).
+          {t("exchangeRateHint")}
         </p>
       </div>
 
       <div>
         <label htmlFor="event_delist_days" className="label">
-          Retrait auto des annonces (jours après l&apos;événement)
+          {t("delistDays")}
         </label>
         <input
           id="event_delist_days"
@@ -43,50 +44,48 @@ export function SettingsForm({ values }: { values: Record<string, string> }) {
           placeholder="15"
         />
         <p className="mt-1 text-xs text-soul-bronze">
-          Une annonce disparaît de la recherche ce nombre de jours après la date de
-          l&apos;événement. Sa page reste accessible (référencement). Par défaut&nbsp;: 15.
+          {t("delistDaysHint")}
         </p>
       </div>
 
       <div className="rounded-xl border border-soul-bronze/15 p-4">
-        <p className="label mb-3">Tarifs des packs (CHF)</p>
+        <p className="label mb-3">{t("packPrices")}</p>
         <div className="grid gap-3 sm:grid-cols-3">
           <div>
-            <label htmlFor="price_pack_1" className="text-xs text-soul-bronze">1 publication</label>
+            <label htmlFor="price_pack_1" className="text-xs text-soul-bronze">{t("pack1")}</label>
             <input id="price_pack_1" name="price_pack_1" inputMode="decimal"
               defaultValue={values.price_pack_1 ?? "25"} className="field" placeholder="25" />
           </div>
           <div>
-            <label htmlFor="price_pack_5" className="text-xs text-soul-bronze">Pack 5</label>
+            <label htmlFor="price_pack_5" className="text-xs text-soul-bronze">{t("pack5")}</label>
             <input id="price_pack_5" name="price_pack_5" inputMode="decimal"
               defaultValue={values.price_pack_5 ?? "100"} className="field" placeholder="100" />
           </div>
           <div>
-            <label htmlFor="price_pack_10" className="text-xs text-soul-bronze">Pack 10</label>
+            <label htmlFor="price_pack_10" className="text-xs text-soul-bronze">{t("pack10")}</label>
             <input id="price_pack_10" name="price_pack_10" inputMode="decimal"
               defaultValue={values.price_pack_10 ?? "180"} className="field" placeholder="180" />
           </div>
         </div>
         <p className="mt-2 text-xs text-soul-bronze">
-          Prix facturés aux praticien·nes. Modifiables ici uniquement — aucune action à
-          faire sur Stripe.
+          {t("packPricesHint")}
         </p>
       </div>
 
       <div className="rounded-xl border border-soul-bronze/15 p-4">
-        <p className="label mb-3">Promotion (optionnel)</p>
+        <p className="label mb-3">{t("promoTitle")}</p>
         <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
           <div>
             <label htmlFor="promo_label" className="text-xs text-soul-bronze">
-              Étiquette (ex. « Spécial Noël 🎅 »)
+              {t("promoLabel")}
             </label>
             <input id="promo_label" name="promo_label" maxLength={40}
               defaultValue={values.promo_label ?? ""} className="field"
-              placeholder="Prix de lancement" />
+              placeholder={t("promoLabelPlaceholder")} />
           </div>
           <div>
             <label htmlFor="promo_discount_percent" className="text-xs text-soul-bronze">
-              Remise %
+              {t("promoDiscount")}
             </label>
             <input id="promo_discount_percent" name="promo_discount_percent"
               inputMode="numeric" defaultValue={values.promo_discount_percent ?? ""}
@@ -94,15 +93,13 @@ export function SettingsForm({ values }: { values: Record<string, string> }) {
           </div>
         </div>
         <p className="mt-2 text-xs text-soul-bronze">
-          L&apos;étiquette s&apos;affiche sur les packs et au paiement. Avec une remise,
-          le prix normal est barré et le prix réduit est facturé. Laissez l&apos;étiquette
-          vide pour arrêter la promotion.
+          {t("promoHint")}
         </p>
       </div>
 
       <div>
         <label htmlFor="payment_beneficiary" className="label">
-          Paiement — bénéficiaire (nom affiché)
+          {t("beneficiary")}
         </label>
         <input
           id="payment_beneficiary"
@@ -115,7 +112,7 @@ export function SettingsForm({ values }: { values: Record<string, string> }) {
 
       <div>
         <label htmlFor="payment_iban" className="label">
-          Paiement — IBAN (virement / Revolut)
+          {t("iban")}
         </label>
         <input
           id="payment_iban"
@@ -125,8 +122,7 @@ export function SettingsForm({ values }: { values: Record<string, string> }) {
           placeholder="CH00 0000 0000 0000 0000 0"
         />
         <p className="mt-1 text-xs text-soul-bronze">
-          Affiché sur la page « Crédits » du praticien, à côté du QR Revolut. Laissez
-          vide pour n&apos;afficher que le bouton/QR Revolut.
+          {t("ibanHint")}
         </p>
       </div>
 
@@ -134,7 +130,7 @@ export function SettingsForm({ values }: { values: Record<string, string> }) {
       {state.success && <p className="text-sm text-green-700">{state.success}</p>}
 
       <button type="submit" disabled={pending} className="btn-primary self-start">
-        {pending ? "Enregistrement…" : "Enregistrer les paramètres"}
+        {pending ? t("saving") : t("saveButton")}
       </button>
     </form>
   );

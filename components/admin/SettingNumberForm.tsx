@@ -4,17 +4,14 @@ import { useActionState } from "react";
 import { updateSettings } from "@/app/actions/settings";
 import type { ActionState } from "@/app/actions/events";
 
-/**
- * Petit formulaire de réglage d'un paramètre numérique (table `settings`),
- * réutilisé là où le réglage a du sens (durée de mise en avant, validité pack…).
- */
 export function SettingNumberForm({
   settingKey,
   label,
   hint,
   defaultValue,
-  suffix = "jours",
+  suffix,
   min = 1,
+  saveLabel,
 }: {
   settingKey: string;
   label: string;
@@ -22,6 +19,7 @@ export function SettingNumberForm({
   defaultValue: string;
   suffix?: string;
   min?: number;
+  saveLabel?: string;
 }) {
   const [state, action, pending] = useActionState<ActionState, FormData>(
     updateSettings,
@@ -40,9 +38,9 @@ export function SettingNumberForm({
           defaultValue={defaultValue}
           className="field !max-w-28"
         />
-        <span className="text-sm text-soul-bronze">{suffix}</span>
+        {suffix && <span className="text-sm text-soul-bronze">{suffix}</span>}
         <button type="submit" disabled={pending} className="btn-secondary !py-2">
-          {pending ? "…" : "Enregistrer"}
+          {pending ? "…" : (saveLabel ?? "Enregistrer")}
         </button>
       </div>
       {hint && <p className="text-xs text-soul-bronze">{hint}</p>}
