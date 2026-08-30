@@ -78,7 +78,7 @@ function SubmissionCard({
             {event.practitioner?.name ?? "?"} · {event.category?.name ?? "—"} ·{" "}
             {formatDate(event.start_date)} {formatTime(event.start_date)}
             {event.venue && <> · {event.venue.name}</>}
-            {event.recurrence && <> · {t("recurrent", { count: event.recurrence_count })}</>}
+            {event.recurrence && <> · {t("recurrent", { count: event.recurrence_count ?? 0 })}</>}
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
