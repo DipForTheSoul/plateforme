@@ -270,6 +270,8 @@
     "rejectedTitle": "Profile rejected.",
     "rejectedProfileText": "Please correct the points below, then save — your profile will be automatically resubmitted for review.",
     "rejectedReason": "Reason:",
+    "rejectedDashboardText": "Please correct your profile and save it to resubmit for review.",
+    "noEventsNeedApproval": "Your profile must be approved before you can submit experiences.",
     "profileUpdatedResubmitted": "Profile updated and resubmitted for review.",
     "balance": "Publication balance",
     "buyPack": "Buy more credits",

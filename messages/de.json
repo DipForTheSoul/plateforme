@@ -270,6 +270,8 @@
     "rejectedTitle": "Profil abgelehnt.",
     "rejectedProfileText": "Bitte korrigieren Sie die folgenden Punkte und speichern Sie — Ihr Profil wird automatisch erneut zur Prüfung eingereicht.",
     "rejectedReason": "Begründung:",
+    "rejectedDashboardText": "Bitte korrigieren Sie Ihr Profil und speichern Sie es, um es erneut zur Prüfung einzureichen.",
+    "noEventsNeedApproval": "Ihr Profil muss freigegeben werden, bevor Sie Erlebnisse einreichen können.",
     "profileUpdatedResubmitted": "Profil aktualisiert und erneut zur Prüfung eingereicht.",
     "balance": "Verfügbare Veröffentlichungen",
     "buyPack": "Paket nachkaufen",

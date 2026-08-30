@@ -54,7 +54,9 @@ export default async function MyEventsPage({
       </div>
 
       {events.length === 0 && (
-        <p className="text-sm text-soul-bronze">{t("noEventsFirst")}</p>
+        <p className="text-sm text-soul-bronze">
+          {practitioner.status === "approved" ? t("noEventsFirst") : t("noEventsNeedApproval")}
+        </p>
       )}
 
       <div className="flex flex-col gap-3">

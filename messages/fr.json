@@ -270,6 +270,8 @@
     "rejectedTitle": "Fiche refusée.",
     "rejectedProfileText": "Veuillez corriger les points ci-dessous, puis enregistrez — votre fiche sera automatiquement renvoyée en validation.",
     "rejectedReason": "Motif :",
+    "rejectedDashboardText": "Corrigez votre fiche puis enregistrez pour la renvoyer en validation.",
+    "noEventsNeedApproval": "Votre fiche doit être validée avant de pouvoir déposer des expériences.",
     "profileUpdatedResubmitted": "Profil mis à jour et renvoyé en validation.",
     "balance": "Solde de publications",
     "buyPack": "Racheter un pack",

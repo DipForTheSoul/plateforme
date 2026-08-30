@@ -41,6 +41,14 @@ export default async function PractitionerDashboard() {
 
   return (
     <div className="flex flex-col gap-6">
+      {practitioner.status === "rejected" && (
+        <div className="rounded-2xl border border-red-300 bg-red-50 p-5 text-sm text-red-900">
+          <strong>{t("rejectedTitle")}</strong> {t("rejectedDashboardText")}
+          {practitioner.admin_message && (
+            <p className="mt-2 italic">{t("rejectedReason")} {practitioner.admin_message}</p>
+          )}
+        </div>
+      )}
       {practitioner.status === "pending" && (
         <div className="rounded-2xl border border-soul-amber/40 bg-soul-ivory p-5 text-sm text-soul-brown">
           {t("pendingReview")}
@@ -72,18 +80,20 @@ export default async function PractitionerDashboard() {
         </div>
       </div>
 
-      {outOfCredits ? (
-        <div className="rounded-2xl border border-soul-terracotta/40 bg-soul-ivory p-5 text-sm text-soul-brown">
-          <strong>{t("balanceEmptyTitle")}</strong> {t("balanceEmptyText")}{" "}
-          <Link href="/espace-praticien/credits" className="font-medium underline">
-            {t("buyPackOneClick")}
+      {practitioner.status === "approved" ? (
+        outOfCredits ? (
+          <div className="rounded-2xl border border-soul-terracotta/40 bg-soul-ivory p-5 text-sm text-soul-brown">
+            <strong>{t("balanceEmptyTitle")}</strong> {t("balanceEmptyText")}{" "}
+            <Link href="/espace-praticien/credits" className="font-medium underline">
+              {t("buyPackOneClick")}
+            </Link>
+          </div>
+        ) : (
+          <Link href="/espace-praticien/evenements/nouveau" className="btn-primary self-start">
+            {t("submitExperience")}
           </Link>
-        </div>
-      ) : (
-        <Link href="/espace-praticien/evenements/nouveau" className="btn-primary self-start">
-          {t("submitExperience")}
-        </Link>
-      )}
+        )
+      ) : null}
 
       <div className="card divide-y divide-soul-bronze/10">
         <p className="p-4 text-sm font-semibold text-soul-brown">{t("latestEvents")}</p>
