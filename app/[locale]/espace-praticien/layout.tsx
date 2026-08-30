@@ -46,7 +46,7 @@ export default async function PractitionerLayout({
         </a>
       </div>
       <div className="grid gap-8 md:grid-cols-[200px_1fr]">
-        <nav className="flex flex-row gap-2 overflow-x-auto md:flex-col">
+        <nav className="flex flex-row gap-2 overflow-x-auto md:flex-col md:overflow-visible">
           {nav.map((item) => (
             <Link
               key={item.href}
@@ -55,7 +55,7 @@ export default async function PractitionerLayout({
             >
               {item.label}
               {"badge" in item && item.badge && (
-                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">
+                <span className="ml-1.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">
                   1
                 </span>
               )}
