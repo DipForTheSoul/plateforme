@@ -534,7 +534,8 @@
       "website": "Site web (optionnel)",
       "geocoding": "Géocodage en cours…",
       "save": "Enregistrer",
-      "createAndGeocode": "Créer et géocoder"
+      "createAndGeocode": "Créer et géocoder",
+      "deleteVenue": "Supprimer ce lieu"
     },
     "credits": {
       "packValidity": "Validité des packs",

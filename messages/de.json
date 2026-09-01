@@ -534,7 +534,8 @@
       "website": "Website (optional)",
       "geocoding": "Geokodierung läuft…",
       "save": "Speichern",
-      "createAndGeocode": "Erstellen und geokodieren"
+      "createAndGeocode": "Erstellen und geokodieren",
+      "deleteVenue": "Diesen Ort löschen"
     },
     "credits": {
       "packValidity": "Gültigkeit der Pakete",

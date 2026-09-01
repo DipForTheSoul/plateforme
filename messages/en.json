@@ -534,7 +534,8 @@
       "website": "Website (optional)",
       "geocoding": "Geocoding…",
       "save": "Save",
-      "createAndGeocode": "Create and geocode"
+      "createAndGeocode": "Create and geocode",
+      "deleteVenue": "Delete this venue"
     },
     "credits": {
       "packValidity": "Pack validity",

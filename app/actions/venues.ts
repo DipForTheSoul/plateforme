@@ -134,3 +134,17 @@ export async function adminUpdateVenue(
   revalidatePath(`/lieux/${venueId}`);
   return { success: "Lieu mis à jour.", venueId };
 }
+
+/** Suppression d'un lieu par l'admin. */
+export async function deleteVenue(formData: FormData): Promise<void> {
+  const profile = await getCurrentProfile();
+  if (!profile || profile.role !== "admin") return;
+
+  const venueId = String(formData.get("venue_id") ?? "");
+  if (!venueId) return;
+
+  const supabase = await createClient();
+  await supabase.from("venues").delete().eq("id", venueId);
+
+  revalidatePath("/admin/lieux");
+}
