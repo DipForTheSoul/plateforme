@@ -52,11 +52,11 @@ export function LoginForm({ next }: { next?: string }) {
           <p className="font-medium text-soul-brown">{t("visitorNoAccount")}</p>
           <p className="mt-1 text-xs">{t("visitorNoAccountDetail")}</p>
         </div>
-        <p className="text-xs">
+        <p className="pt-1 text-sm font-semibold text-soul-brown">
           {t("practitionerQuestion")}{" "}
           <Link
             href="/inscription"
-            className="text-soul-brown underline"
+            className="font-bold text-soul-violet underline underline-offset-2"
           >
             {t("signupTitle")}
           </Link>

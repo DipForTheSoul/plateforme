@@ -15,7 +15,7 @@ export function ImageGallery({ images, alt }: Props) {
   if (!images.length) return null;
   if (images.length === 1) {
     return (
-      <div className="relative h-64 w-full overflow-hidden rounded-3xl sm:h-80">
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl sm:aspect-[16/10]">
         <Image src={images[0]} alt={alt} fill priority sizes="(max-width: 896px) 100vw, 896px" className="object-cover" />
       </div>
     );
@@ -23,7 +23,7 @@ export function ImageGallery({ images, alt }: Props) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="relative h-64 w-full overflow-hidden rounded-3xl sm:h-80">
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl sm:aspect-[16/10]">
         <Image
           src={images[current]}
           alt={`${alt} (${current + 1}/${images.length})`}

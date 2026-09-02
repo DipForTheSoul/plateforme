@@ -153,8 +153,12 @@ export default async function HomePage({
                   </span>
                 )}
                 <div className="relative w-full bg-gradient-to-t from-black/70 via-black/25 to-transparent p-4">
-                  <span className="font-serif text-base font-medium leading-tight text-white drop-shadow md:text-lg" style={{ hyphens: "auto", overflowWrap: "break-word" }}>
-                    {tCat.has(category.slug as never) ? tCat(category.slug as never) : category.name}
+                  <span className="font-serif text-base font-medium leading-tight text-white drop-shadow md:text-lg" style={{ hyphens: "manual", overflowWrap: "normal" }}>
+                    {category.slug === "chamanisme" && locale === "de" ? (
+                      <><span className="block">Neo-</span><span className="block">Schamanismus</span></>
+                    ) : (
+                      tCat.has(category.slug as never) ? tCat(category.slug as never) : category.name
+                    )}
                   </span>
                 </div>
               </Link>
