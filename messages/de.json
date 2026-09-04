@@ -23,7 +23,7 @@
       "newsletterSuccess": "Danke! Du bist angemeldet.",
       "newsletterError": "Anmeldung derzeit nicht möglich. Bitte versuche es später erneut.",
       "legal": "© {year} ForTheSoul — Schweiz",
-      "becomePractitioner": "Anbieter:in werden",
+      "becomePractitioner": "Anbieterkonto erstellen",
       "terms": "Nutzungsbedingungen",
       "privacy": "Datenschutz"
     },
@@ -90,8 +90,16 @@
           "a": "Erstelle ein Anbieterkonto, vervollständige dein Profil (von Didier geprüft) und reiche deine Erlebnisse ein. Jede Veröffentlichung kostet ein Guthaben."
         },
         {
-          "q": "Finden die Erlebnisse überall statt ?",
-          "a": "Hauptsächlich in der Deutsch- und Westschweiz, mit einigen Reisen ins Ausland. Nutze die Umkreissuche, um Angebote in deiner Nähe zu finden."
+          "q": "Was kostet die Veröffentlichung eines Profils und von Erlebnissen auf ForTheSoul?",
+          "a": "Die Erstellung eines Kontos und die Veröffentlichung eines Profils sind kostenlos. Die Veröffentlichung von Erlebnissen ist kostenpflichtig. Die Preise findest du direkt in deinem persönlichen Bereich, über dein Dashboard."
+        },
+        {
+          "q": "Wie funktioniert die Bezahlung?",
+          "a": "Guthaben-Pakete für die Veröffentlichung von Erlebnissen können direkt in deinem persönlichen Bereich erworben werden. Die Bezahlung erfolgt per Kreditkarte oder TWINT über Stripe."
+        },
+        {
+          "q": "Kann ich ForTheSoul kostenlos nutzen?",
+          "a": "Ja. Du kannst ForTheSoul kostenlos entdecken und durchstöbern."
         }
       ]
     },

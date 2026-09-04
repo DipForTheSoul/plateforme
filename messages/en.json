@@ -23,7 +23,7 @@
       "newsletterSuccess": "Thank you! You're subscribed.",
       "newsletterError": "Subscription unavailable right now. Please try again later.",
       "legal": "© {year} ForTheSoul — Switzerland",
-      "becomePractitioner": "Become a practitioner",
+      "becomePractitioner": "Create a practitioner account",
       "terms": "Terms of use",
       "privacy": "Privacy"
     },
@@ -90,8 +90,16 @@
           "a": "Create a practitioner account, complete your profile (reviewed by Didier), then submit your experiences. Each publication uses one credit."
         },
         {
-          "q": "Do experiences take place everywhere ?",
-          "a": "Mostly across French- and German-speaking Switzerland, with a few immersions abroad. Use the 'near me' search to find experiences close to you."
+          "q": "How much does it cost to publish a profile and events on ForTheSoul?",
+          "a": "Creating an account and publishing a profile are free. Publishing events is paid. Prices are shown directly in your personal space, from your dashboard."
+        },
+        {
+          "q": "How does payment work?",
+          "a": "Credit packs needed to publish events can be purchased directly from your personal space. Payment can be made by credit card or TWINT, via Stripe."
+        },
+        {
+          "q": "Can I use ForTheSoul for free?",
+          "a": "Yes. You can discover and browse ForTheSoul for free."
         }
       ]
     },

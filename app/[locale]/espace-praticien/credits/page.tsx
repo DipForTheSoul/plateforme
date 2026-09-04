@@ -151,47 +151,23 @@ export default async function CreditsPage({
         </div>
       </section>
 
-      <section className="card p-6">
-        <h2 className="mb-2 font-serif text-lg text-soul-brown">
-          {tr("creditsPaymentTitle")}
-        </h2>
-        <p className="text-sm text-soul-ink/80">
-          {tr("creditsPaymentIntro", { beneficiary })}
-        </p>
-
-        <div className="mt-4 grid gap-6 sm:grid-cols-[auto_1fr] sm:items-center">
-          <div className="flex flex-col items-center gap-3">
-            <Image
-              src={STATIC_PAYMENT.revolutQr}
-              alt={tr("creditsQrAlt")}
-              width={160}
-              height={160}
-              className="rounded-xl border border-soul-bronze/20 bg-white p-2"
-            />
-            <a
-              href={STATIC_PAYMENT.revolutUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-soul-violet px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-soul-violet-dark"
-            >
-              {tr("creditsPayViaRevolut")}
-            </a>
+      {iban && (
+        <section className="card p-6">
+          <h2 className="mb-2 font-serif text-lg text-soul-brown">
+            {tr("creditsPaymentTitle")}
+          </h2>
+          <p className="text-sm text-soul-ink/80">
+            {tr("creditsPaymentIntro", { beneficiary })}
+          </p>
+          <div className="mt-4 rounded-xl bg-soul-sand/40 p-4 font-mono text-sm text-soul-brown">
+            <p>{beneficiary}</p>
+            <p className="mt-1">{tr("creditsIban")}&nbsp;: {iban}</p>
           </div>
-
-          <div className="text-sm text-soul-ink/80">
-            <p>{tr("creditsScanQr")}</p>
-            {iban && (
-              <div className="mt-3 rounded-xl bg-soul-sand/40 p-4 font-mono text-sm text-soul-brown">
-                <p>{beneficiary}</p>
-                <p className="mt-1">{tr("creditsIban")}&nbsp;: {iban}</p>
-              </div>
-            )}
-            <p className="mt-3 text-xs text-soul-bronze">
-              {tr("creditsPaymentNote", { note: STATIC_PAYMENT.note })}
-            </p>
-          </div>
-        </div>
-      </section>
+          <p className="mt-3 text-xs text-soul-bronze">
+            {tr("creditsPaymentNote", { note: STATIC_PAYMENT.note })}
+          </p>
+        </section>
+      )}
 
       <section>
         <h2 className="mb-4 text-xl text-soul-brown">{tr("creditsHistory")}</h2>

@@ -23,7 +23,7 @@
       "newsletterSuccess": "Merci ! Vous êtes bien inscrit·e.",
       "newsletterError": "Inscription impossible pour le moment. Réessayez plus tard.",
       "legal": "© {year} ForTheSoul — Suisse",
-      "becomePractitioner": "Devenir praticien·ne",
+      "becomePractitioner": "Créer un compte praticien",
       "terms": "Conditions d'utilisation",
       "privacy": "Confidentialité"
     },
@@ -90,8 +90,16 @@
           "a": "Créez un compte praticien, complétez votre fiche (validée par Didier), puis déposez vos expériences. Chaque publication utilise un crédit."
         },
         {
-          "q": "Les expériences ont-elles lieu partout ?",
-          "a": "Principalement en Suisse romande et alémanique, avec quelques immersions à l'étranger. Utilisez la recherche « autour de moi » pour trouver près de chez vous."
+          "q": "Combien coûte la publication d'un profil et d'événements sur ForTheSoul ?",
+          "a": "La création d'un compte et la publication d'un profil sont gratuites. La publication d'événements est payante. Les tarifs sont indiqués directement dans ton espace personnel, depuis ton dashboard."
+        },
+        {
+          "q": "Comment fonctionne le paiement ?",
+          "a": "Les packs de crédits nécessaires à la publication d'événements s'achètent directement depuis ton espace personnel. Le paiement peut être effectué par carte de crédit ou par TWINT, via Stripe."
+        },
+        {
+          "q": "Puis-je utiliser ForTheSoul gratuitement ?",
+          "a": "Oui. Tu peux découvrir et parcourir ForTheSoul gratuitement."
         }
       ]
     },
