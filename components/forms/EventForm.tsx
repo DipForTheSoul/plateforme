@@ -348,7 +348,7 @@ export function EventForm({
           </div>
         </div>
 
-        {!event && (
+        {(!event || !event.parent_event_id) && (
           <div className="grid gap-5 rounded-2xl bg-soul-sand/30 p-5 sm:grid-cols-2">
             <div>
               <label htmlFor="recurrence" className="label">{t("recurrenceLabel")}</label>
@@ -364,7 +364,7 @@ export function EventForm({
               <div>
                 <label htmlFor="recurrence_count" className="label">{t("occurrencesLabel")}</label>
                 <input id="recurrence_count" name="recurrence_count" type="number"
-                  min={2} max={26} defaultValue={4} className="field" />
+                  min={2} max={26} defaultValue={event?.recurrence_count ?? 4} className="field" />
                 <p className="mt-1 text-xs text-soul-bronze">
                   {t("occurrencesHint")}
                 </p>

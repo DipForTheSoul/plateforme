@@ -8,7 +8,7 @@ import { getCurrentPractitioner, getCurrentProfile } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
 import { submissionReceivedEmail } from "@/lib/email-templates";
 import { normalizeHttpUrl, uniqueSlug } from "@/lib/utils";
-import type { Recurrence } from "@/types/database";
+import type { ModerationStatus, Recurrence } from "@/types/database";
 
 const ZURICH_TIME_ZONE = "Europe/Zurich";
 
@@ -134,6 +134,43 @@ function shiftDate(iso: string, recurrence: Recurrence, step: number): string {
   if (recurrence === "biweekly") d.setDate(d.getDate() + 14 * step);
   if (recurrence === "monthly") d.setMonth(d.getMonth() + step);
   return d.toISOString();
+}
+
+/** Recrée les occurrences si la fréquence, le nombre ou la date de départ change. */
+async function rebuildOccurrences(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  parentEventId: string,
+  practitionerId: string,
+  status: ModerationStatus,
+  input: z.infer<typeof eventSchema>,
+  startDate: string,
+  endDate: string | null
+) {
+  await supabase.from("events").delete().eq("parent_event_id", parentEventId);
+  if (!input.recurrence) return;
+  const occurrences = Array.from({ length: (input.recurrence_count ?? 4) - 1 }, (_, i) => ({
+    title: input.title,
+    slug: uniqueSlug(input.title),
+    description: input.description,
+    category_id: input.category_ids[0],
+    practitioner_id: practitionerId,
+    venue_id: input.venue_id,
+    duration_minutes: input.duration_minutes,
+    price: input.price,
+    languages: input.languages,
+    included: input.included,
+    to_bring: input.to_bring,
+    video_url: input.video_url,
+    images: input.images,
+    status,
+    start_date: shiftDate(startDate, input.recurrence!, i + 1),
+    end_date: endDate ? shiftDate(endDate, input.recurrence!, i + 1) : null,
+    parent_event_id: parentEventId,
+  }));
+  const { data: children } = await supabase.from("events").insert(occurrences).select("id");
+  for (const child of children ?? []) {
+    await syncEventCategories(supabase, child.id, input.category_ids);
+  }
 }
 
 /**
@@ -275,6 +312,18 @@ export async function updateEvent(
   const input = parsed.data;
 
   const supabase = await createClient();
+  const { data: current } = await supabase
+    .from("events")
+    .select("recurrence, recurrence_count, start_date, end_date, status")
+    .eq("id", eventId)
+    .eq("practitioner_id", practitioner.id)
+    .maybeSingle();
+  if (!current) return { error: "Expérience introuvable." };
+  const startDate = zurichLocalDateTimeToIso(input.start_date);
+  const endDate = input.end_date ? zurichLocalDateTimeToIso(input.end_date) : null;
+  const scheduleChanged = current.recurrence !== input.recurrence ||
+    current.recurrence_count !== (input.recurrence ? input.recurrence_count ?? 4 : null) ||
+    current.start_date !== startDate || current.end_date !== endDate;
   const { error } = await supabase
     .from("events")
     .update({
@@ -282,8 +331,10 @@ export async function updateEvent(
       description: input.description,
       category_id: input.category_ids[0], // catégorie principale
       venue_id: input.venue_id,
-      start_date: zurichLocalDateTimeToIso(input.start_date),
-      end_date: input.end_date ? zurichLocalDateTimeToIso(input.end_date) : null,
+      start_date: startDate,
+      end_date: endDate,
+      recurrence: input.recurrence,
+      recurrence_count: input.recurrence ? input.recurrence_count ?? 4 : null,
       duration_minutes: input.duration_minutes,
       price: input.price,
       languages: input.languages,
@@ -301,6 +352,9 @@ export async function updateEvent(
 
   // Univers (multi-univers §2.1).
   await syncEventCategories(supabase, eventId, input.category_ids);
+  if (scheduleChanged) {
+    await rebuildOccurrences(supabase, eventId, practitioner.id, current.status as ModerationStatus, input, startDate, endDate);
+  }
 
   revalidatePath("/espace-praticien/evenements");
   redirect("/espace-praticien/evenements?modifie=1");
@@ -413,6 +467,17 @@ export async function adminUpdateEvent(
   const input = parsed.data;
 
   const supabase = await createClient();
+  const { data: current } = await supabase
+    .from("events")
+    .select("practitioner_id, recurrence, recurrence_count, start_date, end_date, status")
+    .eq("id", eventId)
+    .maybeSingle();
+  if (!current) return { error: "Expérience introuvable." };
+  const startDate = zurichLocalDateTimeToIso(input.start_date);
+  const endDate = input.end_date ? zurichLocalDateTimeToIso(input.end_date) : null;
+  const scheduleChanged = current.recurrence !== input.recurrence ||
+    current.recurrence_count !== (input.recurrence ? input.recurrence_count ?? 4 : null) ||
+    current.start_date !== startDate || current.end_date !== endDate;
   const { error } = await supabase
     .from("events")
     .update({
@@ -420,8 +485,10 @@ export async function adminUpdateEvent(
       description: input.description,
       category_id: input.category_ids[0],
       venue_id: input.venue_id,
-      start_date: zurichLocalDateTimeToIso(input.start_date),
-      end_date: input.end_date ? zurichLocalDateTimeToIso(input.end_date) : null,
+      start_date: startDate,
+      end_date: endDate,
+      recurrence: input.recurrence,
+      recurrence_count: input.recurrence ? input.recurrence_count ?? 4 : null,
       duration_minutes: input.duration_minutes,
       price: input.price,
       languages: input.languages,
@@ -435,6 +502,9 @@ export async function adminUpdateEvent(
   if (error) return { error: "Mise à jour impossible." };
 
   await syncEventCategories(supabase, eventId, input.category_ids);
+  if (scheduleChanged) {
+    await rebuildOccurrences(supabase, eventId, current.practitioner_id, current.status as ModerationStatus, input, startDate, endDate);
+  }
 
   revalidatePath("/admin/soumissions");
   revalidatePath(`/experiences/${input.title}`);
