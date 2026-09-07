@@ -95,18 +95,33 @@ export function formatDate(iso: string, locale: Locale = "fr"): string {
   const d = new Date(iso);
   const weekday = new Intl.DateTimeFormat(DATE_LOCALES[locale], {
     weekday: "long",
+    timeZone: "Europe/Zurich",
   }).format(d);
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Zurich",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).formatToParts(d);
+  const getPart = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((part) => part.type === type)?.value ?? "";
+  const dd = getPart("day");
+  const mm = getPart("month");
+  const yyyy = getPart("year");
   const cap = weekday.charAt(0).toUpperCase() + weekday.slice(1);
-  return `${cap} ${dd}.${mm}.${d.getFullYear()}`;
+  return `${cap} ${dd}.${mm}.${yyyy}`;
 }
 
 /** Heure au format 24h « 16:00 » (deux-points, uniforme partout). */
 export function formatTime(iso: string, locale: Locale = "fr"): string {
   const d = new Date(iso);
   void locale;
-  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Zurich",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).format(d);
 }
 
 export function formatDateRange(
@@ -116,7 +131,13 @@ export function formatDateRange(
 ): string {
   const start = new Date(startIso);
   const end = endIso ? new Date(endIso) : null;
-  const sameDay = end && start.toDateString() === end.toDateString();
+  const dateKey = (date: Date) => new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Zurich",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
+  const sameDay = end && dateKey(start) === dateKey(end);
   if (!end || sameDay) return formatDate(startIso, locale);
   return `${formatDate(startIso, locale)} → ${formatDate(endIso!, locale)}`;
 }

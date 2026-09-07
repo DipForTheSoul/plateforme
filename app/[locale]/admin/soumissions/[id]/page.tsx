@@ -33,6 +33,11 @@ export default async function AdminEditEventPage({
   }
 
   const [categories, venues] = await Promise.all([getCategories(), getVenues()]);
+  const { data: occurrenceRows } = await supabase
+    .from("events")
+    .select("id, start_date")
+    .eq("parent_event_id", event.id)
+    .order("start_date");
 
   return (
     <div className="flex flex-col gap-6">
@@ -44,6 +49,7 @@ export default async function AdminEditEventPage({
         event={event}
         selectedCategoryIds={selectedCategoryIds}
         action={adminUpdateEvent.bind(null, event.id)}
+        occurrences={occurrenceRows ?? []}
       />
     </div>
   );

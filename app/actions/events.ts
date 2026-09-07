@@ -10,6 +10,39 @@ import { submissionReceivedEmail } from "@/lib/email-templates";
 import { uniqueSlug } from "@/lib/utils";
 import type { Recurrence } from "@/types/database";
 
+const ZURICH_TIME_ZONE = "Europe/Zurich";
+
+/**
+ * Les champs datetime-local n'ont pas de fuseau. Les expériences sont saisies
+ * pour la Suisse : on les convertit donc explicitement depuis Europe/Zurich
+ * plutôt que depuis le fuseau du serveur (UTC en production).
+ */
+function zurichLocalDateTimeToIso(value: string): string {
+  const [date, time] = value.split("T");
+  const [year, month, day] = date.split("-").map(Number);
+  const [hour, minute] = time.split(":").map(Number);
+  const localAsUtc = Date.UTC(year, month - 1, day, hour, minute);
+  const zonedParts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: ZURICH_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(new Date(localAsUtc));
+  const part = (type: Intl.DateTimeFormatPartTypes) =>
+    Number(zonedParts.find((item) => item.type === type)?.value);
+  const zoneAsUtc = Date.UTC(
+    part("year"),
+    part("month") - 1,
+    part("day"),
+    part("hour"),
+    part("minute")
+  );
+  return new Date(localAsUtc - (zoneAsUtc - localAsUtc)).toISOString();
+}
+
 export interface ActionState {
   error?: string;
   fieldErrors?: Record<string, string>;
@@ -54,6 +87,7 @@ function zodToFieldErrors(err: z.ZodError): Record<string, string> {
 }
 
 function parseEventForm(formData: FormData) {
+  const durationHours = String(formData.get("duration_minutes") ?? "");
   return eventSchema.safeParse({
     title: String(formData.get("title") ?? "").trim(),
     description: String(formData.get("description") ?? "").trim(),
@@ -61,7 +95,9 @@ function parseEventForm(formData: FormData) {
     venue_id: String(formData.get("venue_id") ?? "") || null,
     start_date: formData.get("start_date"),
     end_date: String(formData.get("end_date") ?? "") || null,
-    duration_minutes: String(formData.get("duration_minutes") ?? "") || null,
+    duration_minutes: durationHours
+      ? Math.round(Number(durationHours.replace(",", ".")) * 60)
+      : null,
     price: String(formData.get("price") ?? "") || null,
     languages: formData.getAll("languages").map(String).filter(Boolean),
     recurrence: String(formData.get("recurrence") ?? "") || null,
@@ -164,8 +200,8 @@ export async function createEvent(
       ...base,
       title: input.title,
       slug: uniqueSlug(input.title),
-      start_date: new Date(input.start_date).toISOString(),
-      end_date: input.end_date ? new Date(input.end_date).toISOString() : null,
+      start_date: zurichLocalDateTimeToIso(input.start_date),
+      end_date: input.end_date ? zurichLocalDateTimeToIso(input.end_date) : null,
       recurrence: input.recurrence,
       recurrence_count: input.recurrence ? input.recurrence_count ?? 4 : null,
     })
@@ -246,8 +282,8 @@ export async function updateEvent(
       description: input.description,
       category_id: input.category_ids[0], // catégorie principale
       venue_id: input.venue_id,
-      start_date: new Date(input.start_date).toISOString(),
-      end_date: input.end_date ? new Date(input.end_date).toISOString() : null,
+      start_date: zurichLocalDateTimeToIso(input.start_date),
+      end_date: input.end_date ? zurichLocalDateTimeToIso(input.end_date) : null,
       duration_minutes: input.duration_minutes,
       price: input.price,
       languages: input.languages,
@@ -317,8 +353,8 @@ export async function adminCreateEvent(
       ...base,
       title: input.title,
       slug: uniqueSlug(input.title),
-      start_date: new Date(input.start_date).toISOString(),
-      end_date: input.end_date ? new Date(input.end_date).toISOString() : null,
+      start_date: zurichLocalDateTimeToIso(input.start_date),
+      end_date: input.end_date ? zurichLocalDateTimeToIso(input.end_date) : null,
       recurrence: input.recurrence,
       recurrence_count: input.recurrence ? input.recurrence_count ?? 4 : null,
     })
@@ -384,8 +420,8 @@ export async function adminUpdateEvent(
       description: input.description,
       category_id: input.category_ids[0],
       venue_id: input.venue_id,
-      start_date: new Date(input.start_date).toISOString(),
-      end_date: input.end_date ? new Date(input.end_date).toISOString() : null,
+      start_date: zurichLocalDateTimeToIso(input.start_date),
+      end_date: input.end_date ? zurichLocalDateTimeToIso(input.end_date) : null,
       duration_minutes: input.duration_minutes,
       price: input.price,
       languages: input.languages,
@@ -403,6 +439,26 @@ export async function adminUpdateEvent(
   revalidatePath("/admin/soumissions");
   revalidatePath(`/experiences/${input.title}`);
   return { success: "Expérience mise à jour." };
+}
+
+/** Supprime une occurrence isolée d'une série récurrente depuis l'administration. */
+export async function deleteAdminOccurrence(formData: FormData): Promise<void> {
+  const profile = await getCurrentProfile();
+  if (!profile || profile.role !== "admin") return;
+
+  const occurrenceId = String(formData.get("occurrence_id") ?? "");
+  const parentEventId = String(formData.get("parent_event_id") ?? "");
+  if (!occurrenceId || !parentEventId) return;
+
+  const supabase = await createClient();
+  await supabase
+    .from("events")
+    .delete()
+    .eq("id", occurrenceId)
+    .eq("parent_event_id", parentEventId);
+
+  revalidatePath("/admin/soumissions");
+  revalidatePath(`/admin/soumissions/${parentEventId}`);
 }
 
 /** Suppression d'un événement par son praticien (occurrences en cascade). */

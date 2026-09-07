@@ -3,6 +3,7 @@
 import { useActionState, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { createEvent, updateEvent, type ActionState } from "@/app/actions/events";
+import { deleteAdminOccurrence } from "@/app/actions/events";
 import { createVenue } from "@/app/actions/venues";
 import { ImageUploader } from "@/components/forms/ImageUploader";
 import { LANGUAGE_LABELS } from "@/lib/utils";
@@ -21,6 +22,8 @@ interface Props {
   action?: (prev: ActionState, formData: FormData) => Promise<ActionState>;
   /** Liste des praticien·nes (mode admin création : choix du propriétaire). */
   practitioners?: { id: string; name: string }[];
+  /** Occurrences filles affichées uniquement à l'administration. */
+  occurrences?: { id: string; start_date: string }[];
 }
 
 /** Convertit un ISO en valeur pour <input type="datetime-local">. */
@@ -39,6 +42,7 @@ export function EventForm({
   selectedCategoryIds = [],
   action: actionOverride,
   practitioners,
+  occurrences = [],
 }: Props) {
   const t = useTranslations("eventForm");
   const tCat = useTranslations("categories");
@@ -233,8 +237,9 @@ export function EventForm({
         <div className="grid gap-5 sm:grid-cols-3">
           <div>
             <label htmlFor="duration_minutes" className="label">{t("durationLabel")}</label>
-            <input id="duration_minutes" name="duration_minutes" type="number" min={15}
-              defaultValue={event?.duration_minutes ?? ""} className="field" />
+            <input id="duration_minutes" name="duration_minutes" type="number" min={0.25}
+              step={0.25}
+              defaultValue={event?.duration_minutes ? event.duration_minutes / 60 : ""} className="field" />
           </div>
           <div>
             <label htmlFor="price" className="label">{t("priceLabel")}</label>
@@ -280,6 +285,31 @@ export function EventForm({
               </div>
             )}
           </div>
+        )}
+
+        {event && occurrences.length > 0 && (
+          <section className="rounded-2xl border border-soul-violet/20 bg-soul-violet/5 p-5">
+            <h3 className="font-medium text-soul-brown">{t("occurrencesList")}</h3>
+            <input type="hidden" name="parent_event_id" value={event.id} />
+            <ul className="mt-3 flex flex-col gap-2">
+              {occurrences.map((occurrence) => (
+                <li key={occurrence.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white px-3 py-2 text-sm text-soul-brown">
+                  <time dateTime={occurrence.start_date}>
+                    {new Intl.DateTimeFormat(undefined, {
+                      dateStyle: "full",
+                      timeStyle: "short",
+                      timeZone: "Europe/Zurich",
+                    }).format(new Date(occurrence.start_date))}
+                  </time>
+                  <button type="submit" formAction={deleteAdminOccurrence}
+                    name="occurrence_id" value={occurrence.id}
+                    className="text-sm text-red-700 underline">
+                    {t("removeOccurrence")}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
         )}
 
         <div>
