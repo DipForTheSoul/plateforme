@@ -13,7 +13,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export async function POST(request: NextRequest) {
   if (!isStripeConfigured()) {
     return NextResponse.json(
-      { error: "Stripe non configuré (Rodrigue : clés de test dans .env.local)." },
+      { error: "Le paiement en ligne est momentanément indisponible." },
       { status: 503 }
     );
   }
@@ -43,15 +43,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Aucune fiche praticien." }, { status: 403 });
   }
 
-  const { packId } = (await request.json()) as { packId?: string };
-  const pack = packId ? getPack(packId) : undefined;
+  let packId: unknown;
+  try { const body = await request.json(); packId = body?.packId; }
+  catch { return NextResponse.json({error: 'Requête invalide.'}, {status:400}); }
+  const pack = typeof packId === 'string' ? getPack(packId) : undefined;
   if (!pack) {
     return NextResponse.json({ error: "Pack inconnu." }, { status: 400 });
   }
 
   // Prix éditables par l'admin (table `settings`) + éventuelle promo (étiquette + %).
   // Le montant est envoyé à la volée → Didier change tout dans son admin, jamais sur Stripe.
-  const { data: settingsRows } = await supabase.from("settings").select("key, value");
+  const { data: settingsRows, error: settingsError } = await supabase.from("settings").select("key, value");
+  if (settingsError) return NextResponse.json({error:'Les tarifs sont momentanément indisponibles.'}, {status:503});
   const settings = Object.fromEntries(
     ((settingsRows as { key: string; value: string }[]) ?? []).map((s) => [s.key, s.value])
   );
@@ -59,6 +62,8 @@ export async function POST(request: NextRequest) {
   const promo = getPromo(settings);
   const finalChf = promo && promo.percent > 0 ? discountedChf(priceChf, promo.percent) : priceChf;
   const unitAmount = Math.round(finalChf * 100);
+  if (!Number.isSafeInteger(unitAmount) || unitAmount < 50 || unitAmount > 99999999) return NextResponse.json({error:'Le montant du pack doit être vérifié par l’administrateur.'}, {status:503});
+  const localePrefix = stripeLocale === 'fr' ? '' : `/${stripeLocale}`;
   const productName = promo
     ? `ForTheSoul — ${pack.labelFr} · ${promo.label}`
     : `ForTheSoul — ${pack.labelFr}`;
@@ -89,15 +94,16 @@ export async function POST(request: NextRequest) {
           pack_id: pack.id,
         },
         customer_email: user.email,
-        success_url: `${SITE_URL}/espace-praticien/credits?achat=succes`,
-        cancel_url: `${SITE_URL}/espace-praticien/credits?achat=annule`,
+        success_url: `${SITE_URL}${localePrefix}/espace-praticien/credits?achat=succes`,
+        cancel_url: `${SITE_URL}${localePrefix}/espace-praticien/credits?achat=annule`,
       } as Parameters<typeof stripe.checkout.sessions.create>[0]
     );
 
+    if (!session.url) throw new Error('Checkout URL missing');
     return NextResponse.json({ url: session.url });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Erreur Stripe inconnue";
     console.error("[stripe/checkout] Erreur:", msg);
-    return NextResponse.json({ error: msg }, { status: 500 });
+    return NextResponse.json({ error: 'Impossible d’ouvrir le paiement. Réessayez dans quelques instants.' }, { status: 502 });
   }
 }

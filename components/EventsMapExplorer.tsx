@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import type * as LeafletNS from "leaflet";
+import {escapeHtml} from '@/lib/html';
 
 export interface MapItem {
   id: string;
@@ -76,10 +77,10 @@ export function EventsMapExplorer({
           }),
         }).addTo(map);
         const venue = it.venueName
-          ? `<div style="color:#9e7c52;font-size:12px;">${it.venueName}</div>`
+          ? `<div style="color:#9e7c52;font-size:12px;">${escapeHtml(it.venueName)}</div>`
           : "";
         marker.bindPopup(
-          `<a href="${hrefPrefix}/experiences/${it.slug}" style="font-family:serif;font-weight:600;color:#443420;font-size:14px;text-decoration:none;">${it.title}</a>${venue}<div style="color:#9e7c52;font-size:12px;margin-top:2px;">${it.dateLabel} · ${it.priceLabel}</div>`
+          `<a href="${escapeHtml(hrefPrefix)}/experiences/${encodeURIComponent(it.slug)}" style="font-family:serif;font-weight:600;color:#443420;font-size:14px;text-decoration:none;">${escapeHtml(it.title)}</a>${venue}<div style="color:#9e7c52;font-size:12px;margin-top:2px;">${escapeHtml(it.dateLabel)} · ${escapeHtml(it.priceLabel)}</div>`
         );
         marker.on("click", () => {
           setSelected(it.id);

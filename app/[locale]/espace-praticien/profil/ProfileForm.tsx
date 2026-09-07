@@ -2,6 +2,8 @@
 
 import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useDraftForm } from "@/components/forms/useDraftForm";
+import { WebUrlInput } from "@/components/forms/WebUrlInput";
 import { updatePractitionerProfile } from "@/app/actions/practitioner";
 import type { ActionState } from "@/app/actions/events";
 import { ImageUploader } from "@/components/forms/ImageUploader";
@@ -17,17 +19,33 @@ export function ProfileForm({
   action?: (prev: ActionState, formData: FormData) => Promise<ActionState>;
 }) {
   const t = useTranslations("practitioner");
-  const [state, formAction, pending] = useActionState<ActionState, FormData>(
-    action ?? updatePractitionerProfile,
-    {}
-  );
+  const td = useTranslations('draft');
   const [photos, setPhotos] = useState<string[]>(practitioner.photos);
   const [logo, setLogo] = useState<string[]>(
     practitioner.logo_url ? [practitioner.logo_url] : []
   );
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const [logoBusy, setLogoBusy] = useState(false);
+  const draft = useDraftForm(`profile:${practitioner.id}`, { photos, logo }, data => {
+    if (Array.isArray(data.photos)) setPhotos(data.photos.filter((v): v is string => typeof v === 'string'));
+    if (Array.isArray(data.logo)) setLogo(data.logo.filter((v): v is string => typeof v === 'string'));
+  });
+
+  const [state, formAction, pending] = useActionState<ActionState, FormData>(
+    async (prev, data) => {
+      try {
+        const result = await (action ?? updatePractitionerProfile)(prev, data);
+        if (result.success) draft.clear();
+        return result;
+      } catch { return { error: td('networkError') }; }
+    },
+    {}
+  );
+
 
   return (
-    <form action={formAction} className="flex flex-col gap-5">
+    <form {...draft.formProps} action={formAction} onSubmit={draft.submit(formAction)} className="flex flex-col gap-5">
+      <p className="text-xs text-soul-bronze" role="status">{td(draft.storageError ? 'unavailable' : 'hint')}</p>
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="name" className="label">{t("namePublic")}</label>
@@ -74,7 +92,7 @@ export function ProfileForm({
         </div>
         <div>
           <label htmlFor="website" className="label">{t("website")}</label>
-          <input id="website" name="website" type="url" placeholder="https://…"
+          <WebUrlInput id="website" name="website" placeholder="monsite.ch"
             defaultValue={practitioner.contact.website ?? ""} className="field" />
         </div>
       </div>
@@ -82,32 +100,32 @@ export function ProfileForm({
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="instagram" className="label">{t("instagram")}</label>
-          <input id="instagram" name="instagram" type="url" placeholder="https://instagram.com/…"
+          <WebUrlInput id="instagram" name="instagram" placeholder="instagram.com/…"
             defaultValue={practitioner.links.instagram ?? ""} className="field" />
         </div>
         <div>
           <label htmlFor="facebook" className="label">{t("facebook")}</label>
-          <input id="facebook" name="facebook" type="url" placeholder="https://facebook.com/…"
+          <WebUrlInput id="facebook" name="facebook" placeholder="facebook.com/…"
             defaultValue={practitioner.links.facebook ?? ""} className="field" />
         </div>
       </div>
 
       <div>
         <label htmlFor="review_url" className="label">{t("reviewLink")}</label>
-        <input id="review_url" name="review_url" type="url" placeholder="https://…"
+        <WebUrlInput id="review_url" name="review_url" placeholder="https://…"
           defaultValue={practitioner.review_url ?? ""} className="field" />
         <p className="mt-1 text-xs text-soul-bronze">{t("reviewHint")}</p>
       </div>
 
       <div>
         <span className="label">{t("logoLabel")}</span>
-        <ImageUploader prefix="practitioner-logo" images={logo} onChange={setLogo} max={1} />
+        <ImageUploader prefix="practitioner-logo" images={logo} onChange={setLogo} onBusyChange={setLogoBusy} max={1} />
         <input type="hidden" name="logo_url" value={logo[0] ?? ""} />
       </div>
 
       <div>
         <span className="label">{t("photosLabel")}</span>
-        <ImageUploader prefix="practitioner" images={photos} onChange={setPhotos} max={6} />
+        <ImageUploader prefix="practitioner" images={photos} onChange={setPhotos} onBusyChange={setPhotoBusy} max={6} />
         {photos.map((url) => (
           <input key={url} type="hidden" name="photos" value={url} />
         ))}
@@ -116,7 +134,7 @@ export function ProfileForm({
       {state.error && <p className="text-sm text-red-700">{state.error}</p>}
       {state.success && <p className="text-sm text-green-700">{state.success}</p>}
 
-      <button type="submit" disabled={pending} className="btn-primary self-start">
+      <button type="submit" disabled={pending || photoBusy || logoBusy} className="btn-primary self-start">
         {pending ? t("saving") : t("saveProfile")}
       </button>
     </form>

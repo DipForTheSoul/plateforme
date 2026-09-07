@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { submitWithoutReset } from "@/components/forms/submitWithoutReset";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { signIn, type AuthState } from "@/app/actions/auth";
@@ -13,7 +14,7 @@ export function LoginForm({ next }: { next?: string }) {
   );
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form action={formAction} onSubmit={submitWithoutReset(formAction)} className="flex flex-col gap-4">
       {next && <input type="hidden" name="next" value={next} />}
       <div>
         <label htmlFor="email" className="label">

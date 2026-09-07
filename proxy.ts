@@ -5,7 +5,7 @@ import { updateSession } from "./lib/supabase/middleware";
 
 const intlMiddleware = createIntlMiddleware(routing);
 
-export default async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   // 1. next-intl : détection de langue navigateur + réécriture de locale.
   const response = intlMiddleware(request);
   // 2. Supabase : rafraîchissement de session + protection des espaces privés.

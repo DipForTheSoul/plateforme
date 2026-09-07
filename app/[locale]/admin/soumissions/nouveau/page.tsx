@@ -7,7 +7,7 @@ import { getTranslations } from "next-intl/server";
 export const dynamic = "force-dynamic";
 
 export default async function AdminNewEventPage() {
-  await requireRole(["admin"]);
+  const profile = await requireRole(["admin"]);
   const t = await getTranslations("admin.submissions");
 
   const [categories, venues, practitioners] = await Promise.all([
@@ -20,6 +20,7 @@ export default async function AdminNewEventPage() {
     <div className="flex flex-col gap-6">
       <h2 className="text-xl text-soul-brown">{t("createEventTitle")}</h2>
       <EventForm
+        draftOwner={profile.id}
         categories={categories}
         venues={venues}
         defaultLanguages={["fr"]}

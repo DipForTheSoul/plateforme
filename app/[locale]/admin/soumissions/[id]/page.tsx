@@ -14,7 +14,7 @@ export default async function AdminEditEventPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requireRole(["admin"]);
+  const profile = await requireRole(["admin"]);
   const { id } = await params;
   const t = await getTranslations("admin.submissions");
 
@@ -43,6 +43,7 @@ export default async function AdminEditEventPage({
     <div className="flex flex-col gap-6">
       <h2 className="text-xl text-soul-brown">{t("editEvent", { title: event.title })}</h2>
       <EventForm
+        draftOwner={profile.id}
         categories={categories}
         venues={venues}
         defaultLanguages={event.languages}

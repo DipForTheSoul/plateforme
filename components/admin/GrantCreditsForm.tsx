@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { startTransition, useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
 import { grantCreditsManually } from "@/app/actions/admin";
 import type { ActionState } from "@/app/actions/events";
@@ -17,19 +17,24 @@ export function GrantCreditsForm({
   practitioners: Practitioner[];
 }) {
   const t = useTranslations("admin.credits");
+  const [requestId, setRequestId] = useState(() => crypto.randomUUID());
   const [state, action, pending] = useActionState<ActionState, FormData>(
     async (_prev, formData) => {
-      await grantCreditsManually(formData);
-      return { success: "OK" };
+      try {
+        const result = await grantCreditsManually(formData);
+        if (result.success) setRequestId(crypto.randomUUID());
+        return result;
+      } catch { return {error: 'Réponse interrompue. Réessayez la même opération.'}; }
     },
     {}
   );
 
   return (
-    <form action={action} className="flex flex-wrap items-end gap-3">
+    <form action={action} onSubmit={e => {e.preventDefault(); const data = new FormData(e.currentTarget); startTransition(() => action(data));}} className="flex flex-wrap items-end gap-3">
+      <input type="hidden" name="request_id" value={requestId} />
       <div className="min-w-48 flex-1">
         <label className="label" htmlFor="practitioner_id">{t("practitioner")}</label>
-        <select id="practitioner_id" name="practitioner_id" required className="field">
+        <select id="practitioner_id" name="practitioner_id" required defaultValue="" className="field">
           <option value="" disabled>{t("choose")}</option>
           {practitioners.map((p) => (
             <option key={p.id} value={p.id}>
@@ -50,6 +55,7 @@ export function GrantCreditsForm({
       <button type="submit" disabled={pending} className="btn-primary">
         {pending ? "…" : t("grant")}
       </button>
+      {state.error && <p role="alert" className="w-full text-xs text-red-700">{state.error}</p>}
       {state.success && <p className="w-full text-xs text-green-700">{state.success}</p>}
     </form>
   );

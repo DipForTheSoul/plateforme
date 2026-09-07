@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import type { Contact } from "@/types/database";
+import {csvCell} from '@/lib/contact-csv';
 
 /**
  * Export CSV segmenté de la base newsletter (Phase 7), au format d'import
@@ -29,25 +30,30 @@ export async function GET(request: NextRequest) {
   // chaque téléchargement) ; ils sont marqués « exportés » après génération.
   const onlyNew = request.nextUrl.searchParams.get("scope") === "new";
 
-  let query = supabase.from("contacts").select("*").eq("consent", true);
-  if (interest) query = query.contains("interests", [interest]);
-  if (onlyNew) query = query.is("exported_at", null);
-  const { data } = await query;
-  const contacts = (data as Contact[]) ?? [];
+  const contacts:Contact[]=[];
+  for(let offset=0;;offset+=500){
+    let query = supabase.from("contacts").select("*").eq("consent", true).order('id').range(offset,offset+499);
+    if (interest) query = query.contains("interests", [interest]);
+    if (onlyNew) query = query.is("exported_at", null);
+    const {data,error}=await query;
+    if(error)return NextResponse.json({error:'Export momentanément impossible. Aucun fichier incomplet ne sera téléchargé.'},{status:503});
+    contacts.push(...((data as Contact[])??[]));
+    if(!data||data.length<500)break;
+  }
 
   // Marquer ces contacts comme exportés (mode « nouveaux »).
   if (onlyNew && contacts.length > 0) {
-    await supabase
+    const {error} = await supabase
       .from("contacts")
       .update({ exported_at: new Date().toISOString() })
       .in(
         "id",
         contacts.map((c) => c.id)
       );
+    if(error)return NextResponse.json({error:'Le suivi des exports est indisponible. Réessayez ou utilisez l’export complet.'},{status:503});
   }
 
-  const escape = (value: string | null) =>
-    `"${(value ?? "").replaceAll('"', '""')}"`;
+  const escape = csvCell;
   const lines = [
     "email,name,last_name,groups",
     ...contacts.map((c) =>
@@ -60,10 +66,11 @@ export async function GET(request: NextRequest) {
     ),
   ];
 
-  const filename = `forthesoul-newsletter${interest ? `-${interest}` : ""}${onlyNew ? "-nouveaux" : ""}.csv`;
+  const filename = `forthesoul-newsletter${interest ? `-${interest.replace(/[^a-z0-9_-]/gi,'-').slice(0,80)}` : ""}${onlyNew ? "-nouveaux" : ""}.csv`;
   return new NextResponse(lines.join("\n"), {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
+      "Cache-Control": "private, no-store",
       "Content-Disposition": `attachment; filename="${filename}"`,
     },
   });

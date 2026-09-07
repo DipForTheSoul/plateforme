@@ -36,11 +36,14 @@ export default async function EditEventPage({
   }
 
   const [categories, venues] = await Promise.all([getCategories(), getVenues()]);
+  const { data: occurrences } = await supabase.from('events').select('id, start_date').eq('parent_event_id', event.id).order('start_date');
 
   return (
     <div className="flex flex-col gap-6">
       <h2 className="text-xl text-soul-brown">{t("editEventTitle", { title: event.title })}</h2>
       <EventForm
+        draftOwner={practitioner.id}
+        occurrences={occurrences ?? []}
         categories={categories}
         venues={venues}
         defaultLanguages={practitioner.languages}

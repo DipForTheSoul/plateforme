@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth";
 import type { ActionState } from "@/app/actions/events";
+import {parseContactCsv} from '@/lib/contact-csv';
+import {z} from 'zod';
 
 async function assertAdmin() {
   const profile = await getCurrentProfile();
@@ -26,10 +28,10 @@ export async function importContacts(
   const raw = String(formData.get("csv") ?? "").trim();
   if (!raw) return { error: "Collez au moins une ligne." };
 
-  const rows = raw
-    .split(/\r?\n/)
-    .map((line) => line.split(/[;,]/).map((cell) => cell.trim()))
-    .filter((cells) => cells[0]?.includes("@"));
+  if(raw.length>500000)return {error:'Import trop volumineux : divisez le fichier en lots de 500 Ko maximum.'};
+  let rows:string[][];
+  try{ rows=parseContactCsv(raw).filter(cells=>z.email().safeParse(cells[0]).success); }
+  catch{return {error:'Le CSV est incomplet : vérifiez les guillemets.'};}
 
   if (!rows.length) return { error: "Aucune ligne valide (e-mail requis en 1re colonne)." };
 
@@ -47,13 +49,13 @@ export async function importContacts(
     source: "import-wix",
   }));
 
-  const { error } = await supabase
+  const { data: inserted, error } = await supabase
     .from("contacts")
-    .upsert(contacts, { onConflict: "email", ignoreDuplicates: true });
+    .upsert(contacts, { onConflict: "email", ignoreDuplicates: true }).select('id');
   if (error) return { error: "Import impossible : " + error.message };
 
   revalidatePath("/admin/newsletter");
-  return { success: `${contacts.length} contact(s) importé(s).` };
+  return { success: `${inserted?.length ?? 0} nouveau(x) contact(s) importé(s). Les doublons ont été ignorés.` };
 }
 
 /** Mise à jour des tags d'intérêt d'un contact. */

@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { Locale } from "@/types/database";
+import {escapeHtml} from '@/lib/html';
 
 /**
  * Gabarits d'e-mails transactionnels (Phase 7).
@@ -209,7 +210,7 @@ export function submissionReceivedEmail(practitionerName: string, eventTitle: st
     html: layout(
       lang,
       t.heading,
-      p(t.body(practitionerName, eventTitle)) +
+      p(t.body(escapeHtml(practitionerName), escapeHtml(eventTitle))) +
         button(`${SITE_URL}/espace-praticien/evenements`, t.cta)
     ),
   };
@@ -229,9 +230,9 @@ export function eventApprovedEmail(
     html: layout(
       lang,
       t.heading,
-      p(t.body(practitionerName, eventTitle)) +
-        (adminMessage ? p(`<em>${t.adminMsg}</em> ${adminMessage}`) : "") +
-        button(`${SITE_URL}/experiences/${eventSlug}`, t.cta)
+      p(t.body(escapeHtml(practitionerName), escapeHtml(eventTitle))) +
+        (adminMessage ? p(`<em>${t.adminMsg}</em> ${escapeHtml(adminMessage)}`) : "") +
+        button(`${SITE_URL}/experiences/${encodeURIComponent(eventSlug)}`, t.cta)
     ),
   };
 }
@@ -249,9 +250,9 @@ export function eventRejectedEmail(
     html: layout(
       lang,
       t.heading,
-      p(t.body(practitionerName, eventTitle)) +
+      p(t.body(escapeHtml(practitionerName), escapeHtml(eventTitle))) +
         (adminMessage
-          ? p(`<em>${t.adminMsg}</em> ${adminMessage}`)
+          ? p(`<em>${t.adminMsg}</em> ${escapeHtml(adminMessage)}`)
           : p(t.fallback)) +
         p(t.editNote) +
         button(`${SITE_URL}/espace-praticien/evenements`, t.cta)
@@ -267,8 +268,8 @@ export function practitionerApprovedEmail(practitionerName: string, slug: string
     html: layout(
       lang,
       t.heading,
-      p(t.body(practitionerName)) +
-        button(`${SITE_URL}/praticiens/${slug}`, t.cta)
+      p(t.body(escapeHtml(practitionerName))) +
+        button(`${SITE_URL}/praticiens/${encodeURIComponent(slug)}`, t.cta)
     ),
   };
 }
@@ -285,9 +286,9 @@ export function practitionerRejectedEmail(
     html: layout(
       lang,
       t.heading,
-      p(t.body(practitionerName)) +
+      p(t.body(escapeHtml(practitionerName))) +
         (adminMessage
-          ? p(`<em>${t.adminMsg}</em> ${adminMessage}`)
+          ? p(`<em>${t.adminMsg}</em> ${escapeHtml(adminMessage)}`)
           : p(t.fallback)) +
         p(t.editNote) +
         button(`${SITE_URL}/espace-praticien/profil`, t.cta)

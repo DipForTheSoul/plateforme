@@ -1,4 +1,5 @@
 {
+  "draft": {"hint": "Your draft stays in this tab until saved, including when you change language.", "unavailable": "Local draft storage is unavailable. Keep this tab open until you save.", "networkError": "Save not confirmed. Your entries have been kept; check your connection and try again."},
   "common": {
     "siteName": "ForTheSoul",
     "tagline": "Conscious experiences in Switzerland, chosen with heart",
@@ -353,6 +354,11 @@
     "creditsPaymentUnavailable": "Payment unavailable at the moment."
   },
   "eventForm": {
+    "recurrenceCustom": "Choose individual dates",
+    "customDatesHint": "Add other dates, such as 9 and 30 October. The first date is the start date entered above.",
+    "customDate": "Additional date {number}",
+    "addDate": "Add a date",
+    "seriesEditHint": "Details apply to the whole series. Changing the repeat schedule or start date recalculates later dates. A series uses one credit, as on initial submission.",
     "ownerLabel": "Owning practitioner *",
     "choose": "Choose…",
     "ownerHint": "The experience will be published directly (no credit consumed).",
@@ -395,6 +401,7 @@
     "photosLabel": "Photos (max 6 — automatically compressed)",
     "saving": "Saving…",
     "saveChanges": "Save changes",
+    "publishDirectly": "Publish experience (no credit)",
     "submitForValidation": "Submit for review (1 credit)",
     "newVenueTitle": "New venue",
     "close": "Close",

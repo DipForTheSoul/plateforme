@@ -16,7 +16,7 @@ export function LocaleSwitcher({ compact = false }: { compact?: boolean }) {
         <button
           key={l}
           type="button"
-          onClick={() => router.replace(pathname, { locale: l })}
+          onClick={() => router.replace(`${pathname}${window.location.search}`, { locale: l })}
           className={`rounded-full font-semibold uppercase transition ${
             compact ? "px-1.5 py-0.5 text-xs" : "px-3 py-1.5 text-sm"
           } ${

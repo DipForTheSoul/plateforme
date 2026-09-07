@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { submitWithoutReset } from "@/components/forms/submitWithoutReset";
 import { useTranslations } from "next-intl";
 import { requestPasswordReset, type AuthState } from "@/app/actions/auth";
 
@@ -16,7 +17,7 @@ export function ForgotPasswordForm() {
   }
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form action={formAction} onSubmit={submitWithoutReset(formAction)} className="flex flex-col gap-4">
       <p className="text-sm text-soul-bronze">{t("resetHelp")}</p>
       <div>
         <label htmlFor="email" className="label">

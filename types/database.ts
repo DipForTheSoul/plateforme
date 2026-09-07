@@ -6,7 +6,7 @@
 
 export type Role = "participant" | "practitioner" | "admin";
 export type ModerationStatus = "pending" | "approved" | "rejected";
-export type Recurrence = "weekly" | "biweekly" | "monthly";
+export type Recurrence = "weekly" | "biweekly" | "monthly" | "custom";
 export type Locale = "fr" | "de" | "en";
 
 export interface Profile {

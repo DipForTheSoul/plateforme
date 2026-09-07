@@ -10,8 +10,12 @@ const MAX_WIDTH = 1600;
 const QUALITY = 0.82;
 
 export async function compressImage(file: File): Promise<Blob> {
-  const bitmap = await createImageBitmap(file);
-  const scale = Math.min(1, MAX_WIDTH / bitmap.width);
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) throw new Error('Utilisez une photo JPEG, PNG ou WebP.');
+  if (file.size > 10 * 1024 * 1024) throw new Error('Photo trop volumineuse : maximum 10 Mo. Vos textes sont conservés.');
+  let bitmap: ImageBitmap;
+  try { bitmap = await createImageBitmap(file); }
+  catch { throw new Error('Photo illisible. Essayez une autre image JPEG, PNG ou WebP. Vos textes sont conservés.'); }
+  const scale = Math.min(1, MAX_WIDTH / bitmap.width, MAX_WIDTH / bitmap.height);
   const width = Math.round(bitmap.width * scale);
   const height = Math.round(bitmap.height * scale);
 
@@ -21,6 +25,7 @@ export async function compressImage(file: File): Promise<Blob> {
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("Canvas non disponible");
   ctx.drawImage(bitmap, 0, 0, width, height);
+  bitmap.close();
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(
@@ -44,10 +49,11 @@ export async function uploadImage(
   const supabase = createClient();
 
   const blob = await compressImage(file);
-  const path = `${userId}/${prefix}-${Date.now()}.webp`;
+  const extension = blob.type === 'image/png' ? 'png' : blob.type === 'image/jpeg' ? 'jpg' : 'webp';
+  const path = `${userId}/${prefix}-${crypto.randomUUID()}.${extension}`;
 
   const { error } = await supabase.storage.from("images").upload(path, blob, {
-    contentType: "image/webp",
+    contentType: blob.type,
     upsert: false,
   });
   if (error) throw new Error(`Upload impossible : ${error.message}`);

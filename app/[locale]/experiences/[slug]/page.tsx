@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { toEventLocalInput, eventCalendarDaySpan } from '@/lib/event-time';
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { AddToCalendar } from "@/components/AddToCalendar";
+import { EventDescription } from '@/components/EventDescription';
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { ImageGallery } from "@/components/ImageGallery";
 import { StarRating } from "@/components/StarRating";
@@ -74,7 +75,7 @@ export default async function EventPage({
     .eq("status", "approved")
     .gte("start_date", new Date().toISOString())
     .order("start_date")
-    .limit(8);
+    .limit(26);
   const siblings = (siblingsData as Pick<Event, "id" | "slug" | "start_date">[]) ?? [];
 
   // E-mail du praticien pour le bouton « Réserver » (contact direct — pas de
@@ -129,7 +130,7 @@ export default async function EventPage({
   // - sur plusieurs jours : « du … → … · durée N jours » (l'heure n'est pas pertinente)
   const start = new Date(event.start_date);
   const end = event.end_date ? new Date(event.end_date) : null;
-  const isMultiDay = Boolean(end) && start.toDateString() !== end!.toDateString();
+  const isMultiDay = Boolean(end) && toEventLocalInput(event.start_date).slice(0,10) !== toEventLocalInput(event.end_date).slice(0,10);
   const startTime = formatTime(event.start_date, currentLocale);
   const endTime = event.duration_minutes
     ? formatTime(
@@ -140,14 +141,7 @@ export default async function EventPage({
   const durationLabel = formatDuration(event.duration_minutes);
   const dayCount =
     end && isMultiDay
-      ? Math.max(
-          1,
-          Math.round(
-            (new Date(end.getFullYear(), end.getMonth(), end.getDate()).getTime() -
-              new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime()) /
-              86_400_000
-          )
-        )
+      ? Math.max(1, eventCalendarDaySpan(event.start_date, event.end_date!))
       : null;
 
   return (
@@ -227,6 +221,7 @@ export default async function EventPage({
           title={event.title}
           start={event.start_date}
           end={event.end_date}
+          durationMinutes={event.duration_minutes}
           details={event.description}
           location={venueLocation}
         />
@@ -271,9 +266,7 @@ export default async function EventPage({
       </div>
 
       {event.description && (
-        <div className="prose mt-8 max-w-none whitespace-pre-line text-soul-ink/90">
-          {event.description}
-        </div>
+        <EventDescription text={event.description} />
       )}
 
       {(event.included || event.to_bring) && (

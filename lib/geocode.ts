@@ -32,8 +32,8 @@ export async function geocodeAddress(
         headers: {
           "User-Agent": "ForTheSoul/1.0 (welcome@forthesoul.ch)",
         },
-        // Un géocodage n'est jamais mis en cache côté Next (adresse unique).
-        cache: "no-store",
+        signal: AbortSignal.timeout(8000),
+        next: { revalidate: 86400 },
       }
     );
     if (!res.ok) return null;
@@ -43,11 +43,13 @@ export async function geocodeAddress(
       lon: string;
       display_name: string;
     }>;
-    if (!results.length) return null;
+    if (!Array.isArray(results) || !results.length) return null;
+    const lat = Number(results[0].lat), lng = Number(results[0].lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return null;
 
     return {
-      lat: Number.parseFloat(results[0].lat),
-      lng: Number.parseFloat(results[0].lon),
+      lat,
+      lng,
       displayName: results[0].display_name,
     };
   } catch {

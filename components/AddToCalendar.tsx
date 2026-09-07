@@ -14,6 +14,7 @@ export function AddToCalendar({
   title,
   start,
   end,
+  durationMinutes,
   details,
   location,
 }: {
@@ -21,13 +22,14 @@ export function AddToCalendar({
   title: string;
   start: string;
   end?: string | null;
+  durationMinutes?: number | null;
   details?: string | null;
   location?: string | null;
 }) {
   const t = useTranslations("event");
   const [open, setOpen] = useState(false);
 
-  const google = googleCalendarUrl({ uid: slug, title, start, end, details, location });
+  const google = googleCalendarUrl({ uid: slug, title, start, end, durationMinutes, details, location });
 
   return (
     <div className="relative">

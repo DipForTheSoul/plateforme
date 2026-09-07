@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Signature invalide." }, { status: 400 });
   }
 
-  if (event.type === "checkout.session.completed") {
+  if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
     const session = event.data.object as Stripe.Checkout.Session;
 
     // Sécurité : ne créditer que les sessions réellement payées.
@@ -43,8 +43,8 @@ export async function POST(request: NextRequest) {
     }
 
     const practitionerId = session.metadata?.practitioner_id;
-    const credits = Number.parseInt(session.metadata?.credits ?? "0", 10);
-    if (!practitionerId || !Number.isInteger(credits) || credits <= 0) {
+    const credits = Number(session.metadata?.credits ?? "0");
+    if (!practitionerId || !/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(practitionerId) || !Number.isInteger(credits) || credits <= 0 || credits > 10000) {
       console.error("[stripe] metadata invalide sur la session", session.id);
       return NextResponse.json({ received: true });
     }

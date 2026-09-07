@@ -22,6 +22,14 @@ export async function updateSession(
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          // Keep next-intl's existing rewrite/locale headers while forwarding
+          // the fresh cookie to Server Components in this same request.
+          const forwarded = NextResponse.next({ request: { headers: request.headers } });
+          response.headers.set('x-middleware-request-cookie', forwarded.headers.get('x-middleware-request-cookie') ?? '');
+          const overrides = new Set((response.headers.get('x-middleware-override-headers') ?? '').split(',').map(s => s.trim()).filter(Boolean));
+          overrides.add('cookie');
+          response.headers.set('x-middleware-override-headers', [...overrides].join(','));
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options)
           );
@@ -37,14 +45,18 @@ export async function updateSession(
 
   const pathname = request.nextUrl.pathname;
   // Retire un éventuel préfixe de locale (/de, /en) pour tester la route.
-  const bare = pathname.replace(/^\/(de|en)(?=\/|$)/, "") || "/";
-  const isProtected = PROTECTED_PREFIXES.some((p) => bare.startsWith(p));
+  const bare = pathname.replace(/^\/(fr|de|en)(?=\/|$)/, "") || "/";
+  const isProtected = PROTECTED_PREFIXES.some((p) => bare === p || bare.startsWith(p + '/'));
 
   if (isProtected && !user) {
     const url = request.nextUrl.clone();
-    url.pathname = "/connexion";
-    url.searchParams.set("next", pathname);
-    return NextResponse.redirect(url);
+    const locale = pathname.match(/^\/(de|en)(?=\/|$)/)?.[1];
+    url.pathname = `${locale ? '/' + locale : ''}/connexion`;
+    url.search = '';
+    url.searchParams.set("next", pathname + request.nextUrl.search);
+    const redirectResponse = NextResponse.redirect(url);
+    response.cookies.getAll().forEach(cookie => redirectResponse.cookies.set(cookie));
+    return redirectResponse;
   }
 
   return response;

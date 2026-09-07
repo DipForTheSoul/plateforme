@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { webUrlSchema } from '@/lib/web-url';
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentPractitioner, getCurrentProfile } from "@/lib/auth";
@@ -14,13 +15,13 @@ const profileSchema = z.object({
   languages: z.array(z.string()).max(6),
   email: z.string().email().optional().nullable(),
   phone: z.string().max(30).optional().nullable(),
-  website: z.string().url().optional().nullable(),
-  instagram: z.string().url().optional().nullable(),
-  facebook: z.string().url().optional().nullable(),
-  googleUrl: z.string().url().optional().nullable(),
+  website: webUrlSchema,
+  instagram: webUrlSchema,
+  facebook: webUrlSchema,
+  googleUrl: webUrlSchema,
   googleRating: z.string().max(4).optional().nullable(),
   googleCount: z.string().max(7).optional().nullable(),
-  review_url: z.string().url().optional().nullable(),
+  review_url: webUrlSchema,
   logo_url: z.string().url().optional().nullable(),
   photos: z.array(z.string().url()).max(6),
 });
@@ -72,6 +73,9 @@ export async function updatePractitionerProfile(
         ...(input.website ? { website: input.website } : {}),
       },
       links: {
+        ...practitioner.links,
+        instagram: input.instagram ?? undefined,
+        facebook: input.facebook ?? undefined,
         ...(input.instagram ? { instagram: input.instagram } : {}),
         ...(input.facebook ? { facebook: input.facebook } : {}),
         ...(input.googleUrl ? { googleUrl: input.googleUrl } : {}),
@@ -145,7 +149,7 @@ export async function adminUpdatePractitioner(
   const supabase = await createClient();
   const { data: current } = await supabase
     .from("practitioners")
-    .select("slug")
+    .select("slug, links")
     .eq("id", practitionerId)
     .maybeSingle();
 
@@ -162,6 +166,9 @@ export async function adminUpdatePractitioner(
         ...(input.website ? { website: input.website } : {}),
       },
       links: {
+        ...(current?.links ?? {}),
+        instagram: input.instagram ?? undefined,
+        facebook: input.facebook ?? undefined,
         ...(input.instagram ? { instagram: input.instagram } : {}),
         ...(input.facebook ? { facebook: input.facebook } : {}),
         ...(input.googleUrl ? { googleUrl: input.googleUrl } : {}),

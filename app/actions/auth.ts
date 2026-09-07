@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { slugify } from "@/lib/utils";
+import { safeRedirectPath } from '@/lib/safe-redirect';
 
 export interface AuthState {
   error?: string;
@@ -22,7 +23,8 @@ export async function signIn(
 ): Promise<AuthState> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
-  const next = String(formData.get("next") ?? "");
+  const next = safeRedirectPath(formData.get("next"));
+  const bareNext = next.replace(/^\/(fr|de|en)(?=\/|$)/, '');
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -41,10 +43,10 @@ export async function signIn(
   // Redirection par rôle en priorité (évite qu'un admin arrivant depuis une page
   // praticien via ?next=… ne soit renvoyé dans le mauvais espace).
   if (profile?.role === "admin") {
-    redirect(next.startsWith("/admin") ? next : "/admin");
+    redirect(/^\/admin(?:\/|\?|$)/.test(bareNext) ? next : "/admin");
   }
   if (profile?.role === "practitioner") {
-    redirect(next.startsWith("/espace-praticien") ? next : "/espace-praticien");
+    redirect(/^\/espace-praticien(?:\/|\?|$)/.test(bareNext) ? next : "/espace-praticien");
   }
   // Pas de compte visiteur en V2 : un éventuel rôle participant retombe sur l'accueil.
   if (next.startsWith("/")) redirect(next);
@@ -91,7 +93,7 @@ export async function signUp(
     password: parsed.data.password,
     options: {
       emailRedirectTo: `${SITE_URL}/api/auth/callback`,
-      data: { role: parsed.data.role, preferred_lang: "fr" },
+      data: { role: parsed.data.role, name: parsed.data.name, preferred_lang: ['de','en'].includes(String(formData.get('locale'))) ? String(formData.get('locale')) : 'fr' },
     },
   });
   if (error) {

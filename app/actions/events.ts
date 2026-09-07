@@ -1,478 +1,78 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { z } from "zod";
-import { createClient } from "@/lib/supabase/server";
-import { getCurrentPractitioner, getCurrentProfile } from "@/lib/auth";
-import { sendEmail } from "@/lib/email";
-import { submissionReceivedEmail } from "@/lib/email-templates";
-import { uniqueSlug } from "@/lib/utils";
-import type { Recurrence } from "@/types/database";
+import { revalidatePath } from 'next/cache';
+import { createClient } from '@/lib/supabase/server';
+import { getCurrentPractitioner, getCurrentProfile } from '@/lib/auth';
+import { parseEventForm, occurrenceSchedule } from '@/lib/event-input';
+import { sendEmail } from '@/lib/email';
+import { submissionReceivedEmail } from '@/lib/email-templates';
 
-const ZURICH_TIME_ZONE = "Europe/Zurich";
+export interface ActionState { error?: string; fieldErrors?: Record<string, string>; success?: string; redirectTo?: string; updatedAt?: string; occurrences?: {id:string;start_date:string}[]; }
 
-/**
- * Les champs datetime-local n'ont pas de fuseau. Les expériences sont saisies
- * pour la Suisse : on les convertit donc explicitement depuis Europe/Zurich
- * plutôt que depuis le fuseau du serveur (UTC en production).
- */
-function zurichLocalDateTimeToIso(value: string): string {
-  const [date, time] = value.split("T");
-  const [year, month, day] = date.split("-").map(Number);
-  const [hour, minute] = time.split(":").map(Number);
-  const localAsUtc = Date.UTC(year, month - 1, day, hour, minute);
-  const zonedParts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: ZURICH_TIME_ZONE,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(new Date(localAsUtc));
-  const part = (type: Intl.DateTimeFormatPartTypes) =>
-    Number(zonedParts.find((item) => item.type === type)?.value);
-  const zoneAsUtc = Date.UTC(
-    part("year"),
-    part("month") - 1,
-    part("day"),
-    part("hour"),
-    part("minute")
-  );
-  return new Date(localAsUtc - (zoneAsUtc - localAsUtc)).toISOString();
-}
+const labels: Record<string, string> = { title: 'Titre', description: 'Description (20 à 8 000 caractères)', category_ids: 'Univers : sélectionnez au moins un univers', venue_id: 'Lieu', start_date: 'Date et heure de début', end_date: 'Date et heure de fin (après le début)', duration_minutes: 'Durée en heures', price: 'Prix', languages: 'Langues : sélectionnez au moins une langue', recurrence_count: 'Nombre de dates : de 2 à 26', occurrence_dates: 'Dates supplémentaires : distinctes et après la première date', video_url: 'Lien vidéo', images: 'Photos : maximum 6' };
 
-export interface ActionState {
-  error?: string;
-  fieldErrors?: Record<string, string>;
-  success?: string;
-}
-
-const eventSchema = z.object({
-  title: z.string().min(3).max(140),
-  description: z.string().min(20).max(8000),
-  category_ids: z.array(z.string().uuid()).min(1).max(5),
-  venue_id: z.string().uuid().nullable(),
-  start_date: z.string().min(10),
-  end_date: z.string().optional().nullable(),
-  duration_minutes: z.coerce.number().int().positive().optional().nullable(),
-  price: z.coerce.number().min(0).optional().nullable(),
-  languages: z.array(z.string()).min(1),
-  recurrence: z.enum(["weekly", "biweekly", "monthly"]).optional().nullable(),
-  recurrence_count: z.coerce.number().int().min(2).max(26).optional().nullable(),
-  included: z.string().max(2000).optional().nullable(),
-  to_bring: z.string().max(2000).optional().nullable(),
-  video_url: z.string().url().optional().nullable(),
-  images: z.array(z.string().url()).max(6),
-});
-
-const fieldLabels: Record<string, string> = {
-  title: "Titre",
-  description: "Description",
-  category_ids: "Univers",
-  venue_id: "Lieu",
-  start_date: "Date de début",
-  languages: "Langues",
-  images: "Photos",
-};
-
-function zodToFieldErrors(err: z.ZodError): Record<string, string> {
-  const out: Record<string, string> = {};
-  for (const issue of err.issues) {
-    const key = String(issue.path[0] ?? "");
-    if (!out[key]) out[key] = fieldLabels[key] ?? key;
-  }
-  return out;
-}
-
-function parseEventForm(formData: FormData) {
-  const durationHours = String(formData.get("duration_minutes") ?? "");
-  return eventSchema.safeParse({
-    title: String(formData.get("title") ?? "").trim(),
-    description: String(formData.get("description") ?? "").trim(),
-    category_ids: formData.getAll("category_ids").map(String).filter(Boolean),
-    venue_id: String(formData.get("venue_id") ?? "") || null,
-    start_date: formData.get("start_date"),
-    end_date: String(formData.get("end_date") ?? "") || null,
-    duration_minutes: durationHours
-      ? Math.round(Number(durationHours.replace(",", ".")) * 60)
-      : null,
-    price: String(formData.get("price") ?? "") || null,
-    languages: formData.getAll("languages").map(String).filter(Boolean),
-    recurrence: String(formData.get("recurrence") ?? "") || null,
-    recurrence_count: String(formData.get("recurrence_count") ?? "") || null,
-    included: String(formData.get("included") ?? "").trim() || null,
-    to_bring: String(formData.get("to_bring") ?? "").trim() || null,
-    video_url: String(formData.get("video_url") ?? "").trim() || null,
-    images: formData.getAll("images").map(String).filter(Boolean),
-  });
-}
-
-/**
- * Synchronise les univers d'un événement dans la table de liaison
- * `event_categories` (multi-univers §2.1) : on repart d'une table propre
- * (remplacement complet), et `events.category_id` garde le 1er comme principal.
- */
-async function syncEventCategories(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  eventId: string,
-  categoryIds: string[]
-) {
-  await supabase.from("event_categories").delete().eq("event_id", eventId);
-  if (categoryIds.length) {
-    await supabase
-      .from("event_categories")
-      .insert(categoryIds.map((category_id) => ({ event_id: eventId, category_id })));
-  }
-}
-
-/** Décale une date ISO selon la récurrence choisie. */
-function shiftDate(iso: string, recurrence: Recurrence, step: number): string {
-  const d = new Date(iso);
-  if (recurrence === "weekly") d.setDate(d.getDate() + 7 * step);
-  if (recurrence === "biweekly") d.setDate(d.getDate() + 14 * step);
-  if (recurrence === "monthly") d.setMonth(d.getMonth() + step);
-  return d.toISOString();
-}
-
-/**
- * Dépôt d'un événement (Phase 2) :
- *   1. consomme 1 crédit (atomique, blocage à 0 — fonction SQL consume_credit) ;
- *   2. crée l'événement parent en `pending` ;
- *   3. génère les occurrences récurrentes comme lignes filles ;
- *   4. e-mail de confirmation de dépôt.
- */
-export async function createEvent(
-  _prev: ActionState,
-  formData: FormData
-): Promise<ActionState> {
-  const practitioner = await getCurrentPractitioner();
-  if (!practitioner) return { error: "Aucune fiche praticien trouvée." };
-  if (practitioner.status !== "approved") {
-    return { error: "Votre fiche doit être validée par Didier avant de publier." };
-  }
-
-  const parsed = parseEventForm(formData);
-  if (!parsed.success) {
-    const fieldErrors = zodToFieldErrors(parsed.error);
-    const fields = Object.values(fieldErrors).join(", ");
-    return {
-      error: `Champs invalides : ${fields}.`,
-      fieldErrors,
-    };
-  }
-  const input = parsed.data;
-
-  const supabase = await createClient();
-
-  // 1. Crédit (lève une exception SQL si solde à 0).
-  const { error: creditError } = await supabase.rpc("consume_credit", {
-    p_note: `Dépôt : ${input.title}`,
-  });
-  if (creditError) {
-    return {
-      error: creditError.message.includes("épuisé")
-        ? "Solde de publications épuisé — rachetez un pack pour publier."
-        : "Impossible de consommer un crédit. Réessayez.",
-    };
-  }
-
-  // 2. Événement parent.
-  const base = {
-    description: input.description,
-    category_id: input.category_ids[0], // catégorie principale (dégradé/1er badge)
-    practitioner_id: practitioner.id,
-    venue_id: input.venue_id,
-    duration_minutes: input.duration_minutes,
-    price: input.price,
-    languages: input.languages,
-    included: input.included,
-    to_bring: input.to_bring,
-    video_url: input.video_url,
-    images: input.images,
-    status: "pending" as const,
-  };
-
-  const { data: parent, error } = await supabase
-    .from("events")
-    .insert({
-      ...base,
-      title: input.title,
-      slug: uniqueSlug(input.title),
-      start_date: zurichLocalDateTimeToIso(input.start_date),
-      end_date: input.end_date ? zurichLocalDateTimeToIso(input.end_date) : null,
-      recurrence: input.recurrence,
-      recurrence_count: input.recurrence ? input.recurrence_count ?? 4 : null,
-    })
-    .select("id, title, slug, start_date, end_date")
-    .single();
-
-  if (error || !parent) {
-    return { error: "Enregistrement impossible. Réessayez." };
-  }
-
-  // 2b. Univers du parent (multi-univers §2.1).
-  await syncEventCategories(supabase, parent.id, input.category_ids);
-
-  // 3. Occurrences récurrentes (générées à la création — BUILD-BRIEF.md Phase 2).
-  if (input.recurrence) {
-    const count = input.recurrence_count ?? 4;
-    const occurrences = Array.from({ length: count - 1 }, (_, i) => ({
-      ...base,
-      title: input.title,
-      slug: uniqueSlug(input.title),
-      start_date: shiftDate(parent.start_date, input.recurrence!, i + 1),
-      end_date: parent.end_date
-        ? shiftDate(parent.end_date, input.recurrence!, i + 1)
-        : null,
-      parent_event_id: parent.id,
-    }));
-    if (occurrences.length) {
-      const { data: children } = await supabase
-        .from("events")
-        .insert(occurrences)
-        .select("id");
-      // Chaque occurrence est une ligne à part → ses propres univers.
-      for (const child of children ?? []) {
-        await syncEventCategories(supabase, child.id, input.category_ids);
-      }
-    }
-  }
-
-  // 4. Confirmation de dépôt (dans la langue du praticien).
-  const email = practitioner.contact?.email;
-  if (email) {
-    const { data: prof } = await supabase
-      .from("profiles")
-      .select("preferred_lang")
-      .eq("id", practitioner.user_id!)
-      .maybeSingle();
-    const lang = (prof?.preferred_lang as "fr" | "de" | "en") ?? "fr";
-    const tpl = submissionReceivedEmail(practitioner.name, input.title, lang);
-    await sendEmail({ to: email, ...tpl });
-  }
-
-  revalidatePath("/espace-praticien/evenements");
-  redirect("/espace-praticien/evenements?depose=1");
-}
-
-/** Modification d'un événement par son praticien (repasse en `pending`). */
-export async function updateEvent(
-  eventId: string,
-  _prev: ActionState,
-  formData: FormData
-): Promise<ActionState> {
-  const practitioner = await getCurrentPractitioner();
-  if (!practitioner) return { error: "Aucune fiche praticien trouvée." };
-
-  const parsed = parseEventForm(formData);
-  if (!parsed.success) {
-    const fieldErrors = zodToFieldErrors(parsed.error);
-    const fields = Object.values(fieldErrors).join(", ");
-    return { error: `Champs invalides : ${fields}.`, fieldErrors };
-  }
-  const input = parsed.data;
-
-  const supabase = await createClient();
-  const { error } = await supabase
-    .from("events")
-    .update({
-      title: input.title,
-      description: input.description,
-      category_id: input.category_ids[0], // catégorie principale
-      venue_id: input.venue_id,
-      start_date: zurichLocalDateTimeToIso(input.start_date),
-      end_date: input.end_date ? zurichLocalDateTimeToIso(input.end_date) : null,
-      duration_minutes: input.duration_minutes,
-      price: input.price,
-      languages: input.languages,
-      included: input.included,
-      to_bring: input.to_bring,
-      video_url: input.video_url,
-      images: input.images,
-      // Toute modification repart en relecture (le trigger SQL empêche de
-      // toute façon un praticien de changer lui-même le statut vers approved).
-    })
-    .eq("id", eventId)
-    .eq("practitioner_id", practitioner.id);
-
-  if (error) return { error: "Mise à jour impossible." };
-
-  // Univers (multi-univers §2.1).
-  await syncEventCategories(supabase, eventId, input.category_ids);
-
-  revalidatePath("/espace-praticien/evenements");
-  redirect("/espace-praticien/evenements?modifie=1");
-}
-
-/**
- * Création d'un événement par l'ADMIN (§8) — même formulaire que les praticiens,
- * mais l'admin choisit le/la praticien·ne propriétaire, aucun crédit consommé,
- * et l'événement est publié directement (statut `approved`).
- */
-export async function adminCreateEvent(
-  _prev: ActionState,
-  formData: FormData
-): Promise<ActionState> {
+async function save(eventId: string | null, formData: FormData, admin: boolean): Promise<ActionState> {
   const profile = await getCurrentProfile();
-  if (!profile || profile.role !== "admin") {
-    return { error: "Réservé à l'administrateur." };
-  }
-
-  const ownerId = String(formData.get("owner_practitioner_id") ?? "");
-  if (!ownerId) return { error: "Choisissez le/la praticien·ne propriétaire." };
-
+  if (!profile || (admin && profile.role !== 'admin')) return { error: 'Connexion autorisée requise.' };
+  const practitioner = admin ? null : await getCurrentPractitioner();
+  if (!admin && (!practitioner || practitioner.status !== 'approved')) return { error: 'Votre fiche praticien doit être validée avant de publier.' };
   const parsed = parseEventForm(formData);
   if (!parsed.success) {
-    const fieldErrors = zodToFieldErrors(parsed.error);
-    const fields = Object.values(fieldErrors).join(", ");
-    return { error: `Champs invalides : ${fields}.`, fieldErrors };
+    const fieldErrors = Object.fromEntries(parsed.error.issues.map(i => [String(i.path[0]), labels[String(i.path[0])] ?? i.message]));
+    return { error: 'Vérifiez les champs indiqués. Votre saisie est conservée.', fieldErrors };
   }
-  const input = parsed.data;
-
+  const owner = admin ? String(formData.get('owner_practitioner_id') ?? '') : practitioner!.id;
+  if (admin && !eventId && !/^[\da-f-]{36}$/i.test(owner)) return { error: 'Choisissez le/la praticien·ne propriétaire.', fieldErrors: { owner_practitioner_id: 'Praticien propriétaire' } };
+  let occurrences;
+  try { occurrences = occurrenceSchedule(parsed.data); }
+  catch { return { error: 'Une répétition tombe sur une heure inexistante en Suisse. Choisissez une autre heure de départ.' }; }
   const supabase = await createClient();
-  const base = {
-    description: input.description,
-    category_id: input.category_ids[0],
-    practitioner_id: ownerId,
-    venue_id: input.venue_id,
-    duration_minutes: input.duration_minutes,
-    price: input.price,
-    languages: input.languages,
-    included: input.included,
-    to_bring: input.to_bring,
-    video_url: input.video_url,
-    images: input.images,
-    status: "approved" as const, // créé par l'admin → directement en ligne
-  };
-
-  const { data: parent, error } = await supabase
-    .from("events")
-    .insert({
-      ...base,
-      title: input.title,
-      slug: uniqueSlug(input.title),
-      start_date: zurichLocalDateTimeToIso(input.start_date),
-      end_date: input.end_date ? zurichLocalDateTimeToIso(input.end_date) : null,
-      recurrence: input.recurrence,
-      recurrence_count: input.recurrence ? input.recurrence_count ?? 4 : null,
-    })
-    .select("id, start_date, end_date")
-    .single();
-
-  if (error || !parent) return { error: "Enregistrement impossible." };
-
-  await syncEventCategories(supabase, parent.id, input.category_ids);
-
-  if (input.recurrence) {
-    const count = input.recurrence_count ?? 4;
-    const occurrences = Array.from({ length: count - 1 }, (_, i) => ({
-      ...base,
-      title: input.title,
-      slug: uniqueSlug(input.title),
-      start_date: shiftDate(parent.start_date, input.recurrence!, i + 1),
-      end_date: parent.end_date
-        ? shiftDate(parent.end_date, input.recurrence!, i + 1)
-        : null,
-      parent_event_id: parent.id,
-    }));
-    if (occurrences.length) {
-      const { data: children } = await supabase
-        .from("events")
-        .insert(occurrences)
-        .select("id");
-      for (const child of children ?? []) {
-        await syncEventCategories(supabase, child.id, input.category_ids);
-      }
-    }
+  const { data, error } = await supabase.rpc('save_event_atomic', {
+    p_event_id: eventId,
+    p_practitioner_id: owner || null,
+    p_input: { ...parsed.data, occurrences },
+    p_submission_id: String(formData.get('submission_id') ?? '') || null,
+    p_expected_updated_at: String(formData.get('updated_at') ?? '') || null,
+  });
+  if (error || !data) {
+    const known = error?.message ?? '';
+    return { error: known.includes('épuisé') ? 'Solde de publications épuisé. Aucun événement créé.' : known.includes('modifiée') ? 'Cette expérience a été modifiée entre-temps. Gardez votre brouillon et rechargez la page avant de réessayer.' : 'Enregistrement non confirmé. Votre saisie est conservée ; vous pouvez réessayer sans double débit.' };
   }
-
-  revalidatePath("/admin/soumissions");
-  redirect("/admin/soumissions?cree=1");
+  if (!eventId && !admin && !data.replayed && practitioner?.contact.email) {
+    // A notification failure cannot turn a committed save into an apparent failure.
+    try { await sendEmail({ to: practitioner.contact.email, ...submissionReceivedEmail(practitioner.name, parsed.data.title, profile.preferred_lang) }); }
+    catch { console.error('[events] Notification de dépôt non envoyée'); }
+  }
+  revalidatePath('/', 'layout');
+  return { success: eventId ? 'Expérience mise à jour.' : 'Expérience enregistrée.', updatedAt: data.updated_at, occurrences: data.occurrences,
+    ...(!eventId || !admin ? { redirectTo: admin ? '/admin/soumissions?cree=1' : '/espace-praticien/evenements?' + (eventId ? 'modifie' : 'depose') + '=1' } : {}) };
 }
 
-/**
- * Édition d'un événement par l'ADMIN (§3/§8) — non limitée au propriétaire.
- * Didier peut modifier n'importe quelle expérience ; le statut n'est pas touché.
- */
-export async function adminUpdateEvent(
-  eventId: string,
-  _prev: ActionState,
-  formData: FormData
-): Promise<ActionState> {
+export async function createEvent(_prev: ActionState, data: FormData) { return save(null, data, false); }
+export async function updateEvent(id: string, _prev: ActionState, data: FormData) { return save(id, data, false); }
+export async function adminCreateEvent(_prev: ActionState, data: FormData) { return save(null, data, true); }
+export async function adminUpdateEvent(id: string, _prev: ActionState, data: FormData) { return save(id, data, true); }
+
+export async function removeOccurrence(id: string, parentId: string): Promise<ActionState> {
   const profile = await getCurrentProfile();
-  if (!profile || profile.role !== "admin") {
-    return { error: "Réservé à l'administrateur." };
-  }
-
-  const parsed = parseEventForm(formData);
-  if (!parsed.success) {
-    return { error: "Formulaire incomplet — vérifiez les champs obligatoires." };
-  }
-  const input = parsed.data;
-
+  if (!profile) return { error: 'Connexion requise.' };
   const supabase = await createClient();
-  const { error } = await supabase
-    .from("events")
-    .update({
-      title: input.title,
-      description: input.description,
-      category_id: input.category_ids[0],
-      venue_id: input.venue_id,
-      start_date: zurichLocalDateTimeToIso(input.start_date),
-      end_date: input.end_date ? zurichLocalDateTimeToIso(input.end_date) : null,
-      duration_minutes: input.duration_minutes,
-      price: input.price,
-      languages: input.languages,
-      included: input.included,
-      to_bring: input.to_bring,
-      video_url: input.video_url,
-      images: input.images,
-    })
-    .eq("id", eventId);
-
-  if (error) return { error: "Mise à jour impossible." };
-
-  await syncEventCategories(supabase, eventId, input.category_ids);
-
-  revalidatePath("/admin/soumissions");
-  revalidatePath(`/experiences/${input.title}`);
-  return { success: "Expérience mise à jour." };
+  const { data, error } = await supabase.rpc('remove_event_occurrence', { p_occurrence_id: id, p_parent_id: parentId });
+  if (error) return { error: 'Suppression impossible. La date est conservée.' };
+  revalidatePath('/', 'layout');
+  return { success: 'Date supprimée.', updatedAt: data?.updated_at };
 }
 
-/** Supprime une occurrence isolée d'une série récurrente depuis l'administration. */
 export async function deleteAdminOccurrence(formData: FormData): Promise<void> {
-  const profile = await getCurrentProfile();
-  if (!profile || profile.role !== "admin") return;
-
-  const occurrenceId = String(formData.get("occurrence_id") ?? "");
-  const parentEventId = String(formData.get("parent_event_id") ?? "");
-  if (!occurrenceId || !parentEventId) return;
-
-  const supabase = await createClient();
-  await supabase
-    .from("events")
-    .delete()
-    .eq("id", occurrenceId)
-    .eq("parent_event_id", parentEventId);
-
-  revalidatePath("/admin/soumissions");
-  revalidatePath(`/admin/soumissions/${parentEventId}`);
+  await removeOccurrence(String(formData.get('occurrence_id') ?? ''), String(formData.get('parent_event_id') ?? ''));
 }
 
-/** Suppression d'un événement par son praticien (occurrences en cascade). */
 export async function deleteEvent(formData: FormData): Promise<void> {
-  const eventId = String(formData.get("event_id") ?? "");
   const practitioner = await getCurrentPractitioner();
-  if (!practitioner || !eventId) return;
-
+  const id = String(formData.get('event_id') ?? '');
+  if (!practitioner || !id) return;
   const supabase = await createClient();
-  await supabase
-    .from("events")
-    .delete()
-    .eq("id", eventId)
-    .eq("practitioner_id", practitioner.id);
-
-  revalidatePath("/espace-praticien/evenements");
+  const { error } = await supabase.from('events').delete().eq('id', id).eq('practitioner_id', practitioner.id);
+  if (error) throw new Error('Suppression impossible. Réessayez.');
+  revalidatePath('/', 'layout');
 }

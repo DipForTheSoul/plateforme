@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { parseSearchFilters } from "@/lib/search-filters";
+import { toEventLocalInput } from "@/lib/event-time";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { EventCard } from "@/components/EventCard";
 import { EventsMapExplorer, type MapItem } from "@/components/EventsMapExplorer";
@@ -10,7 +12,6 @@ import {
   getApprovedEvents,
   getApprovedPractitioners,
   getCategories,
-  type EventFilters,
 } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -57,26 +58,7 @@ export default async function ExperiencesPage({
   const tCommon = await getTranslations("common");
   const currentLocale = (await getLocale()) as Locale;
 
-  const filters: EventFilters = {
-    q: sp.q,
-    category: sp.categorie,
-    language: sp.langue,
-    practitioner: sp.praticien,
-    // §2.1 (arbitrage Victor) : Pays + Canton séparés (canton uniquement si Suisse).
-    country: sp.pays || undefined,
-    canton: sp.canton || undefined,
-    priceMax: sp.prix ? Number(sp.prix) : undefined,
-    durationMax: sp.duree ? Number(sp.duree) : undefined,
-    dateFrom: sp.du ? new Date(`${sp.du}T00:00:00`).toISOString() : undefined,
-    dateTo: sp.au
-      ? new Date(`${sp.au}T23:59:59`).toISOString()
-      : sp.du
-        ? new Date(`${sp.du}T23:59:59`).toISOString()
-        : undefined,
-    lat: sp.lat ? Number(sp.lat) : undefined,
-    lng: sp.lng ? Number(sp.lng) : undefined,
-    radiusKm: sp.rayon ? Number(sp.rayon) : undefined,
-  };
+  const filters = parseSearchFilters({ ...sp });
 
   const [events, allEvents, categories, practitioners] = await Promise.all([
     getApprovedEvents(filters),
@@ -85,7 +67,7 @@ export default async function ExperiencesPage({
     getApprovedPractitioners(),
   ]);
 
-  const eventDays = [...new Set(allEvents.map((e) => e.start_date.slice(0, 10)))];
+  const eventDays = [...new Set(allEvents.map((e) => toEventLocalInput(e.start_date).slice(0, 10)))];
 
   // §2.1 — Pays (tous) + Cantons (uniquement pour la Suisse).
   const countries = [

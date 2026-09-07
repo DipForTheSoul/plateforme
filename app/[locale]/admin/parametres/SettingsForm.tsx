@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { submitWithoutReset } from "@/components/forms/submitWithoutReset";
 import { useTranslations } from "next-intl";
 import { updateSettings } from "@/app/actions/settings";
 import type { ActionState } from "@/app/actions/events";
@@ -13,7 +14,7 @@ export function SettingsForm({ values }: { values: Record<string, string> }) {
   );
 
   return (
-    <form action={action} className="card flex flex-col gap-5 p-6">
+    <form action={action} onSubmit={submitWithoutReset(action)} className="card flex flex-col gap-5 p-6">
       <div>
         <label htmlFor="exchange_rate_eur" className="label">
           {t("exchangeRate")}

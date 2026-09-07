@@ -22,7 +22,6 @@ export default async function OpenGraphImage() {
     (
       <div style={{ position: "relative", display: "flex", width: "100%", height: "100%" }}>
         {/* Photo de fond */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={photoSrc}
           width={1200}
@@ -56,7 +55,6 @@ export default async function OpenGraphImage() {
         />
         {/* Logo centré, descendu */}
         <div style={{ position: "absolute", top: 190, left: 0, width: 1200, display: "flex", justifyContent: "center" }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={logoSrc} height={230} style={{ height: 230 }} alt="" />
         </div>
         {/* Wordmark + accroche en bas */}

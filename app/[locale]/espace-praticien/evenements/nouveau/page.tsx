@@ -24,6 +24,7 @@ export default async function NewEventPage() {
         </p>
       </div>
       <EventForm
+        draftOwner={practitioner.id}
         categories={categories}
         venues={venues}
         defaultLanguages={practitioner.languages}

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { webUrlSchema } from '@/lib/web-url';
 import { createClient } from "@/lib/supabase/server";
 import { geocodeAddress } from "@/lib/geocode";
 import { getCurrentProfile } from "@/lib/auth";
@@ -16,7 +17,7 @@ const venueSchema = z.object({
   description: z.string().max(2000).optional().nullable(),
   capacity: z.coerce.number().int().positive().optional().nullable(),
   rooms: z.coerce.number().int().positive().optional().nullable(),
-  website: z.string().max(300).optional().nullable(),
+  website: webUrlSchema,
 });
 
 /**
@@ -82,8 +83,7 @@ export async function createVenue(
 }
 
 /**
- * Édition d'un lieu par l'admin (§3) — re-géocode l'adresse à chaque
- * enregistrement (elle a pu changer). Réservé au rôle admin.
+ * Édition d'un lieu par l'admin — géocode uniquement une adresse changée.
  */
 export async function adminUpdateVenue(
   venueId: string,
@@ -108,8 +108,11 @@ export async function adminUpdateVenue(
   if (!parsed.success) return { error: "Nom et adresse complète requis." };
   const input = parsed.data;
 
-  const geo = await geocodeAddress(input.address, input.country);
-  if (!geo) return { error: "Adresse introuvable — précisez rue, code postal et ville." };
+  const {data:existing,error:readError} = await supabase.from('venues').select('address,country,lat,lng,contact').eq('id',venueId).maybeSingle();
+  if (readError || !existing) return {error: 'Lieu introuvable ou momentanément inaccessible.'};
+  const unchanged = existing.address === input.address && existing.country === input.country && existing.lat != null && existing.lng != null;
+  const geo = unchanged ? {lat:existing.lat,lng:existing.lng} : await geocodeAddress(input.address,input.country);
+  if (!geo) return { error: "Adresse introuvable ou carte momentanément indisponible. Votre saisie est conservée." };
 
   const { error } = await supabase
     .from("venues")
@@ -124,7 +127,7 @@ export async function adminUpdateVenue(
       description: input.description,
       capacity: input.capacity,
       rooms: input.rooms,
-      contact: input.website ? { website: input.website } : {},
+      contact: { ...existing.contact, website: input.website ?? undefined },
     })
     .eq("id", venueId);
 

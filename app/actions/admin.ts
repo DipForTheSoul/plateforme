@@ -44,7 +44,7 @@ export async function moderateEvent(formData: FormData): Promise<void> {
   const eventId = String(formData.get("event_id") ?? "");
   const decision = String(formData.get("decision") ?? "");
   const message = String(formData.get("message") ?? "").trim() || null;
-  if (!eventId || !["approved", "rejected"].includes(decision)) return;
+  if (!/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(eventId) || !["approved", "rejected"].includes(decision)) return;
 
   const supabase = await createClient();
 
@@ -55,15 +55,12 @@ export async function moderateEvent(formData: FormData): Promise<void> {
     .single();
   if (!event) return;
 
-  await supabase
+  const {data: changed, error: updateError} = await supabase
     .from("events")
     .update({ status: decision, admin_message: message })
-    .eq("id", eventId);
-  // Occurrences récurrentes : même décision.
-  await supabase
-    .from("events")
-    .update({ status: decision, admin_message: message })
-    .eq("parent_event_id", eventId);
+    .or(`id.eq.${eventId},parent_event_id.eq.${eventId}`).select('id');
+  // A single SQL UPDATE commits the decision for the whole series together.
+  if(updateError || !changed?.length)throw new Error('La décision n’a pas pu être enregistrée. Aucune notification envoyée.');
 
   // E-mail automatique validé / refusé (avec message admin).
   const practitioner = event.practitioner as unknown as {
@@ -101,19 +98,15 @@ export async function toggleTopListing(formData: FormData): Promise<void> {
 
   let featured_until: string | null = null;
   if (!isTop) {
-    const { data: setting } = await supabase
-      .from("settings")
-      .select("value")
-      .eq("key", "featured_default_days")
-      .maybeSingle();
-    const days = Number((setting as { value: string } | null)?.value) || 30;
+    const days = await featuredDefaultDays(supabase);
     featured_until = new Date(Date.now() + days * 86400_000).toISOString();
   }
 
-  await supabase
+  const {data: changed, error} = await supabase
     .from("events")
     .update({ is_top: !isTop, featured_until })
-    .eq("id", eventId);
+    .eq("id", eventId).select('id');
+  if (error || !changed?.length) throw new Error('La mise en avant n’a pas pu être enregistrée.');
   revalidatePath("/admin/soumissions");
   revalidatePath("/admin/mises-en-avant");
 }
@@ -122,12 +115,14 @@ export async function toggleTopListing(formData: FormData): Promise<void> {
 async function featuredDefaultDays(
   supabase: Awaited<ReturnType<typeof createClient>>
 ): Promise<number> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("settings")
     .select("value")
     .eq("key", "featured_default_days")
     .maybeSingle();
-  return Number((data as { value: string } | null)?.value) || 30;
+  if (error) throw new Error('La durée de mise en avant est momentanément indisponible.');
+  const days = Number((data as { value: string } | null)?.value);
+  return Number.isInteger(days) && days > 0 && days <= 36500 ? days : 30;
 }
 
 /**
@@ -143,10 +138,11 @@ export async function extendFeatured(formData: FormData): Promise<void> {
   const days = await featuredDefaultDays(supabase);
   const featured_until = new Date(Date.now() + days * 86400_000).toISOString();
 
-  await supabase
+  const {data: changed, error} = await supabase
     .from("events")
     .update({ is_top: true, featured_until })
-    .eq("id", eventId);
+    .eq("id", eventId).select('id');
+  if (error || !changed?.length) throw new Error('La prolongation n’a pas pu être enregistrée.');
   revalidatePath("/admin/mises-en-avant");
   revalidatePath("/admin/soumissions");
 }
@@ -166,10 +162,11 @@ export async function moderatePractitioner(formData: FormData): Promise<void> {
     .eq("id", practitionerId)
     .single();
 
-  await supabase
+  const {error: updateError} = await supabase
     .from("practitioners")
     .update({ status: decision, admin_message: message })
     .eq("id", practitionerId);
+  if(updateError)throw new Error('La décision n’a pas pu être enregistrée. Aucune notification envoyée.');
 
   const to = (practitioner?.contact as { email?: string } | null)?.email;
   if (to && practitioner) {
@@ -187,82 +184,30 @@ export async function moderatePractitioner(formData: FormData): Promise<void> {
 
 /**
  * Attribution manuelle de crédits (paiement statique QR/IBAN — Phase 6).
- * Passe par la fonction SQL grant_credits (vérifie elle aussi is_admin()).
+ * Passe par adjust_credits_atomic (autorisation et opération idempotente).
  */
-export async function grantCreditsManually(formData: FormData): Promise<void> {
-  await assertAdmin();
-  const practitionerId = String(formData.get("practitioner_id") ?? "");
-  const amount = Number.parseInt(String(formData.get("amount") ?? "0"), 10);
-  const note = String(formData.get("note") ?? "").trim() || "Paiement statique (QR/IBAN)";
-  if (!practitionerId || !Number.isInteger(amount) || amount <= 0) return;
-
-  const supabase = await createClient();
-  const { error } = await supabase.rpc("grant_credits", {
-    p_practitioner_id: practitionerId,
-    p_amount: amount,
-    p_note: note,
-  });
-  if (error) return;
-
-  // §6.2 — on matérialise un pack avec sa date d'échéance (durée réglable en admin),
-  // pour que le praticien voie ses publications restantes + la date de validité.
-  const { data: setting } = await supabase
-    .from("settings")
-    .select("value")
-    .eq("key", "pack_default_valid_days")
-    .maybeSingle();
-  const days = Number((setting as { value: string } | null)?.value) || 365;
-  await supabase.from("credit_packs").insert({
-    practitioner_id: practitionerId,
-    credits_total: amount,
-    credits_remaining: amount,
-    expires_at: new Date(Date.now() + days * 86400_000).toISOString(),
-    source: "manual",
-  });
-
-  revalidatePath("/admin/credits");
-  revalidatePath("/espace-praticien/credits");
+export async function grantCreditsManually(formData: FormData) {
+  return changeCredits(formData, 1);
 }
 
-/**
- * Ajustement manuel de crédits (déduction / correction).
- * Permet de retirer des crédits attribués par erreur.
- */
-export async function adjustCreditsManually(formData: FormData): Promise<void> {
-  await assertAdmin();
-  const practitionerId = String(formData.get("practitioner_id") ?? "");
-  const amount = Number.parseInt(String(formData.get("amount") ?? "0"), 10);
-  const note = String(formData.get("note") ?? "").trim() || "Correction manuelle";
-  if (!practitionerId || !Number.isInteger(amount) || amount <= 0) return;
+export async function adjustCreditsManually(formData: FormData) {
+  return changeCredits(formData, -1);
+}
 
+async function changeCredits(formData: FormData, direction: 1 | -1): Promise<import('./events').ActionState> {
+  const profile = await getCurrentProfile();
+  if (profile?.role !== 'admin') return {error: 'Réservé à l’administrateur.'};
+  const practitionerId = String(formData.get('practitioner_id') ?? '');
+  const requestId = String(formData.get('request_id') ?? '');
+  const amount = Number(formData.get('amount'));
+  const uuid = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i;
+  if (!uuid.test(practitionerId) || !uuid.test(requestId) || !Number.isInteger(amount) || amount <= 0 || amount > 10000) return {error: 'Choisissez un praticien et un nombre entier de crédits valide.'};
   const supabase = await createClient();
-
-  const { error } = await supabase.from("credit_transactions").insert({
-    practitioner_id: practitionerId,
-    amount: -amount,
-    type: "manual",
-    note,
+  const {error} = await supabase.rpc('adjust_credits_atomic', {
+    p_practitioner_id: practitionerId, p_delta: direction * amount,
+    p_request_id: requestId, p_note: String(formData.get('note') ?? '').trim() || (direction > 0 ? 'Paiement manuel' : 'Correction manuelle')
   });
-  if (error) return;
-
-  await supabase
-    .from("practitioners")
-    .update({ credits: Math.max(0, -amount) })
-    .eq("id", practitionerId);
-
-  // Recalculate from transactions to be safe.
-  const { data: txs } = await supabase
-    .from("credit_transactions")
-    .select("amount")
-    .eq("practitioner_id", practitionerId);
-  if (txs) {
-    const total = txs.reduce((sum, t) => sum + t.amount, 0);
-    await supabase
-      .from("practitioners")
-      .update({ credits: Math.max(0, total) })
-      .eq("id", practitionerId);
-  }
-
-  revalidatePath("/admin/credits");
-  revalidatePath("/espace-praticien/credits");
+  if (error) return {error: error.message.includes('Solde insuffisant') ? 'Le solde est insuffisant. Aucun crédit retiré.' : 'Modification non confirmée. Réessayez sans changer les champs : la même opération ne sera pas comptée deux fois.'};
+  revalidatePath('/', 'layout');
+  return {success: direction > 0 ? 'Crédits ajoutés.' : 'Crédits retirés.'};
 }

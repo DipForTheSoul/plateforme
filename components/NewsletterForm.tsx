@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { submitWithoutReset } from "@/components/forms/submitWithoutReset";
 import {
   subscribeToNewsletter,
   type NewsletterState,
@@ -34,7 +35,7 @@ export function NewsletterForm({
   }
 
   return (
-    <form action={formAction} className="flex flex-col gap-2">
+    <form action={formAction} onSubmit={submitWithoutReset(formAction)} className="flex flex-col gap-2">
       {/* Pot-de-miel anti-spam : invisible pour les humains. */}
       <input
         type="text"

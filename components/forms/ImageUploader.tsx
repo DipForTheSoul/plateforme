@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
@@ -11,17 +11,24 @@ interface Props {
   images: string[];
   onChange: (urls: string[]) => void;
   max?: number;
+  onBusyChange?: (busy: boolean) => void;
 }
 
 /** Upload d'images avec compression client (WebP ≤1600px) vers Supabase Storage. */
-export function ImageUploader({ prefix, images, onChange, max = 6 }: Props) {
+export function ImageUploader({ prefix, images, onChange, max = 6, onBusyChange }: Props) {
   const t = useTranslations("uploader");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const inFlight = useRef(false);
 
   async function handleFiles(files: FileList | null) {
-    if (!files?.length) return;
+    if (!files?.length || inFlight.current) return;
+    // FileList is live: snapshot before awaiting auth, because the input is
+    // cleared below to allow choosing the same image again after an error.
+    const selectedFiles = Array.from(files);
+    inFlight.current = true;
     setBusy(true);
+    onBusyChange?.(true);
     setError(null);
     try {
       const supabase = createClient();
@@ -32,14 +39,17 @@ export function ImageUploader({ prefix, images, onChange, max = 6 }: Props) {
 
       const remaining = max - images.length;
       const urls: string[] = [];
-      for (const file of Array.from(files).slice(0, remaining)) {
+      for (const file of selectedFiles.slice(0, remaining)) {
         urls.push(await uploadImage(file, user.id, prefix));
+        // Keep successful uploads even if a later file fails.
+        onChange([...images, ...urls]);
       }
-      onChange([...images, ...urls]);
     } catch (e) {
       setError(e instanceof Error ? e.message : t("uploadFailed"));
     } finally {
       setBusy(false);
+      inFlight.current = false;
+      onBusyChange?.(false);
     }
   }
 
@@ -51,6 +61,7 @@ export function ImageUploader({ prefix, images, onChange, max = 6 }: Props) {
             <Image src={url} alt="" fill className="object-cover" sizes="128px" />
             <button
               type="button"
+              disabled={busy}
               onClick={() => onChange(images.filter((u) => u !== url))}
               className="absolute right-1 top-1 rounded-full bg-black/60 px-1.5 text-xs text-white"
               aria-label={t("removeImage")}
@@ -67,14 +78,19 @@ export function ImageUploader({ prefix, images, onChange, max = 6 }: Props) {
               accept="image/jpeg,image/png,image/webp"
               multiple
               className="hidden"
+              aria-label={t("maxSizeHint")}
               disabled={busy}
-              onChange={(e) => handleFiles(e.target.files)}
+              onChange={(e) => {
+                const files = e.currentTarget.files;
+                void handleFiles(files);
+                e.currentTarget.value = '';
+              }}
             />
           </label>
         )}
       </div>
       <p className="text-xs text-soul-bronze">{t("maxSizeHint")}</p>
-      {error && <p className="text-xs text-red-700">{error}</p>}
+      {error && <p role="alert" className="text-xs text-red-700">{error}</p>}
     </div>
   );
 }

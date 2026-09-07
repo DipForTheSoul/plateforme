@@ -1,12 +1,14 @@
 "use client";
 
 import { useActionState } from "react";
-import { useTranslations } from "next-intl";
+import { submitWithoutReset } from "@/components/forms/submitWithoutReset";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { signUp, type AuthState } from "@/app/actions/auth";
 
 export function SignupForm() {
   const t = useTranslations("auth");
+  const locale = useLocale();
   const [state, formAction, pending] = useActionState<AuthState, FormData>(
     signUp,
     {}
@@ -24,7 +26,8 @@ export function SignupForm() {
   }
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form action={formAction} onSubmit={submitWithoutReset(formAction)} className="flex flex-col gap-4">
+      <input type="hidden" name="locale" value={locale} />
       {/* Pot-de-miel anti-spam */}
       <input
         type="text"

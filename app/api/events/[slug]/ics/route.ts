@@ -24,6 +24,7 @@ export async function GET(
     title: event.title,
     start: event.start_date,
     end: event.end_date,
+    durationMinutes: event.duration_minutes,
     details: event.description,
     location,
     url: `${SITE_URL}/experiences/${event.slug}`,

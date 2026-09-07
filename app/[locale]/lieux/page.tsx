@@ -79,7 +79,7 @@ export default async function VenuesPage({
             </option>
           ))}
         </select>
-        <button type="submit" className="btn-primary !rounded-full !py-2.5">
+        <button type="submit" aria-label={t("searchPlaceholder")} className="btn-primary !rounded-full !py-2.5">
           <Search className="h-4 w-4" />
         </button>
         {hasFilters && (

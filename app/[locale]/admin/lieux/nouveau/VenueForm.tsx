@@ -1,6 +1,8 @@
 "use client";
 
 import { useActionState } from "react";
+import { WebUrlInput } from '@/components/forms/WebUrlInput';
+import { useDraftForm } from '@/components/forms/useDraftForm';
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { createVenue } from "@/app/actions/venues";
@@ -18,17 +20,21 @@ interface Props {
 export function VenueForm({ venue, action }: Props) {
   const router = useRouter();
   const t = useTranslations("admin.venues");
+  const td = useTranslations('draft');
+  const draft = useDraftForm(`venue:${venue?.id ?? 'new'}`);
   const [state, formAction, pending] = useActionState(
     async (prev: ActionState & { venueId?: string }, formData: FormData) => {
-      const result = await (action ?? createVenue)(prev, formData);
-      if (result.venueId || result.success) router.push("/admin/lieux");
-      return result;
+      try {
+        const result = await (action ?? createVenue)(prev, formData);
+        if (result.success) { draft.clear(); router.push("/admin/lieux"); }
+        return result;
+      } catch { return { error: td('networkError') }; }
     },
     {}
   );
 
   return (
-    <form action={formAction} className="card flex flex-col gap-4 p-6">
+    <form {...draft.formProps} action={formAction} onSubmit={draft.submit(formAction)} className="card flex flex-col gap-4 p-6">
       <div>
         <label className="label" htmlFor="name">{t("venueName")}</label>
         <input id="name" name="name" required defaultValue={venue?.name} className="field" />
@@ -64,7 +70,7 @@ export function VenueForm({ venue, action }: Props) {
       </div>
       <div>
         <label className="label" htmlFor="website">{t("website")}</label>
-        <input id="website" name="website" type="url" inputMode="url"
+        <WebUrlInput id="website" name="website"
           defaultValue={venue?.contact?.website ?? ""} placeholder="https://…" className="field" />
       </div>
       {state.error && <p className="text-sm text-red-700">{state.error}</p>}

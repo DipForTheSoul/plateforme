@@ -35,16 +35,29 @@ export async function updateSettings(
 
   // Ces clés doivent pouvoir être VIDÉES (ex. arrêter une promo) → on les écrit
   // même vides ; les autres, une valeur vide = « ne pas changer ».
-  const alwaysWritable = new Set(["promo_label", "promo_discount_percent"]);
+  const alwaysWritable = new Set(["promo_label", "promo_discount_percent", "payment_iban"]);
   const rows = keys
+    .filter(key => formData.has(key))
     .map((key) => ({ key, value: String(formData.get(key) ?? "").trim() }))
     .filter((r) => r.value !== "" || alwaysWritable.has(r.key));
 
   // Validation légère : le taux doit être un nombre > 0.
   const rate = rows.find((r) => r.key === "exchange_rate_eur");
-  if (rate && !(Number(rate.value) > 0)) {
+  if (rate && (!Number.isFinite(Number(rate.value)) || !(Number(rate.value) > 0))) {
     return { error: "Le taux de change doit être un nombre positif (ex. 1.05)." };
   }
+  for (const row of rows) {
+    if (row.key.startsWith('price_pack_')) {
+      const value = Number(row.value.replace(',', '.'));
+      if (!Number.isFinite(value) || value <= 0 || value > 999999) return {error: 'Le prix du pack doit être un montant positif et valide.'};
+      row.value = String(value);
+    }
+    if (row.key.endsWith('_days')) {
+      const value = Number(row.value);
+      if (!Number.isInteger(value) || value < (row.key === 'event_delist_days' ? 0 : 1) || value > 36500) return {error: 'La durée doit être un nombre entier de jours valide.'};
+    }
+  }
+  if (rows.length === 0) return {error: 'Aucun paramètre à enregistrer.'};
   // Le % de remise, si renseigné, doit être entre 1 et 99.
   const promoPct = rows.find((r) => r.key === "promo_discount_percent");
   if (promoPct && promoPct.value !== "") {

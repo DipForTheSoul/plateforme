@@ -68,7 +68,7 @@ export function videoEmbedUrl(url: string | null | undefined): string | null {
       const id = u.pathname.slice(1);
       return id ? `https://www.youtube-nocookie.com/embed/${id}` : null;
     }
-    if (host.endsWith("youtube.com")) {
+    if (host === "youtube.com" || host === "m.youtube.com") {
       const id =
         u.searchParams.get("v") ??
         u.pathname.match(/\/(embed|shorts)\/([\w-]+)/)?.[2] ??
@@ -76,7 +76,7 @@ export function videoEmbedUrl(url: string | null | undefined): string | null {
       return id ? `https://www.youtube-nocookie.com/embed/${id}` : null;
     }
     // Vimeo : vimeo.com/ID
-    if (host.endsWith("vimeo.com")) {
+    if (host === "vimeo.com" || host === "player.vimeo.com") {
       const id = u.pathname.split("/").filter(Boolean).pop();
       return id && /^\d+$/.test(id) ? `https://player.vimeo.com/video/${id}` : null;
     }
@@ -148,7 +148,7 @@ export function formatPrice(
   freeLabel = "Prix libre"
 ): string {
   if (price === null || Number(price) === 0) return freeLabel;
-  return `${currency} ${Number(price).toFixed(0)}.–`;
+  return Number.isInteger(Number(price)) ? `${currency} ${Number(price)}.–` : `${currency} ${Number(price).toFixed(2)}`;
 }
 
 export function formatDuration(minutes: number | null): string | null {

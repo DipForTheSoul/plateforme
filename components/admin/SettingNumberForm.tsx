@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { submitWithoutReset } from "@/components/forms/submitWithoutReset";
 import { updateSettings } from "@/app/actions/settings";
 import type { ActionState } from "@/app/actions/events";
 
@@ -27,7 +28,7 @@ export function SettingNumberForm({
   );
 
   return (
-    <form action={action} className="flex flex-col gap-2">
+    <form action={action} onSubmit={submitWithoutReset(action)} className="flex flex-col gap-2">
       <label htmlFor={settingKey} className="label">{label}</label>
       <div className="flex items-center gap-2">
         <input

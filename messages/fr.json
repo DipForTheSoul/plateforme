@@ -1,4 +1,5 @@
 {
+  "draft": {"hint": "Brouillon sauvegardé dans cet onglet jusqu’à l’enregistrement. Vous pouvez changer de langue sans perdre votre saisie.", "unavailable": "La sauvegarde locale est indisponible. Gardez cet onglet ouvert jusqu’à l’enregistrement.", "networkError": "Enregistrement non confirmé. Votre saisie est conservée ; vérifiez votre connexion et réessayez."},
   "common": {
     "siteName": "ForTheSoul",
     "tagline": "Expériences conscientes en Suisse, choisies avec cœur",
@@ -353,6 +354,11 @@
     "creditsPaymentUnavailable": "Paiement indisponible pour le moment."
   },
   "eventForm": {
+    "recurrenceCustom": "Dates au choix",
+    "customDatesHint": "Ajoutez les autres dates, par exemple le 9 et le 30 octobre. La première date est celle indiquée plus haut.",
+    "customDate": "Date supplémentaire {number}",
+    "addDate": "Ajouter une date",
+    "seriesEditHint": "Les informations s’appliquent à toute la série. Modifier la répétition ou la date de départ recalcule les dates suivantes. Une série utilise un crédit, comme lors du dépôt initial.",
     "ownerLabel": "Praticien·ne propriétaire *",
     "choose": "Choisir…",
     "ownerHint": "L'expérience sera publiée directement (aucun crédit consommé).",
@@ -395,6 +401,7 @@
     "photosLabel": "Photos (max 6 — compressées automatiquement)",
     "saving": "Enregistrement…",
     "saveChanges": "Enregistrer les modifications",
+    "publishDirectly": "Publier l’expérience (sans crédit)",
     "submitForValidation": "Déposer pour validation (1 crédit)",
     "newVenueTitle": "Nouveau lieu",
     "close": "Fermer",

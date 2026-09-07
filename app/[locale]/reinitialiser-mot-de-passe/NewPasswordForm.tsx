@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { submitWithoutReset } from "@/components/forms/submitWithoutReset";
 import { useTranslations } from "next-intl";
 import { updatePassword, type AuthState } from "@/app/actions/auth";
 
@@ -12,7 +13,7 @@ export function NewPasswordForm() {
   );
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form action={formAction} onSubmit={submitWithoutReset(formAction)} className="flex flex-col gap-4">
       <div>
         <label htmlFor="password" className="label">
           {t("password")}

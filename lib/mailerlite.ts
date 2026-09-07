@@ -32,15 +32,15 @@ export async function upsertSubscriber(input: SubscriberInput): Promise<boolean>
   const groupId = process.env.MAILERLITE_GROUP_ID;
   const body: Record<string, unknown> = {
     email: input.email.toLowerCase(),
-    ...(input.fields ? { fields: input.fields } : {}),
     ...(groupId ? { groups: [groupId] } : {}),
     // Les intérêts deviennent des étiquettes (tags) côté MailerLite.
-    ...(input.interests?.length ? { fields: { interests: input.interests.join(", ") } } : {}),
+    fields: { ...input.fields, ...(input.interests?.length ? { interests: input.interests.join(", ") } : {}) },
   };
 
   try {
     const res = await fetch(`${API}/subscribers`, {
       method: "POST",
+      signal: AbortSignal.timeout(8000),
       headers: {
         Authorization: `Bearer ${key}`,
         "Content-Type": "application/json",

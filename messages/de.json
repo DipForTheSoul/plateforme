@@ -1,4 +1,5 @@
 {
+  "draft": {"hint": "Der Entwurf bleibt bis zum Speichern in diesem Tab erhalten, auch beim Sprachwechsel.", "unavailable": "Lokales Speichern ist nicht verfügbar. Lassen Sie diesen Tab bis zum Speichern geöffnet.", "networkError": "Speichern nicht bestätigt. Ihre Eingaben bleiben erhalten. Prüfen Sie die Verbindung und versuchen Sie es erneut."},
   "common": {
     "siteName": "ForTheSoul",
     "tagline": "Bewusste Erlebnisse in der Schweiz, mit Herz ausgewählt",
@@ -353,6 +354,11 @@
     "creditsPaymentUnavailable": "Zahlung derzeit nicht verfügbar."
   },
   "eventForm": {
+    "recurrenceCustom": "Individuelle Termine",
+    "customDatesHint": "Weitere Termine hinzufügen, z. B. den 9. und 30. Oktober. Der erste Termin ist das oben angegebene Datum.",
+    "customDate": "Zusätzlicher Termin {number}",
+    "addDate": "Termin hinzufügen",
+    "seriesEditHint": "Die Angaben gelten für die ganze Serie. Änderungen an Wiederholung oder Startdatum berechnen die Folgetermine neu. Wie bei der Erstellung kostet eine Serie einen Credit.",
     "ownerLabel": "Zuständige·r Anbieter·in *",
     "choose": "Auswählen…",
     "ownerHint": "Das Erlebnis wird direkt veröffentlicht (kein Guthaben verbraucht).",
@@ -395,6 +401,7 @@
     "photosLabel": "Fotos (max. 6 — automatisch komprimiert)",
     "saving": "Wird gespeichert…",
     "saveChanges": "Änderungen speichern",
+    "publishDirectly": "Erlebnis veröffentlichen (ohne Guthaben)",
     "submitForValidation": "Zur Freigabe einreichen (1 Guthaben)",
     "newVenueTitle": "Neuer Ort",
     "close": "Schließen",

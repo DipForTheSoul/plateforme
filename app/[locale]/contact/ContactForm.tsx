@@ -2,13 +2,21 @@
 
 import { useActionState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { useDraftForm } from '@/components/forms/useDraftForm';
 import { sendContactMessage, type ContactState } from "@/app/actions/contact";
 
 export function ContactForm() {
   const t = useTranslations("contact");
   const locale = useLocale();
+  const draft = useDraftForm('contact');
   const [state, action, pending] = useActionState<ContactState, FormData>(
-    sendContactMessage,
+    async (prev, data) => {
+      try {
+        const result = await sendContactMessage(prev, data);
+        if (result.status === 'success') draft.clear();
+        return result;
+      } catch { return { status: 'error' }; }
+    },
     { status: "idle" }
   );
 
@@ -21,7 +29,7 @@ export function ContactForm() {
   }
 
   return (
-    <form action={action} className="flex flex-col gap-4">
+    <form {...draft.formProps} action={action} onSubmit={draft.submit(action)} className="flex flex-col gap-4">
       {/* Pot-de-miel anti-spam */}
       <input
         type="text"

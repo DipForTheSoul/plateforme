@@ -12,13 +12,17 @@ import { createClient } from "@/lib/supabase/client";
 const DEVICE_KEY = "fts.device";
 const EVENTS_KEY = "fts.fav.events";
 const PRACTITIONERS_KEY = "fts.fav.practitioners";
+const memory = new Map<string, Set<string>>();
+let temporary = false;
+export function favoritesAreTemporary() { return temporary; }
 
 export function getDeviceId(): string {
   if (typeof window === "undefined") return "";
-  let id = window.localStorage.getItem(DEVICE_KEY);
+  let id: string | null;
+  try { id = window.localStorage.getItem(DEVICE_KEY); } catch { return ''; }
   if (!id) {
     id = crypto.randomUUID();
-    window.localStorage.setItem(DEVICE_KEY, id);
+    try { window.localStorage.setItem(DEVICE_KEY, id); } catch { return ''; }
   }
   return id;
 }
@@ -26,14 +30,18 @@ export function getDeviceId(): string {
 function readSet(key: string): Set<string> {
   if (typeof window === "undefined") return new Set();
   try {
-    return new Set(JSON.parse(window.localStorage.getItem(key) ?? "[]"));
+    if (temporary && memory.has(key)) return new Set(memory.get(key));
+    const value = JSON.parse(window.localStorage.getItem(key) ?? "[]");
+    return new Set(Array.isArray(value) ? value.filter((id): id is string => typeof id === 'string') : []);
   } catch {
-    return new Set();
+    return new Set(memory.get(key));
   }
 }
 
 function writeSet(key: string, set: Set<string>) {
-  window.localStorage.setItem(key, JSON.stringify([...set]));
+  memory.set(key,new Set(set));
+  try { window.localStorage.setItem(key, JSON.stringify([...set])); temporary=false; }
+  catch { temporary=true; }
   // Notifie les composants montés (badge du header, page favoris…).
   window.dispatchEvent(new Event("fts:favorites-changed"));
 }
@@ -73,19 +81,20 @@ function mirrorToDatabase(
   try {
     const supabase = createClient();
     const visitorId = getDeviceId();
+    if (!visitorId) return;
     const column = kind === "event" ? "event_id" : "practitioner_id";
     if (added) {
       void supabase
         .from("favorites")
         .insert({ visitor_id: visitorId, [column]: id })
-        .then(() => undefined);
+        .then(() => undefined, () => undefined);
     } else {
       void supabase
         .from("favorites")
         .delete()
         .eq("visitor_id", visitorId)
         .eq(column, id)
-        .then(() => undefined);
+        .then(() => undefined, () => undefined);
     }
   } catch {
     // Supabase non configuré : les favoris restent purement locaux.
