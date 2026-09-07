@@ -64,8 +64,8 @@ export function VenueForm({ venue, action }: Props) {
       </div>
       <div>
         <label className="label" htmlFor="website">{t("website")}</label>
-        <input id="website" name="website" type="url" inputMode="url"
-          defaultValue={venue?.contact?.website ?? ""} placeholder="https://…" className="field" />
+          <input id="website" name="website" type="text" inputMode="url"
+            defaultValue={venue?.contact?.website ?? ""} placeholder="ex. monsite.ch" className="field" />
       </div>
       {state.error && <p className="text-sm text-red-700">{state.error}</p>}
       {state.success && <p className="text-sm text-green-700">{state.success}</p>}

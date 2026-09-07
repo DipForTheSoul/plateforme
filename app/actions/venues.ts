@@ -5,6 +5,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { geocodeAddress } from "@/lib/geocode";
 import { getCurrentProfile } from "@/lib/auth";
+import { normalizeHttpUrl } from "@/lib/utils";
 import type { ActionState } from "@/app/actions/events";
 
 const venueSchema = z.object({
@@ -42,7 +43,7 @@ export async function createVenue(
     description: String(formData.get("description") ?? "").trim() || null,
     capacity: String(formData.get("capacity") ?? "") || null,
     rooms: String(formData.get("rooms") ?? "") || null,
-    website: String(formData.get("website") ?? "").trim() || null,
+    website: normalizeHttpUrl(String(formData.get("website") ?? "")) || null,
   });
   if (!parsed.success) return { error: "Nom et adresse complète requis." };
   const input = parsed.data;
@@ -103,7 +104,7 @@ export async function adminUpdateVenue(
     description: String(formData.get("description") ?? "").trim() || null,
     capacity: String(formData.get("capacity") ?? "") || null,
     rooms: String(formData.get("rooms") ?? "") || null,
-    website: String(formData.get("website") ?? "").trim() || null,
+    website: normalizeHttpUrl(String(formData.get("website") ?? "")) || null,
   });
   if (!parsed.success) return { error: "Nom et adresse complète requis." };
   const input = parsed.data;

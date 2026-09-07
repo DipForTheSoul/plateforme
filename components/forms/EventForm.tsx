@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useRef, useState } from "react";
+import { useActionState, useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createEvent, updateEvent, type ActionState } from "@/app/actions/events";
 import { deleteAdminOccurrence } from "@/app/actions/events";
@@ -24,6 +25,8 @@ interface Props {
   practitioners?: { id: string; name: string }[];
   /** Occurrences filles affichées uniquement à l'administration. */
   occurrences?: { id: string; start_date: string }[];
+  /** Redirection client après création confirmée, une fois le brouillon effacé. */
+  successRedirect?: string;
 }
 
 /** Convertit un ISO en valeur pour <input type="datetime-local">. */
@@ -43,7 +46,9 @@ export function EventForm({
   action: actionOverride,
   practitioners,
   occurrences = [],
+  successRedirect = "/espace-praticien/evenements?depose=1",
 }: Props) {
+  const router = useRouter();
   const t = useTranslations("eventForm");
   const tCat = useTranslations("categories");
   const action =
@@ -54,6 +59,12 @@ export function EventForm({
   );
 
   const [images, setImages] = useState<string[]>(event?.images ?? []);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [draftRestored, setDraftRestored] = useState(false);
+  const draftInitializedRef = useRef(false);
+  const draftKey = practitioners
+    ? "forthesoul:event-draft:admin"
+    : "forthesoul:event-draft:practitioner";
   const [recurrence, setRecurrence] = useState(event?.recurrence ?? "");
   const [showNewVenue, setShowNewVenue] = useState(false);
   const [venueList, setVenueList] = useState(venues);
@@ -70,6 +81,72 @@ export function EventForm({
     }
     return false;
   });
+
+  /** Sauvegarde le long formulaire localement : aucune saisie n'est perdue. */
+  const saveDraft = useCallback(() => {
+    if (event || !draftInitializedRef.current || !formRef.current) return;
+    const values: Record<string, string[]> = {};
+    for (const [name, value] of new FormData(formRef.current).entries()) {
+      if (typeof value !== "string" || name === "parent_event_id") continue;
+      values[name] = [...(values[name] ?? []), value];
+    }
+    localStorage.setItem(draftKey, JSON.stringify({ values, images }));
+  }, [draftKey, event, images]);
+
+  useEffect(() => {
+    if (event) return;
+    const saved = localStorage.getItem(draftKey);
+    if (!saved || !formRef.current) {
+      draftInitializedRef.current = true;
+      return;
+    }
+    try {
+      const draft = JSON.parse(saved) as {
+        values?: Record<string, string[]>;
+        images?: string[];
+      };
+      const values = draft.values ?? {};
+      for (const field of Array.from(formRef.current.elements)) {
+        if (!(field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement)) continue;
+        const savedValues = values[field.name];
+        if (!field.name || !savedValues) continue;
+        if (field instanceof HTMLInputElement && field.type === "checkbox") {
+          field.checked = savedValues.includes(field.value);
+        } else if (field instanceof HTMLInputElement && field.type !== "file") {
+          field.value = savedValues[0] ?? "";
+        } else if (field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement) {
+          field.value = savedValues[0] ?? "";
+        }
+      }
+      queueMicrotask(() => {
+        if (values.venue_id?.[0]) setSelectedVenue(values.venue_id[0]);
+        if (values.recurrence?.[0]) setRecurrence(values.recurrence[0]);
+        if (values.end_date?.[0]) setMultiDay(true);
+        if (Array.isArray(draft.images)) setImages(draft.images);
+        draftInitializedRef.current = true;
+        setDraftRestored(true);
+      });
+    } catch {
+      localStorage.removeItem(draftKey);
+      draftInitializedRef.current = true;
+    }
+  }, [draftKey, event]);
+
+  useEffect(() => {
+    if (!event) saveDraft();
+  }, [event, images, saveDraft]);
+
+  useEffect(() => {
+    if (!event && state.success) {
+      localStorage.removeItem(draftKey);
+      router.push(successRedirect);
+    }
+  }, [draftKey, event, router, state.success, successRedirect]);
+
+  function clearDraft() {
+    localStorage.removeItem(draftKey);
+    window.location.reload();
+  }
 
   function toggleNewVenue() {
     setShowNewVenue((open) => {
@@ -111,7 +188,16 @@ export function EventForm({
 
   return (
     <div className="flex flex-col gap-8">
-      <form action={formAction} className="flex flex-col gap-5">
+      <form ref={formRef} action={formAction} onInput={saveDraft} onChange={saveDraft}
+        className="flex flex-col gap-5">
+        {!event && draftRestored && (
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-soul-violet/20 bg-soul-violet/5 px-4 py-3 text-sm text-soul-brown">
+            <span>{t("draftRestored")}</span>
+            <button type="button" onClick={clearDraft} className="underline">
+              {t("clearDraft")}
+            </button>
+          </div>
+        )}
         {practitioners && !event && (
           <div className="rounded-2xl border border-soul-violet/20 bg-soul-violet/5 p-4">
             <label htmlFor="owner_practitioner_id" className="label">
@@ -314,7 +400,7 @@ export function EventForm({
 
         <div>
           <label htmlFor="video_url" className="label">{t("videoLabel")}</label>
-          <input id="video_url" name="video_url" type="url" placeholder={t("videoPlaceholder")}
+          <input id="video_url" name="video_url" type="text" inputMode="url" placeholder={t("videoPlaceholder")}
             defaultValue={event?.video_url ?? ""} className="field" />
           <p className="mt-1 text-xs text-soul-bronze">
             {t("videoHint")}

@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentPractitioner, getCurrentProfile } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
 import { submissionReceivedEmail } from "@/lib/email-templates";
-import { uniqueSlug } from "@/lib/utils";
+import { normalizeHttpUrl, uniqueSlug } from "@/lib/utils";
 import type { Recurrence } from "@/types/database";
 
 const ZURICH_TIME_ZONE = "Europe/Zurich";
@@ -104,7 +104,7 @@ function parseEventForm(formData: FormData) {
     recurrence_count: String(formData.get("recurrence_count") ?? "") || null,
     included: String(formData.get("included") ?? "").trim() || null,
     to_bring: String(formData.get("to_bring") ?? "").trim() || null,
-    video_url: String(formData.get("video_url") ?? "").trim() || null,
+    video_url: normalizeHttpUrl(String(formData.get("video_url") ?? "")) || null,
     images: formData.getAll("images").map(String).filter(Boolean),
   });
 }
@@ -254,7 +254,7 @@ export async function createEvent(
   }
 
   revalidatePath("/espace-praticien/evenements");
-  redirect("/espace-praticien/evenements?depose=1");
+  return { success: "Expérience déposée pour validation." };
 }
 
 /** Modification d'un événement par son praticien (repasse en `pending`). */
@@ -389,7 +389,7 @@ export async function adminCreateEvent(
   }
 
   revalidatePath("/admin/soumissions");
-  redirect("/admin/soumissions?cree=1");
+  return { success: "Expérience publiée." };
 }
 
 /**
