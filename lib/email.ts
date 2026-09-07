@@ -19,6 +19,14 @@ interface SendEmailInput {
 }
 
 export async function sendEmail({ to, subject, html, replyTo }: SendEmailInput): Promise<boolean> {
+  if (process.env.LOCAL_MAILPIT_URL) {
+    // Test mailbox is strictly loopback-only and cannot be activated on Vercel.
+    if (process.env.QA_LOCAL !== '1' || process.env.VERCEL || process.env.LOCAL_MAILPIT_URL !== 'http://127.0.0.1:54324') return false;
+    try {
+      const response = await fetch('http://127.0.0.1:54324/api/v1/send', {method:'POST',headers:{'content-type':'application/json'},signal:AbortSignal.timeout(5000),body:JSON.stringify({From:{Email:'app@forthesoul.test',Name:'ForTheSoul QA'},To:[{Email:to}],Subject:subject,HTML:html,...(replyTo?{ReplyTo:[{Email:replyTo}]}:{})})});
+      return response.ok;
+    } catch { console.error('[email] Boîte locale de test indisponible.'); return false; }
+  }
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM ?? "ForTheSoul <welcome@forthesoul.ch>";
 

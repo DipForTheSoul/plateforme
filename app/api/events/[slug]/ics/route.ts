@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import {descriptionText} from '@/lib/description-text';
 import { getEventBySlug } from "@/lib/queries";
 import { buildICS } from "@/lib/calendar";
 
@@ -25,7 +26,7 @@ export async function GET(
     start: event.start_date,
     end: event.end_date,
     durationMinutes: event.duration_minutes,
-    details: event.description,
+    details: descriptionText(event.description),
     location,
     url: `${SITE_URL}/experiences/${event.slug}`,
   });

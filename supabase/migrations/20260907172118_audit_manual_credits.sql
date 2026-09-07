@@ -4,7 +4,7 @@ alter table public.credit_transactions add column if not exists request_id uuid 
 
 -- One locked balance, one ledger entry and (for an addition) one pack in the
 -- same transaction. Retries of an uncertain network response are idempotent.
-create or replace function public.adjust_credits_atomic(
+create or replace function public.adjust_credits_transaction(
   p_practitioner_id uuid, p_delta integer, p_request_id uuid, p_note text default null
 ) returns integer language plpgsql security definer set search_path = '' as $$
 declare
@@ -33,8 +33,8 @@ begin
   end if;
   return balance+p_delta;
 end $$;
-revoke all on function public.adjust_credits_atomic(uuid,integer,uuid,text) from public,anon;
-grant execute on function public.adjust_credits_atomic(uuid,integer,uuid,text) to authenticated;
+revoke all on function public.adjust_credits_transaction(uuid,integer,uuid,text) from public,anon;
+grant execute on function public.adjust_credits_transaction(uuid,integer,uuid,text) to authenticated;
 
 -- Explicit service-role grant: public/anon/authenticated must never credit an
 -- arbitrary account via a forged Stripe session identifier.

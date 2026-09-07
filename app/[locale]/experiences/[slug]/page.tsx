@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import {descriptionText} from '@/lib/description-text';
 import { toEventLocalInput, eventCalendarDaySpan } from '@/lib/event-time';
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
@@ -36,10 +37,10 @@ export async function generateMetadata({
   if (!event || event.status !== "approved") return { title: "ForTheSoul" };
   return {
     title: event.title,
-    description: event.description?.slice(0, 160),
+    description: descriptionText(event.description).slice(0, 160),
     openGraph: {
       title: event.title,
-      description: event.description?.slice(0, 160),
+      description: descriptionText(event.description).slice(0, 160),
       images: event.images[0] ? [event.images[0]] : undefined,
       type: "article",
     },
@@ -222,7 +223,7 @@ export default async function EventPage({
           start={event.start_date}
           end={event.end_date}
           durationMinutes={event.duration_minutes}
-          details={event.description}
+          details={descriptionText(event.description)}
           location={venueLocation}
         />
       </div>

@@ -13,17 +13,17 @@ export function ContactForm() {
     async (prev, data) => {
       try {
         const result = await sendContactMessage(prev, data);
-        if (result.status === 'success') draft.clear();
+        if (result.status === 'success' || result.status === 'partial') draft.clear();
         return result;
       } catch { return { status: 'error' }; }
     },
     { status: "idle" }
   );
 
-  if (state.status === "success") {
+  if (state.status === "success" || state.status === "partial") {
     return (
       <p className="rounded-2xl border border-green-300 bg-green-50 p-5 text-sm text-green-800">
-        {t("success")}
+        {t(state.status === 'partial' ? 'partial' : 'success')}
       </p>
     );
   }

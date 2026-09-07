@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useDraftForm } from "./useDraftForm";
 import { WebUrlInput } from "./WebUrlInput";
+import { DescriptionEditor } from './DescriptionEditor';
 import { toEventLocalInput } from "@/lib/event-time";
 import { createEvent, updateEvent, type ActionState } from "@/app/actions/events";
 import { removeOccurrence } from "@/app/actions/events";
@@ -84,17 +85,24 @@ export function EventForm({
   });
 
   const draft = useDraftForm(`event:${draftOwner}:${event?.id ?? (practitioners ? 'admin-new' : 'new')}`,
-    { images, recurrence, recurrenceCount, selectedVenue, multiDay, startDate, endDate, venueList, submissionId, customDates }, data => {
+    { images, recurrence, recurrenceCount, selectedVenue, multiDay, startDate, endDate, venueList, submissionId, customDates }, (data, fields) => {
       if (Array.isArray(data.images)) setImages(data.images.filter((v): v is string => typeof v === 'string'));
-      if (typeof data.recurrence === 'string') setRecurrence(data.recurrence);
-      if (typeof data.recurrenceCount === 'number') setRecurrenceCount(data.recurrenceCount);
-      if (typeof data.selectedVenue === 'string') setSelectedVenue(data.selectedVenue);
+      const restoredRecurrence = fields.recurrence?.[0] ?? data.recurrence;
+      const restoredCount = fields.recurrence_count?.[0] ?? data.recurrenceCount;
+      const restoredVenue = fields.venue_id?.[0] ?? data.selectedVenue;
+      if (typeof restoredRecurrence === 'string') setRecurrence(restoredRecurrence);
+      if (restoredCount !== undefined && Number.isFinite(Number(restoredCount))) setRecurrenceCount(Number(restoredCount));
+      if (typeof restoredVenue === 'string') setSelectedVenue(restoredVenue);
       if (typeof data.multiDay === 'boolean') setMultiDay(data.multiDay);
-      if (typeof data.startDate === 'string') setStartDate(data.startDate);
-      if (typeof data.endDate === 'string') setEndDate(data.endDate);
+      // The DOM snapshot is authoritative: an input event can precede React's commit.
+      const restoredStart = fields.start_date?.[0] ?? data.startDate;
+      const restoredEnd = fields.end_date?.[0] ?? data.endDate;
+      if (typeof restoredStart === 'string') setStartDate(restoredStart);
+      if (typeof restoredEnd === 'string') setEndDate(restoredEnd);
       if (Array.isArray(data.venueList)) setVenueList(data.venueList as Venue[]);
       if (typeof data.submissionId === 'string') setSubmissionId(data.submissionId);
-      if (Array.isArray(data.customDates)) setCustomDates(data.customDates.filter((v): v is string => typeof v === 'string'));
+      const restoredCustom = fields.occurrence_dates ?? data.customDates;
+      if (Array.isArray(restoredCustom)) setCustomDates(restoredCustom.filter((v): v is string => typeof v === 'string'));
     });
 
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
@@ -187,9 +195,7 @@ export function EventForm({
 
         <div>
           <label htmlFor="description" className="label">{t("descriptionLabel")}</label>
-          <textarea id="description" name="description" required minLength={20} maxLength={8000} rows={8}
-            defaultValue={event?.description ?? ""} className="field"
-            placeholder={t("descriptionPlaceholder")} />
+          <DescriptionEditor defaultValue={event?.description ?? ''}/>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2">
@@ -353,7 +359,7 @@ export function EventForm({
             <h3 className="font-medium text-soul-brown">{t("occurrencesList")}</h3>
             <input type="hidden" name="parent_event_id" value={event.id} />
             <ul className="mt-3 flex flex-col gap-2">
-              {visibleOccurrences.map((occurrence) => (
+              {[{id:event.id,start_date:event.start_date}, ...visibleOccurrences].map((occurrence) => (
                 <li key={occurrence.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white px-3 py-2 text-sm text-soul-brown">
                   <time dateTime={occurrence.start_date}>
                     {new Intl.DateTimeFormat(locale, {
@@ -363,9 +369,11 @@ export function EventForm({
                     }).format(new Date(occurrence.start_date))}
                   </time>
                   <button type="button" disabled={removing || pending} onClick={() => startRemoving(async () => {
+                    if(draft.hasChanges()) { setOccurrenceError(t('saveBeforeDelete')); return; }
                     try {
                       const result = await removeOccurrence(occurrence.id, event.id);
                       if (result.error) { setOccurrenceError(result.error); return; }
+                      if (result.redirectTo) { draft.clear(); router.push(result.redirectTo); return; }
                       const remaining = visibleOccurrences.filter(o => o.id !== occurrence.id);
                       setVisibleOccurrences(remaining);
                       setRecurrence(remaining.length ? 'custom' : '');

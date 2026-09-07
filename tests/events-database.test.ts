@@ -20,7 +20,7 @@ function input(changes: Record<string,string> = {}) {
   return {...parsed.data, occurrences:occurrenceSchedule(parsed.data)};
 }
 async function save(data = input(), id: string | null = null, submission: string | null = null, version: string | null = null) {
-  const result = await db.query<{value:{id:string;replayed:boolean;updated_at:string}}>('select public.save_event_atomic($1::jsonb,$2::uuid,$3::uuid,$4::uuid,$5::timestamptz) as value', [JSON.stringify(data),id,practitioner,submission,version]);
+  const result = await db.query<{value:{id:string;replayed:boolean;updated_at:string}}>('select public.save_event_transaction($1::jsonb,$2::uuid,$3::uuid,$4::uuid,$5::timestamptz) as value', [JSON.stringify(data),id,practitioner,submission,version]);
   return result.rows[0].value;
 }
 
@@ -43,6 +43,8 @@ beforeAll(async () => {
   await db.query("insert into public.categories(id,name,slug) values($1,'Yoga','yoga')",[category]);
   await actor(user);
   await db.exec(sql('20260907172118_audit_manual_credits.sql'));
+  await db.exec(sql('20260907180725_audit_series_root_deletion.sql'));
+  await db.exec(sql('20260907181707_audit_admin_bootstrap.sql'));
   // Supabase grants API roles table access, then RLS restricts individual rows.
   await db.exec('grant usage on schema public,auth to anon,authenticated; grant all on all tables in schema public to anon,authenticated;');
 }, 30000);
@@ -95,6 +97,23 @@ describe('Transactions réelles PostgreSQL — publication et crédits', () => {
     await save(input({title:'Titre modifié'}),first.id);
     expect((await db.query('select distinct status from events where id=$1 or parent_event_id=$1',[first.id])).rows).toEqual([{status:'pending'}]);
   });
+  it('supprime uniquement la première date et conserve les identifiants des trois autres, sans débit',async()=>{
+    await actor(user);const first=await save();
+    const children=(await db.query<{id:string}>('select id from events where parent_event_id=$1 order by start_date',[first.id])).rows;
+    const before=(await db.query('select credits from practitioners where id=$1',[practitioner])).rows;
+    await db.exec('set role authenticated');
+    try {const result=await db.query<{value:{parent_id:string}}>('select remove_event_occurrence($1,$1) as value',[first.id]);expect(result.rows[0].value.parent_id).toBe(children[0].id);}
+    finally {await db.exec('reset role');}
+    expect((await db.query('select id from events where id=$1',[first.id])).rows).toEqual([]);
+    expect((await db.query('select id from events where id=$1 or parent_event_id=$1 order by start_date',[children[0].id])).rows).toEqual(children);
+    expect((await db.query('select credits from practitioners where id=$1',[practitioner])).rows).toEqual(before);
+  });
+  it('refuse de réaffecter directement une date à une autre série',async()=>{
+    await actor(user);const first=await save();const child=(await db.query<{id:string}>('select id from events where parent_event_id=$1 limit 1',[first.id])).rows[0].id;
+    await db.exec('set role authenticated');
+    try{await expect(db.query('update events set parent_event_id=null where id=$1',[child])).rejects.toThrow('série');}
+    finally{await db.exec('reset role');}
+  });
   it('ne dépublie pas une expérience lorsque seul le compteur de vues change',async()=>{
     await actor(admin); const first=await save(input()); await actor(user);
     await db.query('update events set view_count=view_count+1 where id=$1',[first.id]);
@@ -116,21 +135,21 @@ describe('Transactions réelles PostgreSQL — publication et crédits', () => {
   it('retire du solde réel sans le recalculer depuis un historique incomplet',async()=>{
     await actor(admin); await db.query('update practitioners set credits=20 where id=$1',[practitioner]);
     const request='60000000-0000-4000-8000-000000000001';
-    await db.query('select public.adjust_credits_atomic($1,-3,$2)',[practitioner,request]);
-    await db.query('select public.adjust_credits_atomic($1,-3,$2)',[practitioner,request]);
+    await db.query('select public.adjust_credits_transaction($1,-3,$2)',[practitioner,request]);
+    await db.query('select public.adjust_credits_transaction($1,-3,$2)',[practitioner,request]);
     expect((await db.query('select credits from practitioners where id=$1',[practitioner])).rows[0]).toEqual({credits:17});
   });
   it('ajoute un pack et un crédit comptable ensemble, sans doublon après relance',async()=>{
     await actor(admin); const request='60000000-0000-4000-8000-000000000002';
-    await db.query('select public.adjust_credits_atomic($1,5,$2)',[practitioner,request]);
-    await db.query('select public.adjust_credits_atomic($1,5,$2)',[practitioner,request]);
+    await db.query('select public.adjust_credits_transaction($1,5,$2)',[practitioner,request]);
+    await db.query('select public.adjust_credits_transaction($1,5,$2)',[practitioner,request]);
     expect((await db.query('select credits from practitioners where id=$1',[practitioner])).rows[0]).toEqual({credits:22});
     expect((await db.query('select credits_total from credit_packs where practitioner_id=$1',[practitioner])).rows).toEqual([{credits_total:5}]);
   });
   it('refuse un retrait supérieur au solde et une attribution par le praticien',async()=>{
     const request='60000000-0000-4000-8000-000000000003';
-    await expect(db.query('select public.adjust_credits_atomic($1,-999,$2)',[practitioner,request])).rejects.toThrow('Solde insuffisant');
-    await actor(user);await expect(db.query('select public.adjust_credits_atomic($1,999,$2)',[practitioner,request])).rejects.toThrow('administrateur');
+    await expect(db.query('select public.adjust_credits_transaction($1,-999,$2)',[practitioner,request])).rejects.toThrow('Solde insuffisant');
+    await actor(user);await expect(db.query('select public.adjust_credits_transaction($1,999,$2)',[practitioner,request])).rejects.toThrow('administrateur');
   });
   it('RLS : un praticien peut déposer via la fonction, pas insérer gratuitement via REST',async()=>{
     await actor(user);await db.exec('set role authenticated');
@@ -151,5 +170,46 @@ describe('Transactions réelles PostgreSQL — publication et crédits', () => {
     await actor(user);const draft=await save();await actor(other);await db.exec('set role authenticated');
     try{expect((await db.query('select id from events where id=$1',[draft.id])).rows).toEqual([]);}
     finally{await db.exec('reset role');await actor(user);}
+  });
+});
+
+describe('Packs — solde historique, consommation et expiration',()=>{
+  beforeAll(async()=>{
+    await actor(admin);
+    await db.query('update practitioners set credits=7 where id=$1',[practitioner]);
+    await db.query("insert into credit_packs(practitioner_id,credits_total,credits_remaining,expires_at,source) values($1,99,99,now()-interval '1 day','manual')",[practitioner]);
+    await db.exec(sql('20260907181033_audit_pack_accounting.sql'));
+  });
+  it('préserve le solde historique sans inventer 99 crédits ni les expirer rétroactivement',async()=>{
+    expect((await db.query('select get_credit_balance($1) as balance',[practitioner])).rows).toEqual([{balance:7}]);
+    expect((await db.query('select credits_remaining,expires_at from credit_packs where practitioner_id=$1 and accounting_active',[practitioner])).rows).toEqual([{credits_remaining:7,expires_at:null}]);
+  });
+  it('crée un seul pack pour un paiement Stripe livré deux fois',async()=>{
+    await db.query("select add_credits($1,5,'cs_test_pack_qa')",[practitioner]);
+    await db.query("select add_credits($1,5,'cs_test_pack_qa')",[practitioner]);
+    expect((await db.query('select get_credit_balance($1) as balance',[practitioner])).rows).toEqual([{balance:12}]);
+    expect((await db.query("select credits_remaining from credit_packs where stripe_session_id='cs_test_pack_qa' and accounting_active")).rows).toEqual([{credits_remaining:5}]);
+  });
+  it('consomme le pack qui expire avant le solde historique sans échéance',async()=>{
+    await actor(user);await save(input({recurrence:'',recurrence_count:''}));
+    expect((await db.query("select credits_remaining from credit_packs where stripe_session_id='cs_test_pack_qa' and accounting_active")).rows).toEqual([{credits_remaining:4}]);
+  });
+  it('expire seulement les crédits inutilisés et ne les débite pas deux fois',async()=>{
+    await actor(admin);await db.query("update credit_packs set expires_at=now()-interval '1 second' where stripe_session_id='cs_test_pack_qa'");
+    expect((await db.query('select get_credit_balance($1) as balance',[practitioner])).rows).toEqual([{balance:7}]);
+    await db.query('select get_credit_balance($1)',[practitioner]);
+    expect((await db.query("select amount from credit_transactions where practitioner_id=$1 and type='expiration'",[practitioner])).rows).toEqual([{amount:-4}]);
+  });
+  it('applique un retrait manuel au restant des packs',async()=>{
+    await db.query('select adjust_credits_transaction($1,-2,$2)',[practitioner,'70000000-0000-4000-8000-000000000001']);
+    expect((await db.query('select get_credit_balance($1) as balance',[practitioner])).rows).toEqual([{balance:5}]);
+    expect((await db.query('select sum(credits_remaining)::integer as remaining from credit_packs where practitioner_id=$1 and accounting_active',[practitioner])).rows).toEqual([{remaining:5}]);
+  });
+  it('interdit au praticien l’ancien débit hors transaction et les fonctions privées',async()=>{
+    await actor(user);await db.exec('set role authenticated');
+    try{
+      await expect(db.query('select consume_credit()')).rejects.toThrow('permission denied');
+      await expect(db.query('select private.sync_credit_balance($1)',[practitioner])).rejects.toThrow('permission denied');
+    }finally{await db.exec('reset role');}
   });
 });

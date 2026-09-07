@@ -34,7 +34,7 @@ const schema = z.object({
 });
 
 export interface ContactState {
-  status: "idle" | "success" | "error";
+  status: "idle" | "success" | "partial" | "error";
 }
 
 /**
@@ -85,7 +85,8 @@ export async function sendContactMessage(
       const nameParts = name.split(/\s+/);
       const firstName = nameParts[0] ?? name;
       const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : null;
-      await supabase.from("contacts").upsert(
+      // ON CONFLICT needs a SELECT policy, intentionally unavailable to visitors.
+      const {error: contactError} = await supabase.from("contacts").insert(
         {
           email,
           first_name: firstName,
@@ -94,9 +95,9 @@ export async function sendContactMessage(
           consent: true,
           opt_in_at: new Date().toISOString(),
           source: "contact-form",
-        },
-        { onConflict: "email", ignoreDuplicates: true }
+        }
       );
+      if(contactError && contactError.code !== '23505') return {status:'partial'};
       await upsertSubscriber({ email, interests: ["contact-form"] });
     }
 
@@ -109,12 +110,12 @@ export async function sendContactMessage(
 /** Admin : marquer un message de contact comme traité (ou non). */
 export async function toggleContactHandled(formData: FormData): Promise<void> {
   const profile = await getCurrentProfile();
-  if (!profile || profile.role !== "admin") return;
+  if (!profile || profile.role !== "admin") throw new Error('Accès administrateur requis.');
   const id = String(formData.get("id") ?? "");
   const handled = String(formData.get("handled") ?? "") === "true";
   if (!id) return;
   const supabase = await createClient();
-  await supabase.from("contact_messages").update({ handled }).eq("id", id);
+  const {error}=await supabase.from("contact_messages").update({ handled }).eq("id", id);
+  if(error)throw new Error('La modification du message n’a pas été confirmée. Réessayez.');
   revalidatePath("/admin/contact");
 }
-

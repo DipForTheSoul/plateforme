@@ -36,6 +36,7 @@ export default async function CreditsPage({
       .from("credit_packs")
       .select("*")
       .eq("practitioner_id", practitioner.id)
+      .eq("accounting_active", true)
       .gt("credits_remaining", 0)
       .order("expires_at", { ascending: true, nullsFirst: false }),
     supabase.from("settings").select("key, value"),

@@ -1,4 +1,5 @@
 {
+  "descriptionEditor": {"toolbar":"Beschreibung formatieren","bold":"Fett","list":"Liste","link":"Externer Link","preview":"Vorschau","sample":"Ihr Text","hint":"Markieren Sie Text und wählen Sie eine Schaltfläche. Ersetzen Sie bei Links https://example.ch durch die Anmelde- oder Dokumentadresse. Die Vorschau zeigt das Ergebnis."},
   "draft": {"hint": "Der Entwurf bleibt bis zum Speichern in diesem Tab erhalten, auch beim Sprachwechsel.", "unavailable": "Lokales Speichern ist nicht verfügbar. Lassen Sie diesen Tab bis zum Speichern geöffnet.", "networkError": "Speichern nicht bestätigt. Ihre Eingaben bleiben erhalten. Prüfen Sie die Verbindung und versuchen Sie es erneut."},
   "common": {
     "siteName": "ForTheSoul",
@@ -394,6 +395,7 @@
     "occurrencesLabel": "Anzahl der Termine",
     "occurrencesHint": "Alle Daten werden automatisch erzeugt — nur 1 Guthaben verbraucht.",
     "occurrencesList": "Veröffentlichte Termine dieser Serie",
+    "saveBeforeDelete": "Speichern Sie zuerst Ihre Änderungen, bevor Sie einen Termin löschen. Ihre Eingaben bleiben erhalten.",
     "removeOccurrence": "Diesen Termin löschen",
     "videoLabel": "Video-Link (YouTube oder Vimeo) — optional",
     "videoPlaceholder": "https://youtu.be/… oder https://vimeo.com/…",
@@ -445,6 +447,7 @@
     "send": "Senden",
     "sending": "Wird gesendet…",
     "success": "Danke! Ihre Nachricht wurde gesendet — wir melden uns bald.",
+    "partial": "Ihre Nachricht ist angekommen. Nur die Newsletter-Anmeldung ist fehlgeschlagen: Bitte versuchen Sie diese unten erneut, ohne die Nachricht nochmals zu senden.",
     "error": "Senden derzeit nicht möglich. Bitte versuchen Sie es gleich erneut.",
     "newsletterConsent": "Ich möchte die ForTheSoul-Neuigkeiten per E-Mail erhalten (Abmeldung jederzeit möglich).",
     "whatsappTitle": "Lieber WhatsApp?",

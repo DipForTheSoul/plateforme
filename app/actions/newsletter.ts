@@ -47,7 +47,7 @@ export async function subscribeToNewsletter(
       source: parsed.data.source,
     });
     // Doublon d'e-mail (unique) : on considère l'inscription réussie.
-    if (error && !error.message.includes("duplicate")) return { status: "error" };
+    if (error && error.code !== '23505') return { status: "error" };
 
     // Synchronisation MailerLite avec les étiquettes d'intérêt (§7.1).
     // No-op si la clé n'est pas encore configurée — n'échoue jamais l'inscription.

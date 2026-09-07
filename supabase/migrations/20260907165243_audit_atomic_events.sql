@@ -38,7 +38,7 @@ drop policy if exists "events: dépôt par le praticien propriétaire (statut pe
 create policy "events: création directe admin uniquement" on public.events for insert to authenticated
   with check (public.is_admin());
 
-create or replace function public.save_event_atomic(
+create or replace function public.save_event_transaction(
   p_input jsonb, p_event_id uuid default null, p_practitioner_id uuid default null,
   p_submission_id uuid default null, p_expected_updated_at timestamptz default null
 ) returns jsonb language plpgsql security definer set search_path = '' as $$
@@ -162,8 +162,8 @@ begin
   return jsonb_build_object('id',saved.id,'updated_at',saved.updated_at,'replayed',false,
     'occurrences',(select coalesce(jsonb_agg(jsonb_build_object('id',id,'start_date',start_date) order by start_date),'[]') from public.events where parent_event_id=saved.id));
 end $$;
-revoke all on function public.save_event_atomic(jsonb,uuid,uuid,uuid,timestamptz) from public, anon;
-grant execute on function public.save_event_atomic(jsonb,uuid,uuid,uuid,timestamptz) to authenticated;
+revoke all on function public.save_event_transaction(jsonb,uuid,uuid,uuid,timestamptz) from public, anon;
+grant execute on function public.save_event_transaction(jsonb,uuid,uuid,uuid,timestamptz) to authenticated;
 
 create or replace function public.remove_event_occurrence(p_occurrence_id uuid,p_parent_id uuid)
 returns jsonb language plpgsql security definer set search_path = '' as $$

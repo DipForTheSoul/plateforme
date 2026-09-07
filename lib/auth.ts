@@ -25,22 +25,22 @@ export async function getCurrentProfile(): Promise<Profile | null> {
 
 /** Fiche praticien liée à l'utilisateur connecté (null si absente). */
 export async function getCurrentPractitioner(): Promise<Practitioner | null> {
-  try {
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) return null;
 
-    const { data } = await supabase
+    const { data, error: profileError } = await supabase
       .from("practitioners")
       .select("*")
       .eq("user_id", user.id)
       .maybeSingle();
-    return (data as Practitioner) ?? null;
-  } catch {
-    return null;
-  }
+    if(profileError) throw new Error('La fiche praticien est momentanément indisponible.');
+    if (!data) return null;
+    const {data: balance,error} = await supabase.rpc('get_credit_balance',{p_practitioner_id:data.id});
+    if(error) throw new Error('Le solde de crédits est momentanément indisponible.');
+    return {...data,credits:balance} as Practitioner;
 }
 
 /** Garde de layout : exige un rôle, sinon redirige. */

@@ -112,6 +112,7 @@ export interface CreditPack {
   practitioner_id: string;
   credits_total: number;
   credits_remaining: number;
+  accounting_active: boolean;
   expires_at: string | null;
   source: "purchase" | "manual";
   stripe_session_id: string | null;
@@ -191,7 +192,7 @@ export interface CreditTransaction {
   id: string;
   practitioner_id: string;
   amount: number;
-  type: "purchase" | "manual" | "consumption";
+  type: "purchase" | "manual" | "consumption" | "expiration";
   stripe_session_id: string | null;
   note: string | null;
   created_at: string;

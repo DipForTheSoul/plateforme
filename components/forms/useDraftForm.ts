@@ -5,7 +5,7 @@ type Draft = { at: number; fields: Record<string, string[]>; extra: Record<strin
 const EMPTY = {};
 
 /** Tab-local, account-scoped drafts; never capture passwords, files or action tokens. */
-export function useDraftForm(key: string, extra: Record<string, unknown> = EMPTY, restoreExtra?: (data: Record<string, unknown>) => void) {
+export function useDraftForm(key: string, extra: Record<string, unknown> = EMPTY, restoreExtra?: (data: Record<string, unknown>, fields: Record<string, string[]>) => void) {
   const ref = useRef<HTMLFormElement>(null);
   const latest = useRef({ extra, restoreExtra });
   useEffect(() => { latest.current = { extra, restoreExtra }; });
@@ -35,7 +35,7 @@ export function useDraftForm(key: string, extra: Record<string, unknown> = EMPTY
       if (raw) {
         const draft: Draft = JSON.parse(raw);
         if (Date.now() - draft.at < 7 * 86400000 && draft.fields && draft.extra) {
-          latest.current.restoreExtra?.(draft.extra);
+          latest.current.restoreExtra?.(draft.extra, draft.fields);
           for (const element of Array.from(ref.current?.elements ?? [])) {
             if (!(element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement)) continue;
             const values = draft.fields[element.name];
@@ -54,10 +54,12 @@ export function useDraftForm(key: string, extra: Record<string, unknown> = EMPTY
   const serializedExtra = JSON.stringify(extra);
   const previousExtra = useRef(serializedExtra);
   useEffect(() => {
-    if (serializedExtra !== previousExtra.current) dirty.current = true;
+    // Do not save initial defaults while restoreExtra is scheduling its state update.
+    // React StrictMode replays mount effects and would otherwise restore that empty copy.
+    if (serializedExtra === previousExtra.current) return;
+    dirty.current = true;
     previousExtra.current = serializedExtra;
     // Synchronizing browser storage; the only state update reports storage failure.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     save();
     // Snapshot changes only; callbacks read their current values through refs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -75,7 +77,7 @@ export function useDraftForm(key: string, extra: Record<string, unknown> = EMPTY
       startTransition(() => action(data));
     };
   }
-  return { ref, clear, changed, storageError, submit, formProps: {
+  return { ref, clear, changed, storageError, submit, hasChanges: () => dirty.current, formProps: {
     ref, onChangeCapture: changed, onInputCapture: changed, onSubmitCapture: changed,
     // React 19 otherwise resets uncontrolled fields even when an action returns an error.
     onReset: (e: FormEvent<HTMLFormElement>) => e.preventDefault(),

@@ -1,4 +1,5 @@
 {
+  "descriptionEditor": {"toolbar":"Mise en forme de la description","bold":"Gras","list":"Liste","link":"Lien externe","preview":"Aperçu","sample":"Votre texte","hint":"Sélectionnez du texte puis choisissez un bouton. Pour un lien, remplacez https://example.ch par l’adresse d’inscription ou du document. L’aperçu montre le résultat."},
   "draft": {"hint": "Brouillon sauvegardé dans cet onglet jusqu’à l’enregistrement. Vous pouvez changer de langue sans perdre votre saisie.", "unavailable": "La sauvegarde locale est indisponible. Gardez cet onglet ouvert jusqu’à l’enregistrement.", "networkError": "Enregistrement non confirmé. Votre saisie est conservée ; vérifiez votre connexion et réessayez."},
   "common": {
     "siteName": "ForTheSoul",
@@ -394,6 +395,7 @@
     "occurrencesLabel": "Nombre d'occurrences",
     "occurrencesHint": "Toutes les dates sont générées automatiquement — 1 seul crédit consommé.",
     "occurrencesList": "Dates publiées dans cette série",
+    "saveBeforeDelete": "Enregistrez d’abord vos modifications avant de supprimer une date. Votre saisie est conservée.",
     "removeOccurrence": "Supprimer cette date",
     "videoLabel": "Lien vidéo (YouTube ou Vimeo) — facultatif",
     "videoPlaceholder": "https://youtu.be/… ou https://vimeo.com/…",
@@ -445,6 +447,7 @@
     "send": "Envoyer",
     "sending": "Envoi…",
     "success": "Merci ! Votre message a bien été envoyé — on vous répond vite.",
+    "partial": "Votre message a bien été reçu. Seule l’inscription à la newsletter a échoué : vous pouvez la réessayer en bas de page, sans renvoyer votre message.",
     "error": "Envoi impossible pour le moment. Réessayez dans un instant.",
     "newsletterConsent": "Je souhaite recevoir les actualités ForTheSoul par e-mail (désinscription possible à tout moment).",
     "whatsappTitle": "Vous préférez WhatsApp ?",

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import {descriptionText} from '@/lib/description-text';
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { FavoriteButton } from "@/components/FavoriteButton";
@@ -66,7 +67,7 @@ export async function EventCard({ event }: { event: EventWithRelations }) {
         </p>
         {event.description && (
           <p className="line-clamp-2 text-sm leading-relaxed text-soul-ink/70">
-            {event.description}
+            {descriptionText(event.description)}
           </p>
         )}
         {/* Notes/avis masqués tant que le module d'avis n'est pas livré (Section 3

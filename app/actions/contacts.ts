@@ -69,7 +69,8 @@ export async function updateContactInterests(formData: FormData): Promise<void> 
   if (!id) return;
 
   const supabase = await createClient();
-  await supabase.from("contacts").update({ interests }).eq("id", id);
+  const {error}=await supabase.from("contacts").update({ interests }).eq("id", id);
+  if(error)throw new Error('La modification du contact n’a pas été confirmée.');
   revalidatePath("/admin/newsletter");
 }
 
@@ -79,7 +80,8 @@ export async function deleteContact(formData: FormData): Promise<void> {
   if (!id) return;
 
   const supabase = await createClient();
-  await supabase.from("contacts").delete().eq("id", id);
+  const {error}=await supabase.from("contacts").delete().eq("id", id);
+  if(error)throw new Error('La suppression du contact n’a pas été confirmée.');
   revalidatePath("/admin/newsletter");
 }
 
@@ -88,8 +90,9 @@ export async function deleteContact(formData: FormData): Promise<void> {
  * des contacts existants). No-op si la clé API n'est pas configurée.
  * Renvoie un message indiquant le nombre de contacts synchronisés.
  */
-export async function syncContactsToMailerLite(): Promise<ActionState> {
+export async function syncContactsToMailerLite(afterId?: string): Promise<ActionState & {nextCursor?:string;processed?:number}> {
   await assertAdmin();
+  if(afterId && !z.uuid().safeParse(afterId).success)return {error:'Curseur de synchronisation invalide.'};
 
   const { mailerliteEnabled, upsertSubscriber } = await import("@/lib/mailerlite");
   if (!mailerliteEnabled()) {
@@ -97,17 +100,20 @@ export async function syncContactsToMailerLite(): Promise<ActionState> {
   }
 
   const supabase = await createClient();
-  const { data } = await supabase
+  let query = supabase
     .from("contacts")
-    .select("email, interests")
+    .select("id, email, interests")
     .eq("consent", true)
-    .limit(1000);
-  const contacts = (data as { email: string; interests: string[] }[]) ?? [];
+    .order('id').limit(6);
+  if(afterId)query=query.gt('id',afterId);
+  const {data,error}=await query;
+  if(error)return {error:'Impossible de lire les contacts. Aucune synchronisation confirmée.'};
+  const contacts = ((data as { id:string;email: string; interests: string[] }[]) ?? []).slice(0,5);
 
   let ok = 0;
-  for (const c of contacts) {
-    if (await upsertSubscriber({ email: c.email, interests: c.interests })) ok++;
-  }
+  const results=await Promise.all(contacts.map(c=>upsertSubscriber({ email: c.email, interests: c.interests })));
+  ok=results.filter(Boolean).length;
+  if(ok!==contacts.length)return {error:`Synchronisation interrompue : ${ok}/${contacts.length} contacts du dernier lot confirmés. Réessayez après vérification du service ; aucun contact local n’a été supprimé.`,processed:ok};
   revalidatePath("/admin/newsletter");
-  return { success: `${ok}/${contacts.length} contacts synchronisés vers MailerLite.` };
+  return { success: `${ok} contacts synchronisés vers MailerLite.`,processed:ok,nextCursor:(data?.length??0)>5?contacts.at(-1)?.id:undefined };
 }

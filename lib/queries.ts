@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { readPages } from "@/lib/read-pages";
 import {
   EVENT_WITH_RELATIONS,
   mapEventRow,
@@ -11,9 +12,9 @@ import {
 
 /**
  * Requêtes de lecture publiques (Server Components).
- * Toutes tolèrent une Supabase non configurée (placeholders .env) : elles
- * renvoient alors des listes vides — le site affiche des états vides propres
- * au lieu de crasher, et Rodrigue voit immédiatement où brancher les clés.
+ * Les lectures critiques signalent les pannes au lieu de produire de fausses
+ * listes vides. Les erreurs internes de Next traversent la création du client.
+ * Seuls les réglages cosmétiques conservent leur valeur de repli documentée.
  */
 
 export interface EventFilters {
@@ -35,13 +36,14 @@ export interface EventFilters {
 
 /** Lit un paramètre éditable en admin (table `settings`). */
 export async function getSetting(key: string): Promise<string | null> {
+  const supabase = await createClient();
   try {
-    const supabase = await createClient();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("settings")
       .select("value")
       .eq("key", key)
       .maybeSingle();
+    if(error) throw new Error('Lecture indisponible.');
     return (data as { value: string } | null)?.value ?? null;
   } catch {
     return null;
@@ -56,33 +58,35 @@ export async function getExchangeRateEur(): Promise<number> {
 }
 
 export async function getCategories(): Promise<Category[]> {
+  const supabase = await createClient();
   try {
-    const supabase = await createClient();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("categories")
       .select("*")
       .order("position");
+    if(error) throw new Error('Lecture indisponible.');
     return (data as Category[]) ?? [];
   } catch {
-    return [];
+    throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");
   }
 }
 
 export async function getApprovedEvents(
   filters: EventFilters = {}
 ): Promise<EventWithRelations[]> {
+  const supabase = await createClient();
   try {
-    const supabase = await createClient();
 
     // Auto-délistage : un événement reste listé jusqu'à N jours après sa date
     // (réglé par l'admin via `settings.event_delist_days`, défaut 15). Au-delà,
     // il n'apparaît plus dans le catalogue/la recherche — mais sa PAGE reste en
     // ligne (accessible par URL, pour le référencement).
-    const { data: delistRow } = await supabase
+    const { data: delistRow, error: delistError } = await supabase
       .from("settings")
       .select("value")
       .eq("key", "event_delist_days")
       .maybeSingle();
+    if(delistError) throw new Error('Paramètres de recherche indisponibles.');
     const delistDays = Number((delistRow as { value: string } | null)?.value);
     const floorDays = Number.isFinite(delistDays) && delistDays >= 0 ? delistDays : 15;
     const delistFloor = new Date(Date.now() - floorDays * 86_400_000).toISOString();
@@ -94,11 +98,12 @@ export async function getApprovedEvents(
       filters.lat !== undefined &&
       filters.lng !== undefined
     ) {
-      const { data: nearby } = await supabase.rpc("venues_within_radius", {
+      const { data: nearby, error: nearbyError } = await supabase.rpc("venues_within_radius", {
         center_lat: filters.lat,
         center_lng: filters.lng,
         radius_km: filters.radiusKm,
       });
+      if(nearbyError) throw new Error('Recherche géographique indisponible.');
       venueIds = ((nearby as { venue_id: string }[]) ?? []).map(
         (v) => v.venue_id
       );
@@ -117,7 +122,7 @@ export async function getApprovedEvents(
       )
       .order("is_top", { ascending: false })
       .order("start_date", { ascending: true })
-      .limit(100);
+      .order("id", { ascending: true });
 
     if (filters.dateTo) query = query.lte("start_date", filters.dateTo);
     if (filters.language) query = query.contains("languages", [filters.language]);
@@ -127,7 +132,7 @@ export async function getApprovedEvents(
     if (venueIds) query = query.in("venue_id", venueIds);
     if (filters.q) query = query.ilike("title", `%${filters.q}%`);
 
-    const { data } = await query;
+    const data = await readPages((from,to)=>query.range(from,to));
     let events = ((data as unknown as EventRowRaw[]) ?? []).map(mapEventRow);
 
     // Filtres sur les relations (appliqués après jointure).
@@ -144,15 +149,15 @@ export async function getApprovedEvents(
 
     return events;
   } catch {
-    return [];
+    throw new Error('Le catalogue est momentanément indisponible. Merci de réessayer.');
   }
 }
 
 export async function getTopEvents(limit = 3): Promise<EventWithRelations[]> {
+  const supabase = await createClient();
   try {
-    const supabase = await createClient();
     const now = new Date().toISOString();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("events")
       .select(EVENT_WITH_RELATIONS)
       .eq("status", "approved")
@@ -162,25 +167,27 @@ export async function getTopEvents(limit = 3): Promise<EventWithRelations[]> {
       .gte("start_date", now)
       .order("start_date")
       .limit(limit);
+    if(error) throw new Error('Lecture indisponible.');
     return ((data as unknown as EventRowRaw[]) ?? []).map(mapEventRow);
   } catch {
-    return [];
+    throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");
   }
 }
 
 export async function getEventBySlug(
   slug: string
 ): Promise<EventWithRelations | null> {
+  const supabase = await createClient();
   try {
-    const supabase = await createClient();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("events")
       .select(EVENT_WITH_RELATIONS)
       .eq("slug", slug)
       .maybeSingle();
+    if(error) throw new Error('Lecture indisponible.');
     return data ? mapEventRow(data as unknown as EventRowRaw) : null;
   } catch {
-    return null;
+    throw new Error("La fiche est momentanément indisponible. Merci de réessayer.");
   }
 }
 
@@ -192,8 +199,8 @@ export async function getAdjacentEvents(
   currentStartDate: string,
   currentId: string
 ): Promise<{ prev: { slug: string; title: string } | null; next: { slug: string; title: string } | null }> {
+  const supabase = await createClient();
   try {
-    const supabase = await createClient();
     const [{ data: prev }, { data: next }] = await Promise.all([
       supabase
         .from("events")
@@ -224,56 +231,60 @@ export async function getAdjacentEvents(
 }
 
 export async function getApprovedPractitioners(): Promise<Practitioner[]> {
+  const supabase = await createClient();
   try {
-    const supabase = await createClient();
-    const { data } = await supabase
+    const query = supabase
       .from("practitioners")
       .select("*")
       .eq("status", "approved")
-      .order("name");
+      .order("name").order("id");
+    const data = await readPages((from,to)=>query.range(from,to));
     return (data as Practitioner[]) ?? [];
   } catch {
-    return [];
+    throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");
   }
 }
 
 export async function getPractitionerBySlug(
   slug: string
 ): Promise<Practitioner | null> {
+  const supabase = await createClient();
   try {
-    const supabase = await createClient();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("practitioners")
       .select("*")
       .eq("slug", slug)
       .maybeSingle();
+    if(error) throw new Error('Lecture indisponible.');
     return (data as Practitioner) ?? null;
   } catch {
-    return null;
+    throw new Error("La fiche est momentanément indisponible. Merci de réessayer.");
   }
 }
 
 export async function getVenueById(id: string): Promise<Venue | null> {
+  const supabase = await createClient();
   try {
-    const supabase = await createClient();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("venues")
       .select("*")
       .eq("id", id)
       .maybeSingle();
+    if(error) throw new Error('Lecture indisponible.');
     return (data as Venue) ?? null;
   } catch {
-    return null;
+    throw new Error("La fiche est momentanément indisponible. Merci de réessayer.");
   }
 }
 
 export async function getVenues(): Promise<Venue[]> {
+  const supabase = await createClient();
   try {
-    const supabase = await createClient();
-    const { data } = await supabase.from("venues").select("*").order("name");
+    const query = supabase.from("venues").select("*").order("name").order("id");
+    const data = await readPages((from,to)=>query.range(from,to));
     return (data as Venue[]) ?? [];
   } catch {
-    return [];
+    throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");
   }
 }
 
@@ -281,16 +292,17 @@ export async function getEventsByIds(
   ids: string[]
 ): Promise<EventWithRelations[]> {
   if (!ids.length) return [];
+  const supabase = await createClient();
   try {
-    const supabase = await createClient();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("events")
       .select(EVENT_WITH_RELATIONS)
       .in("id", ids)
       .eq("status", "approved");
+    if(error) throw new Error('Lecture indisponible.');
     return ((data as unknown as EventRowRaw[]) ?? []).map(mapEventRow);
   } catch {
-    return [];
+    throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");
   }
 }
 
@@ -298,15 +310,16 @@ export async function getPractitionersByIds(
   ids: string[]
 ): Promise<Practitioner[]> {
   if (!ids.length) return [];
+  const supabase = await createClient();
   try {
-    const supabase = await createClient();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("practitioners")
       .select("*")
       .in("id", ids)
       .eq("status", "approved");
+    if(error) throw new Error('Lecture indisponible.');
     return (data as Practitioner[]) ?? [];
   } catch {
-    return [];
+    throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");
   }
 }

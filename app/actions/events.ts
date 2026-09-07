@@ -27,7 +27,7 @@ async function save(eventId: string | null, formData: FormData, admin: boolean):
   try { occurrences = occurrenceSchedule(parsed.data); }
   catch { return { error: 'Une répétition tombe sur une heure inexistante en Suisse. Choisissez une autre heure de départ.' }; }
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc('save_event_atomic', {
+  const { data, error } = await supabase.rpc('save_event_transaction', {
     p_event_id: eventId,
     p_practitioner_id: owner || null,
     p_input: { ...parsed.data, occurrences },
@@ -58,9 +58,11 @@ export async function removeOccurrence(id: string, parentId: string): Promise<Ac
   if (!profile) return { error: 'Connexion requise.' };
   const supabase = await createClient();
   const { data, error } = await supabase.rpc('remove_event_occurrence', { p_occurrence_id: id, p_parent_id: parentId });
-  if (error) return { error: 'Suppression impossible. La date est conservée.' };
+  if (error) return { error: 'Suppression non confirmée. Rechargez la page pour vérifier les dates avant de réessayer.' };
   revalidatePath('/', 'layout');
-  return { success: 'Date supprimée.', updatedAt: data?.updated_at };
+  const base = profile.role === 'admin' ? '/admin/soumissions' : '/espace-praticien/evenements';
+  return { success: 'Date supprimée.', updatedAt: data?.updated_at,
+    ...(id === parentId ? {redirectTo: data?.parent_id ? `${base}/${data.parent_id}` : base} : {}) };
 }
 
 export async function deleteAdminOccurrence(formData: FormData): Promise<void> {

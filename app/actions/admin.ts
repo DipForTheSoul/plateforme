@@ -184,7 +184,7 @@ export async function moderatePractitioner(formData: FormData): Promise<void> {
 
 /**
  * Attribution manuelle de crédits (paiement statique QR/IBAN — Phase 6).
- * Passe par adjust_credits_atomic (autorisation et opération idempotente).
+ * Passe par adjust_credits_transaction (autorisation et opération idempotente).
  */
 export async function grantCreditsManually(formData: FormData) {
   return changeCredits(formData, 1);
@@ -203,7 +203,7 @@ async function changeCredits(formData: FormData, direction: 1 | -1): Promise<imp
   const uuid = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i;
   if (!uuid.test(practitionerId) || !uuid.test(requestId) || !Number.isInteger(amount) || amount <= 0 || amount > 10000) return {error: 'Choisissez un praticien et un nombre entier de crédits valide.'};
   const supabase = await createClient();
-  const {error} = await supabase.rpc('adjust_credits_atomic', {
+  const {error} = await supabase.rpc('adjust_credits_transaction', {
     p_practitioner_id: practitionerId, p_delta: direction * amount,
     p_request_id: requestId, p_note: String(formData.get('note') ?? '').trim() || (direction > 0 ? 'Paiement manuel' : 'Correction manuelle')
   });

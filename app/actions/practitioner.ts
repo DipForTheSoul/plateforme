@@ -92,10 +92,11 @@ export async function updatePractitionerProfile(
 
   if (practitioner.status === "rejected") {
     const admin = createAdminClient();
-    await admin
+    const {error: resubmissionError}=await admin
       .from("practitioners")
       .update({ status: "pending", admin_message: null })
       .eq("id", practitioner.id);
+    if(resubmissionError)return {error:'Votre fiche est enregistrée, mais le renvoi en validation a échoué. Réessayez l’enregistrement.'};
   }
 
   revalidatePath("/espace-praticien/profil");

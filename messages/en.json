@@ -1,4 +1,5 @@
 {
+  "descriptionEditor": {"toolbar":"Description formatting","bold":"Bold","list":"List","link":"External link","preview":"Preview","sample":"Your text","hint":"Select text, then choose a button. For links, replace https://example.ch with the registration or document address. Preview shows the result."},
   "draft": {"hint": "Your draft stays in this tab until saved, including when you change language.", "unavailable": "Local draft storage is unavailable. Keep this tab open until you save.", "networkError": "Save not confirmed. Your entries have been kept; check your connection and try again."},
   "common": {
     "siteName": "ForTheSoul",
@@ -394,6 +395,7 @@
     "occurrencesLabel": "Number of occurrences",
     "occurrencesHint": "All dates are generated automatically — only 1 credit consumed.",
     "occurrencesList": "Dates published in this series",
+    "saveBeforeDelete": "Save your changes before deleting a date. Your input is preserved.",
     "removeOccurrence": "Delete this date",
     "videoLabel": "Video link (YouTube or Vimeo) — optional",
     "videoPlaceholder": "https://youtu.be/… or https://vimeo.com/…",
@@ -445,6 +447,7 @@
     "send": "Send",
     "sending": "Sending…",
     "success": "Thank you! Your message was sent — we'll get back to you soon.",
+    "partial": "Your message was received. Only the newsletter subscription failed: please try again using the form below, without resending your message.",
     "error": "Couldn't send right now. Please try again in a moment.",
     "newsletterConsent": "I'd like to receive ForTheSoul news by email (unsubscribe anytime).",
     "whatsappTitle": "Prefer WhatsApp?",
