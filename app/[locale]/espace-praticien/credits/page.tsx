@@ -1,9 +1,10 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
+import { readPages } from '@/lib/read-pages';
 import { getCurrentPractitioner } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { CREDIT_PACKS, STATIC_PAYMENT, resolvePackPriceChf, getPromo, discountedChf } from "@/lib/credits";
 import { formatDate } from "@/lib/utils";
-import type { CreditPack, CreditTransaction } from "@/types/database";
+import type { CreditPack, CreditTransaction, Locale } from "@/types/database";
 import { BuyPackButton } from "./BuyPackButton";
 
 export const dynamic = "force-dynamic";
@@ -18,6 +19,7 @@ export default async function CreditsPage({
   searchParams: Promise<{ achat?: string }>;
 }) {
   const tr = await getTranslations("practitioner");
+  const locale = await getLocale() as Locale;
   const practitioner = await getCurrentPractitioner();
   const { achat } = await searchParams;
   if (!practitioner) {
@@ -25,22 +27,23 @@ export default async function CreditsPage({
   }
 
   const supabase = await createClient();
-  const [{ data }, { data: packData }, { data: settingsData }] = await Promise.all([
+  const [{ data,error:txError }, packData, { data: settingsData,error:settingsError }] = await Promise.all([
     supabase
       .from("credit_transactions")
       .select("*")
       .eq("practitioner_id", practitioner.id)
       .order("created_at", { ascending: false })
       .limit(30),
-    supabase
+    readPages((from,to)=>supabase
       .from("credit_packs")
       .select("*")
       .eq("practitioner_id", practitioner.id)
       .eq("accounting_active", true)
       .gt("credits_remaining", 0)
-      .order("expires_at", { ascending: true, nullsFirst: false }),
+      .order("expires_at", { ascending: true, nullsFirst: false }).order('id').range(from,to)),
     supabase.from("settings").select("key, value"),
   ]);
+  if(txError || settingsError)throw new Error('Les crédits sont momentanément indisponibles. Réessayez.');
   const transactions = (data as CreditTransaction[]) ?? [];
   const packs = (packData as CreditPack[]) ?? [];
   const settings = Object.fromEntries(
@@ -95,7 +98,7 @@ export default async function CreditsPage({
                     </p>
                     <p className="text-xs text-soul-bronze">
                       {pack.expires_at
-                        ? tr("creditsValidUntil", { date: formatDate(pack.expires_at) })
+                        ? tr("creditsValidUntil", { date: formatDate(pack.expires_at,locale) })
                         : tr("creditsNoExpiry")}
                     </p>
                   </div>
@@ -185,7 +188,7 @@ export default async function CreditsPage({
                       ? tr("creditsTxManual")
                       : t.note ?? tr("creditsTxPublication")}
                 </p>
-                <p className="text-xs text-soul-bronze">{formatDate(t.created_at)}</p>
+                <p className="text-xs text-soul-bronze">{formatDate(t.created_at,locale)}</p>
               </div>
               <span className={`font-semibold ${t.amount > 0 ? "text-green-700" : "text-soul-terracotta"}`}>
                 {t.amount > 0 ? `+${t.amount}` : t.amount}

@@ -1,11 +1,12 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
+import { readPages } from '@/lib/read-pages';
 import { Link } from "@/i18n/navigation";
 import { StatusBadge } from "@/components/StatusBadge";
 import { getCurrentPractitioner } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { deleteEvent } from "@/app/actions/events";
 import { formatDate, formatTime } from "@/lib/utils";
-import type { Event } from "@/types/database";
+import type { Event, Locale } from "@/types/database";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,7 @@ export default async function MyEventsPage({
   searchParams: Promise<{ depose?: string; modifie?: string }>;
 }) {
   const t = await getTranslations("practitioner");
+  const locale = await getLocale() as Locale;
   const practitioner = await getCurrentPractitioner();
   const flags = await searchParams;
   if (!practitioner) {
@@ -23,12 +25,12 @@ export default async function MyEventsPage({
   }
 
   const supabase = await createClient();
-  const { data } = await supabase
+  const data = await readPages((from,to)=>supabase
     .from("events")
     .select("*")
     .eq("practitioner_id", practitioner.id)
     .is("parent_event_id", null)
-    .order("start_date", { ascending: false });
+    .order("start_date", { ascending: false }).order('id').range(from,to));
   const events = (data as Event[]) ?? [];
 
   return (
@@ -65,7 +67,7 @@ export default async function MyEventsPage({
             <div className="min-w-0">
               <p className="font-medium text-soul-brown">{event.title}</p>
               <p className="text-xs text-soul-bronze">
-                {formatDate(event.start_date)} · {formatTime(event.start_date)}
+                {formatDate(event.start_date,locale)} · {formatTime(event.start_date)}
                 {event.recurrence && (
                   <span className="ml-2 rounded-full bg-soul-sand px-2 py-0.5">
                     {t("recurrent", { count: event.recurrence_count ?? "?" })}

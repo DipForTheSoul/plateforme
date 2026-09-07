@@ -57,7 +57,7 @@ node scripts/qa.mjs auth
 node scripts/qa.mjs web
 ```
 
-`auth` effectue huit contrôles réels de confirmation/récupération via Mailpit, Auth et la route Next PKCE, puis supprime son compte temporaire. `web` crée trois expériences temporaires simultanées, vérifie leurs liens, leur agenda et le suivi HTTP limité, puis nettoie ses objets. `verify` comporte 25 contrôles. La suite `npm run check` comporte 163 tests, dont 29 SQL ; ce ne sont pas des parcours navigateur.
+`auth` effectue huit contrôles réels de confirmation/récupération via Mailpit, Auth et la route Next PKCE, puis supprime son compte temporaire. `web` crée trois expériences temporaires simultanées, vérifie leurs liens, leur agenda et le suivi HTTP limité, puis nettoie ses objets. `verify` comporte 25 contrôles. La suite `npm run check` comporte 167 tests, dont 29 SQL ; ce ne sont pas des parcours navigateur.
 
 Sur une installation de recette déjà existante, appliquer les migrations manquantes avant de redémarrer le code. Les nouveaux formulaires publics utilisent des limites partagées en base et refusent l’envoi si cette migration manque. Les scripts ne l’appliquent pas automatiquement. Une installation neuve avec `supabase start` les rejoue à la création de sa base.
 

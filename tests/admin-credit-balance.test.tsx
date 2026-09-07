@@ -1,7 +1,7 @@
 import {expect,it,vi} from 'vitest';
 import {renderToStaticMarkup} from 'react-dom/server';
 import AdminCreditsPage from '@/app/[locale]/admin/credits/page';
-vi.mock('next-intl/server',()=>({getTranslations:async()=>((key:string)=>key)}));
+vi.mock('next-intl/server',()=>({getLocale:async()=> 'fr',getTranslations:async()=>((key:string)=>key)}));
 vi.mock('@/components/admin/SettingNumberForm',()=>({SettingNumberForm:()=>null}));
 vi.mock('@/components/admin/AdjustCreditsForm',()=>({AdjustCreditsForm:()=>null}));
 vi.mock('@/components/admin/GrantCreditsForm',()=>({GrantCreditsForm:({practitioners}:{practitioners:Array<{credits:number}>})=><output>{practitioners[0].credits}</output>}));

@@ -12,7 +12,7 @@ vi.mock('@/lib/queries',()=>({getCategories:async()=>[]}));
 vi.mock('@/app/actions/contacts',()=>({deleteContact:()=>{},updateContactInterests:()=>{}}));
 vi.mock('@/lib/auth',()=>({requireRole:async()=>({role:'admin'})}));
 vi.mock('@/lib/live-credits',()=>({withLiveCredits:async(_:unknown,rows:unknown[])=>rows}));
-vi.mock('next-intl/server',()=>({setRequestLocale:()=>{},getTranslations:async()=>Object.assign((key:string)=>key,{raw:(key:string)=>key})}));
+vi.mock('next-intl/server',()=>({getLocale:async()=> 'fr',setRequestLocale:()=>{},getTranslations:async()=>Object.assign((key:string)=>key,{raw:(key:string)=>key})}));
 vi.mock('next-intl',()=>({useTranslations:()=>((key:string)=>key)}));
 vi.mock('@/i18n/navigation',()=>({Link:({href,children}:{href:string,children:React.ReactNode})=><a href={href}>{children}</a>}));
 vi.mock('@/app/actions/admin',()=>({moderateEvent:()=>{},moderatePractitioner:()=>{},toggleTopListing:()=>{},extendFeatured:()=>{}}));

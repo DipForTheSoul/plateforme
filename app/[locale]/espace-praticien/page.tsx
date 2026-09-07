@@ -1,16 +1,18 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
+import { readPages } from '@/lib/read-pages';
 import { Link } from "@/i18n/navigation";
 import { StatusBadge } from "@/components/StatusBadge";
 import { getCurrentPractitioner } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate } from "@/lib/utils";
 import { createMissingPractitioner } from "@/app/actions/auth";
-import type { Event } from "@/types/database";
+import type { Event, Locale } from "@/types/database";
 
 export const dynamic = "force-dynamic";
 
 /** Tableau de bord praticien : solde, blocage à 0 crédit, stats rapides. */
 export default async function PractitionerDashboard() {
+  const locale = await getLocale() as Locale;
   const t = await getTranslations("practitioner");
   const practitioner = await getCurrentPractitioner();
 
@@ -28,15 +30,16 @@ export default async function PractitionerDashboard() {
   }
 
   const supabase = await createClient();
-  const { data: events } = await supabase
+  const events = await readPages((from,to)=>supabase
     .from("events")
     .select("id, title, status, start_date, view_count, parent_event_id")
     .eq("practitioner_id", practitioner.id)
-    .is("parent_event_id", null)
     .order("start_date", { ascending: false })
-    .limit(5);
+    .order('id').range(from,to));
 
-  const list = (events as Pick<Event, "id" | "title" | "status" | "start_date" | "view_count" | "parent_event_id">[]) ?? [];
+  const all = events as Pick<Event, "id" | "title" | "status" | "start_date" | "view_count" | "parent_event_id">[];
+  const roots = all.filter(e=>!e.parent_event_id);
+  const list = roots.slice(0,5);
   const outOfCredits = practitioner.credits === 0;
 
   return (
@@ -70,12 +73,12 @@ export default async function PractitionerDashboard() {
         </div>
         <div className="card p-6">
           <p className="text-sm text-soul-bronze">{t("eventsSubmitted")}</p>
-          <p className="mt-1 font-serif text-4xl text-soul-brown">{list.length}</p>
+          <p className="mt-1 font-serif text-4xl text-soul-brown">{roots.length}</p>
         </div>
         <div className="card p-6">
           <p className="text-sm text-soul-bronze">{t("totalViews")}</p>
           <p className="mt-1 font-serif text-4xl text-soul-brown">
-            {list.reduce((sum, e) => sum + (e.view_count ?? 0), 0)}
+            {all.reduce((sum, e) => sum + (e.view_count ?? 0), 0)}
           </p>
         </div>
       </div>
@@ -104,7 +107,7 @@ export default async function PractitionerDashboard() {
           <div key={e.id} className="flex items-center justify-between gap-4 p-4 text-sm">
             <div>
               <p className="font-medium text-soul-brown">{e.title}</p>
-              <p className="text-xs text-soul-bronze">{formatDate(e.start_date)}</p>
+              <p className="text-xs text-soul-bronze">{formatDate(e.start_date,locale)}</p>
             </div>
             <StatusBadge status={e.status} />
           </div>

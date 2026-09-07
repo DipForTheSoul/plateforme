@@ -4,7 +4,8 @@ import { readPages } from '@/lib/read-pages';
 import { toggleTopListing, extendFeatured } from "@/app/actions/admin";
 import { SettingNumberForm } from "@/components/admin/SettingNumberForm";
 import { formatDate } from "@/lib/utils";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
+import type { Locale } from '@/types/database';
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,7 @@ type Row = {
 };
 
 export default async function AdminFeaturedPage() {
+  const locale = await getLocale() as Locale;
   await requireRole(["admin"]);
   const t = await getTranslations("admin.featured");
   const tc = await getTranslations("admin.common");
@@ -83,7 +85,7 @@ export default async function AdminFeaturedPage() {
                     <p className="font-medium text-soul-brown">{e.title}</p>
                     <p className="text-xs text-soul-bronze">
                       {e.featured_until
-                        ? `${t("until", { date: formatDate(e.featured_until) })}${expired ? ` — ${t("expired").toLowerCase()}` : ""}`
+                        ? `${t("until", { date: formatDate(e.featured_until,locale) })}${expired ? ` — ${t("expired").toLowerCase()}` : ""}`
                         : t("noEndDate")}
                     </p>
                   </div>

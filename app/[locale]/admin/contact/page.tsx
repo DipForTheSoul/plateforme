@@ -61,7 +61,7 @@ export default async function AdminContactPage({
                     </a>
                   </p>
                   <p className="text-xs text-soul-bronze">
-                    {formatDate(m.created_at)}
+                    {formatDate(m.created_at,locale === 'de' || locale === 'en' ? locale : 'fr')}
                     {m.locale ? ` · ${m.locale.toUpperCase()}` : ""}
                   </p>
                 </div>

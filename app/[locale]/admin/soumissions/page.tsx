@@ -4,13 +4,14 @@ import { Link } from "@/i18n/navigation";
 import { moderateEvent } from "@/app/actions/admin";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatDate, formatTime } from "@/lib/utils";
-import { getTranslations } from "next-intl/server";
-import type { EventWithRelations } from "@/types/database";
+import { getLocale, getTranslations } from "next-intl/server";
+import type { EventWithRelations, Locale } from "@/types/database";
 import { EVENT_WITH_RELATIONS } from "@/types/database";
 
 export const dynamic = "force-dynamic";
 
 export default async function SubmissionsPage() {
+  const locale = await getLocale() as Locale;
   const supabase = await createClient();
   const t = await getTranslations("admin.submissions");
 
@@ -45,7 +46,7 @@ export default async function SubmissionsPage() {
         )}
         <div className="flex flex-col gap-4">
           {pending.map((event) => (
-            <SubmissionCard key={event.id} event={event} t={t} showActions />
+            <SubmissionCard key={event.id} event={event} t={t} locale={locale} showActions />
           ))}
         </div>
       </section>
@@ -54,7 +55,7 @@ export default async function SubmissionsPage() {
         <h2 className="mb-4 text-xl text-soul-brown">{t("history")}</h2>
         <div className="flex flex-col gap-4">
           {others.map((event) => (
-            <SubmissionCard key={event.id} event={event} t={t} />
+            <SubmissionCard key={event.id} event={event} t={t} locale={locale} />
           ))}
         </div>
       </section>
@@ -65,9 +66,11 @@ export default async function SubmissionsPage() {
 function SubmissionCard({
   event,
   t,
+  locale,
   showActions = false,
 }: {
   event: EventWithRelations;
+  locale: Locale;
   t: Awaited<ReturnType<typeof getTranslations<"admin.submissions">>>;
   showActions?: boolean;
 }) {
@@ -78,7 +81,7 @@ function SubmissionCard({
           <p className="font-serif text-lg text-soul-brown">{event.title}</p>
           <p className="text-sm text-soul-bronze">
             {event.practitioner?.name ?? "?"} · {event.category?.name ?? "—"} ·{" "}
-            {formatDate(event.start_date)} {formatTime(event.start_date)}
+            {formatDate(event.start_date,locale)} {formatTime(event.start_date)}
             {event.venue && <> · {event.venue.name}</>}
             {event.recurrence && <> · {t("recurrent", { count: event.recurrence_count ?? 0 })}</>}
           </p>

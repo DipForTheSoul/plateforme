@@ -5,12 +5,13 @@ import { SettingNumberForm } from "@/components/admin/SettingNumberForm";
 import { GrantCreditsForm } from "@/components/admin/GrantCreditsForm";
 import { AdjustCreditsForm } from "@/components/admin/AdjustCreditsForm";
 import { formatDate } from "@/lib/utils";
-import { getTranslations } from "next-intl/server";
-import type { CreditTransaction, Practitioner } from "@/types/database";
+import { getLocale, getTranslations } from "next-intl/server";
+import type { CreditTransaction, Practitioner, Locale } from "@/types/database";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminCreditsPage() {
+  const locale = await getLocale() as Locale;
   const supabase = await createClient();
   const t = await getTranslations("admin.credits");
   const tc = await getTranslations("admin.common");
@@ -90,7 +91,7 @@ export default async function AdminCreditsPage() {
                   </span>
                 </p>
                 <p className="text-xs text-soul-bronze">
-                  {formatDate(tx.created_at)} ·{" "}
+                  {formatDate(tx.created_at,locale)} ·{" "}
                   {tx.type === "purchase" ? t("txStripe") : tx.type === "manual" ? t("txManual") : tx.type === "expiration" ? t("txExpiration") : t("txConsumption")}
                   {tx.note && <> · {tx.note}</>}
                   {tx.stripe_session_id && <> · {tx.stripe_session_id.slice(0, 18)}…</>}
