@@ -1,6 +1,7 @@
 import {expect,it,vi} from 'vitest';
 import {geocodeAddress} from '@/lib/geocode';
 vi.mock('server-only',()=>({}));
+vi.mock('@/lib/rate-limit',()=>({isRateLimited:async()=>false}));
 it('refuse des coordonnées corrompues sans les enregistrer',async()=>{
   vi.stubGlobal('fetch',vi.fn(async()=>({ok:true,json:async()=>[{lat:'NaN',lon:'999',display_name:'Invalid'}]})));
   expect(await geocodeAddress('Adresse test invalide')).toBeNull();

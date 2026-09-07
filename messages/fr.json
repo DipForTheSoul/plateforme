@@ -480,7 +480,7 @@
       "audience30d": "Audience (30 jours)",
       "pageViews": "{count} pages vues — mesure interne sans cookies",
       "noData": "Pas encore de données.",
-      "analyticsNote": "Ceci est un aperçu interne. Les statistiques détaillées (provenance des visiteurs, trafic, pages) se consultent dans <strong>Google Analytics</strong>, désormais connecté."
+      "analyticsNote": "Ceci est un aperçu interne sans cookies. Les statistiques détaillées de Google Analytics ne sont disponibles que si ce service a été configuré séparément."
     },
     "submissions": {
       "title": "Soumissions",
@@ -574,6 +574,7 @@
       "txStripe": "Achat Stripe",
       "txManual": "Manuel",
       "txConsumption": "Consommation",
+      "txExpiration": "Expiration",
       "deductTitle": "Déduire des crédits (correction)",
       "deductHint": "Pour corriger une attribution en trop (double-clic, erreur).",
       "deductAmount": "À déduire",

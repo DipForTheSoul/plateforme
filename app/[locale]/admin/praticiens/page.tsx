@@ -1,3 +1,5 @@
+import { readPages } from "@/lib/read-pages";
+import { withLiveCredits } from '@/lib/live-credits';
 import { createClient } from "@/lib/supabase/server";
 import { Link } from "@/i18n/navigation";
 import { moderatePractitioner } from "@/app/actions/admin";
@@ -11,11 +13,12 @@ export default async function AdminPractitionersPage() {
   const supabase = await createClient();
   const t = await getTranslations("admin.practitioners");
 
-  const { data } = await supabase
+  const query = supabase
     .from("practitioners")
     .select("*")
-    .order("created_at", { ascending: false });
-  const practitioners = (data as Practitioner[]) ?? [];
+    .order("created_at", { ascending: false }).order("id");
+  const data = await readPages((from,to)=>query.range(from,to));
+  const practitioners = await withLiveCredits(supabase,(data as Practitioner[]) ?? []);
   const pending = practitioners.filter((p) => p.status === "pending");
   const others = practitioners.filter((p) => p.status !== "pending");
 

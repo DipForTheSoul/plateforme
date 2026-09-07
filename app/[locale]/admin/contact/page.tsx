@@ -1,3 +1,4 @@
+import { readPages } from "@/lib/read-pages";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
@@ -28,11 +29,12 @@ export default async function AdminContactPage({
 
   const t = await getTranslations("admin.contact");
   const supabase = await createClient();
-  const { data } = await supabase
+  const query = supabase
     .from("contact_messages")
     .select("id, name, email, message, locale, handled, created_at")
     .order("created_at", { ascending: false })
-    .limit(200);
+    .order("id");
+  const data = await readPages((from,to)=>query.range(from,to));
   const messages = (data as ContactMessage[]) ?? [];
 
   return (

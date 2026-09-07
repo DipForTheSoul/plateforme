@@ -4,31 +4,22 @@ import { redirect } from "next/navigation";
 
 /** Utilisateur courant + profil (null si non connecté). */
 export async function getCurrentProfile(): Promise<Profile | null> {
-  try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return null;
-
-    const { data } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .single();
-    return (data as Profile) ?? null;
-  } catch {
-    // Supabase non configuré (placeholders) : on se comporte comme déconnecté.
-    return null;
-  }
+  const supabase = await createClient();
+  const {data:{user},error:authError}=await supabase.auth.getUser();
+  if(authError && (!authError.status || authError.status>=500))throw new Error('La connexion est momentanément indisponible. Réessayez.');
+  if(!user)return null;
+  const {data,error}=await supabase.from('profiles').select('*').eq('id',user.id).single();
+  if(error || !data)throw new Error('Votre profil est momentanément indisponible. Réessayez.');
+  return data as Profile;
 }
 
 /** Fiche praticien liée à l'utilisateur connecté (null si absente). */
 export async function getCurrentPractitioner(): Promise<Practitioner | null> {
     const supabase = await createClient();
     const {
-      data: { user },
+      data: { user },error:authError,
     } = await supabase.auth.getUser();
+    if(authError && (!authError.status || authError.status>=500))throw new Error("La connexion est momentanément indisponible. Réessayez.");
     if (!user) return null;
 
     const { data, error: profileError } = await supabase

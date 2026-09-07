@@ -50,6 +50,17 @@ npm audit --audit-level=high
 git diff --check
 ```
 
+Avec le serveur Next démarré dans un autre terminal :
+
+```sh
+node scripts/qa.mjs auth
+node scripts/qa.mjs web
+```
+
+`auth` effectue huit contrôles réels de confirmation/récupération via Mailpit, Auth et la route Next PKCE, puis supprime son compte temporaire. `web` crée trois expériences temporaires simultanées, vérifie leurs liens, leur agenda et le suivi HTTP limité, puis nettoie ses objets. `verify` comporte 25 contrôles. La suite `npm run check` comporte 163 tests, dont 29 SQL ; ce ne sont pas des parcours navigateur.
+
+Sur une installation de recette déjà existante, appliquer les migrations manquantes avant de redémarrer le code. Les nouveaux formulaires publics utilisent des limites partagées en base et refusent l’envoi si cette migration manque. Les scripts ne l’appliquent pas automatiquement. Une installation neuve avec `supabase start` les rejoue à la création de sa base.
+
 `verify` exerce réellement Auth, les politiques SQL, Storage, PostGIS et la concurrence. Il ne remplace pas la recette navigateur. Après une modification, arrêter Next avec Ctrl+C, reconstruire puis relancer pour tester le paquet réellement destiné à la production. Une page ouverte pendant l’arrêt peut nécessiter un rechargement.
 
 Parcours recommandé : créer une expérience de 1,5 h à 11 h avec deux dates libres (9 et 30 octobre), provoquer une erreur de validation, changer de langue, ajouter une photo, envoyer ; vérifier un seul crédit débité ; approuver en admin ; supprimer la première date seulement ; ajouter une récurrence ; tester la fiche publique, les favoris et le calendrier à largeur mobile. Le rapport d’audit précise les autres scénarios et les limites.

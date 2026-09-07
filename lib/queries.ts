@@ -193,7 +193,7 @@ export async function getEventBySlug(
 
 /**
  * Expériences précédente / suivante (§8) — navigation sur la fiche détail.
- * Ordre chronologique (start_date) parmi les événements approuvés à venir.
+ * Ordre chronologique stable (start_date, id) parmi les événements approuvés.
  */
 export async function getAdjacentEvents(
   currentStartDate: string,
@@ -201,32 +201,33 @@ export async function getAdjacentEvents(
 ): Promise<{ prev: { slug: string; title: string } | null; next: { slug: string; title: string } | null }> {
   const supabase = await createClient();
   try {
-    const [{ data: prev }, { data: next }] = await Promise.all([
+    const [{ data: prev, error: prevError }, { data: next, error: nextError }] = await Promise.all([
       supabase
         .from("events")
         .select("slug, title")
         .eq("status", "approved")
-        .lt("start_date", currentStartDate)
-        .neq("id", currentId)
+        .or(`start_date.lt.${currentStartDate},and(start_date.eq.${currentStartDate},id.lt.${currentId})`)
         .order("start_date", { ascending: false })
+        .order("id", { ascending: false })
         .limit(1)
         .maybeSingle(),
       supabase
         .from("events")
         .select("slug, title")
         .eq("status", "approved")
-        .gt("start_date", currentStartDate)
-        .neq("id", currentId)
+        .or(`start_date.gt.${currentStartDate},and(start_date.eq.${currentStartDate},id.gt.${currentId})`)
         .order("start_date", { ascending: true })
+        .order("id", { ascending: true })
         .limit(1)
         .maybeSingle(),
     ]);
+    if(prevError || nextError) throw new Error('Navigation indisponible.');
     return {
       prev: (prev as { slug: string; title: string } | null) ?? null,
       next: (next as { slug: string; title: string } | null) ?? null,
     };
   } catch {
-    return { prev: null, next: null };
+    throw new Error('La navigation entre les expériences est momentanément indisponible. Réessayez.');
   }
 }
 

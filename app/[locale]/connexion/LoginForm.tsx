@@ -2,11 +2,12 @@
 
 import { useActionState } from "react";
 import { submitWithoutReset } from "@/components/forms/submitWithoutReset";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { signIn, type AuthState } from "@/app/actions/auth";
 
 export function LoginForm({ next }: { next?: string }) {
+  const locale = useLocale();
   const t = useTranslations("auth");
   const [state, formAction, pending] = useActionState<AuthState, FormData>(
     signIn,
@@ -15,6 +16,7 @@ export function LoginForm({ next }: { next?: string }) {
 
   return (
     <form action={formAction} onSubmit={submitWithoutReset(formAction)} className="flex flex-col gap-4">
+      <input type="hidden" name="locale" value={locale} />
       {next && <input type="hidden" name="next" value={next} />}
       <div>
         <label htmlFor="email" className="label">

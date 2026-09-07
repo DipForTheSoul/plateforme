@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from '@/lib/supabase/admin';
 import { getCurrentProfile } from "@/lib/auth";
 import { isRateLimited } from "@/lib/rate-limit";
 import { sendEmail } from "@/lib/email";
@@ -58,14 +59,14 @@ export async function sendContactMessage(
 
   const ip =
     (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
-  if (isRateLimited(`contact:${ip}`)) return { status: "error" };
+  if (await isRateLimited(`contact:${ip}`)) return { status: "error" };
 
   try {
     const name = parsed.data.name.trim();
     const email = parsed.data.email.toLowerCase();
     const message = parsed.data.message.trim();
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     const { error } = await supabase.from("contact_messages").insert({
       name,
       email,

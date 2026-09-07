@@ -16,6 +16,11 @@ export interface AuthState {
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
+function localizedPath(formData: FormData, path: string) {
+  const locale = String(formData.get('locale'));
+  return ['de', 'en'].includes(locale) ? `/${locale}${path}` : path;
+}
+
 /** Connexion e-mail / mot de passe. */
 export async function signIn(
   _prev: AuthState,
@@ -33,20 +38,23 @@ export async function signIn(
   // Redirection selon le rôle (admin → /admin, praticien → espace praticien).
   const {
     data: { user },
+    error: userError,
   } = await supabase.auth.getUser();
-  const { data: profile } = await supabase
+  if (userError || !user) return { error: 'generic' };
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("role")
     .eq("id", user?.id ?? "")
     .single();
+  if (profileError || !profile) return { error: 'generic' };
 
   // Redirection par rôle en priorité (évite qu'un admin arrivant depuis une page
   // praticien via ?next=… ne soit renvoyé dans le mauvais espace).
   if (profile?.role === "admin") {
-    redirect(/^\/admin(?:\/|\?|$)/.test(bareNext) ? next : "/admin");
+    redirect(/^\/admin(?:\/|\?|$)/.test(bareNext) ? next : localizedPath(formData, "/admin"));
   }
   if (profile?.role === "practitioner") {
-    redirect(/^\/espace-praticien(?:\/|\?|$)/.test(bareNext) ? next : "/espace-praticien");
+    redirect(/^\/espace-praticien(?:\/|\?|$)/.test(bareNext) ? next : localizedPath(formData, "/espace-praticien"));
   }
   // Pas de compte visiteur en V2 : un éventuel rôle participant retombe sur l'accueil.
   if (next.startsWith("/")) redirect(next);
@@ -85,10 +93,10 @@ export async function signUp(
 
   const ip =
     (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
-  if (isRateLimited(`signup:${ip}`)) return { error: "generic" };
+  if (await isRateLimited(`signup:${ip}`)) return { error: "generic" };
 
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({
+  const { error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
@@ -104,20 +112,7 @@ export async function signUp(
     return { error: "generic" };
   }
 
-  // Praticien : on crée immédiatement la fiche (statut pending — validée par Didier).
-  // Client admin (service role) car l'utilisateur n'a pas encore de session à ce stade.
-  if (parsed.data.role === "practitioner" && data.user) {
-    const name = parsed.data.name || parsed.data.email.split("@")[0];
-    const admin = createAdminClient();
-    await admin.from("practitioners").insert({
-      user_id: data.user.id,
-      name,
-      slug: `${slugify(name)}-${data.user.id.slice(0, 6)}`,
-      contact: { email: parsed.data.email },
-      status: "pending",
-    });
-  }
-
+  // Auth trigger creates the pending practitioner in the same database transaction.
   return { success: "checkEmail" };
 }
 
@@ -127,17 +122,19 @@ export async function requestPasswordReset(
   formData: FormData
 ): Promise<AuthState> {
   const email = String(formData.get("email") ?? "").trim();
-  if (!email) return { error: "generic" };
+  if (!z.email().safeParse(email).success) return { error: "generic" };
 
   const ip =
     (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
-  if (isRateLimited(`reset:${ip}`)) return { success: "resetSent" };
+  if (await isRateLimited(`reset:${ip}`)) return { success: "resetSent" };
 
   const supabase = await createClient();
-  await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${SITE_URL}/api/auth/callback?next=/reinitialiser-mot-de-passe`,
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${SITE_URL}/api/auth/callback?next=${encodeURIComponent(localizedPath(formData, '/reinitialiser-mot-de-passe'))}`,
   });
-  // Toujours succès : ne révèle pas l'existence d'un compte.
+  // Un refus lié au compte reste indiscernable d'un succès, mais une panne
+  // générale ne doit pas promettre un e-mail qui n'a pas pu être envoyé.
+  if (error && (!error.status || error.status >= 500)) return { error: 'generic' };
   return { success: "resetSent" };
 }
 
@@ -155,7 +152,7 @@ export async function updatePassword(
   const supabase = await createClient();
   const { error } = await supabase.auth.updateUser({ password });
   if (error) return { error: "generic" };
-  redirect("/connexion");
+  redirect(localizedPath(formData, "/connexion"));
 }
 
 /** Crée la fiche praticien manquante pour l'utilisateur connecté. */
@@ -182,13 +179,14 @@ export async function createMissingPractitioner(): Promise<void> {
   if (existing) redirect("/espace-praticien");
 
   const name = (user.user_metadata as Record<string, string>)?.name || user.email?.split("@")[0] || "Praticien";
-  await admin.from("practitioners").insert({
+  const {error:insertError}=await admin.from("practitioners").upsert({
     user_id: user.id,
     name,
     slug: `${slugify(name)}-${user.id.slice(0, 6)}`,
     contact: { email: user.email },
     status: "pending",
-  });
+  },{onConflict:"user_id",ignoreDuplicates:true});
+  if(insertError)throw new Error("La création de votre fiche a échoué. Réessayez.");
   redirect("/espace-praticien");
 }
 

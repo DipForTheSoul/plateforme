@@ -2,7 +2,7 @@
 
 import { headers } from "next/headers";
 import { z } from "zod";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { upsertSubscriber } from "@/lib/mailerlite";
 
@@ -35,10 +35,10 @@ export async function subscribeToNewsletter(
 
   const ip =
     (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
-  if (isRateLimited(`newsletter:${ip}`)) return { status: "error" };
+  if (await isRateLimited(`newsletter:${ip}`)) return { status: "error" };
 
   try {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     const { error } = await supabase.from("contacts").insert({
       email: parsed.data.email.toLowerCase(),
       interests: parsed.data.interests ?? [],

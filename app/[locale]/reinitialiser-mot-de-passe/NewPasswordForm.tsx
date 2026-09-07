@@ -2,10 +2,11 @@
 
 import { useActionState } from "react";
 import { submitWithoutReset } from "@/components/forms/submitWithoutReset";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { updatePassword, type AuthState } from "@/app/actions/auth";
 
 export function NewPasswordForm() {
+  const locale = useLocale();
   const t = useTranslations("auth");
   const [state, formAction, pending] = useActionState<AuthState, FormData>(
     updatePassword,
@@ -14,6 +15,7 @@ export function NewPasswordForm() {
 
   return (
     <form action={formAction} onSubmit={submitWithoutReset(formAction)} className="flex flex-col gap-4">
+      <input type="hidden" name="locale" value={locale} />
       <div>
         <label htmlFor="password" className="label">
           {t("password")}

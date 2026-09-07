@@ -1,10 +1,10 @@
 import "server-only";
+import { isRateLimited } from '@/lib/rate-limit';
 
 /**
  * Géocodage via Nominatim / OpenStreetMap — gratuit, sans clé.
- * Règle d'or n°3 : appelé À LA CRÉATION d'un lieu (sinon la recherche par
- * rayon ne fonctionne pas). Volume très faible (< 1 req/s exigé par Nominatim,
- * on est très en dessous). User-Agent identifiant requis par leur politique.
+ * Appelé à la création/changement d'adresse. Un créneau partagé assure au
+ * maximum une requête par seconde, même entre plusieurs instances serveur.
  */
 
 export interface GeocodeResult {
@@ -26,6 +26,12 @@ export async function geocodeAddress(
   if (country && country.length === 2) params.set("countrycodes", country.toLowerCase());
 
   try {
+    let reserved=false;
+    for(let attempt=0;attempt<3;attempt++){
+      if(!await isRateLimited('geocode:global',1,1)){reserved=true;break;}
+      if(attempt<2)await new Promise(resolve=>setTimeout(resolve,1100));
+    }
+    if(!reserved)return null;
     const res = await fetch(
       `https://nominatim.openstreetmap.org/search?${params.toString()}`,
       {

@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { readPages } from '@/lib/read-pages';
+import { withLiveCredits } from '@/lib/live-credits';
 import { SettingNumberForm } from "@/components/admin/SettingNumberForm";
 import { GrantCreditsForm } from "@/components/admin/GrantCreditsForm";
 import { AdjustCreditsForm } from "@/components/admin/AdjustCreditsForm";
@@ -13,9 +15,9 @@ export default async function AdminCreditsPage() {
   const t = await getTranslations("admin.credits");
   const tc = await getTranslations("admin.common");
 
-  const [{ data: practitionersData }, { data: transactionsData }, { data: settingData }] =
+  const [practitionersData, { data: transactionsData,error: transactionsError }, { data: settingData,error: settingError }] =
     await Promise.all([
-      supabase.from("practitioners").select("*").order("name"),
+      readPages((from,to)=>supabase.from("practitioners").select("*").order("name").order('id').range(from,to)),
       supabase
         .from("credit_transactions")
         .select("*, practitioner:practitioners(name)")
@@ -24,7 +26,8 @@ export default async function AdminCreditsPage() {
       supabase.from("settings").select("value").eq("key", "pack_default_valid_days").maybeSingle(),
     ]);
 
-  const practitioners = (practitionersData as Practitioner[]) ?? [];
+  if(transactionsError || settingError)throw new Error('Les crédits sont momentanément indisponibles. Réessayez.');
+  const practitioners = await withLiveCredits(supabase,(practitionersData as Practitioner[]) ?? []);
   const packValidDays = (settingData as { value: string } | null)?.value ?? "365";
   const transactions =
     (transactionsData as (CreditTransaction & {
@@ -88,7 +91,7 @@ export default async function AdminCreditsPage() {
                 </p>
                 <p className="text-xs text-soul-bronze">
                   {formatDate(tx.created_at)} ·{" "}
-                  {tx.type === "purchase" ? t("txStripe") : tx.type === "manual" ? t("txManual") : t("txConsumption")}
+                  {tx.type === "purchase" ? t("txStripe") : tx.type === "manual" ? t("txManual") : tx.type === "expiration" ? t("txExpiration") : t("txConsumption")}
                   {tx.note && <> · {tx.note}</>}
                   {tx.stripe_session_id && <> · {tx.stripe_session_id.slice(0, 18)}…</>}
                 </p>

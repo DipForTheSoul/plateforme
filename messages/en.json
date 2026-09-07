@@ -480,7 +480,7 @@
       "audience30d": "Audience (30 days)",
       "pageViews": "{count} page views — internal tracking, no cookies",
       "noData": "No data yet.",
-      "analyticsNote": "This is an internal overview. Detailed statistics (visitor origin, traffic, pages) are available in <strong>Google Analytics</strong>, now connected."
+      "analyticsNote": "This is an internal overview without cookies. Detailed Google Analytics statistics are only available if that service has been configured separately."
     },
     "submissions": {
       "title": "Submissions",
@@ -574,6 +574,7 @@
       "txStripe": "Stripe purchase",
       "txManual": "Manual",
       "txConsumption": "Consumption",
+      "txExpiration": "Expiration",
       "deductTitle": "Deduct credits (correction)",
       "deductHint": "To correct an accidental grant (double-tap, error).",
       "deductAmount": "To deduct",

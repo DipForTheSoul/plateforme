@@ -1,5 +1,6 @@
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { readPages } from '@/lib/read-pages';
 import { toggleTopListing, extendFeatured } from "@/app/actions/admin";
 import { SettingNumberForm } from "@/components/admin/SettingNumberForm";
 import { formatDate } from "@/lib/utils";
@@ -20,25 +21,26 @@ export default async function AdminFeaturedPage() {
   const tc = await getTranslations("admin.common");
 
   const supabase = await createClient();
-  const [{ data: settingData }, { data: featuredData }, { data: candidateData }] =
+  const [{ data: settingData,error:settingError }, featuredData, candidateData] =
     await Promise.all([
       supabase.from("settings").select("value").eq("key", "featured_default_days").maybeSingle(),
-      supabase
+      readPages((from,to)=>supabase
         .from("events")
         .select("id, title, is_top, featured_until")
         .eq("status", "approved")
         .eq("is_top", true)
         .is("parent_event_id", null)
-        .order("featured_until", { ascending: true, nullsFirst: false }),
-      supabase
+        .order("featured_until", { ascending: true, nullsFirst: false }).order('id').range(from,to)),
+      readPages((from,to)=>supabase
         .from("events")
         .select("id, title, is_top, featured_until")
         .eq("status", "approved")
         .eq("is_top", false)
         .is("parent_event_id", null)
         .order("start_date", { ascending: true })
-        .limit(200),
+        .order('id').range(from,to)),
     ]);
+  if(settingError)throw new Error('Les paramètres de mise en avant sont indisponibles.');
 
   const defaultDays = (settingData as { value: string } | null)?.value ?? "30";
   const featured = (featuredData as Row[]) ?? [];

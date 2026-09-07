@@ -1,3 +1,4 @@
+import { readPages } from "@/lib/read-pages";
 import { createClient } from "@/lib/supabase/server";
 import { Link } from "@/i18n/navigation";
 import { moderateEvent } from "@/app/actions/admin";
@@ -13,13 +14,14 @@ export default async function SubmissionsPage() {
   const supabase = await createClient();
   const t = await getTranslations("admin.submissions");
 
-  const { data } = await supabase
+  const query = supabase
     .from("events")
     .select(EVENT_WITH_RELATIONS)
     .is("parent_event_id", null)
     .order("status", { ascending: true })
     .order("created_at", { ascending: false })
-    .limit(100);
+    .order("id");
+  const data = await readPages((from,to)=>query.range(from,to));
 
   const events = ((data as unknown as EventWithRelations[]) ?? []);
   const pending = events.filter((e) => e.status === "pending");

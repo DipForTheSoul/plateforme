@@ -7,7 +7,7 @@ vi.mock('@/lib/auth',()=>({getCurrentProfile:async()=>null}));
 vi.mock('@/lib/rate-limit',()=>({isRateLimited:()=>false}));
 vi.mock('@/lib/email',()=>({sendEmail:async()=>true}));
 vi.mock('@/lib/mailerlite',()=>({upsertSubscriber:async()=>{state.synced++;return true;}}));
-vi.mock('@/lib/supabase/server',()=>({createClient:async()=>({from:(table:string)=>({
+vi.mock('@/lib/supabase/admin',()=>({createAdminClient:()=>({from:(table:string)=>({
   insert:async()=>{if(table==='contacts')state.inserted++;return {error:table==='contacts'?state.contactError:null};},
   upsert:async()=>({error:{code:'42501'}}), // ON CONFLICT requires SELECT under the actual RLS.
 })})}));

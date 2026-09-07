@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import {readPages} from '@/lib/read-pages';
 import { deleteContact, updateContactInterests } from "@/app/actions/contacts";
 import { getCategories } from "@/lib/queries";
 import { getTranslations } from "next-intl/server";
@@ -12,8 +13,8 @@ export default async function AdminNewsletterPage() {
   const supabase = await createClient();
   const t = await getTranslations("admin.newsletter");
 
-  const [{ data }, categories, { count: newCount }] = await Promise.all([
-    supabase.from("contacts").select("*").order("created_at", { ascending: false }).limit(500),
+  const [data, categories, { count: newCount,error:countError }] = await Promise.all([
+    readPages((from,to)=>supabase.from("contacts").select("*").order("created_at", { ascending: false }).order('id').range(from,to)),
     getCategories(),
     supabase
       .from("contacts")
@@ -21,6 +22,7 @@ export default async function AdminNewsletterPage() {
       .eq("consent", true)
       .is("exported_at", null),
   ]);
+  if(countError)throw new Error('La liste de contacts est momentanément indisponible.');
   const contacts = (data as Contact[]) ?? [];
 
   const allTags = new Set<string>(categories.map((c) => c.slug));
@@ -90,8 +92,8 @@ export default async function AdminNewsletterPage() {
                   {c.source ?? "site"} · {c.interests.join(", ") || t("noTag")}
                 </p>
               </div>
-              <div className="flex items-center gap-2">
-                <form action={updateContactInterests} className="flex items-center gap-2">
+              <div className="flex max-w-full flex-wrap items-center gap-2">
+                <form action={updateContactInterests} className="flex min-w-0 max-w-full items-center gap-2">
                   <input type="hidden" name="contact_id" value={c.id} />
                   <input name="interests" defaultValue={c.interests.join(", ")}
                     placeholder={t("tagsPlaceholder")}

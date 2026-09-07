@@ -53,7 +53,7 @@ export async function createVenue(
   if (!geo) {
     return {
       error:
-        "Adresse introuvable sur la carte — précisez rue, code postal et ville.",
+        "Adresse introuvable ou carte momentanément indisponible. Vérifiez rue, code postal et ville, puis réessayez ; votre saisie est conservée.",
     };
   }
 
@@ -141,13 +141,14 @@ export async function adminUpdateVenue(
 /** Suppression d'un lieu par l'admin. */
 export async function deleteVenue(formData: FormData): Promise<void> {
   const profile = await getCurrentProfile();
-  if (!profile || profile.role !== "admin") return;
+  if (!profile || profile.role !== "admin") throw new Error('Accès administrateur requis.');
 
   const venueId = String(formData.get("venue_id") ?? "");
   if (!venueId) return;
 
   const supabase = await createClient();
-  await supabase.from("venues").delete().eq("id", venueId);
+  const {error}=await supabase.from("venues").delete().eq("id", venueId);
+  if(error)throw new Error('Le lieu n’a pas pu être supprimé. Il peut être lié à une expérience.');
 
   revalidatePath("/admin/lieux");
 }

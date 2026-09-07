@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
+import { readPages } from '@/lib/read-pages';
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +21,6 @@ export default async function AdminDashboard() {
     activePractitioners,
     creditsConsumed,
     contacts,
-    views,
     topPages,
     topExperiences,
   ] = await Promise.all([
@@ -31,15 +31,21 @@ export default async function AdminDashboard() {
     supabase.from("practitioners").select("id", { count: "exact", head: true }).eq("status", "approved"),
     supabase.from("credit_transactions").select("id", { count: "exact", head: true }).eq("type", "consumption").gte("created_at", since.toISOString()),
     supabase.from("contacts").select("id", { count: "exact", head: true }),
-    supabase.from("page_views").select("id", { count: "exact", head: true }).gte("created_at", since.toISOString()),
-    supabase.from("page_views").select("path").gte("created_at", since.toISOString()).limit(2000),
+    readPages<{path:string}>((from,to)=>supabase.from("page_views").select("path").gte("created_at", since.toISOString()).order('id').range(from,to)),
     supabase.from("events").select("title, slug, view_count").eq("status", "approved").order("view_count", { ascending: false }).limit(8),
   ]);
+  if ([pendingEvents,pendingPractitioners,approvedEvents,rejectedEvents,activePractitioners,creditsConsumed,contacts,topExperiences].some(result=>result.error)) {
+    throw new Error('Les statistiques sont momentanément indisponibles. Réessayez.');
+  }
   const topExp = (topExperiences.data as { title: string; slug: string; view_count: number }[] ?? []).filter((e) => e.view_count > 0);
 
   const counts = new Map<string, number>();
-  for (const row of (topPages.data as { path: string }[]) ?? []) {
-    counts.set(row.path, (counts.get(row.path) ?? 0) + 1);
+  let publicViews=0;
+  for (const row of topPages) {
+    const path=row.path.split(/[?#]/,1)[0];
+    if(/^\/(?:fr\/|de\/|en\/)?(?:admin|espace-praticien)(?:\/|$)/.test(path))continue;
+    publicViews++;
+    counts.set(path, (counts.get(path) ?? 0) + 1);
   }
   const top = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
 
@@ -88,10 +94,10 @@ export default async function AdminDashboard() {
       )}
 
       <div className="card p-6">
-        <div className="mb-4 flex items-baseline justify-between">
+        <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
           <h2 className="font-serif text-lg text-soul-brown">{t("dashboard.audience30d")}</h2>
           <p className="text-sm text-soul-bronze">
-            {t("dashboard.pageViews", { count: views.count ?? 0 })}
+            {t("dashboard.pageViews", { count: publicViews })}
           </p>
         </div>
         {top.length === 0 ? (
@@ -108,9 +114,7 @@ export default async function AdminDashboard() {
             ))}
           </ul>
         )}
-        <p className="mt-4 text-xs text-soul-bronze"
-          dangerouslySetInnerHTML={{ __html: t.raw("dashboard.analyticsNote") }}
-        />
+        <p className="mt-4 text-xs text-soul-bronze">{t("dashboard.analyticsNote")}</p>
       </div>
     </div>
   );

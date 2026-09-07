@@ -2,30 +2,15 @@
 
 /**
  * Favoris liés à l'appareil (Phase 5) — sans compte participant obligatoire.
- * Source de vérité : localStorage. Un miroir best-effort est envoyé à la table
- * `favorites` (insert-only, aucune lecture anonyme — voir 0003_rls.sql) pour
- * les statistiques et pour préparer la future migration vers des comptes.
+ * Source de vérité : localStorage (ou mémoire si le stockage est bloqué).
+ * Aucun transfert analytique : les favoris restent privés sur cet appareil.
  */
 
-import { createClient } from "@/lib/supabase/client";
-
-const DEVICE_KEY = "fts.device";
 const EVENTS_KEY = "fts.fav.events";
 const PRACTITIONERS_KEY = "fts.fav.practitioners";
 const memory = new Map<string, Set<string>>();
 let temporary = false;
 export function favoritesAreTemporary() { return temporary; }
-
-export function getDeviceId(): string {
-  if (typeof window === "undefined") return "";
-  let id: string | null;
-  try { id = window.localStorage.getItem(DEVICE_KEY); } catch { return ''; }
-  if (!id) {
-    id = crypto.randomUUID();
-    try { window.localStorage.setItem(DEVICE_KEY, id); } catch { return ''; }
-  }
-  return id;
-}
 
 function readSet(key: string): Set<string> {
   if (typeof window === "undefined") return new Set();
@@ -68,35 +53,5 @@ export function toggleFavorite(
   if (nowFavorite) set.add(id);
   else set.delete(id);
   writeSet(key, set);
-  mirrorToDatabase(kind, id, nowFavorite);
   return nowFavorite;
-}
-
-/** Miroir analytique best-effort — ne bloque jamais l'UX. */
-function mirrorToDatabase(
-  kind: "event" | "practitioner",
-  id: string,
-  added: boolean
-) {
-  try {
-    const supabase = createClient();
-    const visitorId = getDeviceId();
-    if (!visitorId) return;
-    const column = kind === "event" ? "event_id" : "practitioner_id";
-    if (added) {
-      void supabase
-        .from("favorites")
-        .insert({ visitor_id: visitorId, [column]: id })
-        .then(() => undefined, () => undefined);
-    } else {
-      void supabase
-        .from("favorites")
-        .delete()
-        .eq("visitor_id", visitorId)
-        .eq(column, id)
-        .then(() => undefined, () => undefined);
-    }
-  } catch {
-    // Supabase non configuré : les favoris restent purement locaux.
-  }
 }
