@@ -2,6 +2,13 @@ import {expect,it} from 'vitest';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {EventDescription} from '@/components/EventDescription';
 import {descriptionText} from '@/lib/description-text';
+it('rend italique et souligné imbriqués et les retire du texte des agendas',()=>{
+  const text='**Important et *doux*** __Souligné__ 😊';
+  const html=renderToStaticMarkup(<EventDescription text={text}/>);
+  expect(html).toContain('<strong>Important et <em>doux</em></strong>');
+  expect(html).toContain('<u>Souligné</u>');
+  expect(descriptionText(text)).toBe('Important et doux Souligné 😊');
+});
 it('retire les marqueurs dans les cartes et agendas en conservant le lien',()=>{
   expect(descriptionText('**Important**\n- Tapis\n[Inscription](www.example.ch)')).toBe('Important\n• Tapis\nInscription (www.example.ch)');
   expect(descriptionText(null)).toBe('');

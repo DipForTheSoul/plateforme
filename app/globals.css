@@ -35,6 +35,8 @@ h1, h2, h3 {
 
 /* Champs de formulaire homogènes */
 .field {
+  min-width: 0;
+  max-width: 100%;
   @apply w-full rounded-xl border border-soul-bronze/30 bg-white px-4 py-2.5 text-sm text-soul-ink placeholder:text-soul-bronze/50 focus:border-soul-bronze focus:outline-none focus:ring-2 focus:ring-soul-bronze/20;
 }
 
@@ -55,6 +57,9 @@ h1, h2, h3 {
 }
 
 .card {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   @apply overflow-hidden rounded-2xl border border-soul-bronze/15 bg-white shadow-sm transition hover:shadow-md;
 }
 

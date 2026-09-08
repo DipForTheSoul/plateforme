@@ -17,7 +17,7 @@ export const eventSchema = z.object({
   recurrence_count: z.coerce.number().int().min(2).max(26).nullable(),
   occurrence_dates: z.array(date).max(25),
   included: z.string().max(2000).nullable(), to_bring: z.string().max(2000).nullable(),
-  video_url: webUrlSchema, images: z.array(z.string().url()).max(6),
+  video_url: webUrlSchema, external_url: webUrlSchema.refine(v => !v || v.length <= 2048), images: z.array(z.string().url()).max(6),
 }).superRefine((v, ctx) => {
   if (v.end_date && v.end_date <= v.start_date) ctx.addIssue({ code: 'custom', path: ['end_date'], message: 'La fin doit suivre le début.' });
   if (v.recurrence === 'custom') {
@@ -32,13 +32,13 @@ export function parseEventForm(formData: FormData) {
   return eventSchema.safeParse({
     title: text('title'), description: text('description'), category_ids: formData.getAll('category_ids'),
     venue_id: text('venue_id') || null, start_date: text('start_date'), end_date: text('end_date') || null,
-    duration_minutes: hours ? Math.round(Number(hours.replace(',', '.')) * 60) : null,
+    duration_minutes: hours && !text('end_date') ? Math.round(Number(hours.replace(',', '.')) * 60) : null,
     price: text('price') || null, languages: formData.getAll('languages'),
     recurrence: text('recurrence') || null,
     recurrence_count: text('recurrence') && text('recurrence') !== 'custom' ? text('recurrence_count') || 4 : null,
     occurrence_dates: formData.getAll('occurrence_dates').map(String).filter(Boolean),
     included: text('included') || null, to_bring: text('to_bring') || null,
-    video_url: text('video_url'), images: formData.getAll('images').map(String).filter(Boolean),
+    video_url: text('video_url'), external_url: text('external_url'), images: formData.getAll('images').map(String).filter(Boolean),
   });
 }
 

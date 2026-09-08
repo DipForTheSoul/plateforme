@@ -1,0 +1,80 @@
+id;page;role;controle_ou_scenario;statut;preuve_ou_limite
+D01-A;Formulaire expérience;Praticien;Dates libres avec titre sans espaces sur mobile;OK navigateur;Grille corrigée après dépassement 399 px à 390 px
+D01-B;Catalogue et fiche;Public;Cartes une par ligne et texte long;OK navigateur;Largeurs finales document égales au client
+D01-C;En-tête;Admin et public;Menu compact ouvrir et fermer;OK navigateur;320 et 768 px
+D01-D;En-tête;Admin;Navigation desktop allemande;OK navigateur;1280 / 1265 / 1265
+D01-E;Mobile physique;Public;iPhone 17 et Safari réels;NON EXÉCUTÉ;Appareil et moteur non disponibles
+D02;Formulaire et fiche;Praticien;11h11 déposer sauvegarder rouvrir;OK navigateur;11:11 conservé pour toutes les dates
+D03;Formulaire et fiche;Praticien;Durée 1.5 h;OK navigateur et SQL;90 minutes puis 11:11 → 12:41
+D04-A;Édition expérience;Admin;Liste des quatre dates;OK navigateur;Racine et trois occurrences visibles
+D04-B;Édition expérience;Admin;Hebdomadaire quatre occurrences;OK navigateur;17/24/31 octobre et 7 novembre
+D04-C;Édition expérience;Praticien;Toutes les deux semaines quatre dates;OK navigateur;9/23 octobre et 6/20 novembre
+D04-D;Édition expérience;Admin;Mensuel trois dates en fin de mois;OK navigateur;31 octobre / 30 novembre / 31 décembre
+D04-E;Création expérience;Praticien;Dates libres ajouter puis retirer champ vide;OK navigateur;9 et 30 octobre conservés
+D05-A;Édition expérience;Admin;Deux boutons de suppression successifs;OK navigateur et régression;Dates 24 et 31 retirées sans faux brouillon
+D05-B;Édition expérience;Admin;Suppression avec saisie non enregistrée;OK navigateur;Refus utile puis sauvegarde sans perte
+D05-C;Édition expérience;Praticien;Suppression de la première date;OK navigateur clavier;Trois autres dates conservées et nouvelle racine
+D06-A;Nouveau lieu dans expérience;Admin;Ouvrir le panneau;OK navigateur;Formulaire principal conservé
+D06-B;Nouveau lieu dans expérience;Admin;Deux commandes de fermeture;OK navigateur;Retour au formulaire sans perte
+D06-C;Nouveau lieu dans expérience;Admin;Créer le lieu violet;OK navigateur;Couleur rgb(94 77 158) et vrai lieu sélectionné
+D07;Bloc récurrence;Admin et praticien;Aide lisible et bien placée;OK navigateur;Texte dans le bloc en FR DE EN
+D08-A;Formulaire expérience;Admin;Bouton Sur plusieurs jours;OK navigateur;Durée cachée et désactivée
+D08-B;Formulaire expérience;Admin;Retour bouton Une journée;OK navigateur;1.5 h retrouvée
+D08-C;Sauvegarde;Admin;Ancienne durée avec fin multijour;OK SQL et navigateur;duration_minutes NULL
+D09-A;Fiche séjour;Public;Deux dates et deux heures;OK navigateur;17/10 10:00 → 18/10 16:00
+D09-B;Catalogue liste;Public;Deux extrémités du séjour;OK navigateur;Même plage complète sur la carte
+D09-C;Catalogue carte;Public;Résultat latéral et popup;OK navigateur;Même plage complète
+D09-D;Fiche séjour;Public;Réserver;PARTIEL;mailto complet contrôlé sans envoi réel
+D10;Fiche séjour;Public;Nombre de jours et traductions;OK navigateur et tests;2 jours calendaires FR DE EN
+D11-A;Description;Admin;Gras;OK navigateur;Sélection transformée et rendu strong
+D11-B;Description;Admin;Italique puis combinaison gras;OK navigateur et régression;Ne retire plus le gras
+D11-C;Description;Admin;Souligné et combinaison;OK navigateur;Rendu u avec formats imbriqués
+D11-D;Description;Admin;Liste;OK navigateur;Éléments de liste dans aperçu et public
+D11-E;Description;Admin;Lien ouvrir et annuler;OK navigateur;Texte initial conservé
+D11-F;Description;Admin;Insérer lien invalide;OK navigateur;URL dangereuse refusée sans perte
+D11-G;Description;Admin;Insérer lien valide avec parenthèses;OK navigateur;URL encodée et rendu sûr
+D11-H;Description;Admin;Emoji ouvrir et annuler;OK navigateur;Panneau fermé sans perte
+D11-I;Description;Admin;Chacun des huit boutons emoji;OK navigateur;😊 🙏 ✨ 🌿 ❤️ ☀️ 🧘 💃 insérés
+D11-J;Description;Admin;Aperçu ouvrir et fermer;OK navigateur;Rendu sûr puis retour édition
+D11-K;Description;Admin;Limite 8000 caractères;OK navigateur;Ajout dépassant limite refusé avec message
+D11-L;Rendu public et exports;Public;HTML brut et protocoles dangereux;OK tests;Aucun HTML exécuté et liens validés
+D12;Titre;Tous;Barre de mise en forme du titre;ARBITRAGE;Titre simple conservé sans barre
+D13-A;Formulaire expérience;Admin et praticien;Saisie domaine sans protocole;OK navigateur;www.example.com normalisé
+D13-B;Formulaire expérience;Admin;URL invalide lors du dépôt;OK navigateur;Message utile et autres champs conservés
+D13-C;Édition expérience;Admin;Vider puis restaurer le lien;OK navigateur et SQL;Sauvegardes confirmées et propagation aux occurrences
+D13-D;Formulaire expérience;Admin et praticien;Lien restauré après langue ou panne;OK navigateur;Brouillon complet retrouvé
+D13-E;Fiche publique;Public;Lien inscription/document distinct de Réserver;OK navigateur;Href target et rel corrects
+D13-F;Site externe;Public;Chargement du nouvel onglet destinataire;NON OBSERVABLE;Activation clic et clavier sans fenêtre remontée par le pilote
+BRO-A;Création expérience;Admin;Soumettre sans univers;OK navigateur;Erreur sans perte des données
+BRO-B;Création expérience;Admin;Passer DE recharger EN FR;OK navigateur;Champs et sélections restaurés après hydratation
+BRO-C;Création expérience;Praticien;Abandon annuler puis confirmer;OK navigateur;Seulement ancien brouillon fictif effacé
+BRO-D;Création expérience;Praticien;Déposer pendant arrêt serveur;OK navigateur;Enregistrement non confirmé et champs intacts
+BRO-E;Création expérience;Praticien;Redémarrer recharger puis redéposer;OK navigateur et base;Succès avec un seul crédit 18 → 17
+FIC-A;Photos expérience;Admin;Choisir SVG;OK navigateur;Refus explicite et description conservée
+FIC-B;Photos expérience;Admin;Choisir JPEG et sauvegarder;OK navigateur;Photo retrouvée en édition et public
+FIC-C;Photos expérience;Admin;Retirer une photo puis abandonner cet essai;OK navigateur;Image absente du brouillon puis retrouvée après abandon sans perte du texte
+SAV-A;Création expérience;Admin;Publier puis rouvrir;OK navigateur;Dates photo lien description persistés
+SAV-B;Édition expérience;Admin et praticien;Enregistrer modifications;OK navigateur;Liste des dates synchronisée
+MET-A;Liste soumissions;Admin;Approuver série praticien fictive;OK navigateur;Publications consultables ensuite
+PAY-A;Publication expérience;Praticien;Crédit consommé une seule fois;OK navigateur et SQL;18 → 17 puis édition sans débit
+PAY-B;Paiement externe;Tous;Stripe réel;NON APPLICABLE;Aucun changement de paiement et clés réelles désactivées
+IMP-A;Fiche séjour;Public;Ouvrir et fermer menu agenda;OK navigateur;Options visibles
+IMP-B;Fiche séjour;Public;Lien ICS;OK navigateur et HTTP;Début 08:00Z et fin 14:00Z exacts
+IMP-C;Compte agenda externe;Public;Import Apple Google Outlook;NON EXÉCUTÉ;ICS et URL vérifiés sans compte externe
+STA-A;Carte catalogue;Public;Ajouter et retirer favori;OK navigateur;État visuel changé puis restauré
+LIS-A;Catalogue;Public;Six filtres en succession rapide;OK navigateur et régression;Tous conservés dans URL et menus
+LIS-B;Catalogue;Public;Canton et retrait de puce prix;OK navigateur;Autres choix conservés
+LIS-C;Catalogue;Public;Réinitialiser;OK navigateur;URL et menus remis à zéro
+LIS-D;Catalogue;Public;Recherche textuelle;OK navigateur;Séjour donne les deux dates correspondantes
+LIS-E;Catalogue;Public;Liste puis Carte;OK navigateur;Résultats visibles dans les deux modes
+LIS-F;Calendrier catalogue;Public;Mois suivant et deux dates;OK navigateur;17 puis 18 octobre et séjour seul
+LIS-G;Catalogue;Public;Carte + date puis Liste + deuxième date;OK navigateur et régression;Vue et période ne s’écrasent plus
+LIS-H;Carte géographique;Public;Zoom plus et moins;OK navigateur;Commandes activées
+LIS-I;Carte géographique;Public;Ouvrir marqueur et fermer popup;OK navigateur;Séjour et plage complète dans popup
+GEO-A;Catalogue;Public;Autour de moi avec permission réelle;NON EXÉCUTÉ;Pas de collecte de position personnelle
+AUTH-A;Connexion;Admin et praticien;Connexion déconnexion et changement de rôle;OK navigateur;Comptes fictifs distincts
+AUTH-B;Auth réelle locale;Comptes temporaires;Confirmation et récupération;OK tests connectés;8 contrôles réussis
+SEC-A;API et base locale;Divers rôles;Droits crédits stockage concurrence;OK tests connectés;25 contrôles réussis
+DEP-A;Application;Technique;Lint typage tests et compilation;OK;192 tests et compilation finale réussis
+DEP-B;Base locale;Technique;Rejeu et comparaison migrations;OK;Aucun écart de schéma public
+DEP-C;Production cliente;Tous;Déploiement et smoke test;NON EXÉCUTÉ;Lot local sans modification cloud

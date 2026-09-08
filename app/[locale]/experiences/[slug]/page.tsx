@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import {descriptionText} from '@/lib/description-text';
-import { toEventLocalInput, eventCalendarDaySpan } from '@/lib/event-time';
+import {webUrlSchema} from '@/lib/web-url';
+import { toEventLocalInput } from '@/lib/event-time';
+import { eventInclusiveDays, formatEventSchedule } from '@/lib/event-display';
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -94,9 +96,7 @@ export default async function EventPage({
     ? `${event.venue.name}, ${event.venue.address}`
     : null;
   // §8 — message de réservation pré-rempli (titre + date + lieu).
-  const reservationDate = `${formatDateRange(event.start_date, event.end_date, currentLocale)}${
-    event.end_date ? "" : ` à ${formatTime(event.start_date, currentLocale)}`
-  }`;
+  const reservationDate = formatEventSchedule(event.start_date, event.end_date, currentLocale);
   const mailtoBody =
     `Bonjour,\n\n` +
     `Je souhaite réserver ou avoir des informations sur « ${event.title} ».\n\n` +
@@ -124,16 +124,17 @@ export default async function EventPage({
 
   const visual = categoryVisual(event.category?.slug);
   const videoEmbed = videoEmbedUrl(event.video_url);
+  const externalLink = webUrlSchema.safeParse(event.external_url);
   const { prev, next } = await getAdjacentEvents(event.start_date, event.id);
 
   // Affichage date/heure adapté (remarque Didier) :
   // - sur une journée : « de 16h30 → 18h00 · durée 1 h 30 »
-  // - sur plusieurs jours : « du … → … · durée N jours » (l'heure n'est pas pertinente)
+  // - sur plusieurs jours : les deux dates/heures et le nombre de jours inclusifs.
   const start = new Date(event.start_date);
   const end = event.end_date ? new Date(event.end_date) : null;
   const isMultiDay = Boolean(end) && toEventLocalInput(event.start_date).slice(0,10) !== toEventLocalInput(event.end_date).slice(0,10);
   const startTime = formatTime(event.start_date, currentLocale);
-  const endTime = event.duration_minutes
+  const endTime = event.end_date ? formatTime(event.end_date, currentLocale) : event.duration_minutes
     ? formatTime(
         new Date(start.getTime() + event.duration_minutes * 60000).toISOString(),
         currentLocale
@@ -142,11 +143,11 @@ export default async function EventPage({
   const durationLabel = formatDuration(event.duration_minutes);
   const dayCount =
     end && isMultiDay
-      ? Math.max(1, eventCalendarDaySpan(event.start_date, event.end_date!))
+      ? eventInclusiveDays(event.start_date, event.end_date!)
       : null;
 
   return (
-    <article className="mx-auto max-w-4xl px-4 py-10">
+    <article className="mx-auto min-w-0 max-w-4xl px-4 py-10 [overflow-wrap:anywhere]">
       <JsonLd data={eventJsonLd(event)} />
 
       {event.images.length > 0 ? (
@@ -226,6 +227,11 @@ export default async function EventPage({
           details={descriptionText(event.description)}
           location={venueLocation}
         />
+        {externalLink.success && externalLink.data && (
+          <a href={externalLink.data} target="_blank" rel="noopener noreferrer" className="btn-secondary">
+            {t("externalLink")}
+          </a>
+        )}
       </div>
 
       <p className="mt-3 flex items-start gap-2 text-xs leading-relaxed text-soul-bronze">
@@ -236,7 +242,7 @@ export default async function EventPage({
       <div className="mt-6 grid gap-4 rounded-2xl bg-white p-6 sm:grid-cols-2">
         <p className="flex items-center gap-3 text-sm text-soul-ink">
           <Calendar className="h-4 w-4 shrink-0 text-soul-violet" />
-          {formatDateRange(event.start_date, event.end_date, currentLocale)}
+          {formatEventSchedule(event.start_date, event.end_date, currentLocale)}
         </p>
         <p className="flex items-center gap-3 text-sm text-soul-ink">
           <Clock className="h-4 w-4 shrink-0 text-soul-violet" />

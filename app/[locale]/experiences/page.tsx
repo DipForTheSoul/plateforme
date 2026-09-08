@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { parseSearchFilters } from "@/lib/search-filters";
 import { toEventLocalInput } from "@/lib/event-time";
+import { formatEventSchedule } from '@/lib/event-display';
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { EventCard } from "@/components/EventCard";
 import { EventsMapExplorer, type MapItem } from "@/components/EventsMapExplorer";
 import { ExplorerControls } from "@/components/ExplorerControls";
 import { ViewToggle } from "@/components/ViewToggle";
-import { countryName, formatDate, formatPrice } from "@/lib/utils";
+import { ExplorerNavigation } from "@/components/ExplorerNavigation";
+import { countryName, formatPrice } from "@/lib/utils";
 import type { Locale } from "@/types/database";
 import {
   getApprovedEvents,
@@ -94,7 +96,8 @@ export default async function ExperiencesPage({
       <h1 className="text-3xl text-soul-brown">{t("title")}</h1>
       <p className="mt-2 max-w-2xl text-soul-bronze">{t("subtitle")}</p>
 
-      <div className="mt-8 grid gap-10 lg:grid-cols-[280px_1fr]">
+      <ExplorerNavigation>
+      <div className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-[280px_minmax(0,1fr)]">
         <aside>
           <ExplorerControls
             categories={categories}
@@ -105,7 +108,7 @@ export default async function ExperiencesPage({
           />
         </aside>
 
-        <section>
+        <section className="min-w-0">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-soul-bronze">
               {t("resultCount", { count: events.length })}
@@ -128,7 +131,7 @@ export default async function ExperiencesPage({
                     venueName: e.venue.name,
                     regionLabel: e.venue.canton ?? e.venue.country,
                     priceLabel: formatPrice(e.price, e.currency, tCommon("free")),
-                    dateLabel: formatDate(e.start_date, currentLocale),
+                    dateLabel: formatEventSchedule(e.start_date, e.end_date, currentLocale),
                     image: e.images[0],
                     featured: e.is_top,
                     lat: e.venue.lat,
@@ -147,6 +150,7 @@ export default async function ExperiencesPage({
           )}
         </section>
       </div>
+      </ExplorerNavigation>
     </div>
   );
 }

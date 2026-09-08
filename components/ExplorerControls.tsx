@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { usePathname, useRouter } from "@/i18n/navigation";
+import { useExplorerNavigation } from "@/components/ExplorerNavigation";
 import { EventCalendar } from "@/components/EventCalendar";
 import { LANGUAGE_LABELS } from "@/lib/utils";
 import type { Category } from "@/types/database";
@@ -25,29 +25,13 @@ interface Props {
 export function ExplorerControls({ categories, practitioners, countries, cantons, eventDays }: Props) {
   const t = useTranslations("events");
   const tCat = useTranslations("categories");
-  const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [, startTransition] = useTransition();
+  const setParams = useExplorerNavigation();
 
   const [q, setQ] = useState(searchParams.get("q") ?? "");
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [locating, setLocating] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
-
-  const setParams = useCallback(
-    (updates: Record<string, string | undefined>) => {
-      const params = new URLSearchParams(searchParams.toString());
-      for (const [key, value] of Object.entries(updates)) {
-        if (value) params.set(key, value);
-        else params.delete(key);
-      }
-      startTransition(() => {
-        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-      });
-    },
-    [router, pathname, searchParams]
-  );
 
   // Recherche instantanée (debounce).
   useEffect(() => {
@@ -71,7 +55,7 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
 
   function resetAll() {
     setQ("");
-    router.replace(pathname, { scroll: false });
+    setParams({}, true);
   }
 
   // §8 — puces des filtres actifs (visibles + retirables) pour voir d'un coup d'œil
@@ -81,7 +65,7 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
     "180": t("filters.dur180"),
     "480": t("filters.dur480"),
   };
-  const activeChips: { key: string; label: string; clear: () => void }[] = [];
+  const activeChips: { key: string; label: string; remove: Record<string, undefined> }[] = [];
   const gp = (k: string) => searchParams.get(k);
   if (gp("categorie"))
     activeChips.push({
@@ -89,56 +73,56 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
       label: tCat.has(gp("categorie")! as never)
         ? tCat(gp("categorie")! as never)
         : (categories.find((c) => c.slug === gp("categorie"))?.name ?? gp("categorie")!),
-      clear: () => setParams({ categorie: undefined }),
+      remove: { categorie: undefined },
     });
   if (gp("langue"))
     activeChips.push({
       key: "langue",
       label: LANGUAGE_LABELS[gp("langue")!] ?? gp("langue")!,
-      clear: () => setParams({ langue: undefined }),
+      remove: { langue: undefined },
     });
   if (gp("praticien"))
     activeChips.push({
       key: "praticien",
       label: practitioners.find((p) => p.slug === gp("praticien"))?.name ?? gp("praticien")!,
-      clear: () => setParams({ praticien: undefined }),
+      remove: { praticien: undefined },
     });
   if (gp("pays"))
     activeChips.push({
       key: "pays",
       label: countries.find((c) => c.code === gp("pays"))?.name ?? gp("pays")!,
       // Retirer le pays retire aussi le canton (canton dépend du pays).
-      clear: () => setParams({ pays: undefined, canton: undefined }),
+      remove: { pays: undefined, canton: undefined },
     });
   if (gp("canton"))
     activeChips.push({
       key: "canton",
       label: gp("canton")!,
-      clear: () => setParams({ canton: undefined }),
+      remove: { canton: undefined },
     });
   if (gp("prix"))
     activeChips.push({
       key: "prix",
       label: `≤ CHF ${gp("prix")}`,
-      clear: () => setParams({ prix: undefined }),
+      remove: { prix: undefined },
     });
   if (gp("duree"))
     activeChips.push({
       key: "duree",
       label: durationLabels[gp("duree")!] ?? `≤ ${gp("duree")} min`,
-      clear: () => setParams({ duree: undefined }),
+      remove: { duree: undefined },
     });
   if (radiusActive)
     activeChips.push({
       key: "rayon",
       label: `${gp("rayon")} km`,
-      clear: () => setParams({ rayon: undefined, lat: undefined, lng: undefined }),
+      remove: { rayon: undefined, lat: undefined, lng: undefined },
     });
   if (gp("du") || gp("au"))
     activeChips.push({
       key: "dates",
       label: `${gp("du") ?? "…"} → ${gp("au") ?? "…"}`,
-      clear: () => setParams({ du: undefined, au: undefined }),
+      remove: { du: undefined, au: undefined },
     });
 
   function toggleRadius() {
@@ -231,7 +215,7 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
             <button
               key={chip.key}
               type="button"
-              onClick={chip.clear}
+              onClick={() => setParams(chip.remove)}
               className="inline-flex items-center gap-1 rounded-full bg-soul-violet/10 px-3 py-1 text-xs font-medium text-soul-violet transition hover:bg-soul-violet/20"
             >
               {chip.label}
@@ -314,7 +298,7 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <button type="button" onClick={toggleRadius}
+            <button type="button" onClick={toggleRadius} disabled={locating}
               className={radiusActive ? "btn-primary !py-2" : "btn-secondary !py-2"}>
               <LocateFixed className="h-4 w-4" />
               {locating

@@ -1,15 +1,20 @@
 import type {ReactNode} from 'react';
 import {webUrlSchema} from '@/lib/web-url';
+import {descriptionParts, type DescriptionPart} from '@/lib/description-format';
 
 /** Deliberately small formatting vocabulary; user HTML is always escaped by React. */
-function inline(text:string):ReactNode[] {
-  return text.split(/(\*\*[^*\n]+\*\*|\[[^\]\n]+\]\([^\s)]+\))/g).map((part,index)=>{
-    if(part.startsWith('**')&&part.endsWith('**'))return <strong key={index}>{part.slice(2,-2)}</strong>;
-    const link=/^\[([^\]\n]+)\]\(([^\s)]+)\)$/.exec(part);
-    if(link){const parsed=webUrlSchema.safeParse(link[2]);if(parsed.success&&parsed.data)return <a key={index} href={parsed.data} target="_blank" rel="noopener noreferrer" className="underline">{link[1]}</a>;}
-    return part;
+function renderParts(parts: DescriptionPart[]):ReactNode[] {
+  return parts.map((part,index)=>{
+    if(typeof part === 'string') return part;
+    const children = renderParts(part.children);
+    if(part.kind === 'bold') return <strong key={index}>{children}</strong>;
+    if(part.kind === 'italic') return <em key={index}>{children}</em>;
+    if(part.kind === 'underline') return <u key={index}>{children}</u>;
+    const parsed=webUrlSchema.safeParse(part.url);
+    return parsed.success&&parsed.data ? <a key={index} href={parsed.data} target="_blank" rel="noopener noreferrer" className="underline">{children}</a> : <span key={index}>{children}</span>;
   });
 }
+const inline = (text: string) => renderParts(descriptionParts(text));
 
 /** Keep formatted descriptions and long URLs inside a narrow mobile viewport. */
 export function EventDescription({text}: {text: string}) {

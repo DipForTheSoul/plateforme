@@ -57,7 +57,7 @@ node scripts/qa.mjs auth
 node scripts/qa.mjs web
 ```
 
-`auth` effectue huit contrôles réels de confirmation/récupération via Mailpit, Auth et la route Next PKCE, puis supprime son compte temporaire. `web` crée trois expériences temporaires simultanées, vérifie leurs liens, leur agenda et le suivi HTTP limité, puis nettoie ses objets. `verify` comporte 25 contrôles. La suite `npm run check` comporte désormais 180 tests, dont 29 SQL ; ce ne sont pas des parcours navigateur.
+`auth` effectue huit contrôles réels de confirmation/récupération via Mailpit, Auth et la route Next PKCE, puis supprime son compte temporaire. `web` crée trois expériences temporaires simultanées, vérifie leurs liens, leur agenda et le suivi HTTP limité, puis nettoie ses objets. `verify` comporte 25 contrôles. La suite `npm run check` comporte désormais 192 tests, dont 31 SQL ; ce ne sont pas des parcours navigateur.
 
 Sur une installation de recette déjà existante, appliquer les migrations manquantes avant de redémarrer le code. Les nouveaux formulaires publics utilisent des limites partagées en base et refusent l’envoi si cette migration manque. Les scripts ne l’appliquent pas automatiquement. Une installation neuve avec `supabase start` les rejoue à la création de sa base.
 
@@ -86,3 +86,9 @@ Cela libère la RAM et ferme les tunnels, sans supprimer le disque de recette. P
 ## Déploiement client
 
 Consulter `AUDIT-2026-09-07.md`. Cette installation locale n’est pas une copie des données de production ni un déploiement Vercel. La bascule des migrations et du code doit être coordonnée ; les anciens formulaires ne sont pas compatibles avec la nouvelle publication transactionnelle.
+
+### Lot email Didier — recette du 9 septembre
+
+[Rapport et inventaire des tests navigateur](recette/2026-09-08-demandes-client/RAPPORT.md). Nouveau champ `events.external_url`, migration `20260908170656_client_external_event_link.sql` à appliquer après les migrations d’audit précédentes et avant le code de ce lot. Elle est déjà appliquée sur la base fictive de Victor, pas sur le Supabase client.
+
+Le contrôle local `supabase db diff --local --schema public` a rejoué toutes les migrations dans une base temporaire : aucun écart détecté. Avec la VM isolée et les tunnels manuels de ce guide, cette commande nécessite aussi un tunnel **temporaire** 127.0.0.1:54320 vers le même port de la VM (base de comparaison), à fermer après usage. Aucun besoin d’ouvrir une restriction réseau sur Supabase cloud.

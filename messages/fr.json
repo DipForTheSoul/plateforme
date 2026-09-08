@@ -1,6 +1,36 @@
 {
-  "descriptionEditor": {"toolbar":"Mise en forme de la description","bold":"Gras","list":"Liste","link":"Lien externe","preview":"Aperçu","sample":"Votre texte","hint":"Sélectionnez du texte puis choisissez un bouton. Pour un lien, remplacez https://example.ch par l’adresse d’inscription ou du document. L’aperçu montre le résultat."},
-  "draft": {"hint":"Brouillon sauvegardé dans cet onglet jusqu’à l’enregistrement. Vous pouvez changer de langue sans perdre votre saisie.","unavailable":"La sauvegarde locale est indisponible. Gardez cet onglet ouvert jusqu’à l’enregistrement.","networkError":"Enregistrement non confirmé. Votre saisie est conservée ; vérifiez votre connexion et réessayez.","ready":"Vos modifications seront sauvegardées sur cet appareil pendant 7 jours, même si vous fermez le navigateur. Ce brouillon n’est pas encore envoyé.","saved":"Brouillon sauvegardé sur cet appareil pour 7 jours. Les photos déjà téléversées sont conservées ; les fichiers non envoyés ne le sont pas.","discard":"Abandonner le brouillon","confirmDiscard":"Abandonner les modifications non enregistrées de ce formulaire ? Le brouillon local sera effacé et la page rechargée. Les données déjà enregistrées sur la plateforme ne seront pas supprimées.","conflict":"Ce brouillon a changé dans un autre onglet. Votre saisie reste visible ici, mais la sauvegarde et l’envoi sont bloqués pour éviter un écrasement. Copiez le texte à conserver avant de recharger.","reload":"Recharger la dernière version","confirmReload":"Recharger la dernière version ? La saisie non sauvegardée de cet onglet sera abandonnée. Copiez d’abord tout texte à conserver.","cancel":"Annuler","confirm":"Confirmer"},
+  "descriptionEditor": {
+    "toolbar": "Mise en forme de la description",
+    "bold": "Gras",
+    "list": "Liste",
+    "link": "Lien externe",
+    "preview": "Aperçu",
+    "sample": "Votre texte",
+    "hint": "Sélectionnez du texte puis choisissez sa mise en forme. Les marqueurs restent visibles pendant la saisie ; l’aperçu montre le résultat publié.",
+    "italic": "Italique",
+    "underline": "Souligné",
+    "emoji": "Emoji",
+    "linkText": "Texte du lien",
+    "linkAddress": "Adresse du lien",
+    "insertLink": "Insérer le lien",
+    "cancel": "Annuler",
+    "invalidLink": "Indiquez un texte sans crochets et une adresse web valide (http ou https).",
+    "tooLong": "La description ne peut pas dépasser 8 000 caractères."
+  },
+  "draft": {
+    "hint": "Brouillon sauvegardé dans cet onglet jusqu’à l’enregistrement. Vous pouvez changer de langue sans perdre votre saisie.",
+    "unavailable": "La sauvegarde locale est indisponible. Gardez cet onglet ouvert jusqu’à l’enregistrement.",
+    "networkError": "Enregistrement non confirmé. Votre saisie est conservée ; vérifiez votre connexion et réessayez.",
+    "ready": "Vos modifications seront sauvegardées sur cet appareil pendant 7 jours, même si vous fermez le navigateur. Ce brouillon n’est pas encore envoyé.",
+    "saved": "Brouillon sauvegardé sur cet appareil pour 7 jours. Les photos déjà téléversées sont conservées ; les fichiers non envoyés ne le sont pas.",
+    "discard": "Abandonner le brouillon",
+    "confirmDiscard": "Abandonner les modifications non enregistrées de ce formulaire ? Le brouillon local sera effacé et la page rechargée. Les données déjà enregistrées sur la plateforme ne seront pas supprimées.",
+    "conflict": "Ce brouillon a changé dans un autre onglet. Votre saisie reste visible ici, mais la sauvegarde et l’envoi sont bloqués pour éviter un écrasement. Copiez le texte à conserver avant de recharger.",
+    "reload": "Recharger la dernière version",
+    "confirmReload": "Recharger la dernière version ? La saisie non sauvegardée de cet onglet sera abandonnée. Copiez d’abord tout texte à conserver.",
+    "cancel": "Annuler",
+    "confirm": "Confirmer"
+  },
   "common": {
     "siteName": "ForTheSoul",
     "tagline": "Expériences conscientes en Suisse, choisies avec cœur",
@@ -159,7 +189,7 @@
     "date": "Date",
     "schedule": "Horaire",
     "duration": "Durée",
-    "durationDays": "Durée : {count} jours",
+    "durationDays": "Durée : {count, plural, one {# jour calendaire} other {# jours calendaires}}",
     "multiDay": "Sur plusieurs jours",
     "timeFromTo": "de {from} → {to}",
     "durationInline": "durée {value}",
@@ -181,7 +211,8 @@
     "calOther": "Apple / Outlook (.ics)",
     "included": "Ce qui est inclus",
     "toBring": "À apporter",
-    "reserveNote": "Pas de paiement en ligne : en cliquant sur « Réserver », vous contactez directement le/la praticien·ne par e-mail. Le règlement (acompte éventuel ou paiement sur place) se convient directement avec lui/elle."
+    "reserveNote": "Pas de paiement en ligne : en cliquant sur « Réserver », vous contactez directement le/la praticien·ne par e-mail. Le règlement (acompte éventuel ou paiement sur place) se convient directement avec lui/elle.",
+    "externalLink": "Inscription / document externe ↗"
   },
   "practitioners": {
     "title": "Les praticien·nes",
@@ -381,9 +412,9 @@
     "oneDay": "Sur une journée",
     "multiDay": "Sur plusieurs jours",
     "startLabel": "Date et heure de début *",
-    "oneDayHint": "Un cours, un atelier, une soirée… La durée se règle juste en dessous. Pour un rendez-vous qui revient (chaque semaine, chaque mois), utilisez la récurrence plus bas.",
-    "arrivalLabel": "Arrivée (jour & heure) *",
-    "departureLabel": "Départ (jour & heure) *",
+    "oneDayHint": "Pour plusieurs rendez-vous, choisissez une répétition régulière ou des dates libres. Les dates sont créées avec la même heure suisse.",
+    "arrivalLabel": "Date et heure de début *",
+    "departureLabel": "Date et heure de fin *",
     "durationLabel": "Durée (heures)",
     "priceLabel": "Prix (CHF — 0 = prix libre)",
     "languagesLabel": "Langues *",
@@ -417,7 +448,9 @@
     "countryLabel": "Pays (code) *",
     "capacityLabel": "Capacité",
     "geocoding": "Géocodage…",
-    "createVenue": "Créer le lieu"
+    "createVenue": "Créer le lieu",
+    "externalLabel": "Lien d’inscription / document externe — facultatif",
+    "externalHint": "Adresse d’un formulaire, document ou site externe. Ce lien est affiché séparément du bouton Réserver."
   },
   "uploader": {
     "loginRequired": "Connexion requise pour téléverser.",

@@ -1,6 +1,36 @@
 {
-  "descriptionEditor": {"toolbar":"Description formatting","bold":"Bold","list":"List","link":"External link","preview":"Preview","sample":"Your text","hint":"Select text, then choose a button. For links, replace https://example.ch with the registration or document address. Preview shows the result."},
-  "draft": {"hint":"Your draft stays in this tab until saved, including when you change language.","unavailable":"Local draft storage is unavailable. Keep this tab open until you save.","networkError":"Save not confirmed. Your entries have been kept; check your connection and try again.","ready":"Your changes will be saved on this device for 7 days, even if you close the browser. This draft has not been submitted.","saved":"Draft saved on this device for 7 days. Uploaded photos are kept; files not yet uploaded are not.","discard":"Discard draft","confirmDiscard":"Discard unsaved changes to this form? The local draft will be deleted and the page reloaded. Data already saved on the platform will not be deleted.","conflict":"This draft changed in another tab. Your entries remain visible here, but saving and submitting are blocked to prevent overwriting. Copy any text you want to keep before reloading.","reload":"Reload latest version","confirmReload":"Reload the latest version? Unsaved entries in this tab will be discarded. Copy any text you want to keep first.","cancel":"Cancel","confirm":"Confirm"},
+  "descriptionEditor": {
+    "toolbar": "Description formatting",
+    "bold": "Bold",
+    "list": "List",
+    "link": "External link",
+    "preview": "Preview",
+    "sample": "Your text",
+    "hint": "Select text, then choose its formatting. Markers remain visible while editing; Preview shows the published result.",
+    "italic": "Italic",
+    "underline": "Underline",
+    "emoji": "Emoji",
+    "linkText": "Link text",
+    "linkAddress": "Link address",
+    "insertLink": "Insert link",
+    "cancel": "Cancel",
+    "invalidLink": "Enter text without square brackets and a valid web address (http or https).",
+    "tooLong": "The description cannot exceed 8,000 characters."
+  },
+  "draft": {
+    "hint": "Your draft stays in this tab until saved, including when you change language.",
+    "unavailable": "Local draft storage is unavailable. Keep this tab open until you save.",
+    "networkError": "Save not confirmed. Your entries have been kept; check your connection and try again.",
+    "ready": "Your changes will be saved on this device for 7 days, even if you close the browser. This draft has not been submitted.",
+    "saved": "Draft saved on this device for 7 days. Uploaded photos are kept; files not yet uploaded are not.",
+    "discard": "Discard draft",
+    "confirmDiscard": "Discard unsaved changes to this form? The local draft will be deleted and the page reloaded. Data already saved on the platform will not be deleted.",
+    "conflict": "This draft changed in another tab. Your entries remain visible here, but saving and submitting are blocked to prevent overwriting. Copy any text you want to keep before reloading.",
+    "reload": "Reload latest version",
+    "confirmReload": "Reload the latest version? Unsaved entries in this tab will be discarded. Copy any text you want to keep first.",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
   "common": {
     "siteName": "ForTheSoul",
     "tagline": "Conscious experiences in Switzerland, chosen with heart",
@@ -159,7 +189,7 @@
     "date": "Date",
     "schedule": "Time",
     "duration": "Duration",
-    "durationDays": "Duration: {count} days",
+    "durationDays": "Duration: {count, plural, one {# calendar day} other {# calendar days}}",
     "multiDay": "Over several days",
     "timeFromTo": "{from} → {to}",
     "durationInline": "duration {value}",
@@ -181,7 +211,8 @@
     "toBring": "What to bring",
     "reserveNote": "No online payment: clicking “Book” contacts the practitioner directly by email. Payment (any deposit or on-site) is arranged directly with them.",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "externalLink": "Registration / external document ↗"
   },
   "practitioners": {
     "title": "The practitioners",
@@ -381,9 +412,9 @@
     "oneDay": "On a single day",
     "multiDay": "Over several days",
     "startLabel": "Start date and time *",
-    "oneDayHint": "A class, a workshop, an evening… The duration is set just below. For a recurring appointment (every week, every month), use the recurrence further down.",
-    "arrivalLabel": "Arrival (day & time) *",
-    "departureLabel": "Departure (day & time) *",
+    "oneDayHint": "For multiple sessions, choose a regular repeat or individual dates. The Swiss local time stays the same.",
+    "arrivalLabel": "Start date and time *",
+    "departureLabel": "End date and time *",
     "durationLabel": "Duration (hours)",
     "priceLabel": "Price (CHF — 0 = pay what you want)",
     "languagesLabel": "Languages *",
@@ -417,7 +448,9 @@
     "countryLabel": "Country (code) *",
     "capacityLabel": "Capacity",
     "geocoding": "Geocoding…",
-    "createVenue": "Create venue"
+    "createVenue": "Create venue",
+    "externalLabel": "Registration / external document link — optional",
+    "externalHint": "Address of an external form, document or website. This link appears separately from the Reserve button."
   },
   "uploader": {
     "loginRequired": "Sign-in required to upload.",

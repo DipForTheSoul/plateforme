@@ -4,7 +4,8 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { categoryVisual } from "@/lib/gradients";
-import { formatDate, formatTime, formatVenueLocationFull } from "@/lib/utils";
+import { formatVenueLocationFull } from "@/lib/utils";
+import { formatEventSchedule } from '@/lib/event-display';
 import { Price } from "@/components/Price";
 import type { EventWithRelations, Locale } from "@/types/database";
 import { MapPin } from "lucide-react";
@@ -50,10 +51,7 @@ export async function EventCard({ event }: { event: EventWithRelations }) {
       <div className="flex flex-1 flex-col gap-3 p-6">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
           <span className="font-semibold text-soul-brown">
-            {formatDate(event.start_date, locale)}
-          </span>
-          <span className="rounded-full bg-soul-violet/10 px-2.5 py-0.5 text-xs font-semibold text-soul-violet">
-            {formatTime(event.start_date, locale)}
+            {formatEventSchedule(event.start_date, event.end_date, locale)}
           </span>
         </div>
         <h3 className="font-serif text-xl leading-snug text-soul-brown">

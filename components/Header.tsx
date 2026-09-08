@@ -34,7 +34,7 @@ export async function Header() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 sm:gap-4">
         <LogoLink />
 
-        <nav className="hidden items-center gap-7 md:flex">
+        <nav className="hidden items-center gap-7 xl:flex">
           {links.map((link) => (
             <Link
               key={link.href}
@@ -53,7 +53,7 @@ export async function Header() {
           </Link>
         </nav>
 
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-3 xl:flex">
           <CurrencySwitcher />
           <LocaleSwitcher />
           <Link
@@ -65,7 +65,7 @@ export async function Header() {
         </div>
 
         {/* Accès direct langue + devise sur mobile (hors menu) — version compacte. */}
-        <div className="flex items-center gap-1 md:hidden">
+        <div className="flex shrink-0 items-center gap-1 xl:hidden">
           <CurrencySwitcher compact />
           <LocaleSwitcher compact />
           <MobileNav

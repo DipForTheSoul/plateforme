@@ -89,8 +89,9 @@ function EventFormBody({
     return false;
   });
 
+  const draftExtra = { images, recurrence, recurrenceCount, selectedVenue, multiDay, startDate, endDate, venueList, submissionId, customDates };
   const draft = useDraftForm(`event:${draftOwner}:${event?.id ?? (practitioners ? 'admin-new' : 'new')}`,
-    { images, recurrence, recurrenceCount, selectedVenue, multiDay, startDate, endDate, venueList, submissionId, customDates }, (data, fields) => {
+    draftExtra, (data, fields) => {
       if (Array.isArray(data.images)) setImages(data.images.filter((v): v is string => typeof v === 'string'));
       const restoredRecurrence = fields.recurrence?.[0] ?? data.recurrence;
       const restoredCount = fields.recurrence_count?.[0] ?? data.recurrenceCount;
@@ -257,7 +258,7 @@ function EventFormBody({
 
         <div>
           <span className="label">{t("whenLabel")}</span>
-          <div className="mb-3 inline-flex rounded-full border border-soul-bronze/30 bg-white p-1 text-sm">
+          <div className="mb-3 inline-flex max-w-full flex-wrap rounded-2xl border border-soul-bronze/30 bg-white p-1 text-sm">
             <button type="button" onClick={() => setMultiDay(false)}
               className={`rounded-full px-4 py-1.5 font-medium transition ${!multiDay ? "bg-soul-violet text-white" : "text-soul-brown hover:text-soul-terracotta"}`}>
               {t("oneDay")}
@@ -275,9 +276,6 @@ function EventFormBody({
                 <input id="start_date" name="start_date" type="datetime-local" required
                   value={startDate} onInput={e => setStartDate(e.currentTarget.value)} onChange={e => setStartDate(e.target.value)} className="field" />
               </div>
-              <p className="self-end pb-2.5 text-xs text-soul-bronze">
-                {t("oneDayHint")}
-              </p>
             </div>
           ) : (
             <div className="grid gap-5 sm:grid-cols-2">
@@ -295,11 +293,11 @@ function EventFormBody({
           )}
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-3">
-          <div>
+        <div className={`grid gap-5 ${multiDay ? 'sm:grid-cols-2' : 'sm:grid-cols-3'}`}>
+          <div hidden={multiDay}>
             <label htmlFor="duration_minutes" className="label">{t("durationLabel")}</label>
             <input id="duration_minutes" name="duration_minutes" type="number" min={0.01}
-              step="any"
+              step="any" disabled={multiDay}
               defaultValue={event?.duration_minutes ? event.duration_minutes / 60 : ""} className="field" />
           </div>
           <div>
@@ -325,6 +323,7 @@ function EventFormBody({
 
         {!event?.parent_event_id && (
           <div className="grid gap-5 rounded-2xl bg-soul-sand/30 p-5 sm:grid-cols-2">
+            <p className="sm:col-span-2 text-sm leading-relaxed text-soul-ink">{t("oneDayHint")}</p>
             <div>
               <label htmlFor="recurrence" className="label">{t("recurrenceLabel")}</label>
               <select id="recurrence" name="recurrence" value={recurrence}
@@ -348,7 +347,7 @@ function EventFormBody({
             )}
             {recurrence === 'custom' && <div id="occurrence_dates" className="sm:col-span-2 flex flex-col gap-3">
               <p className="text-sm">{t('customDatesHint')}</p>
-              {customDates.map((date, index) => <div key={index} className="flex gap-2">
+              {customDates.map((date, index) => <div key={index} className="flex min-w-0 flex-col gap-2 sm:flex-row">
                 <input type="datetime-local" name="occurrence_dates" required min={startDate} aria-label={t('customDate', { number: index + 1 })} className="field min-w-0" value={date}
                   onInput={e => { const value = e.currentTarget.value; setCustomDates(dates => dates.map((d, i) => i === index ? value : d)); }}
                   onChange={e => setCustomDates(dates => dates.map((d, i) => i === index ? e.target.value : d))} />
@@ -381,6 +380,7 @@ function EventFormBody({
                       if (result.error) { setOccurrenceError(result.error); return; }
                       if (result.redirectTo) { draft.clear(); router.push(result.redirectTo); return; }
                       const remaining = visibleOccurrences.filter(o => o.id !== occurrence.id);
+                      draft.clear({...draftExtra, recurrence: remaining.length ? 'custom' : '', customDates: remaining.map(o => toLocalInput(o.start_date))});
                       setVisibleOccurrences(remaining);
                       setRecurrence(remaining.length ? 'custom' : '');
                       setCustomDates(remaining.map(o => toLocalInput(o.start_date)));
@@ -397,6 +397,13 @@ function EventFormBody({
             {occurrenceError && <p role="alert">{occurrenceError}</p>}
           </section>
         )}
+
+        <div>
+          <label htmlFor="external_url" className="label">{t("externalLabel")}</label>
+          <WebUrlInput id="external_url" name="external_url" maxLength={2048} placeholder="example.ch/inscription"
+            defaultValue={event?.external_url ?? ""} className="field" />
+          <p className="mt-1 text-sm text-soul-ink">{t("externalHint")}</p>
+        </div>
 
         <div>
           <label htmlFor="video_url" className="label">{t("videoLabel")}</label>
@@ -471,7 +478,7 @@ function EventFormBody({
             </div>
           </div>
           {venueState.error && <p role="alert" className="text-sm text-red-700">{venueState.error}</p>}
-          <button type="submit" disabled={venuePending} className="btn-secondary self-start">
+          <button type="submit" disabled={venuePending} className="btn-primary self-start">
             {venuePending ? t("geocoding") : t("createVenue")}
           </button>
         </form>

@@ -45,19 +45,43 @@ beforeAll(async () => {
   await db.exec(sql('20260907172118_audit_manual_credits.sql'));
   await db.exec(sql('20260907180725_audit_series_root_deletion.sql'));
   await db.exec(sql('20260907181707_audit_admin_bootstrap.sql'));
+  await db.exec(sql('20260908170656_client_external_event_link.sql'));
   // Supabase grants API roles table access, then RLS restricts individual rows.
   await db.exec('grant usage on schema public,auth to anon,authenticated; grant all on all tables in schema public to anon,authenticated;');
 }, 30000);
 afterAll(async()=>{ await db?.close(); });
 
 describe('Transactions réelles PostgreSQL — publication et crédits', () => {
+  it('rejette un lien dangereux dans la transaction et modère une modification directe du lien', async()=>{
+    await actor(admin);
+    const first=await save(input({external_url:'example.ch'}));
+    const malformed={...input(),external_url:'javascript:alert(1)'};
+    await expect(save(malformed,first.id)).rejects.toThrow('events_external_url_check');
+    expect((await db.query('select external_url from events where id=$1',[first.id])).rows[0]).toEqual({external_url:'https://example.ch/'});
+    await actor(user);await db.exec('set role authenticated');
+    try {
+      await db.query("update events set external_url='https://example.ch/new' where id=$1",[first.id]);
+      expect((await db.query('select status from events where id=$1',[first.id])).rows[0]).toEqual({status:'pending'});
+    } finally {await db.exec('reset role');}
+  });
+  it('sauvegarde, modifie et efface le lien externe sur toutes les dates', async()=>{
+    await actor(admin);
+    const first=await save(input({external_url:'www.example.ch/inscription'}));
+    const links=()=>db.query<{external_url:string|null}>('select external_url from events where id=$1 or parent_event_id=$1',[first.id]);
+    expect((await links()).rows).toEqual(Array(4).fill({external_url:'https://www.example.ch/inscription'}));
+    await save(input({external_url:'example.ch/document'}),first.id);
+    expect((await links()).rows.every(x=>x.external_url==='https://example.ch/document')).toBe(true);
+    await save(input({external_url:''}),first.id);
+    expect((await links()).rows.every(x=>x.external_url===null)).toBe(true);
+    await actor(user);
+  });
   it('crée quatre dates avec un seul crédit, tous les univers, et la même heure suisse après changement d’heure', async()=>{
     const saved = await save();
     const rows = await db.query<{time:string}>("select to_char(start_date at time zone 'Europe/Zurich','HH24:MI') as time from events where id=$1 or parent_event_id=$1",[saved.id]);
     expect(rows.rows).toHaveLength(4);
     expect(rows.rows.every(r=>r.time==='11:00')).toBe(true);
     expect((await db.query('select credits from practitioners where id=$1',[practitioner])).rows[0]).toEqual({credits:19});
-    expect((await db.query('select * from event_categories')).rows).toHaveLength(4);
+    expect((await db.query('select * from event_categories where event_id in (select id from events where id=$1 or parent_event_id=$1)',[saved.id])).rows).toHaveLength(4);
   });
   it('annule le débit et toutes les lignes si la création échoue', async()=>{
     const before=(await db.query('select credits from practitioners where id=$1',[practitioner])).rows[0];

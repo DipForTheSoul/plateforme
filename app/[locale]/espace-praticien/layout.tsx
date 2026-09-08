@@ -35,7 +35,7 @@ export default async function PractitionerLayout({
   ];
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
+    <div className="mx-auto min-w-0 max-w-6xl px-4 py-8 [overflow-wrap:anywhere]">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl text-soul-brown">{spaceTitle}</h1>
         {/* Lien direct (pas <Link>) : on veut atteindre la route serveur qui
@@ -45,7 +45,7 @@ export default async function PractitionerLayout({
           {t("logout")}
         </a>
       </div>
-      <div className="grid gap-8 md:grid-cols-[200px_1fr]">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-[200px_minmax(0,1fr)]">
         <nav className="flex flex-row gap-2 overflow-x-auto md:flex-col md:overflow-visible">
           {nav.map((item) => (
             <Link
@@ -62,7 +62,7 @@ export default async function PractitionerLayout({
             </Link>
           ))}
         </nav>
-        <div>{children}</div>
+        <div className="min-w-0">{children}</div>
       </div>
     </div>
   );

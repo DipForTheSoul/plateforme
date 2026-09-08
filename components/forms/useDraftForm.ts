@@ -110,13 +110,16 @@ export function useDraftForm(key: string, extra: Record<string, unknown> = EMPTY
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serializedExtra]);
 
-  function clear() {
+  function clear(savedExtra?: Record<string, unknown>) {
     try {
       if (persistent && storage().getItem(storageKey) !== lastStored.current) { markConflict(); return false; }
       storage().removeItem(storageKey);
       sessionStorage.removeItem(storageKey);
       lastStored.current = null;
       dirty.current = false;
+      // A confirmed server operation may also update controlled form state.
+      // Its next render is a saved baseline, not a fresh user draft.
+      if (savedExtra) previousExtra.current = JSON.stringify(savedExtra);
       setHasDraft(false);
       return true;
     } catch { setStorageError(true); return false; }

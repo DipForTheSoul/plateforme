@@ -87,6 +87,7 @@ export interface Event {
   is_top: boolean;
   /** §4.1 — lien vidéo YouTube/Vimeo (lecteur intégré sur la fiche). */
   video_url: string | null;
+  external_url: string | null;
   /** §6.1 — fin de mise en avant ; expiration appliquée à la lecture. */
   featured_until: string | null;
   /** Ce qui est inclus (prix, matériel, repas…). */

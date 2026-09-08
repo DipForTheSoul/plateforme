@@ -1,6 +1,36 @@
 {
-  "descriptionEditor": {"toolbar":"Beschreibung formatieren","bold":"Fett","list":"Liste","link":"Externer Link","preview":"Vorschau","sample":"Ihr Text","hint":"Markieren Sie Text und wählen Sie eine Schaltfläche. Ersetzen Sie bei Links https://example.ch durch die Anmelde- oder Dokumentadresse. Die Vorschau zeigt das Ergebnis."},
-  "draft": {"hint":"Der Entwurf bleibt bis zum Speichern in diesem Tab erhalten, auch beim Sprachwechsel.","unavailable":"Lokales Speichern ist nicht verfügbar. Lassen Sie diesen Tab bis zum Speichern geöffnet.","networkError":"Speichern nicht bestätigt. Ihre Eingaben bleiben erhalten. Prüfen Sie die Verbindung und versuchen Sie es erneut.","ready":"Ihre Änderungen werden auf diesem Gerät 7 Tage gespeichert, auch wenn Sie den Browser schließen. Der Entwurf wurde noch nicht gesendet.","saved":"Entwurf für 7 Tage auf diesem Gerät gespeichert. Bereits hochgeladene Fotos bleiben erhalten; noch nicht hochgeladene Dateien nicht.","discard":"Entwurf verwerfen","confirmDiscard":"Nicht gespeicherte Änderungen dieses Formulars verwerfen? Der lokale Entwurf wird gelöscht und die Seite neu geladen. Bereits auf der Plattform gespeicherte Daten werden nicht gelöscht.","conflict":"Dieser Entwurf wurde in einem anderen Tab geändert. Ihre Eingaben bleiben hier sichtbar, aber Speichern und Senden sind gesperrt, um Überschreiben zu verhindern. Kopieren Sie wichtigen Text vor dem Neuladen.","reload":"Aktuelle Version neu laden","confirmReload":"Aktuelle Version neu laden? Nicht gespeicherte Eingaben dieses Tabs werden verworfen. Kopieren Sie zuerst den Text, den Sie behalten möchten.","cancel":"Abbrechen","confirm":"Bestätigen"},
+  "descriptionEditor": {
+    "toolbar": "Beschreibung formatieren",
+    "bold": "Fett",
+    "list": "Liste",
+    "link": "Externer Link",
+    "preview": "Vorschau",
+    "sample": "Ihr Text",
+    "hint": "Markieren Sie Text und wählen Sie die Formatierung. Beim Schreiben bleiben die Zeichen sichtbar; die Vorschau zeigt das veröffentlichte Ergebnis.",
+    "italic": "Kursiv",
+    "underline": "Unterstrichen",
+    "emoji": "Emoji",
+    "linkText": "Linktext",
+    "linkAddress": "Linkadresse",
+    "insertLink": "Link einfügen",
+    "cancel": "Abbrechen",
+    "invalidLink": "Geben Sie einen Text ohne eckige Klammern und eine gültige Webadresse (http oder https) ein.",
+    "tooLong": "Die Beschreibung darf höchstens 8 000 Zeichen enthalten."
+  },
+  "draft": {
+    "hint": "Der Entwurf bleibt bis zum Speichern in diesem Tab erhalten, auch beim Sprachwechsel.",
+    "unavailable": "Lokales Speichern ist nicht verfügbar. Lassen Sie diesen Tab bis zum Speichern geöffnet.",
+    "networkError": "Speichern nicht bestätigt. Ihre Eingaben bleiben erhalten. Prüfen Sie die Verbindung und versuchen Sie es erneut.",
+    "ready": "Ihre Änderungen werden auf diesem Gerät 7 Tage gespeichert, auch wenn Sie den Browser schließen. Der Entwurf wurde noch nicht gesendet.",
+    "saved": "Entwurf für 7 Tage auf diesem Gerät gespeichert. Bereits hochgeladene Fotos bleiben erhalten; noch nicht hochgeladene Dateien nicht.",
+    "discard": "Entwurf verwerfen",
+    "confirmDiscard": "Nicht gespeicherte Änderungen dieses Formulars verwerfen? Der lokale Entwurf wird gelöscht und die Seite neu geladen. Bereits auf der Plattform gespeicherte Daten werden nicht gelöscht.",
+    "conflict": "Dieser Entwurf wurde in einem anderen Tab geändert. Ihre Eingaben bleiben hier sichtbar, aber Speichern und Senden sind gesperrt, um Überschreiben zu verhindern. Kopieren Sie wichtigen Text vor dem Neuladen.",
+    "reload": "Aktuelle Version neu laden",
+    "confirmReload": "Aktuelle Version neu laden? Nicht gespeicherte Eingaben dieses Tabs werden verworfen. Kopieren Sie zuerst den Text, den Sie behalten möchten.",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen"
+  },
   "common": {
     "siteName": "ForTheSoul",
     "tagline": "Bewusste Erlebnisse in der Schweiz, mit Herz ausgewählt",
@@ -159,7 +189,7 @@
     "date": "Datum",
     "schedule": "Uhrzeit",
     "duration": "Dauer",
-    "durationDays": "Dauer: {count} Tage",
+    "durationDays": "Dauer: {count, plural, one {# Kalendertag} other {# Kalendertage}}",
     "multiDay": "Über mehrere Tage",
     "timeFromTo": "von {from} → {to}",
     "durationInline": "Dauer {value}",
@@ -181,7 +211,8 @@
     "toBring": "Mitzubringen",
     "reserveNote": "Keine Online-Zahlung: Mit einem Klick auf «Reservieren» kontaktierst du die anbietende Person direkt per E-Mail. Die Bezahlung (allfällige Anzahlung oder vor Ort) wird direkt mit ihr vereinbart.",
     "previous": "Vorherige",
-    "next": "Nächste"
+    "next": "Nächste",
+    "externalLink": "Anmeldung / externes Dokument ↗"
   },
   "practitioners": {
     "title": "Die Anbieter:innen",
@@ -381,9 +412,9 @@
     "oneDay": "An einem Tag",
     "multiDay": "Über mehrere Tage",
     "startLabel": "Datum und Uhrzeit Beginn *",
-    "oneDayHint": "Ein Kurs, ein Workshop, ein Abend… Die Dauer stellen Sie direkt darunter ein. Für einen wiederkehrenden Termin (jede Woche, jeden Monat) nutzen Sie die Wiederholung weiter unten.",
-    "arrivalLabel": "Ankunft (Tag & Uhrzeit) *",
-    "departureLabel": "Abreise (Tag & Uhrzeit) *",
+    "oneDayHint": "Wählen Sie für mehrere Termine eine regelmäßige Wiederholung oder freie Termine. Die Schweizer Uhrzeit bleibt gleich.",
+    "arrivalLabel": "Startdatum und Uhrzeit *",
+    "departureLabel": "Enddatum und Uhrzeit *",
     "durationLabel": "Dauer (Stunden)",
     "priceLabel": "Preis (CHF — 0 = freier Preis)",
     "languagesLabel": "Sprachen *",
@@ -417,7 +448,9 @@
     "countryLabel": "Land (Code) *",
     "capacityLabel": "Kapazität",
     "geocoding": "Geokodierung…",
-    "createVenue": "Ort erstellen"
+    "createVenue": "Ort erstellen",
+    "externalLabel": "Anmelde- / Dokumentlink — optional",
+    "externalHint": "Adresse eines externen Formulars, Dokuments oder einer Website. Dieser Link erscheint zusätzlich zur Schaltfläche Reservieren."
   },
   "uploader": {
     "loginRequired": "Anmeldung zum Hochladen erforderlich.",

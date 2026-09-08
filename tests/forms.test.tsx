@@ -1,10 +1,11 @@
 import { describe, it, expect, vi } from 'vitest';
 import { StrictMode } from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import fr from '@/messages/fr.json';
 import de from '@/messages/de.json';
 import { EventForm } from '@/components/forms/EventForm';
+import {removeOccurrence} from '@/app/actions/events';
 import { ProfileForm } from '@/app/[locale]/espace-praticien/profil/ProfileForm';
 import type { Practitioner, Category, Event } from '@/types/database';
 
@@ -19,6 +20,25 @@ const wrap = (child: React.ReactNode, locale = 'fr') => <NextIntlClientProvider 
 const eventForm = (action = vi.fn(async () => ({ error: 'Univers manquant' }))) => <EventForm categories={categories} venues={[]} defaultLanguages={['fr']} action={action} />;
 
 describe('Régressions signalées par Didier', () => {
+  it('permet deux suppressions successives de dates sans faux brouillon bloquant',async()=>{
+    vi.mocked(removeOccurrence).mockResolvedValue({success:'Date supprimée.',updatedAt:'2026-09-09T12:00:00Z'});
+    const event={id:'series',title:'Série de test',start_date:'2026-10-09T09:00:00Z',images:[],languages:['fr'],recurrence:'weekly',recurrence_count:4} as unknown as Event;
+    render(wrap(<EventForm categories={categories} venues={[]} defaultLanguages={['fr']} event={event} occurrences={[16,23,30].map(day=>({id:`day-${day}`,start_date:`2026-10-${day}T09:00:00Z`}))}/>));
+    const section=within(screen.getByText(fr.eventForm.occurrencesList).closest('section')!);
+    fireEvent.click(section.getAllByRole('button',{name:fr.eventForm.removeOccurrence})[1]);
+    await waitFor(()=>expect(section.getAllByRole('button',{name:fr.eventForm.removeOccurrence})).toHaveLength(3));
+    await waitFor(()=>expect(section.getAllByRole('button',{name:fr.eventForm.removeOccurrence})[1]).toBeEnabled());
+    fireEvent.click(section.getAllByRole('button',{name:fr.eventForm.removeOccurrence})[1]);
+    await waitFor(()=>expect(section.getAllByRole('button',{name:fr.eventForm.removeOccurrence})).toHaveLength(2));
+  });
+  it('masque la durée horaire sur plusieurs jours et la retrouve au retour sur une journée', () => {
+    render(wrap(eventForm()));
+    fireEvent.change(screen.getByLabelText(fr.eventForm.durationLabel), {target:{value:'1.5'}});
+    fireEvent.click(screen.getByRole('button',{name:fr.eventForm.multiDay}));
+    expect(screen.queryByRole('spinbutton',{name:fr.eventForm.durationLabel})).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button',{name:fr.eventForm.oneDay}));
+    expect(screen.getByLabelText(fr.eventForm.durationLabel)).toHaveValue(1.5);
+  });
   it('ne transporte pas le brouillon lorsque le compte change sans démontage de la page', () => {
     const form = (owner: string) => wrap(<EventForm draftOwner={owner} categories={categories} venues={[]} defaultLanguages={['fr']} />);
     const view = render(form('account-a'));

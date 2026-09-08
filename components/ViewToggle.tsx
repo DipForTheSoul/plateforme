@@ -3,21 +3,17 @@
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { List, Map as MapIcon } from "lucide-react";
-import { usePathname, useRouter } from "@/i18n/navigation";
+import { useExplorerNavigation } from "@/components/ExplorerNavigation";
 
 /** Bascule Liste / Carte du catalogue (via le paramètre d'URL `vue`). */
 export function ViewToggle() {
   const t = useTranslations("events");
-  const router = useRouter();
-  const pathname = usePathname();
+  const setParams = useExplorerNavigation();
   const searchParams = useSearchParams();
   const isMap = searchParams.get("vue") === "carte";
 
   function setVue(value?: string) {
-    const params = new URLSearchParams(searchParams.toString());
-    if (value) params.set("vue", value);
-    else params.delete("vue");
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    setParams({ vue: value });
   }
 
   const base = "flex items-center gap-1.5 rounded-full px-4 py-1.5 font-medium transition";

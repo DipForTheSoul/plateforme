@@ -31,7 +31,7 @@ export function LogoLink() {
         priority
         className="h-8 w-auto sm:h-11"
       />
-      <span className="font-serif text-xl leading-none text-soul-brown sm:text-3xl">
+      <span className="hidden font-serif text-xl leading-none text-soul-brown min-[400px]:inline sm:text-3xl">
         ForTheSoul
       </span>
     </Link>
