@@ -4,6 +4,7 @@ import { startTransition, useActionState, useRef, useState, useTransition } from
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useDraftForm } from "./useDraftForm";
+import { DraftNotice } from "./DraftNotice";
 import { WebUrlInput } from "./WebUrlInput";
 import { DescriptionEditor } from './DescriptionEditor';
 import { toEventLocalInput } from "@/lib/event-time";
@@ -37,7 +38,11 @@ function toLocalInput(iso: string | null | undefined): string {
   return toEventLocalInput(iso);
 }
 
-export function EventForm({
+export function EventForm(props: Props) {
+  return <EventFormBody key={`${props.draftOwner ?? 'local'}:${props.event?.id ?? (props.practitioners ? 'admin-new' : 'new')}`} {...props} />;
+}
+
+function EventFormBody({
   categories,
   venues,
   defaultLanguages,
@@ -101,9 +106,10 @@ export function EventForm({
       if (typeof restoredEnd === 'string') setEndDate(restoredEnd);
       if (Array.isArray(data.venueList)) setVenueList(data.venueList as Venue[]);
       if (typeof data.submissionId === 'string') setSubmissionId(data.submissionId);
+      if (typeof data.updatedAt === 'string') setUpdatedAt(data.updatedAt);
       const restoredCustom = fields.occurrence_dates ?? data.customDates;
       if (Array.isArray(restoredCustom)) setCustomDates(restoredCustom.filter((v): v is string => typeof v === 'string'));
-    });
+    }, { persistent: true, updatedAt });
 
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
     async (prev, data) => {
@@ -165,7 +171,7 @@ export function EventForm({
   return (
     <div className="flex flex-col gap-8">
       <form {...draft.formProps} action={formAction} onSubmit={draft.submit(formAction)} className="flex flex-col gap-5">
-        <p className="text-xs text-soul-bronze" role="status">{td(draft.storageError ? 'unavailable' : 'hint')}</p>
+        <DraftNotice draft={draft} busy={pending || uploading || venuePending || removing} />
         <input type="hidden" name="locale" value={locale} />
         <input type="hidden" name="submission_id" value={submissionId} />
         <input type="hidden" name="updated_at" value={updatedAt} />
@@ -414,7 +420,7 @@ export function EventForm({
         </div>}
         {state.success && <p role="status" className="text-sm text-green-700">{state.success}</p>}
 
-        <button type="submit" disabled={pending || uploading || venuePending || removing} className="btn-primary self-start">
+        <button type="submit" disabled={draft.conflict || pending || uploading || venuePending || removing} className="btn-primary self-start">
           {pending
             ? t("saving")
             : event

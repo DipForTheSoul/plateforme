@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { WebUrlInput } from '@/components/forms/WebUrlInput';
 import { useDraftForm } from '@/components/forms/useDraftForm';
+import { DraftNotice } from '@/components/forms/DraftNotice';
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { createVenue } from "@/app/actions/venues";
@@ -10,6 +11,7 @@ import type { ActionState } from "@/app/actions/events";
 import type { Venue } from "@/types/database";
 
 interface Props {
+  draftOwner: string;
   venue?: Venue;
   action?: (
     prev: ActionState & { venueId?: string },
@@ -17,11 +19,15 @@ interface Props {
   ) => Promise<ActionState & { venueId?: string }>;
 }
 
-export function VenueForm({ venue, action }: Props) {
+export function VenueForm({ venue, action, draftOwner }: Props) {
+  return <VenueFormBody key={`${draftOwner}:${venue?.id ?? 'new'}`} venue={venue} action={action} draftOwner={draftOwner} />;
+}
+
+function VenueFormBody({ venue, action, draftOwner }: Props) {
   const router = useRouter();
   const t = useTranslations("admin.venues");
   const td = useTranslations('draft');
-  const draft = useDraftForm(`venue:${venue?.id ?? 'new'}`);
+  const draft = useDraftForm(`venue:${draftOwner}:${venue?.id ?? 'new'}`, {}, undefined, { persistent: true });
   const [state, formAction, pending] = useActionState(
     async (prev: ActionState & { venueId?: string }, formData: FormData) => {
       try {
@@ -35,6 +41,7 @@ export function VenueForm({ venue, action }: Props) {
 
   return (
     <form {...draft.formProps} action={formAction} onSubmit={draft.submit(formAction)} className="card flex flex-col gap-4 p-6">
+      <DraftNotice draft={draft} busy={pending} />
       <div>
         <label className="label" htmlFor="name">{t("venueName")}</label>
         <input id="name" name="name" required defaultValue={venue?.name} className="field" />
@@ -75,7 +82,7 @@ export function VenueForm({ venue, action }: Props) {
       </div>
       {state.error && <p className="text-sm text-red-700">{state.error}</p>}
       {state.success && <p className="text-sm text-green-700">{state.success}</p>}
-      <button type="submit" disabled={pending} className="btn-primary self-start">
+      <button type="submit" disabled={draft.conflict || pending} className="btn-primary self-start">
         {pending ? t("geocoding") : venue ? t("save") : t("createAndGeocode")}
       </button>
     </form>

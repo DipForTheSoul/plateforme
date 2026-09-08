@@ -57,7 +57,7 @@ node scripts/qa.mjs auth
 node scripts/qa.mjs web
 ```
 
-`auth` effectue huit contrôles réels de confirmation/récupération via Mailpit, Auth et la route Next PKCE, puis supprime son compte temporaire. `web` crée trois expériences temporaires simultanées, vérifie leurs liens, leur agenda et le suivi HTTP limité, puis nettoie ses objets. `verify` comporte 25 contrôles. La suite `npm run check` comporte 167 tests, dont 29 SQL ; ce ne sont pas des parcours navigateur.
+`auth` effectue huit contrôles réels de confirmation/récupération via Mailpit, Auth et la route Next PKCE, puis supprime son compte temporaire. `web` crée trois expériences temporaires simultanées, vérifie leurs liens, leur agenda et le suivi HTTP limité, puis nettoie ses objets. `verify` comporte 25 contrôles. La suite `npm run check` comporte désormais 180 tests, dont 29 SQL ; ce ne sont pas des parcours navigateur.
 
 Sur une installation de recette déjà existante, appliquer les migrations manquantes avant de redémarrer le code. Les nouveaux formulaires publics utilisent des limites partagées en base et refusent l’envoi si cette migration manque. Les scripts ne l’appliquent pas automatiquement. Une installation neuve avec `supabase start` les rejoue à la création de sa base.
 
@@ -66,6 +66,12 @@ Sur une installation de recette déjà existante, appliquer les migrations manqu
 Parcours recommandé : créer une expérience de 1,5 h à 11 h avec deux dates libres (9 et 30 octobre), provoquer une erreur de validation, changer de langue, ajouter une photo, envoyer ; vérifier un seul crédit débité ; approuver en admin ; supprimer la première date seulement ; ajouter une récurrence ; tester la fiche publique, les favoris et le calendrier à largeur mobile. Le rapport d’audit précise les autres scénarios et les limites.
 
 Les notifications sont capturées dans Mailpit. Un redémarrage de la VM peut vider cette boîte ; elle ne sert pas d’archive. Les paiements ne fonctionneront pas ici : les clés Stripe sont volontairement vides. Pour une recette Stripe réelle, utiliser un environnement client de test et des clés de test hors Git.
+
+### Complément brouillons du 8 septembre
+
+Les formulaires authentifiés conservent désormais leur brouillon sur cet appareil entre sessions (restaurable sept jours après modification). Tester fermeture/nouvel onglet, erreur puis correction, changement de langue et de compte, deux onglets concurrents, abandon annulé puis confirmé. Revenir sur la fiche après sauvegarde pour vérifier les données serveur et l’absence de vieux brouillon. Contact reste limité à l’onglet. Ne pas utiliser ces brouillons locaux sur un profil navigateur public partagé ; ce n’est pas du stockage chiffré ni une synchronisation entre ordinateurs.
+
+Résultats et limites : [recette ciblée](recette/2026-09-08-brouillons/RAPPORT.md).
 
 ## Arrêter sans perdre les données
 

@@ -1,9 +1,11 @@
 import { VenueForm } from "./VenueForm";
 import { getTranslations } from "next-intl/server";
+import { requireRole } from '@/lib/auth';
 
 export const dynamic = "force-dynamic";
 
 export default async function NewVenuePage() {
+  const profile = await requireRole(['admin']);
   const t = await getTranslations("admin.venues");
 
   return (
@@ -12,7 +14,7 @@ export default async function NewVenuePage() {
       <p className="mb-6 text-sm text-soul-bronze">
         {t("newVenueHint")}
       </p>
-      <VenueForm />
+      <VenueForm draftOwner={profile.id} />
     </div>
   );
 }

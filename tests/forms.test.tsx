@@ -19,6 +19,15 @@ const wrap = (child: React.ReactNode, locale = 'fr') => <NextIntlClientProvider 
 const eventForm = (action = vi.fn(async () => ({ error: 'Univers manquant' }))) => <EventForm categories={categories} venues={[]} defaultLanguages={['fr']} action={action} />;
 
 describe('Régressions signalées par Didier', () => {
+  it('ne transporte pas le brouillon lorsque le compte change sans démontage de la page', () => {
+    const form = (owner: string) => wrap(<EventForm draftOwner={owner} categories={categories} venues={[]} defaultLanguages={['fr']} />);
+    const view = render(form('account-a'));
+    fireEvent.change(screen.getByLabelText(fr.eventForm.titleLabel), { target: { value: 'Texte privé A' } });
+    view.rerender(form('account-b'));
+    expect(screen.getByLabelText(fr.eventForm.titleLabel)).toHaveValue('');
+    view.rerender(form('account-a'));
+    expect(screen.getByLabelText(fr.eventForm.titleLabel)).toHaveValue('Texte privé A');
+  });
   it('ne remplace pas les photos restaurées par un brouillon vide au double montage React',()=>{
     sessionStorage.setItem('fts.draft.v1:event:local:new',JSON.stringify({at:Date.now(),fields:{title:['Brouillon']},extra:{images:['https://example.test/photo.webp'],recurrence:'weekly',recurrenceCount:3}}));
     render(<StrictMode>{wrap(eventForm())}</StrictMode>);

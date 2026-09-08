@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useDraftForm } from "@/components/forms/useDraftForm";
+import { DraftNotice } from "@/components/forms/DraftNotice";
 import { WebUrlInput } from "@/components/forms/WebUrlInput";
 import { updatePractitionerProfile } from "@/app/actions/practitioner";
 import type { ActionState } from "@/app/actions/events";
@@ -10,11 +11,17 @@ import { ImageUploader } from "@/components/forms/ImageUploader";
 import { LANGUAGE_LABELS } from "@/lib/utils";
 import type { Practitioner } from "@/types/database";
 
-export function ProfileForm({
+export function ProfileForm(props: Parameters<typeof ProfileFormBody>[0]) {
+  return <ProfileFormBody key={`${props.draftOwner ?? props.practitioner.id}:${props.practitioner.id}`} {...props} />;
+}
+
+function ProfileFormBody({
   practitioner,
   action,
+  draftOwner,
 }: {
   practitioner: Practitioner;
+  draftOwner?: string;
   /** Action serveur alternative (édition admin d'une autre fiche, §3). */
   action?: (prev: ActionState, formData: FormData) => Promise<ActionState>;
 }) {
@@ -26,10 +33,10 @@ export function ProfileForm({
   );
   const [photoBusy, setPhotoBusy] = useState(false);
   const [logoBusy, setLogoBusy] = useState(false);
-  const draft = useDraftForm(`profile:${practitioner.id}`, { photos, logo }, data => {
+  const draft = useDraftForm(`profile:${draftOwner ?? practitioner.id}:${practitioner.id}`, { photos, logo }, data => {
     if (Array.isArray(data.photos)) setPhotos(data.photos.filter((v): v is string => typeof v === 'string'));
     if (Array.isArray(data.logo)) setLogo(data.logo.filter((v): v is string => typeof v === 'string'));
-  });
+  }, { persistent: true });
 
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
     async (prev, data) => {
@@ -45,7 +52,7 @@ export function ProfileForm({
 
   return (
     <form {...draft.formProps} action={formAction} onSubmit={draft.submit(formAction)} className="flex flex-col gap-5">
-      <p className="text-xs text-soul-bronze" role="status">{td(draft.storageError ? 'unavailable' : 'hint')}</p>
+      <DraftNotice draft={draft} busy={pending || photoBusy || logoBusy} />
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="name" className="label">{t("namePublic")}</label>
@@ -134,7 +141,7 @@ export function ProfileForm({
       {state.error && <p className="text-sm text-red-700">{state.error}</p>}
       {state.success && <p className="text-sm text-green-700">{state.success}</p>}
 
-      <button type="submit" disabled={pending || photoBusy || logoBusy} className="btn-primary self-start">
+      <button type="submit" disabled={draft.conflict || pending || photoBusy || logoBusy} className="btn-primary self-start">
         {pending ? t("saving") : t("saveProfile")}
       </button>
     </form>
