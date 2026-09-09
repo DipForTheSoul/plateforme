@@ -1,5 +1,25 @@
 # Checklist go-live — ForTheSoul
 
+## État actualisé — 9 septembre 2026, 18 h 52 CEST
+
+La version applicative **74ca626 est en production et sur main**, à la demande de Rodrigue. Le détail des preuves et les limites figurent en tête de `REPRISE-VICTOR-2026-09-09.md`. La checklist initiale ci-dessous reste l'état historique de préparation, et non une certification globale de tous les services.
+
+- [x] Accès réels et association Supabase/Vercel vérifiés.
+- [x] Sauvegarde chiffrée réelle, Auth/Storage compris, restauration isolée exercée.
+- [x] Onze migrations répétées sur copie, puis transaction atomique en production avec assertions de conservation des anciennes données et soldes.
+- [x] Build production prêt avant promotion ; domaines publics vérifiés ; push normal main effectué et CI réussie.
+- [x] Tests de transactions/droits/récurrences/crédits en production intégralement annulés par ROLLBACK.
+- [x] Connexion, dépôt privé de série et modification tarifaire par navigateur sur le domaine public ; crédit unique vérifié ; fixture dédiée supprimée par identifiants exacts.
+- [x] Pages publiques, locales et barrières d'accès HTTP vérifiées ; absence d'erreurs dans la fenêtre de logs interrogée.
+- [x] Build de retour compatible `4610ad9` préparé ; sauvegarde et procédure de restauration distinctes.
+- [ ] Certification paiement live/webhook, réception fournisseurs de mails/newsletter : non effectuée ; aucun paiement réel déclenché.
+- [ ] Isolation des variables Preview/Production : partage existant identifié, aucun test destructif à lancer sur Preview.
+- [ ] Révocation historique, revue conformité/accessibilité exhaustive et exploitation durable : réserves non levées par ce déploiement.
+
+**Décision constatée : mise à jour applicative déployée et smoke tests réussis ; ne pas présenter cela comme une certification exhaustive de la plateforme.** Aucun reset, seed, effacement générique de données ou changement de clés/DNS.
+
+## Checklist initiale conservée pour traçabilité
+
 Version candidate : branche `codex/fix-practitioner-editor-duration`, base `4610ad9`.
 Date/fenêtre : contrôles du 9 septembre 2026, 18 h Europe/Paris ; aucune fenêtre de production fixée.
 Responsable de décision : Rodrigue, avec propriétaire des environnements client.

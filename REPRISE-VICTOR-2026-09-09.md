@@ -1,10 +1,31 @@
 # ForTheSoul — retour de recette de Rodrigue, 9 septembre 2026
 
+## Mise à jour après déploiement — 9 septembre, 18 h 52 CEST
+
+**Version applicative `74ca626` poussée sur `main` et déployée sur https://www.forthesoul.ch.** La section de préparation ci-dessous est conservée comme historique : ses blocages d'accès et de migrations ont été levés, elle ne décrit plus l'état du déploiement.
+
+- Accès administrateur Supabase et Vercel retrouvés dans la configuration déjà autorisée. Aucun remplacement de clé, changement DNS, reset, seed ou transfert de la base QA locale.
+- Sauvegarde chiffrée de la base réelle (Auth et métadonnées Storage compris), restauration complète avec propriétaires/droits dans une base PostgreSQL isolée ; objets Storage binaires également sauvegardés et contrôlés. Une seconde sauvegarde de la base a précédé la bascule. Archives et clés hors Git, sur l'appareil de Rodrigue.
+- Les **11 migrations manquantes**, de `0016_security_hardening.sql` à `20260909174000_event_price_mode.sql`, ont été répétées sur cette copie puis appliquées dans une transaction unique. Verrouillage des écritures et assertions avant COMMIT : anciennes lignes conservées, soldes inchangés, anciens tarifs et lieux conservant leur sens. Les packs de reprise ajoutés par la migration comptable représentent les soldes antérieurs ; ils ne sont pas des achats ou crédits supplémentaires.
+- L'ancienne base n'avait pas de registre `supabase_migrations.schema_migrations`. Les fichiers réellement appliqués et leurs SHA-256 sont tracés dans `private.release_migration_log`. Ne pas relancer toutes les migrations historiques ni initialiser artificiellement le registre sans réconciliation préalable.
+- Build Vercel production prêt avant bascule, promotion puis push normal sans force sur `main`. Le déploiement Git résultant `plateforme-f489cfdox-for-the-soul.vercel.app` est READY et correspond à `74ca626` ; les domaines publics pointent vers cette version.
+- [CI main réussie](https://github.com/DipForTheSoul/plateforme/actions/runs/34378796151) : 256 tests, lint, types, build et audit ; [CI de branche réussie](https://github.com/DipForTheSoul/plateforme/actions/runs/34374561785).
+- Tests transactionnels sur la base de production, avec ROLLBACK intégral : dépôt, idempotence, débit unique, récurrence, modes tarifaires, refus des accès croisés, approbation, visibilité publique et retrait de racine de série.
+- Test navigateur sur le domaine public : création d'un compte temporaire dédié, connexion par le formulaire réel, dépôt privé de deux occurrences à 79,50 CHF pour 90 minutes, solde passant de deux à un ; modification en Gratuit propagée aux deux dates sans autre débit. Suppression vérifiée du compte, profil, praticien, événements et dépendances par leurs identifiants exacts. Aucun événement de test publié, aucun mail client ou paiement déclenché.
+- Smoke HTTP : accueil, catalogue FR/DE/EN, praticiens, lieux et connexion en 200 ; administration/espace praticien anonymes redirigés vers connexion ; export admin et recherche d'adresse refusés anonymement (401). Catalogue rendu sans erreur applicative. Aucun journal de niveau erreur retourné pour le nouveau déploiement pendant la fenêtre contrôlée.
+- Une bande blanche dans le navigateur piloté provenait de son viewport forcé à 800 px dans une fenêtre de 1 200 px, pas d'une modification du CSS ; affichage en ligne normal également confirmé par Rodrigue.
+
+**Limites exactes :** cela ne certifie pas un paiement fournisseur, un webhook live ou la réception d'un e-mail/une inscription MailerLite. Aucun débit réel autorisé ou effectué. Les réglages Preview et Production partagent certaines variables existantes : ne pas lancer de recette destructive sur Preview ; utiliser le laboratoire isolé. La révocation du secret historique et les réserves UX/accessibilité listées plus bas restent à traiter. Les anciennes données distantes ne sont pas supprimées sur une simple correspondance de nom « Test » ; seules les fixtures identifiées de cette exécution ont été nettoyées.
+
+**Retour applicatif préparé :** build `4610ad9` READY, `plateforme-7rosxikxb-for-the-soul.vercel.app`, compatible avec les nouvelles transactions (payload historique exercé en laboratoire). En cas d'incident confirmé, promouvoir cette version compatible puis vérifier. Ne pas restaurer directement l'ancien `99da235` contre le nouveau schéma et ne pas supprimer les nouvelles colonnes. La restauration intégrale de sauvegarde est un recours distinct pouvant perdre les écritures ultérieures ; elle exige une décision et une fenêtre protégée.
+
+Ce rapport constitue le relevé destiné à Victor ; l'envoi d'un message à Victor n'est pas attesté par cette livraison.
+
 ## Version et décision
 
 Branche de livraison : `codex/fix-practitioner-editor-duration`, basée sur `4610ad9` de Victor. Consulter le diff `4610ad9...codex/fix-practitioner-editor-duration` pour l'inventaire exact. Ce lot ne remplace pas la préparation de production décrite dans REPRISE-RODRIGUE.md.
 
-**GO pour transmettre la branche ; NO-GO pour basculer la production.** Rodrigue a demandé à l'agent de terminer les contrôles techniques, sans refaire une passe manuelle complète. Ne pas présenter ces contrôles complémentaires comme une recette personnelle de Rodrigue.
+**Décision historique avant reprise des accès : GO pour transmettre la branche ; NO-GO pour basculer la production.** Voir la mise à jour de déploiement ci-dessus. Rodrigue a demandé à l'agent de terminer les contrôles techniques, sans refaire une passe manuelle complète. Ne pas présenter ces contrôles complémentaires comme une recette personnelle de Rodrigue.
 
 Contrôle distant en lecture seule le 9 septembre vers 18 h (Europe/Paris) : la base configurée dans le projet local d'origine renvoie `42703` pour `events.external_url`, `events.price_mode` et `venues.review_status`. L'OpenAPI n'expose ni `save_event_transaction` ni `take_request_slot`. L'association exacte de cette base aux environnements Vercel reste à confirmer : la page des réglages du projet client affiche « Not Found » dans la session disponible. Aucun réglage distant ni aucune donnée distante n'a été modifié.
 
@@ -43,7 +64,7 @@ L'agenda et le mail ont été préremplis, pas enregistrés/envoyés. Le dernier
 
 ## Données et ordre de déploiement impératif
 
-Les tests de cette session utilisent exclusivement Supabase sur `127.0.0.1:54321`. Les comptes/données de recette manuelle y restent pour permettre la reprise. Ils ne font pas partie du push Git. Aucun dump, secret, fichier `.env`, fichier de base ou audit privé des mails n'est à publier.
+Les tests de préparation listés dans la section initiale utilisent Supabase sur `127.0.0.1:54321`. Les contrôles de production ultérieurs sont détaillés en tête de rapport. Les comptes/données de recette manuelle locale y restent pour permettre la reprise et ne font pas partie du push Git. Aucun dump, secret, fichier `.env`, fichier de base ou audit privé des mails n'est à publier.
 
 Deux nouvelles migrations :
 
