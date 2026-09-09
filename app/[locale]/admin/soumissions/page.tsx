@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Link } from "@/i18n/navigation";
 import { moderateEvent } from "@/app/actions/admin";
 import { StatusBadge } from "@/components/StatusBadge";
-import { formatDate, formatTime } from "@/lib/utils";
+import { eventInclusiveDays, formatEventSchedule } from "@/lib/event-display";
 import { getLocale, getTranslations } from "next-intl/server";
 import type { EventWithRelations, Locale } from "@/types/database";
 import { EVENT_WITH_RELATIONS } from "@/types/database";
@@ -80,10 +80,13 @@ function SubmissionCard({
         <div className="min-w-0">
           <p className="font-serif text-lg text-soul-brown">{event.title}</p>
           <p className="text-sm text-soul-bronze">
-            {event.practitioner?.name ?? "?"} · {event.category?.name ?? "—"} ·{" "}
-            {formatDate(event.start_date,locale)} {formatTime(event.start_date)}
+            {event.practitioner?.name ?? "?"} · {event.category?.name ?? "—"}
             {event.venue && <> · {event.venue.name}</>}
             {event.recurrence && <> · {t("recurrent", { count: event.recurrence_count ?? 0 })}</>}
+          </p>
+          <p className="mt-2 text-sm font-medium text-soul-brown">
+            {formatEventSchedule(event.start_date, event.end_date, locale)}
+            {event.end_date && <> — {t("durationDays", { count: eventInclusiveDays(event.start_date, event.end_date) })}</>}
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
@@ -100,6 +103,12 @@ function SubmissionCard({
       {event.description && (
         <p className="mt-3 line-clamp-3 text-sm text-soul-ink/80">{event.description}</p>
       )}
+
+      {event.venue && <p className="mt-3 text-sm text-soul-brown">
+        <Link href={`/admin/lieux/${event.venue.id}`} className="underline">{event.venue.name}</Link>
+        {' — '}{event.venue.address}{event.venue.city ? ` · ${event.venue.city}` : ''}
+        {event.venue.review_status === 'pending' && <span className="ml-2 rounded-full bg-soul-sand px-2 py-1 text-xs">{t('venueReview')}</span>}
+      </p>}
 
       {showActions ? (
         <form action={moderateEvent} className="mt-4 flex flex-col gap-3">

@@ -7,7 +7,9 @@ import { useDraftForm } from "./useDraftForm";
 import { DraftNotice } from "./DraftNotice";
 import { WebUrlInput } from "./WebUrlInput";
 import { DescriptionEditor } from './DescriptionEditor';
+import { VenueAddressFields } from './VenueAddressFields';
 import { toEventLocalInput } from "@/lib/event-time";
+import { eventPriceMode } from '@/lib/event-price';
 import { createEvent, updateEvent, type ActionState } from "@/app/actions/events";
 import { removeOccurrence } from "@/app/actions/events";
 import { createVenue } from "@/app/actions/venues";
@@ -31,6 +33,17 @@ interface Props {
   /** Autres dates de la série, visibles au propriétaire et à l'administration. */
   occurrences?: { id: string; start_date: string }[];
   draftOwner?: string;
+}
+
+const DURATION_HOURS = Array.from({ length: 24 }, (_, hour) => hour);
+const DURATION_MINUTES = Array.from({ length: 60 }, (_, minute) => minute);
+
+function splitDuration(durationMinutes: number | null | undefined) {
+  if (!durationMinutes) return { hours: "", minutes: "" };
+  return {
+    hours: String(Math.floor(durationMinutes / 60)),
+    minutes: String(durationMinutes % 60),
+  };
 }
 
 /** Convertit un ISO en valeur pour <input type="datetime-local">. */
@@ -77,6 +90,12 @@ function EventFormBody({
   const [removing, startRemoving] = useTransition();
   const [occurrenceError, setOccurrenceError] = useState('');
   const venueFormRef = useRef<HTMLFormElement>(null);
+  const initialDuration = splitDuration(event?.duration_minutes);
+  const [durationHours, setDurationHours] = useState(initialDuration.hours);
+  const [durationMinutes, setDurationMinutes] = useState(initialDuration.minutes);
+  const initialPriceMode = event ? eventPriceMode(event.price, event.price_mode) : 'unspecified';
+  const [priceMode, setPriceMode] = useState(initialPriceMode === 'unspecified' ? '' : initialPriceMode);
+  const [priceValue, setPriceValue] = useState(event?.price == null ? '' : String(event.price));
 
   // Sur une journée (cours, atelier, soirée) vs plusieurs jours (retraite, voyage).
   const [multiDay, setMultiDay] = useState<boolean>(() => {
@@ -89,7 +108,7 @@ function EventFormBody({
     return false;
   });
 
-  const draftExtra = { images, recurrence, recurrenceCount, selectedVenue, multiDay, startDate, endDate, venueList, submissionId, customDates };
+  const draftExtra = { images, recurrence, recurrenceCount, selectedVenue, multiDay, startDate, endDate, venueList, submissionId, customDates, priceMode, priceValue };
   const draft = useDraftForm(`event:${draftOwner}:${event?.id ?? (practitioners ? 'admin-new' : 'new')}`,
     draftExtra, (data, fields) => {
       if (Array.isArray(data.images)) setImages(data.images.filter((v): v is string => typeof v === 'string'));
@@ -102,9 +121,27 @@ function EventFormBody({
       if (typeof data.multiDay === 'boolean') setMultiDay(data.multiDay);
       // The DOM snapshot is authoritative: an input event can precede React's commit.
       const restoredStart = fields.start_date?.[0] ?? data.startDate;
+      const restoredPrice = fields.price?.[0] ?? data.priceValue;
+      const restoredMode = fields.price_mode?.[0] ?? data.priceMode;
+      if (typeof restoredPrice === 'string') setPriceValue(restoredPrice);
+      if (restoredMode === '' || restoredMode === 'free' || restoredMode === 'flexible' || restoredMode === 'fixed') setPriceMode(restoredMode);
+      else if (typeof restoredPrice === 'string' && restoredPrice !== '') setPriceMode(Number(restoredPrice) === 0 ? 'flexible' : 'fixed');
       const restoredEnd = fields.end_date?.[0] ?? data.endDate;
       if (typeof restoredStart === 'string') setStartDate(restoredStart);
       if (typeof restoredEnd === 'string') setEndDate(restoredEnd);
+      const restoredDurationHours = fields.duration_hours?.[0];
+      const restoredDurationMinutes = fields.duration_minute_part?.[0];
+      if (typeof restoredDurationHours === 'string' || typeof restoredDurationMinutes === 'string') {
+        if (typeof restoredDurationHours === 'string') setDurationHours(restoredDurationHours);
+        if (typeof restoredDurationMinutes === 'string') setDurationMinutes(restoredDurationMinutes);
+      } else if (typeof fields.duration_minutes?.[0] === 'string') {
+        const legacyMinutes = Math.round(Number(fields.duration_minutes[0].replace(',', '.')) * 60);
+        if (Number.isInteger(legacyMinutes) && legacyMinutes > 0) {
+          const restored = splitDuration(legacyMinutes);
+          setDurationHours(restored.hours);
+          setDurationMinutes(restored.minutes);
+        }
+      }
       if (Array.isArray(data.venueList)) setVenueList(data.venueList as Venue[]);
       if (typeof data.submissionId === 'string') setSubmissionId(data.submissionId);
       if (typeof data.updatedAt === 'string') setUpdatedAt(data.updatedAt);
@@ -294,17 +331,48 @@ function EventFormBody({
         </div>
 
         <div className={`grid gap-5 ${multiDay ? 'sm:grid-cols-2' : 'sm:grid-cols-3'}`}>
-          <div hidden={multiDay}>
-            <label htmlFor="duration_minutes" className="label">{t("durationLabel")}</label>
-            <input id="duration_minutes" name="duration_minutes" type="number" min={0.01}
-              step="any" disabled={multiDay}
-              defaultValue={event?.duration_minutes ? event.duration_minutes / 60 : ""} className="field" />
-          </div>
-          <div>
-            <label htmlFor="price" className="label">{t("priceLabel")}</label>
-            <input id="price" name="price" type="number" min={0} step="0.05"
-              defaultValue={event?.price ?? ""} className="field" />
-          </div>
+          <fieldset id="duration_minutes" hidden={multiDay} disabled={multiDay}>
+            <legend className="label">{t("durationLabel")}</legend>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label htmlFor="duration_hours" className="mb-1 block text-sm text-soul-brown">{t("durationHoursLabel")}</label>
+                <select id="duration_hours" name="duration_hours" value={durationHours}
+                  onChange={(event) => setDurationHours(event.target.value)} className="field h-11">
+                  <option value="">—</option>
+                  {DURATION_HOURS.map((hour) => <option key={hour} value={hour}>{hour}</option>)}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="duration_minute_part" className="mb-1 block text-sm text-soul-brown">{t("durationMinutesLabel")}</label>
+                <select id="duration_minute_part" name="duration_minute_part" value={durationMinutes}
+                  onChange={(event) => setDurationMinutes(event.target.value)} className="field h-11">
+                  <option value="">—</option>
+                  {DURATION_MINUTES.map((minute) => <option key={minute} value={minute}>{String(minute).padStart(2, "0")}</option>)}
+                </select>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend className="label">{t('priceLabel')}</legend>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label htmlFor="price_mode" className="mb-1 block text-sm text-soul-brown">{t('priceType')}</label>
+                <select id="price_mode" name="price_mode" required value={priceMode}
+                  onChange={e => setPriceMode(e.target.value as typeof priceMode)} className="field h-11">
+                  <option value="" disabled>{t('choose')}</option>
+                  <option value="free">{t('priceFree')}</option>
+                  <option value="flexible">{t('priceFlexible')}</option>
+                  <option value="fixed">{t('priceFixed')}</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="price" className="mb-1 block text-sm text-soul-brown">{t('priceAmount')}</label>
+                <input id="price" name="price" type="number" min="0.05" step="0.05" required={priceMode === 'fixed'} disabled={priceMode !== 'fixed'}
+                  value={priceValue} onChange={e => setPriceValue(e.target.value)} className="field h-11 disabled:bg-soul-sand/30" />
+              </div>
+            </div>
+            <p className="mt-1 text-xs text-soul-bronze">{t(priceMode === 'flexible' ? 'priceFlexibleHint' : priceMode === 'free' ? 'priceFreeHint' : 'priceFixedHint')}</p>
+          </fieldset>
           <div>
             <span id="languages" className="label">{t("languagesLabel")}</span>
             <div className="flex flex-wrap gap-3 pt-1.5">
@@ -448,30 +516,14 @@ function EventFormBody({
           <p className="text-xs text-soul-bronze">
             {t("newVenueHint")}
           </p>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div>
             <div>
               <label className="label" htmlFor="v-name">{t("venueNameLabel")}</label>
               <input id="v-name" name="name" required className="field" />
             </div>
-            <div>
-              <label className="label" htmlFor="v-canton">{t("cantonLabel")}</label>
-              <input id="v-canton" name="canton" maxLength={2} className="field" />
-            </div>
           </div>
+          <VenueAddressFields />
           <div>
-            <label className="label" htmlFor="v-address">{t("fullAddressLabel")}</label>
-            <input id="v-address" name="address" required className="field"
-              placeholder={t("fullAddressPlaceholder")} />
-          </div>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div>
-              <label className="label" htmlFor="v-city">{t("cityLabel")}</label>
-              <input id="v-city" name="city" className="field" placeholder={t("cityPlaceholder")} />
-            </div>
-            <div>
-              <label className="label" htmlFor="v-country">{t("countryLabel")}</label>
-              <input id="v-country" name="country" defaultValue="CH" maxLength={2} required className="field" />
-            </div>
             <div>
               <label className="label" htmlFor="v-capacity">{t("capacityLabel")}</label>
               <input id="v-capacity" name="capacity" type="number" min={1} className="field" />
@@ -479,7 +531,7 @@ function EventFormBody({
           </div>
           {venueState.error && <p role="alert" className="text-sm text-red-700">{venueState.error}</p>}
           <button type="submit" disabled={venuePending} className="btn-primary self-start">
-            {venuePending ? t("geocoding") : t("createVenue")}
+            {venuePending ? t("saving") : t("createVenue")}
           </button>
         </form>
       )}

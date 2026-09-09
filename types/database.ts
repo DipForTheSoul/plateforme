@@ -40,6 +40,7 @@ export interface Practitioner {
 }
 
 export interface Venue {
+  review_status?: 'pending' | 'approved';
   id: string;
   name: string;
   address: string;
@@ -80,6 +81,7 @@ export interface Event {
   parent_event_id: string | null;
   duration_minutes: number | null;
   price: number | null;
+  price_mode?: import('@/lib/event-price').PriceMode;
   currency: string;
   languages: string[];
   status: ModerationStatus;
@@ -131,6 +133,8 @@ export interface Review {
 
 /** Événement avec ses relations chargées (select avec jointures). */
 export interface EventWithRelations extends Event {
+  /** Public dates available for this series, attached by the catalogue grouping. */
+  series_date_count?: number;
   /** Catégorie principale (dégradé/visuel, 1er badge). Vient de `category_id`. */
   category: Category | null;
   /** Tous les univers rattachés (multi-univers §2.1) — source de vérité filtres/badges. */

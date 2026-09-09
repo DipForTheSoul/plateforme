@@ -29,7 +29,7 @@ export default async function VenuesPage({
   const { q = "", canton = "" } = await searchParams;
   setRequestLocale(locale);
   const t = await getTranslations("venues");
-  const all = await getVenues();
+  const all = (await getVenues()).filter(v => v.review_status !== 'pending');
 
   // Cantons disponibles (uniquement les lieux qui en ont un), triés.
   const cantons = Array.from(

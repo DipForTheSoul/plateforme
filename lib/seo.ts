@@ -54,7 +54,7 @@ export function eventJsonLd(event: EventWithRelations) {
         }
       : undefined,
     offers:
-      event.price !== null
+      event.price !== null && (event.price_mode === 'free' || Number(event.price) > 0)
         ? {
             "@type": "Offer",
             price: Number(event.price),

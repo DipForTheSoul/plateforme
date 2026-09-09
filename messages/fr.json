@@ -1,12 +1,31 @@
 {
+  "addressSearch": {
+    "placeholder": "Commencez à saisir la rue, le numéro et la ville…",
+    "suggestions": "Adresses proposées",
+    "hint": "Suggestions d’adresses suisses dès 4 caractères. Recherche transmise à swisstopo.",
+    "loading": "Recherche d’adresses…",
+    "empty": "Aucune adresse trouvée. Vous pouvez la saisir manuellement.",
+    "error": "Suggestions indisponibles. Vous pouvez saisir l’adresse manuellement.",
+    "manual": "Adresse introuvable ? Saisir manuellement",
+    "automatic": "Revenir aux suggestions",
+    "manualHint": "Indiquez le numéro, la rue, le code postal et la ville. Didier vérifiera l’adresse lors de la validation de votre événement.",
+    "selected": "Adresse sélectionnée. Didier la vérifiera avec votre événement."
+  },
+  "eventDraftCard": {
+    "badge": "Brouillon",
+    "untitled": "Expérience sans titre",
+    "notice": "Conservé 7 jours après votre dernière modification, dans ce navigateur sur cet appareil. Non envoyé, aucun crédit débité.",
+    "resume": "Reprendre"
+  },
   "descriptionEditor": {
     "toolbar": "Mise en forme de la description",
+    "editorLabel": "Zone de rédaction de la description",
     "bold": "Gras",
     "list": "Liste",
     "link": "Lien externe",
     "preview": "Aperçu",
     "sample": "Votre texte",
-    "hint": "Sélectionnez du texte puis choisissez sa mise en forme. Les marqueurs restent visibles pendant la saisie ; l’aperçu montre le résultat publié.",
+    "hint": "Sélectionnez du texte puis utilisez les icônes de mise en forme. Le résultat affiché correspond au texte publié.",
     "italic": "Italique",
     "underline": "Souligné",
     "emoji": "Emoji",
@@ -32,6 +51,10 @@
     "confirm": "Confirmer"
   },
   "common": {
+    "recurring": "Récurrent",
+    "recurringDates": "Récurrent · {count, plural, one {# date} other {# dates}}",
+    "priceFree": "Gratuit",
+    "priceUnspecified": "Prix non renseigné",
     "siteName": "ForTheSoul",
     "tagline": "Expériences conscientes en Suisse, choisies avec cœur",
     "nav": {
@@ -386,6 +409,14 @@
     "creditsPaymentUnavailable": "Paiement indisponible pour le moment."
   },
   "eventForm": {
+    "priceType": "Type de tarif",
+    "priceFree": "Gratuit",
+    "priceFlexible": "Prix libre",
+    "priceFixed": "Prix fixe",
+    "priceAmount": "Montant (CHF)",
+    "priceFlexibleHint": "Le participant choisit librement le montant.",
+    "priceFreeHint": "Aucun paiement demandé au participant.",
+    "priceFixedHint": "Pour un prix fixe, indiquez le montant à payer, même si le règlement se fait sur place.",
     "recurrenceCustom": "Dates au choix",
     "customDatesHint": "Ajoutez les autres dates, par exemple le 9 et le 30 octobre. La première date est celle indiquée plus haut.",
     "customDate": "Date supplémentaire {number}",
@@ -415,8 +446,10 @@
     "oneDayHint": "Pour plusieurs rendez-vous, choisissez une répétition régulière ou des dates libres. Les dates sont créées avec la même heure suisse.",
     "arrivalLabel": "Date et heure de début *",
     "departureLabel": "Date et heure de fin *",
-    "durationLabel": "Durée (heures)",
-    "priceLabel": "Prix (CHF — 0 = prix libre)",
+    "durationLabel": "Durée",
+    "durationHoursLabel": "Heures",
+    "durationMinutesLabel": "Minutes",
+    "priceLabel": "Tarif *",
     "languagesLabel": "Langues *",
     "recurrenceLabel": "Récurrence",
     "recurrenceNone": "Événement unique",
@@ -438,7 +471,7 @@
     "submitForValidation": "Déposer pour validation (1 crédit)",
     "newVenueTitle": "Nouveau lieu",
     "close": "Fermer",
-    "newVenueHint": "L'adresse est géolocalisée automatiquement (recherche par distance).",
+    "newVenueHint": "Choisissez une adresse proposée ou saisissez-la manuellement. Didier vérifiera le lieu avec votre événement.",
     "venueNameLabel": "Nom du lieu *",
     "cantonLabel": "Canton (ex. VD)",
     "fullAddressLabel": "Adresse complète *",
@@ -516,6 +549,9 @@
       "analyticsNote": "Ceci est un aperçu interne sans cookies. Les statistiques détaillées de Google Analytics ne sont disponibles que si ce service a été configuré séparément."
     },
     "submissions": {
+      "backToSubmissions": "Retour aux soumissions",
+      "durationDays": "{count, plural, one {# jour} other {# jours}}",
+      "venueReview": "Adresse à vérifier avec l’événement",
       "title": "Soumissions",
       "createEvent": "+ Créer un événement",
       "pending": "En attente ({count})",

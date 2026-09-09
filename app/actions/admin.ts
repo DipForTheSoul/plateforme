@@ -80,6 +80,8 @@ export async function moderateEvent(formData: FormData): Promise<void> {
 
   revalidatePath("/admin/soumissions");
   revalidatePath("/experiences");
+  revalidatePath("/lieux");
+  revalidatePath("/admin/lieux");
 }
 
 /**

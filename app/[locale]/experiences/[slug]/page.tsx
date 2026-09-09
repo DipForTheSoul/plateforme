@@ -204,7 +204,7 @@ export default async function EventPage({
           </p>
         )}
         <p className="mt-4 font-serif text-2xl text-soul-brown">
-          <Price value={event.price} baseCurrency={event.currency} freeLabel={tCommon("free")} />
+          <Price value={event.price} mode={event.price_mode} baseCurrency={event.currency} freeLabel={tCommon("free")} />
         </p>
         {/* Note/avis masqués — module d'avis = Section 3 (arbitrage Victor). */}
       </div>

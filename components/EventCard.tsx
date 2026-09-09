@@ -54,6 +54,11 @@ export async function EventCard({ event }: { event: EventWithRelations }) {
             {formatEventSchedule(event.start_date, event.end_date, locale)}
           </span>
         </div>
+        {(event.series_date_count || event.recurrence || event.parent_event_id) && (
+          <span className="self-start rounded-full bg-soul-violet px-3 py-1 text-xs font-semibold text-white">
+            {event.series_date_count || event.recurrence_count ? t('recurringDates', { count: event.series_date_count ?? event.recurrence_count ?? 1 }) : t('recurring')}
+          </span>
+        )}
         <h3 className="font-serif text-xl leading-snug text-soul-brown">
           {event.title}
         </h3>
@@ -82,7 +87,7 @@ export async function EventCard({ event }: { event: EventWithRelations }) {
             )}
           </span>
           <span className="shrink-0 whitespace-nowrap font-semibold text-soul-brown">
-            <Price value={event.price} baseCurrency={event.currency} freeLabel={t("free")} />
+            <Price value={event.price} mode={event.price_mode} baseCurrency={event.currency} freeLabel={t("free")} />
           </span>
         </div>
       </div>

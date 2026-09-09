@@ -4,6 +4,7 @@ import { render, screen, fireEvent, waitFor, within } from '@testing-library/rea
 import { NextIntlClientProvider } from 'next-intl';
 import fr from '@/messages/fr.json';
 import de from '@/messages/de.json';
+import en from '@/messages/en.json';
 import { EventForm } from '@/components/forms/EventForm';
 import {removeOccurrence} from '@/app/actions/events';
 import { ProfileForm } from '@/app/[locale]/espace-praticien/profil/ProfileForm';
@@ -16,10 +17,30 @@ vi.mock('@/app/actions/venues', () => ({ createVenue: vi.fn() }));
 vi.mock('@/components/forms/ImageUploader', () => ({ ImageUploader: ({images}:{images:string[]}) => <span>Upload {images.length}</span> }));
 const categories = [{ id: '10000000-0000-4000-8000-000000000001', name: 'Yoga', slug: 'yoga-somatique' }] as Category[];
 const practitioner = { id: 'p1', name: 'Initial', bio: 'Ancienne biographie', photos: [], languages: ['fr'], specialties: [], contact: {}, links: {} } as unknown as Practitioner;
-const wrap = (child: React.ReactNode, locale = 'fr') => <NextIntlClientProvider locale={locale} messages={locale === 'fr' ? fr : de}>{child}</NextIntlClientProvider>;
+const messages = { fr, de, en };
+const wrap = (child: React.ReactNode, locale: keyof typeof messages = 'fr') => <NextIntlClientProvider locale={locale} messages={messages[locale]}>{child}</NextIntlClientProvider>;
 const eventForm = (action = vi.fn(async () => ({ error: 'Univers manquant' }))) => <EventForm categories={categories} venues={[]} defaultLanguages={['fr']} action={action} />;
 
 describe('Régressions signalées par Didier', () => {
+  it('exige un tarif explicite, réserve le montant au prix fixe et conserve le brouillon', async () => {
+    const view = render(wrap(eventForm()));
+    const mode = screen.getByLabelText(fr.eventForm.priceType);
+    const amount = screen.getByLabelText(fr.eventForm.priceAmount);
+    expect(mode).toBeRequired();
+    expect(mode).toHaveValue('');
+    expect(amount).toBeDisabled();
+    fireEvent.change(mode, {target:{value:'fixed'}});
+    expect(amount).toBeRequired();
+    fireEvent.change(amount, {target:{value:'79'}});
+    fireEvent.change(mode, {target:{value:'free'}});
+    expect(amount).toBeDisabled();
+    fireEvent.change(mode, {target:{value:'fixed'}});
+    expect(amount).toHaveValue(79);
+    view.unmount();
+    render(wrap(eventForm()));
+    await waitFor(() => expect(screen.getByLabelText(fr.eventForm.priceType)).toHaveValue('fixed'));
+    expect(screen.getByLabelText(fr.eventForm.priceAmount)).toHaveValue(79);
+  });
   it('permet deux suppressions successives de dates sans faux brouillon bloquant',async()=>{
     vi.mocked(removeOccurrence).mockResolvedValue({success:'Date supprimée.',updatedAt:'2026-09-09T12:00:00Z'});
     const event={id:'series',title:'Série de test',start_date:'2026-10-09T09:00:00Z',images:[],languages:['fr'],recurrence:'weekly',recurrence_count:4} as unknown as Event;
@@ -31,13 +52,33 @@ describe('Régressions signalées par Didier', () => {
     fireEvent.click(section.getAllByRole('button',{name:fr.eventForm.removeOccurrence})[1]);
     await waitFor(()=>expect(section.getAllByRole('button',{name:fr.eventForm.removeOccurrence})).toHaveLength(2));
   });
-  it('masque la durée horaire sur plusieurs jours et la retrouve au retour sur une journée', () => {
+  it('masque les sélecteurs de durée sur plusieurs jours et les retrouve au retour sur une journée', () => {
     render(wrap(eventForm()));
-    fireEvent.change(screen.getByLabelText(fr.eventForm.durationLabel), {target:{value:'1.5'}});
+    fireEvent.change(screen.getByLabelText(fr.eventForm.durationHoursLabel), {target:{value:'1'}});
+    fireEvent.change(screen.getByLabelText(fr.eventForm.durationMinutesLabel), {target:{value:'35'}});
     fireEvent.click(screen.getByRole('button',{name:fr.eventForm.multiDay}));
-    expect(screen.queryByRole('spinbutton',{name:fr.eventForm.durationLabel})).not.toBeInTheDocument();
+    expect(screen.getByLabelText(fr.eventForm.durationHoursLabel)).not.toBeVisible();
+    expect(screen.getByLabelText(fr.eventForm.durationMinutesLabel)).toBeDisabled();
     fireEvent.click(screen.getByRole('button',{name:fr.eventForm.oneDay}));
-    expect(screen.getByLabelText(fr.eventForm.durationLabel)).toHaveValue(1.5);
+    expect(screen.getByLabelText(fr.eventForm.durationHoursLabel)).toHaveValue('1');
+    expect(screen.getByLabelText(fr.eventForm.durationMinutesLabel)).toHaveValue('35');
+  });
+  it('décompose la durée enregistrée en édition', () => {
+    const event = { id: 'e1', title: 'Yoga', start_date: '2026-09-11T09:00:00Z', duration_minutes: 95, images: [], languages: ['fr'] } as unknown as Event;
+    render(wrap(<EventForm categories={categories} venues={[]} defaultLanguages={['fr']} event={event} />));
+    expect(screen.getByLabelText(fr.eventForm.durationHoursLabel)).toHaveValue('1');
+    expect(screen.getByLabelText(fr.eventForm.durationMinutesLabel)).toHaveValue('35');
+  });
+  it.each([['de', de.eventForm], ['en', en.eventForm]] as const)('traduit les deux sélecteurs en %s', (locale, labels) => {
+    render(wrap(eventForm(), locale));
+    expect(screen.getByLabelText(labels.durationHoursLabel)).toBeInTheDocument();
+    expect(screen.getByLabelText(labels.durationMinutesLabel)).toBeInTheDocument();
+  });
+  it('reprend un ancien brouillon de durée décimale dans les deux sélecteurs', async () => {
+    sessionStorage.setItem('fts.draft.v1:event:local:new',JSON.stringify({at:Date.now(),fields:{duration_minutes:['1.5']},extra:{images:[],recurrence:'',recurrenceCount:4}}));
+    render(wrap(eventForm()));
+    await waitFor(()=>expect(screen.getByLabelText(fr.eventForm.durationHoursLabel)).toHaveValue('1'));
+    expect(screen.getByLabelText(fr.eventForm.durationMinutesLabel)).toHaveValue('30');
   });
   it('ne transporte pas le brouillon lorsque le compte change sans démontage de la page', () => {
     const form = (owner: string) => wrap(<EventForm draftOwner={owner} categories={categories} venues={[]} defaultLanguages={['fr']} />);

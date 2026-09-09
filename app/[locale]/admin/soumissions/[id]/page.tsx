@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getCategories, getVenues } from "@/lib/queries";
 import { getTranslations } from "next-intl/server";
 import type { Event } from "@/types/database";
+import { Link } from "@/i18n/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +42,9 @@ export default async function AdminEditEventPage({
 
   return (
     <div className="flex flex-col gap-6">
+      <Link href="/admin/soumissions" className="self-start text-soul-violet underline">
+        ← {t("backToSubmissions")}
+      </Link>
       <h2 className="text-xl text-soul-brown">{t("editEvent", { title: event.title })}</h2>
       <EventForm
         draftOwner={profile.id}
@@ -52,6 +56,9 @@ export default async function AdminEditEventPage({
         action={adminUpdateEvent.bind(null, event.id)}
         occurrences={occurrenceRows ?? []}
       />
+      <Link href="/admin/soumissions" className="self-start text-soul-violet underline">
+        ← {t("backToSubmissions")}
+      </Link>
     </div>
   );
 }

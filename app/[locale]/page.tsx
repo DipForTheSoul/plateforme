@@ -5,6 +5,8 @@ import { EventCard } from "@/components/EventCard";
 import { JsonLd } from "@/components/JsonLd";
 import { categoryVisual } from "@/lib/gradients";
 import { getApprovedEvents, getCategories, getTopEvents } from "@/lib/queries";
+import { nextHomeExperiences } from "@/lib/home-events";
+import { groupEventSeries } from '@/lib/event-series';
 import { organizationJsonLd } from "@/lib/seo";
 import { ArrowRight, MapPin, Plus, Search, ShieldCheck, Sparkles } from "lucide-react";
 
@@ -20,12 +22,14 @@ export default async function HomePage({
   const t = await getTranslations("home");
   const tCat = await getTranslations("categories");
 
-  const [topEvents, upcoming, categories] = await Promise.all([
+  const [topOccurrences, upcoming, categories] = await Promise.all([
     getTopEvents(4),
     getApprovedEvents(),
     getCategories(),
   ]);
-  const upcomingNonTop = upcoming.filter((e) => !e.is_top).slice(0, 8);
+  const topEvents = groupEventSeries(topOccurrences, upcoming);
+  const featuredSeries = new Set(topEvents.map(e => e.parent_event_id ?? e.id));
+  const upcomingNonTop = nextHomeExperiences(upcoming.filter(e => !featuredSeries.has(e.parent_event_id ?? e.id)));
 
   const badges = [
     { icon: ShieldCheck, label: t("heroBadge1") },

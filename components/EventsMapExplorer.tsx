@@ -13,6 +13,7 @@ export interface MapItem {
   regionLabel?: string;
   priceLabel: string;
   dateLabel: string;
+  recurrenceLabel?: string;
   image?: string;
   featured?: boolean;
   lat: number;
@@ -79,8 +80,9 @@ export function EventsMapExplorer({
         const venue = it.venueName
           ? `<div style="color:#9e7c52;font-size:12px;">${escapeHtml(it.venueName)}</div>`
           : "";
+        const recurrence = it.recurrenceLabel ? `<div style="background:#604ca0;color:white;border-radius:999px;padding:3px 8px;display:inline-block;margin-top:6px">${escapeHtml(it.recurrenceLabel)}</div>` : '';
         marker.bindPopup(
-          `<a href="${escapeHtml(hrefPrefix)}/experiences/${encodeURIComponent(it.slug)}" style="font-family:serif;font-weight:600;color:#443420;font-size:14px;text-decoration:none;">${escapeHtml(it.title)}</a>${venue}<div style="color:#9e7c52;font-size:12px;margin-top:2px;">${escapeHtml(it.dateLabel)} · ${escapeHtml(it.priceLabel)}</div>`
+          `<a href="${escapeHtml(hrefPrefix)}/experiences/${encodeURIComponent(it.slug)}" style="font-family:serif;font-weight:600;color:#443420;font-size:14px;text-decoration:none;">${escapeHtml(it.title)}</a>${venue}<div style="color:#9e7c52;font-size:12px;margin-top:2px;">${escapeHtml(it.dateLabel)} · ${escapeHtml(it.priceLabel)}</div>${recurrence}`
         );
         marker.on("click", () => {
           setSelected(it.id);
@@ -156,6 +158,7 @@ export function EventsMapExplorer({
               <h3 className="truncate font-serif text-base leading-tight text-soul-brown">
                 {it.title}
               </h3>
+              {it.recurrenceLabel && <span className="my-1 inline-block rounded-full bg-soul-violet px-2 py-1 text-xs font-semibold text-white">{it.recurrenceLabel}</span>}
               <p className="truncate text-xs text-soul-bronze">
                 {it.venueName ?? it.regionLabel ?? ""}
               </p>

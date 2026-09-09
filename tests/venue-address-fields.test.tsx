@@ -1,0 +1,33 @@
+import {fireEvent, render, screen, waitFor} from '@testing-library/react';
+import {expect, it, vi} from 'vitest';
+import {NextIntlClientProvider} from 'next-intl';
+import {VenueAddressFields} from '@/components/forms/VenueAddressFields';
+import fr from '@/messages/fr.json';
+const suggestion = {address: 'Rue Charles-Galland 2 1206 Genève', city: 'Genève', canton: 'GE', country: 'CH', lat:46.19936, lng:6.15164};
+const view = () => render(<NextIntlClientProvider locale="fr" messages={fr}><form aria-label="Lieu"><VenueAddressFields/></form></NextIntlClientProvider>);
+it('remplit les champs par sélection clavier et invalide le point après correction', async () => {
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(Response.json({suggestions: [suggestion]})));
+  view(); const address = screen.getByRole('combobox');
+  fireEvent.change(address, {target: {value: 'Charles-Galland'}});
+  await screen.findByRole('option');
+  fireEvent.keyDown(address, {key:'ArrowDown'}); fireEvent.keyDown(address, {key:'Enter'});
+  expect(address).toHaveValue(suggestion.address);
+  expect(screen.getByLabelText(fr.eventForm.cityLabel)).toHaveValue('Genève');
+  expect(screen.getByLabelText(fr.eventForm.cantonLabel)).toHaveValue('GE');
+  const form = screen.getByRole('form') as HTMLFormElement;
+  expect(new FormData(form).get('lat')).toBe('46.19936');
+  fireEvent.change(address, {target: {value:'Une autre adresse'}});
+  expect(new FormData(form).get('lat')).toBe('');
+});
+it('permet la saisie manuelle sans carte ni coordonnées, même en panne', async () => {
+  vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
+  const {container} = view();
+  fireEvent.change(screen.getByRole('combobox'), {target:{value:'Adresse introuvable'}});
+  await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(fr.addressSearch.error));
+  fireEvent.click(screen.getByRole('button', {name:fr.addressSearch.manual}));
+  expect(screen.getByRole('combobox')).toHaveValue('Adresse introuvable');
+  expect(container.querySelector('.leaflet-container')).toBeNull();
+  const data = new FormData(screen.getByRole('form') as HTMLFormElement);
+  expect(data.get('address_mode')).toBe('manual'); expect(data.get('lat')).toBe('');
+  expect(screen.getByText(fr.addressSearch.manualHint)).toBeInTheDocument();
+});

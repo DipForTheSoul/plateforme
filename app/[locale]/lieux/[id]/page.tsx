@@ -17,7 +17,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const venue = await getVenueById(id);
-  return venue
+  return venue && venue.review_status !== 'pending'
     ? { title: venue.name, description: venue.description?.slice(0, 160) }
     : { title: "ForTheSoul" };
 }
@@ -33,7 +33,7 @@ export default async function VenuePage({
   const t = await getTranslations("venues");
 
   const venue = await getVenueById(id);
-  if (!venue) notFound();
+  if (!venue || venue.review_status === 'pending') notFound();
 
   const supabase = await createClient();
   const { data } = await supabase

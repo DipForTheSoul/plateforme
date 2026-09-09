@@ -5,6 +5,7 @@ import { z } from "zod";
 import { webUrlSchema } from '@/lib/web-url';
 import { createClient } from "@/lib/supabase/server";
 import { geocodeAddress } from "@/lib/geocode";
+import {readVenuePoint} from '@/lib/address-search';
 import { getCurrentProfile } from "@/lib/auth";
 import type { ActionState } from "@/app/actions/events";
 
@@ -48,12 +49,17 @@ export async function createVenue(
   if (!parsed.success) return { error: "Nom et adresse complète requis." };
   const input = parsed.data;
 
-  // Géocodage à la création (Nominatim, gratuit, sans clé).
-  const geo = await geocodeAddress(input.address, input.country);
-  if (!geo) {
+  let geo;
+  try {geo = readVenuePoint(formData);}
+  catch {return {error: 'Adresse sélectionnée invalide. Sélectionnez-la à nouveau ou utilisez la saisie manuelle.'};}
+  const manual = formData.get('address_mode') === 'manual';
+  // Manual entry never requires locating a pin or waiting for a geocoder.
+  if (manual) geo = null;
+  else if (!geo) geo = await geocodeAddress([input.address, input.city].filter(Boolean).join(', '), input.country);
+  if (!geo && !manual) {
     return {
       error:
-        "Adresse introuvable ou carte momentanément indisponible. Vérifiez rue, code postal et ville, puis réessayez ; votre saisie est conservée.",
+        "Adresse introuvable. Choisissez la saisie manuelle : Didier vérifiera l’adresse avec votre événement. Votre saisie est conservée.",
     };
   }
 
@@ -62,8 +68,9 @@ export async function createVenue(
     .insert({
       name: input.name,
       address: input.address,
-      lat: geo.lat,
-      lng: geo.lng,
+      lat: geo?.lat ?? null,
+      lng: geo?.lng ?? null,
+      review_status: (await getCurrentProfile())?.role === 'admin' ? 'approved' : 'pending',
       city: input.city,
       canton: input.canton,
       country: input.country,
@@ -79,7 +86,7 @@ export async function createVenue(
   if (error || !data) return { error: "Enregistrement du lieu impossible." };
 
   revalidatePath("/admin/lieux");
-  return { success: "Lieu créé et géocodé.", venueId: data.id };
+  return { success: "Lieu enregistré.", venueId: data.id };
 }
 
 /**
@@ -111,16 +118,17 @@ export async function adminUpdateVenue(
   const {data:existing,error:readError} = await supabase.from('venues').select('address,country,lat,lng,contact').eq('id',venueId).maybeSingle();
   if (readError || !existing) return {error: 'Lieu introuvable ou momentanément inaccessible.'};
   const unchanged = existing.address === input.address && existing.country === input.country && existing.lat != null && existing.lng != null;
-  const geo = unchanged ? {lat:existing.lat,lng:existing.lng} : await geocodeAddress(input.address,input.country);
-  if (!geo) return { error: "Adresse introuvable ou carte momentanément indisponible. Votre saisie est conservée." };
+  const geo = unchanged ? {lat:existing.lat,lng:existing.lng} : await geocodeAddress([input.address,input.city].filter(Boolean).join(', '),input.country);
+  // Didier may correct a manually entered place even when no coordinates exist.
+  // Never preserve stale coordinates after changing the address.
 
   const { error } = await supabase
     .from("venues")
     .update({
       name: input.name,
       address: input.address,
-      lat: geo.lat,
-      lng: geo.lng,
+      lat: geo?.lat ?? null,
+      lng: geo?.lng ?? null,
       city: input.city,
       canton: input.canton,
       country: input.country,

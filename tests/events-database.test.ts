@@ -14,7 +14,7 @@ const sql = (name: string) => readFileSync(new URL(`../supabase/migrations/${nam
 const actor = (id: string) => db.query("select set_config('request.jwt.claim.sub', $1, false)", [id]);
 function input(changes: Record<string,string> = {}) {
   const fd = new FormData();
-  Object.entries({title:'Love Lounge',description:'Une description suffisamment longue pour cette expérience.',category_ids:category,start_date:'2026-10-09T11:00',languages:'fr',recurrence:'weekly',recurrence_count:'4', ...changes}).forEach(([k,v])=>fd.set(k,v));
+  Object.entries({title:'Love Lounge',description:'Une description suffisamment longue pour cette expérience.',category_ids:category,start_date:'2026-10-09T11:00',languages:'fr',price_mode:'flexible',recurrence:'weekly',recurrence_count:'4', ...changes}).forEach(([k,v])=>fd.set(k,v));
   const parsed = parseEventForm(fd);
   if (!parsed.success) throw parsed.error;
   return {...parsed.data, occurrences:occurrenceSchedule(parsed.data)};
@@ -46,12 +46,57 @@ beforeAll(async () => {
   await db.exec(sql('20260907180725_audit_series_root_deletion.sql'));
   await db.exec(sql('20260907181707_audit_admin_bootstrap.sql'));
   await db.exec(sql('20260908170656_client_external_event_link.sql'));
+  await db.exec(sql('20260909145000_venue_event_review.sql'));
+  await db.exec(sql('20260909174000_event_price_mode.sql'));
   // Supabase grants API roles table access, then RLS restricts individual rows.
   await db.exec('grant usage on schema public,auth to anon,authenticated; grant all on all tables in schema public to anon,authenticated;');
 }, 30000);
 afterAll(async()=>{ await db?.close(); });
 
 describe('Transactions réelles PostgreSQL — publication et crédits', () => {
+  it('propage les trois modes tarifaires sans crédit supplémentaire et refuse une incohérence SQL', async () => {
+    await actor(admin);
+    const first=await save(input({price_mode:'fixed',price:'79'}));
+    const rows=()=>db.query<{price_mode:string;price:string}>('select price_mode,price from events where id=$1 or parent_event_id=$1',[first.id]);
+    expect((await rows()).rows).toHaveLength(4);
+    expect((await rows()).rows.every(r=>r.price_mode==='fixed' && Number(r.price)===79)).toBe(true);
+    for(const mode of ['free','flexible']){
+      await save(input({price_mode:mode}),first.id);
+      expect((await rows()).rows.every(r=>r.price_mode===mode && Number(r.price)===0)).toBe(true);
+    }
+    await expect(save({...input({price_mode:'fixed',price:'79'}),price:0},first.id)).rejects.toThrow('Tarif invalide');
+    await actor(user);await db.exec('set role authenticated');
+    try{
+      await db.query("update events set price_mode='free' where id=$1",[first.id]);
+      expect((await db.query('select status from events where id=$1',[first.id])).rows[0]).toEqual({status:'pending'});
+    }finally{await db.exec('reset role');await actor(user);}
+  });
+  it('garde le lieu privé puis le valide dans la transaction de validation de l’événement', async () => {
+    await actor(user); await db.exec('set role authenticated');
+    let venueId: string;
+    try {
+      const result = await db.query<{id:string;review_status:string}>("insert into venues(name,address,created_by,review_status) values ('Lieu manuel QA','Adresse QA à vérifier',$1,'approved') returning id,review_status",[user]);
+      venueId = result.rows[0].id; expect(result.rows[0].review_status).toBe('pending');
+    } finally {await db.exec('reset role');}
+    await actor(other);await db.exec('set role authenticated');
+    try {expect((await db.query('select id from venues where id=$1',[venueId])).rows).toHaveLength(0);}
+    finally {await db.exec('reset role');}
+    await actor(user);
+    // Create as admin only to avoid consuming the balances used by existing tests;
+    // use a pending event to exercise the real later moderation UPDATE.
+    await actor(admin); const event = await save(input({venue_id:venueId}));
+    await db.query("update events set status='pending' where id=$1",[event.id]);
+    await db.query("update venues set review_status='pending' where id=$1",[venueId]);
+    await db.exec('set role anon');
+    try {await actor('');expect((await db.query('select id from venues where id=$1',[venueId])).rows).toHaveLength(0);}
+    finally {await db.exec('reset role');}
+    await actor(admin); await db.exec('set role authenticated');
+    try {await db.query("update events set status='approved' where id=$1",[event.id]);}
+    finally {await db.exec('reset role');}
+    await actor('');await db.exec('set role anon');
+    try {expect((await db.query('select review_status,lat,lng from venues where id=$1',[venueId])).rows).toEqual([{review_status:'approved',lat:null,lng:null}]);}
+    finally {await db.exec('reset role'); await actor(user);}
+  });
   it('rejette un lien dangereux dans la transaction et modère une modification directe du lien', async()=>{
     await actor(admin);
     const first=await save(input({external_url:'example.ch'}));

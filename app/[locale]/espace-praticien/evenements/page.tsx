@@ -2,6 +2,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { readPages } from '@/lib/read-pages';
 import { Link } from "@/i18n/navigation";
 import { StatusBadge } from "@/components/StatusBadge";
+import { NewEventDraftCard } from "@/components/forms/NewEventDraftCard";
 import { getCurrentPractitioner } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { deleteEvent } from "@/app/actions/events";
@@ -54,6 +55,8 @@ export default async function MyEventsPage({
           </Link>
         )}
       </div>
+
+      <NewEventDraftCard owner={practitioner.id} />
 
       {events.length === 0 && (
         <p className="text-sm text-soul-bronze">

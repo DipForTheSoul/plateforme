@@ -1,12 +1,31 @@
 {
+  "addressSearch": {
+    "placeholder": "Start typing the street, number and town…",
+    "suggestions": "Address suggestions",
+    "hint": "Swiss address suggestions from 4 characters. Searches are sent to swisstopo.",
+    "loading": "Searching addresses…",
+    "empty": "No address found. You can enter it manually.",
+    "error": "Suggestions unavailable. You can enter the address manually.",
+    "manual": "Address not found? Enter it manually",
+    "automatic": "Back to suggestions",
+    "manualHint": "Enter the number, street, postcode and town. Didier will check the address when approving your experience.",
+    "selected": "Address selected. Didier will check it along with your experience."
+  },
+  "eventDraftCard": {
+    "badge": "Draft",
+    "untitled": "Untitled experience",
+    "notice": "Saved for 7 days after your last change in this browser on this device. Not submitted, no credits deducted.",
+    "resume": "Resume"
+  },
   "descriptionEditor": {
     "toolbar": "Description formatting",
+    "editorLabel": "Description editing area",
     "bold": "Bold",
     "list": "List",
     "link": "External link",
     "preview": "Preview",
     "sample": "Your text",
-    "hint": "Select text, then choose its formatting. Markers remain visible while editing; Preview shows the published result.",
+    "hint": "Select text, then use the formatting icons. The displayed result matches the published text.",
     "italic": "Italic",
     "underline": "Underline",
     "emoji": "Emoji",
@@ -32,6 +51,10 @@
     "confirm": "Confirm"
   },
   "common": {
+    "recurring": "Recurring",
+    "recurringDates": "Recurring · {count, plural, one {# date} other {# dates}}",
+    "priceFree": "Free",
+    "priceUnspecified": "Price not specified",
     "siteName": "ForTheSoul",
     "tagline": "Conscious experiences in Switzerland, chosen with heart",
     "nav": {
@@ -386,6 +409,14 @@
     "creditsPaymentUnavailable": "Payment unavailable at the moment."
   },
   "eventForm": {
+    "priceType": "Price type",
+    "priceFree": "Free",
+    "priceFlexible": "Pay what you want",
+    "priceFixed": "Fixed price",
+    "priceAmount": "Amount (CHF)",
+    "priceFlexibleHint": "Participants choose how much to pay.",
+    "priceFreeHint": "No payment is required.",
+    "priceFixedHint": "For a fixed price, enter the amount due, even when payment is made on site.",
     "recurrenceCustom": "Choose individual dates",
     "customDatesHint": "Add other dates, such as 9 and 30 October. The first date is the start date entered above.",
     "customDate": "Additional date {number}",
@@ -415,8 +446,10 @@
     "oneDayHint": "For multiple sessions, choose a regular repeat or individual dates. The Swiss local time stays the same.",
     "arrivalLabel": "Start date and time *",
     "departureLabel": "End date and time *",
-    "durationLabel": "Duration (hours)",
-    "priceLabel": "Price (CHF — 0 = pay what you want)",
+    "durationLabel": "Duration",
+    "durationHoursLabel": "Hours",
+    "durationMinutesLabel": "Minutes",
+    "priceLabel": "Pricing *",
     "languagesLabel": "Languages *",
     "recurrenceLabel": "Recurrence",
     "recurrenceNone": "One-off event",
@@ -438,7 +471,7 @@
     "submitForValidation": "Submit for review (1 credit)",
     "newVenueTitle": "New venue",
     "close": "Close",
-    "newVenueHint": "The address is geolocated automatically (search by distance).",
+    "newVenueHint": "Choose a suggested address or enter it manually. Didier will check the venue along with your experience.",
     "venueNameLabel": "Venue name *",
     "cantonLabel": "Canton (e.g. VD)",
     "fullAddressLabel": "Full address *",
@@ -516,6 +549,9 @@
       "analyticsNote": "This is an internal overview without cookies. Detailed Google Analytics statistics are only available if that service has been configured separately."
     },
     "submissions": {
+      "backToSubmissions": "Back to submissions",
+      "durationDays": "{count, plural, one {# day} other {# days}}",
+      "venueReview": "Check address with the experience",
       "title": "Submissions",
       "createEvent": "+ Create an event",
       "pending": "Pending ({count})",

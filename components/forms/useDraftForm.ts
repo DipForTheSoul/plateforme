@@ -44,6 +44,7 @@ export function useDraftForm(key: string, extra: Record<string, unknown> = EMPTY
       const raw = JSON.stringify({ at: Date.now(), fields, extra: savedExtra });
       storage().setItem(storageKey, raw);
       lastStored.current = raw;
+      window.dispatchEvent(new Event('fts:draft-changed'));
       setHasDraft(true);
       setStorageError(false);
     }
@@ -64,7 +65,14 @@ export function useDraftForm(key: string, extra: Record<string, unknown> = EMPTY
             const values = draft.fields[element.name];
             if (!Array.isArray(values) || !values.every(v => typeof v === 'string') || ['password', 'file', 'hidden'].includes(element.type)) continue;
             if (element instanceof HTMLInputElement && ['checkbox', 'radio'].includes(element.type)) element.checked = values.includes(element.value);
-            else element.value = values[0] ?? '';
+            else {
+              element.value = values[0] ?? '';
+              // Rich editors keep a visible contenteditable surface synchronized with
+              // their native form field. Notify only those fields after draft restore.
+              if (element instanceof HTMLTextAreaElement && element.dataset.richEditorBacking === 'true') {
+                element.dispatchEvent(new Event('input', { bubbles: true }));
+              }
+            }
           }
           dirty.current = true;
           // Hydrate status from external browser storage, unavailable during SSR.
@@ -116,6 +124,7 @@ export function useDraftForm(key: string, extra: Record<string, unknown> = EMPTY
       storage().removeItem(storageKey);
       sessionStorage.removeItem(storageKey);
       lastStored.current = null;
+      window.dispatchEvent(new Event('fts:draft-changed'));
       dirty.current = false;
       // A confirmed server operation may also update controlled form state.
       // Its next render is a saved baseline, not a fresh user draft.

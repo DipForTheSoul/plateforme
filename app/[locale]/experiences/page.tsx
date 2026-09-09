@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { parseSearchFilters } from "@/lib/search-filters";
 import { toEventLocalInput } from "@/lib/event-time";
 import { formatEventSchedule } from '@/lib/event-display';
+import { groupEventSeries } from '@/lib/event-series';
+import { eventPriceMode, priceLabelKey } from '@/lib/event-price';
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { EventCard } from "@/components/EventCard";
 import { EventsMapExplorer, type MapItem } from "@/components/EventsMapExplorer";
@@ -62,12 +64,13 @@ export default async function ExperiencesPage({
 
   const filters = parseSearchFilters({ ...sp });
 
-  const [events, allEvents, categories, practitioners] = await Promise.all([
+  const [matchingEvents, allEvents, categories, practitioners] = await Promise.all([
     getApprovedEvents(filters),
     getApprovedEvents(), // pour pastiller le calendrier + régions disponibles
     getCategories(),
     getApprovedPractitioners(),
   ]);
+  const events = groupEventSeries(matchingEvents, allEvents);
 
   const eventDays = [...new Set(allEvents.map((e) => toEventLocalInput(e.start_date).slice(0, 10)))];
 
@@ -130,7 +133,8 @@ export default async function ExperiencesPage({
                     title: e.title,
                     venueName: e.venue.name,
                     regionLabel: e.venue.canton ?? e.venue.country,
-                    priceLabel: formatPrice(e.price, e.currency, tCommon("free")),
+                    priceLabel: eventPriceMode(e.price, e.price_mode) === 'fixed' ? formatPrice(e.price, e.currency) : tCommon(priceLabelKey(eventPriceMode(e.price, e.price_mode))),
+                    recurrenceLabel: e.series_date_count ? tCommon('recurringDates', { count: e.series_date_count }) : undefined,
                     dateLabel: formatEventSchedule(e.start_date, e.end_date, currentLocale),
                     image: e.images[0],
                     featured: e.is_top,

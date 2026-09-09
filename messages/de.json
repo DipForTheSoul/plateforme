@@ -1,12 +1,31 @@
 {
+  "addressSearch": {
+    "placeholder": "Strasse, Hausnummer und Ort eingeben…",
+    "suggestions": "Adressvorschläge",
+    "hint": "Schweizer Adressvorschläge ab 4 Zeichen. Die Suche wird an swisstopo übermittelt.",
+    "loading": "Adressen werden gesucht…",
+    "empty": "Keine Adresse gefunden. Sie können sie manuell eingeben.",
+    "error": "Vorschläge nicht verfügbar. Sie können die Adresse manuell eingeben.",
+    "manual": "Adresse nicht gefunden? Manuell eingeben",
+    "automatic": "Zurück zu den Vorschlägen",
+    "manualHint": "Hausnummer, Strasse, Postleitzahl und Ort angeben. Didier prüft die Adresse bei der Freigabe Ihres Erlebnisses.",
+    "selected": "Adresse ausgewählt. Didier prüft sie zusammen mit Ihrem Erlebnis."
+  },
+  "eventDraftCard": {
+    "badge": "Entwurf",
+    "untitled": "Erlebnis ohne Titel",
+    "notice": "Nach der letzten Änderung 7 Tage in diesem Browser auf diesem Gerät gespeichert. Nicht eingereicht, kein Guthaben abgezogen.",
+    "resume": "Fortsetzen"
+  },
   "descriptionEditor": {
     "toolbar": "Beschreibung formatieren",
+    "editorLabel": "Eingabebereich für die Beschreibung",
     "bold": "Fett",
     "list": "Liste",
     "link": "Externer Link",
     "preview": "Vorschau",
     "sample": "Ihr Text",
-    "hint": "Markieren Sie Text und wählen Sie die Formatierung. Beim Schreiben bleiben die Zeichen sichtbar; die Vorschau zeigt das veröffentlichte Ergebnis.",
+    "hint": "Markieren Sie Text und verwenden Sie die Formatierungssymbole. Die Anzeige entspricht dem veröffentlichten Text.",
     "italic": "Kursiv",
     "underline": "Unterstrichen",
     "emoji": "Emoji",
@@ -32,6 +51,10 @@
     "confirm": "Bestätigen"
   },
   "common": {
+    "recurring": "Wiederkehrend",
+    "recurringDates": "Wiederkehrend · {count, plural, one {# Termin} other {# Termine}}",
+    "priceFree": "Kostenlos",
+    "priceUnspecified": "Preis nicht angegeben",
     "siteName": "ForTheSoul",
     "tagline": "Bewusste Erlebnisse in der Schweiz, mit Herz ausgewählt",
     "nav": {
@@ -386,6 +409,14 @@
     "creditsPaymentUnavailable": "Zahlung derzeit nicht verfügbar."
   },
   "eventForm": {
+    "priceType": "Preisart",
+    "priceFree": "Kostenlos",
+    "priceFlexible": "Freier Preis",
+    "priceFixed": "Festpreis",
+    "priceAmount": "Betrag (CHF)",
+    "priceFlexibleHint": "Teilnehmende wählen den Betrag selbst.",
+    "priceFreeHint": "Es wird keine Zahlung verlangt.",
+    "priceFixedHint": "Bei einem Festpreis geben Sie den Betrag an, auch wenn vor Ort bezahlt wird.",
     "recurrenceCustom": "Individuelle Termine",
     "customDatesHint": "Weitere Termine hinzufügen, z. B. den 9. und 30. Oktober. Der erste Termin ist das oben angegebene Datum.",
     "customDate": "Zusätzlicher Termin {number}",
@@ -415,8 +446,10 @@
     "oneDayHint": "Wählen Sie für mehrere Termine eine regelmäßige Wiederholung oder freie Termine. Die Schweizer Uhrzeit bleibt gleich.",
     "arrivalLabel": "Startdatum und Uhrzeit *",
     "departureLabel": "Enddatum und Uhrzeit *",
-    "durationLabel": "Dauer (Stunden)",
-    "priceLabel": "Preis (CHF — 0 = freier Preis)",
+    "durationLabel": "Dauer",
+    "durationHoursLabel": "Stunden",
+    "durationMinutesLabel": "Minuten",
+    "priceLabel": "Preisgestaltung *",
     "languagesLabel": "Sprachen *",
     "recurrenceLabel": "Wiederholung",
     "recurrenceNone": "Einmaliges Ereignis",
@@ -438,7 +471,7 @@
     "submitForValidation": "Zur Freigabe einreichen (1 Guthaben)",
     "newVenueTitle": "Neuer Ort",
     "close": "Schließen",
-    "newVenueHint": "Die Adresse wird automatisch geolokalisiert (Umkreissuche).",
+    "newVenueHint": "Wählen Sie eine vorgeschlagene Adresse oder geben Sie sie manuell ein. Didier prüft den Ort zusammen mit Ihrem Erlebnis.",
     "venueNameLabel": "Name des Orts *",
     "cantonLabel": "Kanton (z. B. VD)",
     "fullAddressLabel": "Vollständige Adresse *",
@@ -516,6 +549,9 @@
       "analyticsNote": "Dies ist eine interne Übersicht ohne Cookies. Detaillierte Google-Analytics-Statistiken sind nur verfügbar, wenn dieser Dienst separat eingerichtet wurde."
     },
     "submissions": {
+      "backToSubmissions": "Zurück zu den Einreichungen",
+      "durationDays": "{count, plural, one {# Tag} other {# Tage}}",
+      "venueReview": "Adresse mit dem Erlebnis prüfen",
       "title": "Einreichungen",
       "createEvent": "+ Veranstaltung erstellen",
       "pending": "Ausstehend ({count})",
