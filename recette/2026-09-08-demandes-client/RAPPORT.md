@@ -1,5 +1,7 @@
 # Recette des demandes email Didier
 
+> Transmission ultérieure du 9 septembre : le commit applicatif `7fba090` a été poussé sur la branche client et déployé en Preview protégée, avec contrôles GitHub réussis. Le rapport ci-dessous conserve l’état de clôture de la recette locale. Pour reprendre et connaître les blocages distants, lire d’abord [REPRISE-RODRIGUE.md](../../REPRISE-RODRIGUE.md).
+
 Recette locale terminée le 9 septembre 2026, sur la branche `codex/audit-parcours-20260907`, à partir de `9460277`. **Développé et vérifié localement ; non publié sur main, Vercel ou Supabase client.**
 
 Victor confirme que les six pages PDF constituent le lot complet ; les autres pages sont d’anciennes demandes. Ajouts autorisés : description enrichie et lien externe dédié, titre simple selon la proposition acceptée. Registre source : [analyse D01–D13](../../ANALYSE-DEMANDES-CLIENT-2026-09-08.md).
