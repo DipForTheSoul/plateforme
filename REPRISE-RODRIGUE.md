@@ -1,6 +1,14 @@
-# ForTheSoul — reprise par Rodrigue et son IA
+# ForTheSoul — reprise et tests manuels par Rodrigue
 
 État transmis le 9 septembre 2026. Commencer ici avant les anciens rapports.
+
+## Consigne de Victor — qui fait les tests ?
+
+**Rodrigue effectue lui-même les tests manuels et les valide personnellement. La recette n’est pas à déléguer à son IA.** Il se connecte avec chaque rôle, saisit les données, clique sur les boutons, observe le résultat et rejoue les essais après correction.
+
+L’IA peut aider à préparer l’environnement, expliquer le code, diagnostiquer et corriger les défauts signalés par Rodrigue. Elle ne pilote pas le navigateur à sa place pour cette recette et ne coche pas les essais comme réussis sans résultat confirmé par lui. Les tests automatisés restent une preuve technique complémentaire, pas une validation manuelle.
+
+Cette consigne remplace toute formulation antérieure suggérant de confier la recette à l’IA. Les tests déjà réalisés sur le Mac de Victor restent des preuves historiques ; **la nouvelle passe manuelle appartient à Rodrigue**.
 
 ## Point de reprise
 
@@ -19,6 +27,37 @@
 La prévisualisation est protégée par la connexion Vercel du client. La session de Victor ne dispose pas de cet accès, ni de l’accès permettant d’administrer le Supabase client. Ses comptes cloud connectés concernent d’autres projets : aucun projet en double n’a été créé. La configuration et les migrations de la base distante restent **à vérifier**, pas présumées appliquées.
 
 Ce fichier peut recevoir un commit documentaire après `7fba090`. Reprendre le dernier état de la branche, en conservant ce commit applicatif dans son historique. Vérifier les références distantes au moment de la reprise : les valeurs ci-dessus sont un état daté, pas un verrou sur le travail ultérieur.
+
+## Identifiants pour les tests manuels
+
+### Laboratoire local uniquement
+
+Après avoir recréé le laboratoire sur son Mac avec [QA-LOCAL.md](QA-LOCAL.md), Rodrigue ouvre **http://localhost:3100/connexion**.
+
+| Rôle à tester | Adresse de connexion |
+| --- | --- |
+| Administrateur | `admin@forthesoul.test` |
+| Praticien approuvé | `praticien@forthesoul.test` |
+| Autre praticien — contrôle de séparation des comptes | `autre@forthesoul.test` |
+| Praticien en attente de validation | `nouveau@forthesoul.test` |
+| Visiteur / participant | `visiteur@forthesoul.test` |
+
+**Mot de passe commun, fictif et exclusivement local : `Fts-QA-Local-2026!`**. Les adresses et ce mot de passe sont ceux des comptes créés par le seed de recette ; si un mot de passe a ensuite été changé localement, utiliser sa nouvelle valeur. Pour le parcours public anonyme, se déconnecter ou ouvrir une fenêtre privée. Les favoris publics ne nécessitent pas de compte.
+
+Le serveur de Victor n’est pas accessible depuis le Mac de Rodrigue : `localhost` désigne l’ordinateur utilisé. Ces identifiants ne sont **pas** des accès à la Preview Vercel ou à la production. Ce mot de passe est publié dans le dépôt : ne jamais le réutiliser en ligne.
+
+### Tests sur la version en ligne
+
+Deux accès distincts sont nécessaires : le compte Vercel client ouvre la Preview protégée ; les comptes de l’application donnent ensuite les rôles administrateur/praticien/visiteur. **Les comptes applicatifs distants de recette n’ont pas été créés par Victor ; aucun mot de passe distant n’est fourni dans ce document.**
+
+Avant ses essais en ligne, Rodrigue doit :
+
+1. Vérifier que la Preview utilise une base de test isolée, avec les migrations requises, conformément aux étapes 2 et 3 ci-dessous.
+2. Créer ou identifier les comptes de recette correspondant aux rôles du tableau, avec des adresses de test qu’il contrôle et des mots de passe uniques. Prévoir un solde fictif pour les essais de publication et vérifier les états approuvé/en attente.
+3. Conserver ces accès dans un gestionnaire de mots de passe ou un canal privé, **pas dans ce dépôt public**.
+4. Se connecter lui-même avec chaque compte et vérifier le rôle affiché avant de commencer les parcours.
+
+Si ces accès ne sont pas prêts, les tests en ligne sont marqués « bloqués — comptes/environnement à préparer », pas « réussis ». Il peut effectuer la passe locale avec les identifiants ci-dessus en attendant ; elle ne remplace pas la validation de l’environnement distant.
 
 ## Ce qui est déjà traité
 
@@ -74,9 +113,11 @@ Les fichiers `supabase/config.toml`, les données de seed QA et les lanceurs `sc
 
 **Terminé quand :** migrations appliquées et vérifiées sur la cible de test, sauvegarde d’une expérience opérationnelle, crédits et séries conservés, droits vérifiés. Un build Vercel vert n’est pas ce contrôle.
 
-## Étape 4 — recette dans le navigateur de Rodrigue
+## Étape 4 — Rodrigue teste personnellement dans son navigateur
 
-Lire le [rapport du lot Didier](recette/2026-09-08-demandes-client/RAPPORT.md), puis reprendre les lignes de [COUVERTURE.csv](recette/2026-09-08-demandes-client/COUVERTURE.csv). Pour chaque page modifiée, inventorier chaque bouton, lien, champ et action conditionnelle ; donner à chacun un résultat et une preuve. Une lecture du code ou un test unitaire ne compte pas comme clic navigateur.
+Rodrigue lit le [rapport du lot Didier](recette/2026-09-08-demandes-client/RAPPORT.md), puis reprend les lignes de [COUVERTURE.csv](recette/2026-09-08-demandes-client/COUVERTURE.csv) dans une nouvelle grille pour sa propre passe, sans écraser les preuves historiques. Pour chaque page modifiée, il inventorie chaque bouton, lien, champ et action conditionnelle, puis les manipule lui-même. Une lecture du code, un test unitaire ou un parcours piloté par l’IA ne compte pas comme sa validation manuelle.
+
+Pour chaque essai, il renseigne : date, URL et version testées, compte/rôle, action effectuée, résultat attendu, résultat réellement observé, statut, preuve et nom du testeur **Rodrigue**. La grille est complétée au fil des manipulations, pas à partir des conclusions de l’IA.
 
 Parcours prioritaires sur données fictives isolées :
 
@@ -88,19 +129,19 @@ Parcours prioritaires sur données fictives isolées :
 - Compléter les limites locales : Safari/iPhone et Android physiques, vraie ouverture du lien externe, import agenda, permission de géolocalisation accordée/refusée et accessibilité clavier/lecteur d’écran.
 - Services : confirmation/récupération Auth sur les bons domaines, stockage, emails vers des boîtes de test, Stripe en mode test et webhook rejoué, désinscription/newsletter et quotas du fournisseur effectivement retenu. Aucun paiement ni campagne client réelle pendant cette recette.
 
-À chaque défaut : reproduire, consigner, corriger, ajouter le test de régression adapté et **rejouer le même parcours réel après déploiement du correctif**. Rejouer aussi les parcours voisins touchés.
+À chaque défaut, Rodrigue le reproduit et consigne les étapes avec une capture ou le message exact. Son IA peut diagnostiquer, corriger le code et ajouter le test de régression adapté. **Après déploiement du correctif, Rodrigue rejoue lui-même le même parcours et les parcours voisins touchés**, puis confirme ou refuse la correction.
 
-**Terminé quand :** les commandes des pages concernées ont un statut explicite (réussi, échec, bloqué, non applicable), tous les échecs bloquants sont corrigés/retestés et les limites restantes sont annoncées. Garder URL, SHA, rôle, données fictives et preuves avec le rapport. Ne pas conclure « tout fonctionne » sur la seule compilation.
+**Terminé quand :** Rodrigue a personnellement testé les commandes des pages concernées, attribué un statut explicite (réussi, échec, bloqué, non applicable), rejoué les corrections et confirmé le compte rendu. Les limites restantes sont annoncées. Un essai non effectué par lui reste « non testé manuellement », même si les tests automatisés ou ceux de Victor sont verts.
 
 ## Étape 5 — production et compte rendu
 
 Suivre la procédure de bascule de [l’audit initial](AUDIT-2026-09-07.md), section « Bascule client — ne pas appliquer les migrations seules ». Vérifier les autorisations de déploiement en cours avec Rodrigue avant de modifier la production ; ce document de reprise n’accorde pas à lui seul de nouveaux droits sur des comptes ou données.
 
-**Terminé quand :** le SHA validé est déployé avec la bonne base, les parcours critiques sont rejoués en production de manière non destructive, les erreurs serveur sont contrôlées et un compte rendu distingue version livrée, tests réussis et réserves. Si la bascule échoue, conserver les écritures protégées et exécuter le retour testé ou corriger en avant.
+**Terminé quand :** le SHA validé est déployé avec la bonne base, Rodrigue rejoue personnellement les parcours critiques en production de manière non destructive, les erreurs serveur sont contrôlées et il confirme un compte rendu distinguant version livrée, tests réussis et réserves. Si la bascule échoue, conserver les écritures protégées et exécuter le retour testé ou corriger en avant.
 
 ## Comptes de test et documents à consulter au bon moment
 
-- Pour recréer le laboratoire sur le Mac de Rodrigue : [QA-LOCAL.md](QA-LOCAL.md), avec comptes admin/praticien/autre praticien/en attente/visiteur et mot de passe fictif. **Ces comptes sont locaux : ils n’ont pas été créés sur la Preview ou chez le client.** `localhost:3100` désigne le Mac où le laboratoire tourne, pas celui de Victor à distance. Pour une préproduction distante, créer des comptes de recette séparés, avec mots de passe uniques transmis de façon privée.
+- Pour recréer le laboratoire sur le Mac de Rodrigue : [QA-LOCAL.md](QA-LOCAL.md). Les identifiants sont repris dans la section « Identifiants pour les tests manuels » ci-dessus ; les commandes de préparation restent dans ce guide.
 - Pour comprendre chaque demande et l’arbitrage titre simple : [analyse D01–D13](ANALYSE-DEMANDES-CLIENT-2026-09-08.md).
 - Pour les reproductions et les limites exactes : [preuves](recette/2026-09-08-demandes-client/PREUVES.md) et [anomalies](recette/2026-09-08-demandes-client/ANOMALIES.md).
 - Pour les brouillons et la prise en compte des patches : [rapport brouillons](recette/2026-09-08-brouillons/RAPPORT.md).
