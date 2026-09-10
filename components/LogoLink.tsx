@@ -8,7 +8,7 @@ import { Link, usePathname } from "@/i18n/navigation";
  * Logo cliquable — ramène à l'accueil, et si on y est déjà, remonte en haut
  * de la page en douceur (remarque Didier : clic logo depuis le bas de la landing).
  */
-export function LogoLink() {
+export function LogoLink({ footer = false }: { footer?: boolean }) {
   const pathname = usePathname();
   const t = useTranslations("common.tabbar");
 
@@ -28,10 +28,10 @@ export function LogoLink() {
         alt=""
         width={40}
         height={34}
-        priority
-        className="h-8 w-auto sm:h-11"
+        priority={!footer}
+        className={footer ? "h-11 w-auto" : "h-8 w-auto sm:h-11"}
       />
-      <span className="hidden font-serif text-xl leading-none text-soul-brown min-[400px]:inline sm:text-3xl">
+      <span className={footer ? "font-serif text-3xl text-soul-brown" : "hidden font-serif text-xl leading-none text-soul-brown min-[400px]:inline sm:text-3xl"}>
         ForTheSoul
       </span>
     </Link>

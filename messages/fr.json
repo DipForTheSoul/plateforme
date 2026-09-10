@@ -108,7 +108,7 @@
     "topTitle": "Sélection du moment",
     "topSubtitle": "Les expériences mises en avant",
     "didierTitle": "Choisi avec cœur, validé par Didier",
-    "didierText": "ForTheSoul n'est pas un annuaire de plus : chaque praticien·ne et chaque expérience sont validés personnellement par Didier Picamoles, fondateur de la plateforme et créateur de la Humanic Dance. Vous savez que ce que vous réservez a été vécu, rencontré, choisi.",
+    "didierText": "ForTheSoul n'est pas un annuaire de plus : chaque praticien·ne et chaque expérience sont validés personnellement par Didier Picamoles, fondateur de la plateforme et créateur de la Humanic Dance.",
     "didierCta": "Découvrir l'histoire de ForTheSoul",
     "upcomingTitle": "Prochaines expériences",
     "heroBadge1": "Validé un à un par Didier",
@@ -117,8 +117,8 @@
     "categoriesSubtitle": "Trouvez la pratique qui vous appelle",
     "upcomingSubtitle": "Les prochaines dates près de chez vous",
     "upcomingCta": "Voir toutes les expériences",
-    "didierEyebrow": "Chaque expérience testée et approuvée par Didier",
-    "didierQuote": "Je ne partage que les expériences que j'ai vécues et les personnes que j'ai rencontrées. C'est ça, ForTheSoul.",
+    "didierEyebrow": "Une sélection humaine, par Didier",
+    "didierQuote": "Je te souhaite de vivre les mêmes magnifiques expériences que celles que j'ai vécues.",
     "didierSignature": "Didier Picamoles, fondateur",
     "faq": {
       "title": "Questions fréquentes",
@@ -130,7 +130,7 @@
         },
         {
           "q": "Comment les expériences sont-elles sélectionnées ?",
-          "a": "Chaque praticien·ne et chaque expérience sont validés personnellement par Didier. Ce qui est publié a été vécu, rencontré, choisi."
+          "a": "Chaque praticien·ne et chaque expérience sont validés personnellement par Didier avant publication."
         },
         {
           "q": "Comment participer à une expérience ?",
@@ -158,7 +158,7 @@
         }
       ]
     },
-    "heroEyebrow": "Sélectionné avec soin, testé par Didier"
+    "heroEyebrow": "Sélectionné avec soin par Didier"
   },
   "events": {
     "title": "Toutes les expériences",
@@ -174,7 +174,7 @@
       "allPractitioners": "Tou·tes les praticien·nes",
       "region": "Région",
       "allRegions": "Partout",
-      "priceMax": "Prix max (CHF)",
+      "priceMax": "Prix max ({currency})",
       "durationMax": "Durée max",
       "anyDuration": "Toutes durées",
       "dur90": "≤ 1 h 30",
@@ -624,6 +624,10 @@
       "geocoding": "Géocodage en cours…",
       "save": "Enregistrer",
       "createAndGeocode": "Créer et géocoder",
+      "publication": "Publication dans l’annuaire des lieux",
+      "unpublished": "Non publié dans l’annuaire",
+      "published": "Publié dans l’annuaire",
+      "publicationHelp": "Valider une expérience ne publie pas automatiquement son lieu dans l’annuaire. Son adresse reste disponible sur l’expérience validée.",
       "deleteVenue": "Supprimer ce lieu"
     },
     "credits": {

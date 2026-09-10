@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { LogoLink } from "@/components/LogoLink";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { NewsletterForm } from "@/components/NewsletterForm";
@@ -12,16 +12,7 @@ export async function Footer() {
     <footer className="mt-16 border-t border-soul-bronze/15 bg-soul-sand text-soul-brown">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 md:grid-cols-3">
         <div>
-          <div className="flex items-center gap-2.5">
-            <Image
-              src="/logo-icon.png"
-              alt=""
-              width={44}
-              height={37}
-              className="h-11 w-auto"
-            />
-            <p className="font-serif text-3xl">ForTheSoul</p>
-          </div>
+          <LogoLink footer />
           <p className="mt-3 text-sm text-soul-brown/70">{t("tagline")}</p>
         </div>
 

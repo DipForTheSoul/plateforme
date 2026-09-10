@@ -49,6 +49,9 @@ export async function createVenue(
   if (!parsed.success) return { error: "Nom et adresse complète requis." };
   const input = parsed.data;
 
+  const isAdmin = (await getCurrentProfile())?.role === 'admin';
+  const isPublic = isAdmin && formData.get('is_public') === 'true';
+
   let geo;
   try {geo = readVenuePoint(formData);}
   catch {return {error: 'Adresse sélectionnée invalide. Sélectionnez-la à nouveau ou utilisez la saisie manuelle.'};}
@@ -70,7 +73,8 @@ export async function createVenue(
       address: input.address,
       lat: geo?.lat ?? null,
       lng: geo?.lng ?? null,
-      review_status: (await getCurrentProfile())?.role === 'admin' ? 'approved' : 'pending',
+      review_status: isAdmin ? 'approved' : 'pending',
+      is_public: isPublic,
       city: input.city,
       canton: input.canton,
       country: input.country,
@@ -86,6 +90,7 @@ export async function createVenue(
   if (error || !data) return { error: "Enregistrement du lieu impossible." };
 
   revalidatePath("/admin/lieux");
+  revalidatePath("/[locale]/lieux", "page");
   return { success: "Lieu enregistré.", venueId: data.id };
 }
 
@@ -100,6 +105,11 @@ export async function adminUpdateVenue(
   const supabase = await createClient();
   const profile = await getCurrentProfile();
   if (!profile || profile.role !== "admin") return { error: "Réservé à l'administrateur." };
+
+  const publication = formData.get('is_public');
+  if (publication !== null && publication !== 'true' && publication !== 'false') {
+    return {error: 'Choisissez le statut de publication du lieu.'};
+  }
 
   const parsed = venueSchema.safeParse({
     name: String(formData.get("name") ?? "").trim(),
@@ -136,6 +146,9 @@ export async function adminUpdateVenue(
       capacity: input.capacity,
       rooms: input.rooms,
       contact: { ...existing.contact, website: input.website ?? undefined },
+      // A stale pre-deployment form must not silently unpublish a venue.
+      ...(publication === null ? {} : { is_public: publication === 'true' }),
+      ...(publication === 'true' ? { review_status: 'approved' } : {}),
     })
     .eq("id", venueId);
 
@@ -143,6 +156,9 @@ export async function adminUpdateVenue(
 
   revalidatePath("/admin/lieux");
   revalidatePath(`/lieux/${venueId}`);
+  revalidatePath("/[locale]/lieux", "page");
+  revalidatePath("/[locale]/lieux/[id]", "page");
+  revalidatePath("/[locale]/experiences/[slug]", "page");
   return { success: "Lieu mis à jour.", venueId };
 }
 

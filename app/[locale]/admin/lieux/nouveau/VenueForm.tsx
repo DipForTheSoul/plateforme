@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 import { createVenue } from "@/app/actions/venues";
 import type { ActionState } from "@/app/actions/events";
 import type { Venue } from "@/types/database";
+import { isVenuePublished } from '@/lib/venue-publication';
 
 interface Props {
   draftOwner: string;
@@ -42,6 +43,15 @@ function VenueFormBody({ venue, action, draftOwner }: Props) {
   return (
     <form {...draft.formProps} action={formAction} onSubmit={draft.submit(formAction)} className="card flex flex-col gap-4 p-6">
       <DraftNotice draft={draft} busy={pending} />
+      <div>
+        <label className="label" htmlFor="is_public">{t('publication')}</label>
+        <select id="is_public" name="is_public" className="field"
+          defaultValue={venue && isVenuePublished(venue) ? 'true' : 'false'}>
+          <option value="false">{t('unpublished')}</option>
+          <option value="true">{t('published')}</option>
+        </select>
+        <p className="mt-2 text-sm text-soul-bronze">{t('publicationHelp')}</p>
+      </div>
       <div>
         <label className="label" htmlFor="name">{t("venueName")}</label>
         <input id="name" name="name" required defaultValue={venue?.name} className="field" />

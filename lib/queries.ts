@@ -77,7 +77,7 @@ export async function getApprovedEvents(
   const supabase = await createClient();
   try {
 
-    // Auto-délistage : un événement reste listé jusqu'à N jours après sa date
+    // Auto-délistage : un événement reste listé jusqu'à N jours après sa fin
     // (réglé par l'admin via `settings.event_delist_days`, défaut 15). Au-delà,
     // il n'apparaît plus dans le catalogue/la recherche — mais sa PAGE reste en
     // ligne (accessible par URL, pour le référencement).
@@ -87,7 +87,7 @@ export async function getApprovedEvents(
       .eq("key", "event_delist_days")
       .maybeSingle();
     if(delistError) throw new Error('Paramètres de recherche indisponibles.');
-    const delistDays = Number((delistRow as { value: string } | null)?.value);
+    const delistDays = Number((delistRow as { value: string } | null)?.value ?? 15);
     const floorDays = Number.isFinite(delistDays) && delistDays >= 0 ? delistDays : 15;
     const delistFloor = new Date(Date.now() - floorDays * 86_400_000).toISOString();
 
@@ -114,16 +114,14 @@ export async function getApprovedEvents(
       .from("events")
       .select(EVENT_WITH_RELATIONS)
       .eq("status", "approved")
-      .gte(
-        "start_date",
-        filters.dateFrom && filters.dateFrom > delistFloor
-          ? filters.dateFrom
-          : delistFloor
-      )
+      // Also keep a future start when a legacy row has an erroneous earlier end.
+      // Do not silently hide that event or invent a corrected client date.
+      .or(`end_date.gte.${delistFloor},start_date.gte.${delistFloor}`)
       .order("is_top", { ascending: false })
       .order("start_date", { ascending: true })
       .order("id", { ascending: true });
 
+    if (filters.dateFrom) query = query.gte("start_date", filters.dateFrom);
     if (filters.dateTo) query = query.lte("start_date", filters.dateTo);
     if (filters.language) query = query.contains("languages", [filters.language]);
     if (filters.priceMax !== undefined) query = query.lte("price", filters.priceMax);

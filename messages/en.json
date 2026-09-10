@@ -108,7 +108,7 @@
     "topTitle": "Current selection",
     "topSubtitle": "Highlighted experiences",
     "didierTitle": "Chosen with heart, reviewed by Didier",
-    "didierText": "ForTheSoul is not just another directory: every practitioner and every experience is personally reviewed by Didier Picamoles, founder of the platform and creator of Humanic Dance. What you book has been lived, met, chosen.",
+    "didierText": "ForTheSoul is not just another directory: every practitioner and every experience is personally reviewed by Didier Picamoles, founder of the platform and creator of Humanic Dance.",
     "didierCta": "Discover the ForTheSoul story",
     "upcomingTitle": "Upcoming experiences",
     "heroBadge1": "Reviewed one by one by Didier",
@@ -117,8 +117,8 @@
     "categoriesSubtitle": "Find the practice that calls you",
     "upcomingSubtitle": "The next dates near you",
     "upcomingCta": "See all experiences",
-    "didierEyebrow": "Every experience tested and approved by Didier",
-    "didierQuote": "I only share experiences I've lived and people I've met. That's ForTheSoul.",
+    "didierEyebrow": "Personally selected by Didier",
+    "didierQuote": "I wish for you to live the same magnificent experiences as those I have lived.",
     "didierSignature": "Didier Picamoles, founder",
     "faq": {
       "title": "Frequently asked questions",
@@ -130,7 +130,7 @@
         },
         {
           "q": "How are experiences selected ?",
-          "a": "Every practitioner and every experience is personally reviewed by Didier. What gets published has been lived, met, chosen."
+          "a": "Every practitioner and every experience is personally reviewed by Didier before publication."
         },
         {
           "q": "How do I join an experience ?",
@@ -158,7 +158,7 @@
         }
       ]
     },
-    "heroEyebrow": "Carefully selected, tested by Didier"
+    "heroEyebrow": "Carefully selected by Didier"
   },
   "events": {
     "title": "All experiences",
@@ -174,7 +174,7 @@
       "allPractitioners": "All practitioners",
       "region": "Region",
       "allRegions": "Everywhere",
-      "priceMax": "Max price (CHF)",
+      "priceMax": "Max price ({currency})",
       "durationMax": "Max duration",
       "anyDuration": "Any duration",
       "dur90": "≤ 1h30",
@@ -624,6 +624,10 @@
       "geocoding": "Geocoding…",
       "save": "Save",
       "createAndGeocode": "Create and geocode",
+      "publication": "Venue directory publication",
+      "unpublished": "Not published in the directory",
+      "published": "Published in the directory",
+      "publicationHelp": "Approving an experience does not automatically publish its venue in the directory. Its address remains available on the approved experience.",
       "deleteVenue": "Delete this venue"
     },
     "credits": {

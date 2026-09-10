@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { isVenuePublished } from '@/lib/venue-publication';
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { EventCard } from "@/components/EventCard";
@@ -17,7 +18,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const venue = await getVenueById(id);
-  return venue && venue.review_status !== 'pending'
+  return venue && isVenuePublished(venue)
     ? { title: venue.name, description: venue.description?.slice(0, 160) }
     : { title: "ForTheSoul" };
 }
@@ -33,7 +34,7 @@ export default async function VenuePage({
   const t = await getTranslations("venues");
 
   const venue = await getVenueById(id);
-  if (!venue || venue.review_status === 'pending') notFound();
+  if (!venue || !isVenuePublished(venue)) notFound();
 
   const supabase = await createClient();
   const { data } = await supabase

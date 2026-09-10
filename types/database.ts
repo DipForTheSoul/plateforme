@@ -41,6 +41,7 @@ export interface Practitioner {
 
 export interface Venue {
   review_status?: 'pending' | 'approved';
+  is_public?: boolean;
   id: string;
   name: string;
   address: string;

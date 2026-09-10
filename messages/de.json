@@ -108,7 +108,7 @@
     "topTitle": "Aktuelle Auswahl",
     "topSubtitle": "Hervorgehobene Erlebnisse",
     "didierTitle": "Mit Herz gewählt, von Didier geprüft",
-    "didierText": "ForTheSoul ist kein weiteres Verzeichnis: Jede:r Anbieter:in und jedes Erlebnis wird von Didier Picamoles, Gründer der Plattform und Schöpfer der Humanic Dance, persönlich geprüft. Was du buchst, wurde erlebt, getroffen, ausgewählt.",
+    "didierText": "ForTheSoul ist kein weiteres Verzeichnis: Jede:r Anbieter:in und jedes Erlebnis wird von Didier Picamoles, Gründer der Plattform und Schöpfer der Humanic Dance, persönlich geprüft.",
     "didierCta": "Die Geschichte von ForTheSoul entdecken",
     "upcomingTitle": "Nächste Erlebnisse",
     "heroBadge1": "Einzeln von Didier geprüft",
@@ -117,8 +117,8 @@
     "categoriesSubtitle": "Finde die Praxis, die dich ruft",
     "upcomingSubtitle": "Die nächsten Termine in deiner Nähe",
     "upcomingCta": "Alle Erlebnisse ansehen",
-    "didierEyebrow": "Jedes Erlebnis von Didier getestet und geprüft",
-    "didierQuote": "Ich teile nur Erlebnisse, die ich selbst gelebt habe, und Menschen, die ich getroffen habe. Das ist ForTheSoul.",
+    "didierEyebrow": "Von Didier persönlich ausgewählt",
+    "didierQuote": "Ich wünsche dir, dieselben wunderbaren Erlebnisse zu erleben wie ich.",
     "didierSignature": "Didier Picamoles, Gründer",
     "faq": {
       "title": "Häufige Fragen",
@@ -130,7 +130,7 @@
         },
         {
           "q": "Wie werden die Erlebnisse ausgewählt ?",
-          "a": "Jede:r Anbieter:in und jedes Erlebnis wird persönlich von Didier geprüft. Was veröffentlicht wird, wurde erlebt, getroffen, ausgewählt."
+          "a": "Jede:r Anbieter:in und jedes Erlebnis wird vor der Veröffentlichung persönlich von Didier geprüft."
         },
         {
           "q": "Wie nehme ich an einem Erlebnis teil ?",
@@ -158,7 +158,7 @@
         }
       ]
     },
-    "heroEyebrow": "Mit Sorgfalt ausgewählt, von Didier getestet"
+    "heroEyebrow": "Von Didier mit Sorgfalt ausgewählt"
   },
   "events": {
     "title": "Alle Erlebnisse",
@@ -174,7 +174,7 @@
       "allPractitioners": "Alle Anbieter:innen",
       "region": "Region",
       "allRegions": "Überall",
-      "priceMax": "Max. Preis (CHF)",
+      "priceMax": "Max. Preis ({currency})",
       "durationMax": "Max. Dauer",
       "anyDuration": "Alle Dauern",
       "dur90": "≤ 1 Std. 30",
@@ -624,6 +624,10 @@
       "geocoding": "Geokodierung läuft…",
       "save": "Speichern",
       "createAndGeocode": "Erstellen und geokodieren",
+      "publication": "Veröffentlichung im Ortsverzeichnis",
+      "unpublished": "Nicht im Verzeichnis veröffentlicht",
+      "published": "Im Verzeichnis veröffentlicht",
+      "publicationHelp": "Die Freigabe eines Erlebnisses veröffentlicht seinen Ort nicht automatisch im Verzeichnis. Die Adresse bleibt beim freigegebenen Erlebnis verfügbar.",
       "deleteVenue": "Diesen Ort löschen"
     },
     "credits": {

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { isVenuePublished } from '@/lib/venue-publication';
 import {descriptionText} from '@/lib/description-text';
 import {webUrlSchema} from '@/lib/web-url';
 import { toEventLocalInput } from '@/lib/event-time';
@@ -258,9 +259,9 @@ export default async function EventPage({
         {event.venue && (
           <p className="flex items-center gap-3 text-sm text-soul-ink">
             <MapPin className="h-4 w-4 shrink-0 text-soul-bronze" />
-            <Link href={`/lieux/${event.venue.id}`} className="underline">
+            {isVenuePublished(event.venue) ? <Link href={`/lieux/${event.venue.id}`} className="underline">
               {event.venue.name}
-            </Link>
+            </Link> : <span>{event.venue.name}</span>}
             <span className="text-soul-bronze">
               — {event.venue.canton ?? event.venue.country}
             </span>

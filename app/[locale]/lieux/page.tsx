@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getVenues } from "@/lib/queries";
+import { isVenuePublished } from '@/lib/venue-publication';
 import { formatVenueLocationFull } from "@/lib/utils";
 import { MapPin, Search, Users, X } from "lucide-react";
 
@@ -29,7 +30,7 @@ export default async function VenuesPage({
   const { q = "", canton = "" } = await searchParams;
   setRequestLocale(locale);
   const t = await getTranslations("venues");
-  const all = (await getVenues()).filter(v => v.review_status !== 'pending');
+  const all = (await getVenues()).filter(isVenuePublished);
 
   // Cantons disponibles (uniquement les lieux qui en ont un), triés.
   const cantons = Array.from(

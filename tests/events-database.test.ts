@@ -48,6 +48,7 @@ beforeAll(async () => {
   await db.exec(sql('20260908170656_client_external_event_link.sql'));
   await db.exec(sql('20260909145000_venue_event_review.sql'));
   await db.exec(sql('20260909174000_event_price_mode.sql'));
+  await db.exec(sql('20260910090000_venue_directory_publication.sql'));
   // Supabase grants API roles table access, then RLS restricts individual rows.
   await db.exec('grant usage on schema public,auth to anon,authenticated; grant all on all tables in schema public to anon,authenticated;');
 }, 30000);
@@ -94,8 +95,16 @@ describe('Transactions réelles PostgreSQL — publication et crédits', () => {
     try {await db.query("update events set status='approved' where id=$1",[event.id]);}
     finally {await db.exec('reset role');}
     await actor('');await db.exec('set role anon');
-    try {expect((await db.query('select review_status,lat,lng from venues where id=$1',[venueId])).rows).toEqual([{review_status:'approved',lat:null,lng:null}]);}
+    try {expect((await db.query('select review_status,is_public,lat,lng from venues where id=$1',[venueId])).rows).toEqual([{review_status:'approved',is_public:false,lat:null,lng:null}]);}
     finally {await db.exec('reset role'); await actor(user);}
+    await actor(admin);await db.exec('set role authenticated');
+    try {await db.query('update venues set is_public=true where id=$1',[venueId]);}
+    finally {await db.exec('reset role');}
+    expect((await db.query('select is_public from venues where id=$1',[venueId])).rows[0]).toEqual({is_public:true});
+    await actor(user);await db.exec('set role authenticated');
+    try {await db.query('update venues set is_public=true where id=$1',[venueId]);}
+    finally {await db.exec('reset role');}
+    expect((await db.query('select is_public from venues where id=$1',[venueId])).rows[0]).toEqual({is_public:false});
   });
   it('rejette un lien dangereux dans la transaction et modère une modification directe du lien', async()=>{
     await actor(admin);

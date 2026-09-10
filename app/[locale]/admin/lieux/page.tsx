@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { getVenues } from "@/lib/queries";
 import { getTranslations } from "next-intl/server";
+import { isVenuePublished } from '@/lib/venue-publication';
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,9 @@ export default async function AdminVenuesPage() {
               </p>
             </div>
             <div className="flex items-center gap-3">
+              <span className="rounded-full bg-soul-violet/10 px-3 py-1 text-xs text-soul-violet">
+                {isVenuePublished(v) ? t('published') : t('unpublished')}
+              </span>
               <span className={`rounded-full px-3 py-1 text-xs ${
                 v.lat !== null ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
               }`}>

@@ -5,9 +5,25 @@ import {ExplorerControls} from '@/components/ExplorerControls';
 import {ViewToggle} from '@/components/ViewToggle';
 import {ExplorerNavigation} from '@/components/ExplorerNavigation';
 import fr from '@/messages/fr.json';
+import { CurrencyProvider, useCurrency } from '@/components/CurrencyProvider';
+import de from '@/messages/de.json';
+import en from '@/messages/en.json';
 const {replace}=vi.hoisted(()=>({replace:vi.fn()}));
 vi.mock('next/navigation',()=>({useSearchParams:()=>new URLSearchParams()}));
 vi.mock('@/i18n/navigation',()=>({useRouter:()=>({replace}),usePathname:()=>'/experiences'}));
+function SwitchCurrency(){const {setCurrency}=useCurrency();return <><button onClick={()=>setCurrency('EUR')}>Euros</button><button onClick={()=>setCurrency('CHF')}>Francs</button></>;}
+it.each([['fr',fr,'Prix max'],['de',de,'Max. Preis'],['en',en,'Max price']] as const)('affiche le seuil converti en %s sans changer sa valeur CHF', (locale,messages,label)=>{
+  localStorage.removeItem('fts-currency');
+  render(<NextIntlClientProvider locale={locale} messages={messages}><CurrencyProvider rateEur={1.05}><SwitchCurrency/><ExplorerNavigation><ExplorerControls categories={[]} practitioners={[]} countries={[]} cantons={[]} eventDays={[]}/></ExplorerNavigation></CurrencyProvider></NextIntlClientProvider>);
+  fireEvent.click(screen.getByRole('button',{name:'Euros'}));
+  const price=screen.getByRole('combobox',{name:`${label} (EUR)`});
+  expect(screen.getByRole('option',{name:'≤ EUR 52.50',hidden:true})).toHaveValue('50');
+  fireEvent.change(price,{target:{value:'50'}});
+  expect(new URL(replace.mock.calls.at(-1)![0],'http://localhost').searchParams.get('prix')).toBe('50');
+  fireEvent.click(screen.getByRole('button',{name:'Francs'}));
+  expect(screen.getByRole('combobox',{name:`${label} (CHF)`})).toBeInTheDocument();
+  localStorage.removeItem('fts-currency');
+});
 it('cumule les changements rapides de filtres avant la réponse de navigation',()=>{
   render(<NextIntlClientProvider locale="fr" messages={fr}><ExplorerNavigation><ExplorerControls categories={[]} practitioners={[]} countries={[{code:'CH',name:'Suisse'}]} cantons={['VD']} eventDays={[]}/></ExplorerNavigation></NextIntlClientProvider>);
   fireEvent.click(screen.getByRole('button',{name:'Filtres'}));
