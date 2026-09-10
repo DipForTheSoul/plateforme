@@ -20,7 +20,14 @@
 
 ## Déploiement
 
-À compléter avec le commit et les contrôles réellement observés après mise en ligne.
+- Commit applicatif `280701358a675a0df6fc9818b35b5fa2639ba34c` poussé normalement sur `main` et la branche de reprise ; aucun push forcé.
+- CI main réussie : https://github.com/DipForTheSoul/plateforme/actions/runs/34467880926 ; CI branche également réussie.
+- Déploiement `dpl_CypLpTbC8wjKzS8qLnjM1WPysgDp`, `plateforme-nk5xtbqik-for-the-soul.vercel.app`, READY ; commit confirmé par l’API Vercel et domaines `www.forthesoul.ch` / `forthesoul.ch` rattachés.
+- Migration de production réussie dans la transaction avec comparaison intégrale des lignes métier et registre SHA-256. Neuf lieux conservés publiés, aucune suppression ni modification des anciennes valeurs métier.
+- Contrôle navigateur en production : seuil EUR, puce EUR, passage à CHF, puce CHF, version française, retour à l’accueil via le logo footer, nouveaux textes et citation visibles.
+- Contrôles HTTP : accueil, catalogue FR/DE/EN, lieux et connexion en 200 sans écran d’erreur applicative ; espaces admin/praticien anonymes redirigés vers la connexion.
+- Audit npm des dépendances de production : zéro vulnérabilité signalée.
+- Aucun contenu de test ajouté en production pour ce complément. L’audit privé des e-mails reste hors Git.
 
 ## Limites et retour
 

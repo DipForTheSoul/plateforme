@@ -1,5 +1,9 @@
 # ForTheSoul — retour de recette de Rodrigue, 9 septembre 2026
 
+## Complément livré le 10 septembre 2026
+
+Les cinq points confirmés lors de la relecture ont été corrigés, testés et déployés au commit `2807013` : formulations de l’accueil, logo footer, filtre CHF/EUR, délistage après fin du séjour et publication indépendante des lieux. Voir [le complément de livraison](REPRISE-COMPLEMENT-2026-09-10.md) pour le périmètre, les 266 tests, la migration avec préservation des données, la CI et les contrôles en production. Les mentions contraires ci-dessous sont l’historique du 9 septembre, pas l’état actuel de ces cinq points.
+
 ## Mise à jour après déploiement — 9 septembre, 18 h 52 CEST
 
 **Version applicative `74ca626` poussée sur `main` et déployée sur https://www.forthesoul.ch.** La section de préparation ci-dessous est conservée comme historique : ses blocages d'accès et de migrations ont été levés, elle ne décrit plus l'état du déploiement.
