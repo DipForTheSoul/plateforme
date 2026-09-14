@@ -2,9 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentProfile } from "@/lib/auth";
 import type { ActionState } from "@/app/actions/events";
-import {parseContactCsv} from '@/lib/contact-csv';
+import {normalizeContactRows, parseContactCsv} from '@/lib/contact-csv';
 import {z} from 'zod';
 
 async function assertAdmin() {
@@ -25,25 +26,28 @@ export async function importContacts(
   formData: FormData
 ): Promise<ActionState> {
   await assertAdmin();
-  const raw = String(formData.get("csv") ?? "").trim();
-  if (!raw) return { error: "Collez au moins une ligne." };
+  const uploaded = formData.get("csv_file");
+  const pasted = String(formData.get("csv") ?? "").trim();
+  const raw = uploaded instanceof File && uploaded.size > 0
+    ? (await uploaded.text()).trim()
+    : pasted;
+  if (!raw) return { error: "empty" };
 
-  if(raw.length>500000)return {error:'Import trop volumineux : divisez le fichier en lots de 500 Ko maximum.'};
-  let rows:string[][];
-  try{ rows=parseContactCsv(raw).filter(cells=>z.email().safeParse(cells[0]).success); }
-  catch{return {error:'Le CSV est incomplet : vérifiez les guillemets.'};}
+  if(raw.length>500000)return {error:'tooLarge'};
+  let rows;
+  try{ rows=normalizeContactRows(parseContactCsv(raw)); }
+  catch{return {error:'invalidCsv'};}
 
-  if (!rows.length) return { error: "Aucune ligne valide (e-mail requis en 1re colonne)." };
+  if (!rows.length) return { error: "noValidContact" };
 
-  const supabase = await createClient();
-  const contacts = rows.map((cells) => ({
-    email: cells[0].toLowerCase(),
-    first_name: cells[1] || null,
-    last_name: cells[2] || null,
-    interests: (cells[3] ?? "")
-      .split("|")
-      .map((t) => t.trim())
-      .filter(Boolean),
+  // The service-role client is deliberately created only after assertAdmin().
+  // Direct table INSERT grants stay revoked for browser roles.
+  const supabase = createAdminClient();
+  const contacts = rows.map((contact) => ({
+    email: contact.email,
+    first_name: contact.firstName,
+    last_name: contact.lastName,
+    interests: contact.interests,
     consent: true, // base opt-in existante (import Wix)
     opt_in_at: new Date().toISOString(),
     source: "import-wix",
@@ -52,10 +56,10 @@ export async function importContacts(
   const { data: inserted, error } = await supabase
     .from("contacts")
     .upsert(contacts, { onConflict: "email", ignoreDuplicates: true }).select('id');
-  if (error) return { error: "Import impossible : " + error.message };
+  if (error) return { error: "database" };
 
   revalidatePath("/admin/newsletter");
-  return { success: `${inserted?.length ?? 0} nouveau(x) contact(s) importé(s). Les doublons ont été ignorés.` };
+  return { success: `imported:${inserted?.length ?? 0}` };
 }
 
 /** Mise à jour des tags d'intérêt d'un contact. */
