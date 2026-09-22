@@ -34,7 +34,8 @@
     "insertLink": "Link einfügen",
     "cancel": "Abbrechen",
     "invalidLink": "Geben Sie einen Text ohne eckige Klammern und eine gültige Webadresse (http oder https) ein.",
-    "tooLong": "Die Beschreibung darf höchstens 8 000 Zeichen enthalten."
+    "tooLong": "Die Beschreibung darf höchstens 8 000 sichtbare Zeichen enthalten.",
+    "tooMuchFormatting": "Die Formatierung ist zu umfangreich, um diese Beschreibung zu speichern."
   },
   "draft": {
     "hint": "Der Entwurf bleibt bis zum Speichern in diesem Tab erhalten, auch beim Sprachwechsel.",

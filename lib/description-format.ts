@@ -1,5 +1,17 @@
 export type DescriptionPart = string | {kind: 'bold' | 'italic' | 'underline' | 'link'; children: DescriptionPart[]; url?: string};
 
+export const DESCRIPTION_VISIBLE_MAX = 8000;
+export const DESCRIPTION_STORAGE_MAX = 16000;
+
+const visibleLength = (parts: DescriptionPart[]): number => parts.reduce((length, part) =>
+  length + (typeof part === 'string' ? part.length : visibleLength(part.children)), 0);
+
+/** Count what readers see, not Markdown markers or link destinations. */
+export function descriptionVisibleLength(markdown: string): number {
+  return markdown.split('\n').reduce((length, line, index) =>
+    length + (index ? 1 : 0) + visibleLength(descriptionParts(line.replace(/^[-*] /, ''))), 0);
+}
+
 /** Bounded inline grammar shared by public HTML and plain-text exports. No raw HTML. */
 export function descriptionParts(text: string, depth = 0): DescriptionPart[] {
   if (depth >= 8) return [text];

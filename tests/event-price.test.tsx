@@ -26,6 +26,13 @@ it('conserve le montant positif du tarif fixe', () => {
   const result = parseEventForm(form('fixed','79.50'));
   expect(result.success && result.data.price).toBe(79.5);
 });
+it('compte le texte visible et non les marqueurs Markdown de la description', () => {
+  const fd = form('flexible');
+  fd.set('description', `**${'a'.repeat(7999)}**`);
+  expect(parseEventForm(fd).success).toBe(true);
+  fd.set('description', `**${'a'.repeat(8001)}**`);
+  expect(parseEventForm(fd).success).toBe(false);
+});
 it('ne transforme jamais les anciens prix en gratuit', () => {
   expect(eventPriceMode(null)).toBe('unspecified');
   expect(eventPriceMode(0)).toBe('flexible');

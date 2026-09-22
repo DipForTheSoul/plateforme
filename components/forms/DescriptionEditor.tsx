@@ -1,36 +1,40 @@
 "use client";
-import {useCallback, useRef, useState, type ClipboardEvent, type KeyboardEvent, type MouseEvent} from 'react';
+import {useCallback, useEffect, useRef, useState, type ClipboardEvent, type KeyboardEvent, type MouseEvent} from 'react';
 import {Bold, Italic, Link, List, Smile, Underline} from 'lucide-react';
 import {useTranslations} from 'next-intl';
 import {webUrlSchema} from '@/lib/web-url';
 import {editorToMarkdown, markdownToEditorHtml} from './description-editor-markdown';
+import {DESCRIPTION_STORAGE_MAX, DESCRIPTION_VISIBLE_MAX, descriptionVisibleLength} from '@/lib/description-format';
 
-const MAX_LENGTH = 8000;
 type Panel = 'link' | 'emoji' | null;
 type Command = 'bold' | 'italic' | 'underline' | 'insertUnorderedList';
 
 export function DescriptionEditor({defaultValue = ''}: {defaultValue?: string}) {
   const t = useTranslations('descriptionEditor');
   const tf = useTranslations('eventForm');
-  const initialValue = defaultValue.slice(0, MAX_LENGTH);
+  const initialValue = defaultValue;
   const editorRef = useRef<HTMLDivElement>(null);
   const fieldRef = useRef<HTMLTextAreaElement>(null);
   const savedRange = useRef<Range | null>(null);
   const savedOffsets = useRef({start: 0, end: 0});
   const linkSelectionText = useRef('');
-  const lastValid = useRef(initialValue);
   const syncingField = useRef(false);
   const [panel, setPanel] = useState<Panel>(null);
   const [label, setLabel] = useState('');
   const [url, setUrl] = useState('');
-  const [error, setError] = useState('');
+  const limitError = useCallback((markdown: string) => markdown.length > DESCRIPTION_STORAGE_MAX
+    ? t('tooMuchFormatting') : descriptionVisibleLength(markdown) > DESCRIPTION_VISIBLE_MAX ? t('tooLong') : '', [t]);
+  const [error, setError] = useState(() => limitError(initialValue));
   const [active, setActive] = useState<Record<Command, boolean>>({
     bold: false, italic: false, underline: false, insertUnorderedList: false,
   });
   const initializeEditor = useCallback((node: HTMLDivElement | null) => {
     editorRef.current = node;
-    if (node) node.innerHTML = markdownToEditorHtml(defaultValue.slice(0, MAX_LENGTH));
+    if (node) node.innerHTML = markdownToEditorHtml(defaultValue);
   }, [defaultValue]);
+  useEffect(() => {
+    fieldRef.current?.setCustomValidity(limitError(initialValue));
+  }, [initialValue, limitError]);
 
   function selectionBelongsToEditor(range: Range) {
     const editor = editorRef.current;
@@ -103,6 +107,7 @@ export function DescriptionEditor({defaultValue = ''}: {defaultValue?: string}) 
     if (!field) return;
     syncingField.current = true;
     field.value = markdown;
+    field.setCustomValidity(limitError(markdown));
     field.dispatchEvent(new Event('input', {bubbles: true}));
     syncingField.current = false;
   }
@@ -111,21 +116,16 @@ export function DescriptionEditor({defaultValue = ''}: {defaultValue?: string}) 
     const editor = editorRef.current;
     if (!editor) return false;
     const markdown = editorToMarkdown(editor);
-    if (markdown.length > MAX_LENGTH) {
-      editor.innerHTML = markdownToEditorHtml(lastValid.current);
-      updateField(lastValid.current);
-      setError(t('tooLong'));
-      editor.focus();
-      const range = document.createRange();
-      range.selectNodeContents(editor);
-      range.collapse(false);
-      const selection = window.getSelection();
-      selection?.removeAllRanges();
-      selection?.addRange(range);
-      savedRange.current = range.cloneRange();
+    const validationError = limitError(markdown);
+    if (validationError) {
+      // Keep the user's edit and caret intact. The backing field remains invalid
+      // until the text is shortened, so neither native nor server validation
+      // can silently submit the previous version instead.
+      updateField(markdown);
+      setError(validationError);
+      rememberSelection();
       return false;
     }
-    lastValid.current = markdown;
     updateField(markdown);
     setError('');
     rememberSelection();
@@ -300,15 +300,16 @@ export function DescriptionEditor({defaultValue = ''}: {defaultValue?: string}) 
       onInput={() => {setPanel(null);syncEditor();}} onBlur={rememberSelection} onMouseUp={rememberSelection} onKeyUp={rememberSelection}
       onKeyDown={handleKeyDown} onPaste={handlePaste}
       onClick={event => {if ((event.target as HTMLElement).closest('a')) event.preventDefault();}}/>
-    <textarea ref={fieldRef} id="description" name="description" required minLength={20} maxLength={MAX_LENGTH}
+    <textarea ref={fieldRef} id="description" name="description" required minLength={20} maxLength={DESCRIPTION_STORAGE_MAX}
       data-rich-editor-backing="true"
       defaultValue={initialValue} tabIndex={-1} aria-hidden="true" className="sr-only"
       onFocus={() => editorRef.current?.focus()}
       onInput={event => {
         if (syncingField.current) return;
-        const markdown = event.currentTarget.value.slice(0, MAX_LENGTH);
-        lastValid.current = markdown;
+        const markdown = event.currentTarget.value;
+        event.currentTarget.setCustomValidity(limitError(markdown));
         if (editorRef.current) editorRef.current.innerHTML = markdownToEditorHtml(markdown);
+        setError(limitError(markdown));
       }}/>
   </>;
 }

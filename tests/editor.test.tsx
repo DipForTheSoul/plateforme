@@ -110,7 +110,7 @@ describe('éditeur visuel de description', () => {
     expect(editor.querySelector('a')).toHaveAttribute('href', 'https://example.ch/form(a)');
   });
 
-  it('refuse le HTML collé et revient à la dernière valeur valide au-delà de 8 000 caractères', () => {
+  it('refuse le HTML collé et garde le texte ainsi que le curseur au-delà de 8 000 caractères', () => {
     const {container} = view('Texte sûr');
     const editor = screen.getByRole('textbox', {name: fr.descriptionEditor.editorLabel});
     fireEvent.paste(editor, {clipboardData: {getData: () => '<img src=x onerror=alert(1)>'}});
@@ -118,9 +118,43 @@ describe('éditeur visuel de description', () => {
     expect(backing(container).value).toContain('<img src=x onerror=alert(1)>');
 
     editor.textContent = 'a'.repeat(8001);
+    const range = document.createRange();
+    range.setStart(editor.firstChild!, 7);
+    range.collapse(true);
+    const selection = window.getSelection()!;
+    selection.removeAllRanges();
+    selection.addRange(range);
     fireEvent.input(editor);
     expect(screen.getByRole('alert')).toHaveTextContent(fr.descriptionEditor.tooLong);
-    expect(backing(container).value.length).toBeLessThanOrEqual(8000);
+    expect(backing(container).value.length).toBe(8001);
+    expect(backing(container).checkValidity()).toBe(false);
+    expect(selection.getRangeAt(0).startOffset).toBe(7);
+    expect(editor.textContent).toHaveLength(8001);
+    editor.textContent = 'a'.repeat(7999);
+    fireEvent.input(editor);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(backing(container).value).toHaveLength(7999);
+  });
+
+  it('ne détruit pas un formatage qui fait dépasser la limite', () => {
+    const {container} = view('a'.repeat(7999));
+    const editor = screen.getByRole('textbox', {name: fr.descriptionEditor.editorLabel});
+    selectText(editor, 'aaa');
+    fireEvent.click(screen.getByRole('button', {name: fr.descriptionEditor.bold}));
+    expect(editor.querySelector('strong')).toHaveTextContent('aaa');
+    expect(backing(container).value.length).toBe(8003);
+    expect(backing(container).checkValidity()).toBe(true);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it('ne tronque pas silencieusement une description existante dont le Markdown dépasse 8 000 caractères', () => {
+    const description = `**${'a'.repeat(7999)}**`;
+    const {container} = view(description);
+    const editor = screen.getByRole('textbox', {name: fr.descriptionEditor.editorLabel});
+    expect(editor.textContent).toHaveLength(7999);
+    expect(backing(container).value).toBe(description);
+    expect(backing(container).checkValidity()).toBe(true);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 });
 

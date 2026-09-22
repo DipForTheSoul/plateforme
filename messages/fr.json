@@ -34,7 +34,8 @@
     "insertLink": "Insérer le lien",
     "cancel": "Annuler",
     "invalidLink": "Indiquez un texte sans crochets et une adresse web valide (http ou https).",
-    "tooLong": "La description ne peut pas dépasser 8 000 caractères."
+    "tooLong": "La description ne peut pas dépasser 8 000 caractères visibles.",
+    "tooMuchFormatting": "La mise en forme est trop volumineuse pour enregistrer cette description."
   },
   "draft": {
     "hint": "Brouillon sauvegardé dans cet onglet jusqu’à l’enregistrement. Vous pouvez changer de langue sans perdre votre saisie.",
