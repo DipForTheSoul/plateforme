@@ -1,5 +1,5 @@
 "use client";
-import {useCallback, useRef, useState, type ClipboardEvent, type KeyboardEvent, type MouseEvent} from 'react';
+import {useCallback, useEffect, useRef, useState, type ClipboardEvent, type KeyboardEvent, type MouseEvent} from 'react';
 import {Bold, Italic, Link, List, Smile, Underline} from 'lucide-react';
 import {useTranslations} from 'next-intl';
 import {webUrlSchema} from '@/lib/web-url';
@@ -12,25 +12,27 @@ type Command = 'bold' | 'italic' | 'underline' | 'insertUnorderedList';
 export function DescriptionEditor({defaultValue = ''}: {defaultValue?: string}) {
   const t = useTranslations('descriptionEditor');
   const tf = useTranslations('eventForm');
-  const initialValue = defaultValue.slice(0, MAX_LENGTH);
+  const initialValue = defaultValue;
   const editorRef = useRef<HTMLDivElement>(null);
   const fieldRef = useRef<HTMLTextAreaElement>(null);
   const savedRange = useRef<Range | null>(null);
   const savedOffsets = useRef({start: 0, end: 0});
   const linkSelectionText = useRef('');
-  const lastValid = useRef(initialValue);
   const syncingField = useRef(false);
   const [panel, setPanel] = useState<Panel>(null);
   const [label, setLabel] = useState('');
   const [url, setUrl] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState(initialValue.length > MAX_LENGTH ? t('tooLong') : '');
   const [active, setActive] = useState<Record<Command, boolean>>({
     bold: false, italic: false, underline: false, insertUnorderedList: false,
   });
   const initializeEditor = useCallback((node: HTMLDivElement | null) => {
     editorRef.current = node;
-    if (node) node.innerHTML = markdownToEditorHtml(defaultValue.slice(0, MAX_LENGTH));
+    if (node) node.innerHTML = markdownToEditorHtml(defaultValue);
   }, [defaultValue]);
+  useEffect(() => {
+    fieldRef.current?.setCustomValidity(initialValue.length > MAX_LENGTH ? t('tooLong') : '');
+  }, [initialValue, t]);
 
   function selectionBelongsToEditor(range: Range) {
     const editor = editorRef.current;
@@ -103,6 +105,7 @@ export function DescriptionEditor({defaultValue = ''}: {defaultValue?: string}) 
     if (!field) return;
     syncingField.current = true;
     field.value = markdown;
+    field.setCustomValidity(markdown.length > MAX_LENGTH ? t('tooLong') : '');
     field.dispatchEvent(new Event('input', {bubbles: true}));
     syncingField.current = false;
   }
@@ -112,20 +115,14 @@ export function DescriptionEditor({defaultValue = ''}: {defaultValue?: string}) 
     if (!editor) return false;
     const markdown = editorToMarkdown(editor);
     if (markdown.length > MAX_LENGTH) {
-      editor.innerHTML = markdownToEditorHtml(lastValid.current);
-      updateField(lastValid.current);
+      // Keep the user's edit and caret intact. The backing field remains invalid
+      // until the text is shortened, so neither native nor server validation
+      // can silently submit the previous version instead.
+      updateField(markdown);
       setError(t('tooLong'));
-      editor.focus();
-      const range = document.createRange();
-      range.selectNodeContents(editor);
-      range.collapse(false);
-      const selection = window.getSelection();
-      selection?.removeAllRanges();
-      selection?.addRange(range);
-      savedRange.current = range.cloneRange();
+      rememberSelection();
       return false;
     }
-    lastValid.current = markdown;
     updateField(markdown);
     setError('');
     rememberSelection();
@@ -306,9 +303,10 @@ export function DescriptionEditor({defaultValue = ''}: {defaultValue?: string}) 
       onFocus={() => editorRef.current?.focus()}
       onInput={event => {
         if (syncingField.current) return;
-        const markdown = event.currentTarget.value.slice(0, MAX_LENGTH);
-        lastValid.current = markdown;
+        const markdown = event.currentTarget.value;
+        event.currentTarget.setCustomValidity(markdown.length > MAX_LENGTH ? t('tooLong') : '');
         if (editorRef.current) editorRef.current.innerHTML = markdownToEditorHtml(markdown);
+        setError(markdown.length > MAX_LENGTH ? t('tooLong') : '');
       }}/>
   </>;
 }
