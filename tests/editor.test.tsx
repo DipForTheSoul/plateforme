@@ -143,17 +143,18 @@ describe('éditeur visuel de description', () => {
     fireEvent.click(screen.getByRole('button', {name: fr.descriptionEditor.bold}));
     expect(editor.querySelector('strong')).toHaveTextContent('aaa');
     expect(backing(container).value.length).toBe(8003);
-    expect(backing(container).checkValidity()).toBe(false);
-    expect(screen.getByRole('alert')).toHaveTextContent(fr.descriptionEditor.tooLong);
+    expect(backing(container).checkValidity()).toBe(true);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
-  it('ne tronque pas silencieusement une description existante dépassant la limite', () => {
-    const {container} = view('a'.repeat(8001));
+  it('ne tronque pas silencieusement une description existante dont le Markdown dépasse 8 000 caractères', () => {
+    const description = `**${'a'.repeat(7999)}**`;
+    const {container} = view(description);
     const editor = screen.getByRole('textbox', {name: fr.descriptionEditor.editorLabel});
-    expect(editor.textContent).toHaveLength(8001);
-    expect(backing(container).value).toHaveLength(8001);
-    expect(backing(container).checkValidity()).toBe(false);
-    expect(screen.getByRole('alert')).toHaveTextContent(fr.descriptionEditor.tooLong);
+    expect(editor.textContent).toHaveLength(7999);
+    expect(backing(container).value).toBe(description);
+    expect(backing(container).checkValidity()).toBe(true);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 });
 

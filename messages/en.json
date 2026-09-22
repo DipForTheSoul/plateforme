@@ -34,7 +34,8 @@
     "insertLink": "Insert link",
     "cancel": "Cancel",
     "invalidLink": "Enter text without square brackets and a valid web address (http or https).",
-    "tooLong": "The description cannot exceed 8,000 characters."
+    "tooLong": "The description cannot exceed 8,000 visible characters.",
+    "tooMuchFormatting": "The formatting is too large to save this description."
   },
   "draft": {
     "hint": "Your draft stays in this tab until saved, including when you change language.",

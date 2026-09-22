@@ -48,6 +48,7 @@ beforeAll(async () => {
   await db.exec(sql('20260908170656_client_external_event_link.sql'));
   await db.exec(sql('20260909145000_venue_event_review.sql'));
   await db.exec(sql('20260909174000_event_price_mode.sql'));
+  await db.exec(sql('20260922120000_description_formatting_allowance.sql'));
   await db.exec(sql('20260910090000_venue_directory_publication.sql'));
   // Supabase grants API roles table access, then RLS restricts individual rows.
   await db.exec('grant usage on schema public,auth to anon,authenticated; grant all on all tables in schema public to anon,authenticated;');
@@ -55,6 +56,21 @@ beforeAll(async () => {
 afterAll(async()=>{ await db?.close(); });
 
 describe('Transactions réelles PostgreSQL — publication et crédits', () => {
+  it('conserve une description publiée et accepte son formatage au-delà de 8 000 caractères bruts', async () => {
+    await actor(admin);
+    const original = await save(input({description:'Texte publié et déjà validé pour cette expérience.'}));
+    const before = await db.query<{description:string;status:string}>('select description,status from events where id=$1',[original.id]);
+    expect(before.rows[0]).toEqual({description:'Texte publié et déjà validé pour cette expérience.',status:'approved'});
+    await db.exec(sql('20260922120000_description_formatting_allowance.sql'));
+    expect((await db.query('select description,status from events where id=$1',[original.id])).rows[0]).toEqual(before.rows[0]);
+    const formatted = `**${'a'.repeat(7999)}**`;
+    await save(input({description:formatted}),original.id);
+    const after = await db.query<{description:string;status:string}>('select description,status from events where id=$1',[original.id]);
+    expect(after.rows[0]).toEqual({description:formatted,status:'approved'});
+    await expect(save({...input(),description:'a'.repeat(16001)},original.id)).rejects.toThrow('Formulaire invalide');
+    expect((await db.query<{description:string}>('select description from events where id=$1',[original.id])).rows[0].description).toBe(formatted);
+    await actor(user);
+  });
   it('propage les trois modes tarifaires sans crédit supplémentaire et refuse une incohérence SQL', async () => {
     await actor(admin);
     const first=await save(input({price_mode:'fixed',price:'79'}));

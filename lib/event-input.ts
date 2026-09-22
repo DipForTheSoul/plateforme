@@ -1,13 +1,15 @@
 import { z } from 'zod';
 import { eventLocalToIso, shiftEventDate } from './event-time';
 import { webUrlSchema } from './web-url';
+import {DESCRIPTION_STORAGE_MAX, DESCRIPTION_VISIBLE_MAX, descriptionVisibleLength} from './description-format';
 
 const date = z.string().transform((value, ctx) => {
   try { return eventLocalToIso(value); }
   catch { ctx.addIssue({ code: 'custom', message: 'Date ou heure suisse invalide.' }); return z.NEVER; }
 });
 export const eventSchema = z.object({
-  title: z.string().trim().min(3).max(140), description: z.string().trim().min(20).max(8000),
+  title: z.string().trim().min(3).max(140), description: z.string().trim().max(DESCRIPTION_STORAGE_MAX)
+    .refine(value => descriptionVisibleLength(value) >= 20 && descriptionVisibleLength(value) <= DESCRIPTION_VISIBLE_MAX),
   category_ids: z.array(z.string().uuid()).min(1).max(6), venue_id: z.string().uuid().nullable(),
   start_date: date, end_date: date.nullable(),
   duration_minutes: z.number().int().min(1).max(525600).nullable(),
