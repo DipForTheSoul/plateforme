@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useDraftForm } from "@/components/forms/useDraftForm";
 import { DraftNotice } from "@/components/forms/DraftNotice";
 import { WebUrlInput } from "@/components/forms/WebUrlInput";
@@ -27,6 +27,7 @@ function ProfileFormBody({
 }) {
   const t = useTranslations("practitioner");
   const td = useTranslations('draft');
+  const locale=useLocale();
   const [photos, setPhotos] = useState<string[]>(practitioner.photos);
   const [logo, setLogo] = useState<string[]>(
     practitioner.logo_url ? [practitioner.logo_url] : []
@@ -53,6 +54,7 @@ function ProfileFormBody({
   return (
     <form {...draft.formProps} action={formAction} onSubmit={draft.submit(formAction)} className="flex flex-col gap-5">
       <DraftNotice draft={draft} busy={pending || photoBusy || logoBusy} />
+      <input type="hidden" name="locale" value={locale}/>
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="name" className="label">{t("namePublic")}</label>

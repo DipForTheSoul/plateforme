@@ -2,6 +2,13 @@ import "server-only";
 import {createHmac} from 'node:crypto';
 import {createAdminClient} from '@/lib/supabase/admin';
 
+/** Stable pseudonymous identifier. Raw addresses never leave server memory. */
+export function hashRequestIdentity(value:string):string {
+  const secret=process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if(!secret)throw new Error('Rate-limit secret unavailable');
+  return createHmac('sha256',secret).update(`identity:${value}`).digest('hex');
+}
+
 /** Shared across instances; fail closed. Only HMAC keys are stored, never raw IPs. */
 export async function isRateLimited(key:string,limit=5,windowSeconds=60):Promise<boolean> {
   try {

@@ -1,5 +1,37 @@
 # PROGRESS — ForTheSoul
 
+## Lot local — ajout ultérieur n°1 (2026-09-28, non publié)
+
+### Terminé en local
+
+- Formulaire de contact sur les fiches praticien : validation, consentements séparés, honeypot, limite partagée de 5/h/IP pseudonymisée, envoi transactionnel avec `reply-to`, conservation des succès/échecs.
+- Table dédiée avec RLS sans lecture publique/praticien ; consultation admin, filtres, détail et export CSV UTF-8 BOM.
+- Page `/devenir-praticien` FR/DE/EN, prix issus des réglages existants, SEO/hreflang/sitemap, CTA depuis accueil/catalogues/footer et FAQ.
+- Recherche des lieux sur nom/ville/description, pays puis canton conditionnel pour la Suisse.
+- Prix maximum des filtres toujours présenté en CHF, compteur des filtres conservé et libellés non tronqués.
+- Pages fixes CGV et mentions légales FR/DE/EN, clairement marquées comme textes provisoires à valider.
+- `Praticien Test` masqué de l’annuaire public et des listes de filtres alimentées par celui-ci.
+- Photos de l’annuaire praticiens au format portrait et ancrées en haut afin de ne plus couper les visages sur mobile.
+- Messages d’erreur des parcours praticien principaux localisés FR/DE/EN ; l’anglais sert de repli.
+
+### Vérifications effectuées
+
+- `npm run check` : lint, TypeScript et **278 tests** réussis.
+- `npm run build` : build de production réussi, 114 pages générées.
+- Rendu local vérifié sur annuaire, fiche/contact, recrutement, lieux, expériences et pages légales ; routes FR/DE/EN répondent en 200.
+- Formulaire testé par automatisation locale : stockage, destinataire de secours, `reply-to`, statut envoyé/échoué, honeypot et sixième demande bloquée.
+
+### Restant avant mise en ligne
+
+- Appliquer la migration `20260928120000_practitioner_contact_requests.sql` sur l’environnement cible, puis effectuer un envoi de recette vers une vraie boîte contrôlée et vérifier l’export avec un compte admin.
+- Tester la géolocalisation « Autour de moi » sur l’URL HTTPS de préproduction/production : impossible à certifier depuis le seul environnement localhost demandé.
+- Faire valider par Didier les textes commerciaux de `/devenir-praticien` et les textes provisoires CGV/mentions légales.
+- L’admin ne dispose toujours pas de champs de descriptions d’expérience distincts DE/EN : point signalé conformément à la consigne, aucun développement ajouté.
+
+### Hors périmètre confirmé
+
+MailerLite automatique, statistiques supplémentaires, mise en avant payante, réservation/comptes participants/messagerie/avis, traduction automatique, distance des lieux et édition admin des textes fixes restent exclus.
+
 > Suivi d'avancement lisible par Victor & Rodrigue. Dernière mise à jour : 2026-07-30.
 
 ## 🚀 LOT V2 (périmètre validé — PDF client « Suites données à vos demandes » + TASKS-V2)

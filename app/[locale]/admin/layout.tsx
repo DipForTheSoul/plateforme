@@ -27,6 +27,7 @@ export default async function AdminLayout({
     { href: "/admin/credits", label: t("nav.credits") },
     { href: "/admin/newsletter", label: t("nav.newsletter") },
     { href: "/admin/contact", label: t("nav.messages") },
+    { href: "/admin/demandes-contact", label: "Demandes de contact" },
     { href: "/admin/parametres", label: t("nav.settings") },
   ];
 

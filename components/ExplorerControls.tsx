@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useExplorerNavigation } from "@/components/ExplorerNavigation";
 import { EventCalendar } from "@/components/EventCalendar";
-import { useCurrency } from "@/components/CurrencyProvider";
 import { LANGUAGE_LABELS } from "@/lib/utils";
 import type { Category } from "@/types/database";
 import { LocateFixed, Search, SlidersHorizontal, X } from "lucide-react";
@@ -28,12 +27,8 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
   const tCat = useTranslations("categories");
   const searchParams = useSearchParams();
   const setParams = useExplorerNavigation();
-  const { currency, rateEur } = useCurrency();
-  // The URL and database keep CHF thresholds; only their presentation changes.
-  const priceLabel = (chf: number) => {
-    const amount = Math.round(chf * (currency === "EUR" ? rateEur : 1) * 100) / 100;
-    return `≤ ${currency} ${Number.isInteger(amount) ? `${amount}.–` : amount.toFixed(2)}`;
-  };
+  // Price filtering always uses and displays its source currency: CHF.
+  const priceLabel = (chf: number) => `≤ CHF ${chf}.–`;
 
   const [q, setQ] = useState(searchParams.get("q") ?? "");
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -287,8 +282,8 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
 
             <select value={searchParams.get("prix") ?? ""}
               onChange={(e) => setParams({ prix: e.target.value || undefined })}
-              className="field" aria-label={t("filters.priceMax", { currency })}>
-              <option value="">{t("filters.priceMax", { currency })} : —</option>
+              className="field min-w-0 w-full" aria-label={t("filters.priceMax", { currency: "CHF" })}>
+              <option value="">{t("filters.priceMax", { currency: "CHF" })} : —</option>
               {[30, 50, 100, 300, 1000].map((p) => (
                 <option key={p} value={p}>{priceLabel(p)}</option>
               ))}

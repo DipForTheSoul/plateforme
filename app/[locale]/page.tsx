@@ -192,6 +192,16 @@ export default async function HomePage({
         </section>
       )}
 
+      <section className="bg-soul-violet py-14 text-white">
+        <div className="mx-auto max-w-6xl px-4 text-center">
+          <h2 className="text-3xl text-white">{t("recruitment.title")}</h2>
+          <div className="mx-auto mt-6 grid max-w-4xl gap-3 text-left sm:grid-cols-3">
+            {(t.raw("recruitment.benefits") as string[]).map(item=><p className="rounded-2xl bg-white/10 p-4" key={item}>✓ {item}</p>)}
+          </div>
+          <Link className="mt-7 inline-flex rounded-full bg-white px-6 py-3 font-semibold text-soul-violet" href="/devenir-praticien">{t("recruitment.cta")}</Link>
+        </div>
+      </section>
+
       {/* ------------------------------------------------------------------ */}
       {/* Prochaines expériences */}
       {/* ------------------------------------------------------------------ */}
@@ -238,7 +248,7 @@ export default async function HomePage({
                 {item.q}
                 <Plus className="h-5 w-5 shrink-0 text-soul-bronze transition-transform duration-200 group-open:rotate-45" />
               </summary>
-              <p className="pb-5 leading-relaxed text-soul-ink/75">{item.a}</p>
+              <p className="pb-5 leading-relaxed text-soul-ink/75">{item.a}{i===4&&<> <Link className="text-soul-violet underline" href="/devenir-praticien">{t("recruitment.learnMore")}</Link></>}</p>
             </details>
           ))}
         </div>

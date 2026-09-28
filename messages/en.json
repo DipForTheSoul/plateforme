@@ -1,4 +1,24 @@
 {
+  "practitionerContact": {
+    "title": "Contact this practitioner",
+    "intro": "Your message will be sent directly through ForTheSoul.",
+    "name": "Name *", "email": "Email *", "phone": "Phone (optional)", "message": "Message *",
+    "contactConsent": "I agree that my contact details and message may be shared with the practitioner and retained by ForTheSoul to follow up my request.",
+    "newsletterConsent": "I would also like to receive the ForTheSoul newsletter (optional).",
+    "legal": "Read our <privacy>privacy policy</privacy> and <terms>terms of use</terms>.",
+    "submit": "Send my message", "sending": "Sending…", "success": "Your message has been sent to the practitioner.", "honeypot": "Website",
+    "errors": {"invalid":"Please check the fields and required consents.","rateLimited":"Too many attempts. Please try again in one hour.","unavailable":"The form is temporarily unavailable. Please try again later.","sendFailed":"Your request was saved, but the email could not be sent. Please try again later."}
+  },
+  "legalFixed":{"cgv":{"title":"General terms of sale","intro":"Terms applying to purchases of publishing credits on ForTheSoul.","provisional":"Temporary copy — subject to client approval","sections":[{"title":"Purpose","text":"Credits allow approved practitioners to publish experiences on the platform."},{"title":"Prices and payment","text":"Prices shown at checkout are in Swiss francs. Payment is processed by the provider identified during purchase."},{"title":"Using credits","text":"One credit covers one published experience, including a recurring series. The terms shown in the practitioner area at purchase apply."},{"title":"Contact","text":"Questions may be sent through the ForTheSoul contact page."}]},"notices":{"title":"Legal notice","intro":"Information about the publisher and hosting of ForTheSoul.","provisional":"Temporary copy — subject to client approval","sections":[{"title":"Publisher","text":"ForTheSoul — Didier Picamoles, Switzerland. Full contact details are to be confirmed by the client."},{"title":"Hosting","text":"The application is hosted by Vercel; application data is hosted by Supabase. Contract details are to be confirmed."},{"title":"Intellectual property","text":"Content, trademarks and visuals remain the property of their respective owners."}] }},
+  "becomePractitioner": {
+    "metaTitle":"Become a practitioner on ForTheSoul","metaDescription":"Present your practice and publish conscious experiences for a qualified audience in Switzerland.",
+    "eyebrow":"ForTheSoul for practitioners","title":"Are you a practitioner? Join ForTheSoul","intro":"Bring your practice to a warm, carefully and personally curated community.","cta":"Create my practitioner account","learnMore":"Discover the process",
+    "benefitsTitle":"Why join ForTheSoul?","benefits":["Visibility with a qualified audience in Switzerland","Personal selection by Didier","An interface in French, German and English","Simple publishing, including recurring experiences","Dates that are easy to add to a calendar"],
+    "stepsTitle":"How it works","steps":[{"title":"1. Present your practice","text":"Create your account and complete the essential information about your practice."},{"title":"2. Review by Didier","text":"Didier personally reviews your profile before it is published."},{"title":"3. Publish your experiences","text":"Buy the credits you need and submit one-off or recurring dates."}],
+    "packsTitle":"Publishing packs","packsIntro":"One credit covers one published experience, including an experience with several dates.","packLabel":"{count, plural, one {# publication} other {# publications}}","temporary":"Temporary prices and sales copy — subject to client approval.",
+    "faqTitle":"Practitioner questions","faq":[{"q":"Is creating a profile free?","a":"Yes. Your account and practitioner profile are free. Experiences are published using credits."},{"q":"Who reviews my profile?","a":"Didier personally reviews every application before publication."},{"q":"Can I publish a recurring experience?","a":"Yes. A recurring series uses one credit and its individual dates remain visible."}],
+    "finalTitle":"Ready to present your practice?","finalText":"Create your account, present your work and join a consciously curated selection."
+  },
   "addressSearch": {
     "placeholder": "Start typing the street, number and town…",
     "suggestions": "Address suggestions",
@@ -79,9 +99,9 @@
       "newsletterSuccess": "Thank you! You're subscribed.",
       "newsletterError": "Subscription unavailable right now. Please try again later.",
       "legal": "© {year} ForTheSoul — Switzerland",
-      "becomePractitioner": "Create a practitioner account",
+      "becomePractitioner": "Become a practitioner",
       "terms": "Terms of use",
-      "privacy": "Privacy"
+      "privacy": "Privacy", "salesTerms":"Terms of sale", "legalNotices":"Legal notice"
     },
     "noResults": "No results for now.",
     "loading": "Loading…",
@@ -100,6 +120,7 @@
     }
   },
   "home": {
+    "recruitment":{"title":"Are you a practitioner?","benefits":["A qualified audience in Switzerland","Personal selection by Didier","Simple trilingual publishing"],"cta":"Discover the practitioner journey","learnMore":"Discover the full journey."},
     "heroTitle": "Experiences that nourish the soul",
     "heroSubtitle": "Free dance, meditation, yoga, sound journeys and retreats.",
     "heroCta": "Explore experiences",
@@ -162,6 +183,7 @@
     "heroEyebrow": "Carefully selected by Didier"
   },
   "events": {
+    "practitionerCta":"Are you a practitioner?",
     "title": "All experiences",
     "subtitle": "Search by mood, date or distance — everything reviewed, everything alive.",
     "searchPlaceholder": "Free search: dance, breathwork, singing bowls…",
@@ -239,6 +261,7 @@
     "externalLink": "Registration / external document ↗"
   },
   "practitioners": {
+    "practitionerCta":"Join ForTheSoul",
     "title": "The practitioners",
     "subtitle": "People Didier has met, listened to and reviewed.",
     "searchPlaceholder": "Search a practitioner…",
@@ -260,7 +283,7 @@
     "openInOsm": "Open in OpenStreetMap",
     "searchPlaceholder": "Search a venue (name, city…)",
     "allCantons": "All cantons",
-    "canton": "Canton",
+    "canton": "Canton", "country":"Country", "allCountries":"All countries",
     "filtersReset": "Reset"
   },
   "favorites": {

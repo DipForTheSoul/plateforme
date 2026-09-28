@@ -29,7 +29,7 @@ export async function Footer() {
           <Link href="/a-propos" className="hover:text-soul-violet">
             {t("nav.about")}
           </Link>
-          <Link href="/inscription" className="hover:text-soul-violet">
+          <Link href="/devenir-praticien" className="hover:text-soul-violet">
             {t("footer.becomePractitioner")}
           </Link>
           <Link href="/contact" className="hover:text-soul-violet">
@@ -41,6 +41,8 @@ export async function Footer() {
           <Link href="/confidentialite" className="hover:text-soul-violet">
             {t("footer.privacy")}
           </Link>
+          <Link href="/cgv" className="hover:text-soul-violet">{t("footer.salesTerms")}</Link>
+          <Link href="/mentions-legales" className="hover:text-soul-violet">{t("footer.legalNotices")}</Link>
         </nav>
 
         <div>

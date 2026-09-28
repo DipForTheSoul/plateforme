@@ -1,4 +1,24 @@
 {
+  "practitionerContact": {
+    "title": "Anbieter·in kontaktieren",
+    "intro": "Ihre Nachricht wird direkt über ForTheSoul weitergeleitet.",
+    "name": "Name *", "email": "E-Mail *", "phone": "Telefon (optional)", "message": "Nachricht *",
+    "contactConsent": "Ich bin damit einverstanden, dass meine Angaben und meine Nachricht an den/die Anbieter·in übermittelt und von ForTheSoul zur Bearbeitung gespeichert werden.",
+    "newsletterConsent": "Ich möchte auch den ForTheSoul-Newsletter erhalten (optional).",
+    "legal": "Lesen Sie unsere <privacy>Datenschutzerklärung</privacy> und <terms>Nutzungsbedingungen</terms>.",
+    "submit": "Nachricht senden", "sending": "Wird gesendet…", "success": "Ihre Nachricht wurde erfolgreich übermittelt.", "honeypot": "Website",
+    "errors": {"invalid":"Bitte prüfen Sie die Felder und erforderlichen Einwilligungen.","rateLimited":"Zu viele Versuche. Bitte versuchen Sie es in einer Stunde erneut.","unavailable":"Das Formular ist vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.","sendFailed":"Ihre Anfrage wurde gespeichert, aber die E-Mail konnte nicht gesendet werden. Bitte versuchen Sie es später erneut."}
+  },
+  "legalFixed":{"cgv":{"title":"Allgemeine Verkaufsbedingungen","intro":"Bedingungen für den Kauf von Publikations-Credits auf ForTheSoul.","provisional":"Vorläufiger Text — vom Kunden zu bestätigen","sections":[{"title":"Gegenstand","text":"Credits ermöglichen validierten Anbieter·innen, Erlebnisse auf der Plattform zu veröffentlichen."},{"title":"Preise und Zahlung","text":"Die bei der Bestellung angezeigten Preise sind in Schweizer Franken. Die Zahlung wird vom angegebenen Zahlungsdienst verarbeitet."},{"title":"Verwendung der Credits","text":"Ein Credit entspricht einem veröffentlichten Erlebnis, einschließlich einer wiederkehrenden Serie. Es gelten die beim Kauf angezeigten Bedingungen."},{"title":"Kontakt","text":"Fragen können über die Kontaktseite von ForTheSoul gestellt werden."}]},"notices":{"title":"Impressum","intro":"Angaben zum Betreiber und Hosting von ForTheSoul.","provisional":"Vorläufiger Text — vom Kunden zu bestätigen","sections":[{"title":"Betreiber","text":"ForTheSoul — Didier Picamoles, Schweiz. Vollständige Angaben sind vom Kunden zu bestätigen."},{"title":"Hosting","text":"Die Anwendung wird von Vercel gehostet; Anwendungsdaten von Supabase. Vertragsdetails sind zu bestätigen."},{"title":"Geistiges Eigentum","text":"Inhalte, Marken und Bilder bleiben Eigentum ihrer jeweiligen Rechteinhaber."}] }},
+  "becomePractitioner": {
+    "metaTitle":"Anbieter·in bei ForTheSoul werden","metaDescription":"Präsentieren Sie Ihre Tätigkeit und veröffentlichen Sie bewusste Erlebnisse für ein qualifiziertes Publikum in der Schweiz.",
+    "eyebrow":"ForTheSoul für Anbieter·innen","title":"Sind Sie Anbieter·in? Werden Sie Teil von ForTheSoul","intro":"Machen Sie Ihre Praxis in einer menschlich und sorgfältig kuratierten Auswahl sichtbar.","cta":"Anbieterkonto erstellen","learnMore":"Ablauf entdecken",
+    "benefitsTitle":"Warum ForTheSoul?","benefits":["Sichtbarkeit bei einem qualifizierten Publikum in der Schweiz","Persönliche Auswahl durch Didier","Oberfläche auf Französisch, Deutsch und Englisch","Einfache Veröffentlichung wiederkehrender Erlebnisse","Termine lassen sich leicht zum Kalender hinzufügen"],
+    "stepsTitle":"So funktioniert es","steps":[{"title":"1. Tätigkeit vorstellen","text":"Erstellen Sie Ihr Konto und ergänzen Sie die wichtigsten Angaben zu Ihrer Praxis."},{"title":"2. Prüfung durch Didier","text":"Didier prüft Ihr Profil persönlich vor der Veröffentlichung."},{"title":"3. Erlebnisse veröffentlichen","text":"Kaufen Sie die benötigten Credits und veröffentlichen Sie einzelne oder wiederkehrende Termine."}],
+    "packsTitle":"Publikationspakete","packsIntro":"Ein Credit entspricht einem veröffentlichten Erlebnis, auch bei mehreren Terminen.","packLabel":"{count, plural, one {# Veröffentlichung} other {# Veröffentlichungen}}","temporary":"Vorläufige Preise und Verkaufstexte — vom Kunden zu bestätigen.",
+    "faqTitle":"Fragen von Anbieter·innen","faq":[{"q":"Ist das Profil kostenpflichtig?","a":"Nein. Konto und Anbieterprofil sind kostenlos. Erlebnisse werden mit Credits veröffentlicht."},{"q":"Wer prüft mein Profil?","a":"Didier prüft jede Anfrage persönlich vor der Veröffentlichung."},{"q":"Kann ich wiederkehrende Erlebnisse veröffentlichen?","a":"Ja. Eine Serie benötigt einen Credit; die einzelnen Termine bleiben sichtbar."}],
+    "finalTitle":"Möchten Sie Ihre Praxis vorstellen?","finalText":"Erstellen Sie Ihr Konto, präsentieren Sie Ihre Tätigkeit und werden Sie Teil einer bewussten Auswahl."
+  },
   "addressSearch": {
     "placeholder": "Strasse, Hausnummer und Ort eingeben…",
     "suggestions": "Adressvorschläge",
@@ -79,9 +99,9 @@
       "newsletterSuccess": "Danke! Du bist angemeldet.",
       "newsletterError": "Anmeldung derzeit nicht möglich. Bitte versuche es später erneut.",
       "legal": "© {year} ForTheSoul — Schweiz",
-      "becomePractitioner": "Anbieterkonto erstellen",
+      "becomePractitioner": "Anbieter·in werden",
       "terms": "Nutzungsbedingungen",
-      "privacy": "Datenschutz"
+      "privacy": "Datenschutz", "salesTerms":"Verkaufsbedingungen", "legalNotices":"Impressum"
     },
     "noResults": "Zurzeit keine Ergebnisse.",
     "loading": "Wird geladen…",
@@ -100,6 +120,7 @@
     }
   },
   "home": {
+    "recruitment":{"title":"Sind Sie Anbieter·in?","benefits":["Ein qualifiziertes Publikum in der Schweiz","Persönliche Auswahl durch Didier","Einfaches, dreisprachiges Veröffentlichen"],"cta":"Anbieter-Ablauf entdecken","learnMore":"Den vollständigen Ablauf entdecken."},
     "heroTitle": "Erlebnisse, die die Seele nähren",
     "heroSubtitle": "Freier Tanz, Meditation, Yoga, Klangreisen und Retreats.",
     "heroCta": "Erlebnisse entdecken",
@@ -162,6 +183,7 @@
     "heroEyebrow": "Von Didier mit Sorgfalt ausgewählt"
   },
   "events": {
+    "practitionerCta":"Sind Sie Anbieter·in?",
     "title": "Alle Erlebnisse",
     "subtitle": "Suche nach Lust, Datum oder Distanz — alles geprüft, alles lebendig.",
     "searchPlaceholder": "Freie Suche: Tanz, Breathwork, Klangschalen…",
@@ -239,6 +261,7 @@
     "externalLink": "Anmeldung / externes Dokument ↗"
   },
   "practitioners": {
+    "practitionerCta":"ForTheSoul beitreten",
     "title": "Die Anbieter:innen",
     "subtitle": "Menschen, die Didier getroffen, angehört und geprüft hat.",
     "searchPlaceholder": "Anbieter:in suchen…",
@@ -260,7 +283,7 @@
     "openInOsm": "In OpenStreetMap öffnen",
     "searchPlaceholder": "Ort suchen (Name, Stadt…)",
     "allCantons": "Alle Kantone",
-    "canton": "Kanton",
+    "canton": "Kanton", "country":"Land", "allCountries":"Alle Länder",
     "filtersReset": "Zurücksetzen"
   },
   "favorites": {

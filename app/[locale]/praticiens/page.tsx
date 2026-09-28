@@ -43,8 +43,7 @@ export default async function PractitionersPage({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="text-3xl text-soul-brown">{t("title")}</h1>
-      <p className="mt-2 max-w-2xl text-soul-bronze">{t("subtitle")}</p>
+      <div className="flex flex-wrap items-start justify-between gap-4"><div><h1 className="text-3xl text-soul-brown">{t("title")}</h1><p className="mt-2 max-w-2xl text-soul-bronze">{t("subtitle")}</p></div><Link className="btn-secondary !py-2" href="/devenir-praticien">{t("practitionerCta")}</Link></div>
 
       <form className="mt-6 max-w-md">
         <input
@@ -62,11 +61,11 @@ export default async function PractitionersPage({
             <Link href={`/praticiens/${p.slug}`} className="absolute inset-0 z-10">
               <span className="sr-only">{p.name}</span>
             </Link>
-            <div className="relative h-52 w-full overflow-hidden">
+            <div className="relative aspect-[4/5] w-full overflow-hidden bg-soul-sand/30">
               {p.photos[0] ? (
                 <Image src={p.photos[0]} alt={p.name} fill
                   sizes="(max-width: 640px) 100vw, 33vw"
-                  className="object-cover transition duration-500 group-hover:scale-105" />
+                  className="object-cover object-top transition duration-500 group-hover:scale-105" />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-soul-brown to-soul-bronze text-5xl text-soul-cream"
                   aria-hidden="true">

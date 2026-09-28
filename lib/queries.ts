@@ -238,7 +238,7 @@ export async function getApprovedPractitioners(): Promise<Practitioner[]> {
       .eq("status", "approved")
       .order("name").order("id");
     const data = await readPages((from,to)=>query.range(from,to));
-    return (data as Practitioner[]) ?? [];
+    return ((data as Practitioner[]) ?? []).filter((p)=>p.name.trim().toLowerCase()!=="praticien test");
   } catch {
     throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");
   }

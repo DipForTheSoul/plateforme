@@ -29,11 +29,13 @@ export async function createVenue(
   _prev: ActionState & { venueId?: string },
   formData: FormData
 ): Promise<ActionState & { venueId?: string }> {
+  const locale=String(formData.get("locale")??"en");
+  const msg=locale==="fr"?{auth:"Connexion requise.",fields:"Nom et adresse complète requis.",point:"Adresse sélectionnée invalide. Sélectionnez-la à nouveau ou utilisez la saisie manuelle.",missing:"Adresse introuvable. Choisissez la saisie manuelle : Didier vérifiera l’adresse avec votre événement. Votre saisie est conservée.",save:"Enregistrement du lieu impossible.",ok:"Lieu enregistré."}:locale==="de"?{auth:"Anmeldung erforderlich.",fields:"Name und vollständige Adresse sind erforderlich.",point:"Die ausgewählte Adresse ist ungültig. Wählen Sie sie erneut oder verwenden Sie die manuelle Eingabe.",missing:"Adresse nicht gefunden. Wählen Sie die manuelle Eingabe; Didier prüft sie mit Ihrem Erlebnis. Ihre Eingaben bleiben erhalten.",save:"Der Ort konnte nicht gespeichert werden.",ok:"Ort gespeichert."}:{auth:"Sign-in required.",fields:"Name and full address are required.",point:"The selected address is invalid. Select it again or use manual entry.",missing:"Address not found. Choose manual entry; Didier will review it with your experience. Your input has been preserved.",save:"The venue could not be saved.",ok:"Venue saved."};
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { error: "Connexion requise." };
+  if (!user) return { error: msg.auth };
 
   const parsed = venueSchema.safeParse({
     name: String(formData.get("name") ?? "").trim(),
@@ -46,7 +48,7 @@ export async function createVenue(
     rooms: String(formData.get("rooms") ?? "") || null,
     website: String(formData.get("website") ?? "").trim() || null,
   });
-  if (!parsed.success) return { error: "Nom et adresse complète requis." };
+  if (!parsed.success) return { error: msg.fields };
   const input = parsed.data;
 
   const isAdmin = (await getCurrentProfile())?.role === 'admin';
@@ -54,15 +56,14 @@ export async function createVenue(
 
   let geo;
   try {geo = readVenuePoint(formData);}
-  catch {return {error: 'Adresse sélectionnée invalide. Sélectionnez-la à nouveau ou utilisez la saisie manuelle.'};}
+  catch {return {error: msg.point};}
   const manual = formData.get('address_mode') === 'manual';
   // Manual entry never requires locating a pin or waiting for a geocoder.
   if (manual) geo = null;
   else if (!geo) geo = await geocodeAddress([input.address, input.city].filter(Boolean).join(', '), input.country);
   if (!geo && !manual) {
     return {
-      error:
-        "Adresse introuvable. Choisissez la saisie manuelle : Didier vérifiera l’adresse avec votre événement. Votre saisie est conservée.",
+      error: msg.missing,
     };
   }
 
@@ -87,11 +88,11 @@ export async function createVenue(
     .select("id")
     .single();
 
-  if (error || !data) return { error: "Enregistrement du lieu impossible." };
+  if (error || !data) return { error: msg.save };
 
   revalidatePath("/admin/lieux");
   revalidatePath("/[locale]/lieux", "page");
-  return { success: "Lieu enregistré.", venueId: data.id };
+  return { success: msg.ok, venueId: data.id };
 }
 
 /**

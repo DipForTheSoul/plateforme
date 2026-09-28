@@ -8,7 +8,8 @@ import { JsonLd } from "@/components/JsonLd";
 import { getApprovedEvents, getPractitionerBySlug } from "@/lib/queries";
 import { practitionerJsonLd } from "@/lib/seo";
 import { LANGUAGE_LABELS } from "@/lib/utils";
-import { Globe, Link as LinkIcon, Mail, Star } from "lucide-react";
+import { Globe, Link as LinkIcon, Star } from "lucide-react";
+import { PractitionerContactForm } from "@/components/PractitionerContactForm";
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +48,9 @@ export default async function PractitionerPage({
   if (!practitioner || practitioner.status !== "approved") notFound();
 
   const events = await getApprovedEvents({ practitioner: slug });
+  // A linked account always has an auth/profile email; the address itself is
+  // deliberately resolved only inside the server action and never exposed.
+  const hasContactRecipient = Boolean(practitioner.contact.email?.trim() || practitioner.user_id);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
@@ -112,16 +116,9 @@ export default async function PractitionerPage({
             <p className="mt-6 whitespace-pre-line text-soul-ink/85">{practitioner.bio}</p>
           )}
 
-          {(practitioner.contact.email ||
-            practitioner.contact.website ||
+          {(practitioner.contact.website ||
             Object.keys(practitioner.links).some((n) => !n.startsWith("google"))) && (
             <div className="mt-8 flex flex-col gap-2 border-t border-soul-bronze/15 pt-6 text-sm">
-              {practitioner.contact.email && (
-                <a href={`mailto:${practitioner.contact.email}`}
-                  className="flex items-center gap-2 text-soul-brown hover:underline">
-                  <Mail className="h-4 w-4 text-soul-violet" /> {practitioner.contact.email}
-                </a>
-              )}
               {practitioner.contact.website && (
                 <a href={practitioner.contact.website} target="_blank" rel="noopener noreferrer"
                   className="flex items-center gap-2 text-soul-brown hover:underline">
@@ -137,6 +134,9 @@ export default async function PractitionerPage({
                   </a>
                 ))}
             </div>
+          )}
+          {hasContactRecipient && (
+            <PractitionerContactForm practitionerId={practitioner.id} locale={locale} />
           )}
         </div>
       </div>

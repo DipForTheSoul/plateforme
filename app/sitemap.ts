@@ -17,7 +17,7 @@ function localized(path: string) {
  * hreflang FR/DE/EN. Généré dynamiquement depuis la base.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticPaths = ["", "/experiences", "/praticiens", "/a-propos"];
+  const staticPaths = ["", "/experiences", "/praticiens", "/lieux", "/devenir-praticien", "/a-propos", "/cgu", "/confidentialite", "/cgv", "/mentions-legales"];
 
   const entries: MetadataRoute.Sitemap = staticPaths.map((path) => ({
     url: `${SITE_URL}${path || "/"}`,

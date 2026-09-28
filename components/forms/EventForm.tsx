@@ -444,7 +444,7 @@ function EventFormBody({
                   <button type="button" disabled={removing || pending} onClick={() => startRemoving(async () => {
                     if(draft.hasChanges()) { setOccurrenceError(t('saveBeforeDelete')); return; }
                     try {
-                      const result = await removeOccurrence(occurrence.id, event.id);
+                      const result = await removeOccurrence(occurrence.id, event.id, locale);
                       if (result.error) { setOccurrenceError(result.error); return; }
                       if (result.redirectTo) { draft.clear(); router.push(result.redirectTo); return; }
                       const remaining = visibleOccurrences.filter(o => o.id !== occurrence.id);

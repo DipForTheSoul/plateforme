@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentPractitioner, getCurrentProfile } from "@/lib/auth";
 import type { ActionState } from "@/app/actions/events";
+import {actionLocale,actionMessage} from "@/lib/action-messages";
 
 const profileSchema = z.object({
   name: z.string().min(2).max(120),
@@ -31,8 +32,9 @@ export async function updatePractitionerProfile(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
+  const locale=actionLocale(formData);
   const practitioner = await getCurrentPractitioner();
-  if (!practitioner) return { error: "Aucune fiche praticien trouvée." };
+  if (!practitioner) return { error: actionMessage(locale,"profileMissing") };
 
   const parsed = profileSchema.safeParse({
     name: String(formData.get("name") ?? "").trim(),
@@ -55,7 +57,7 @@ export async function updatePractitionerProfile(
     photos: formData.getAll("photos").map(String).filter(Boolean),
   });
   if (!parsed.success) {
-    return { error: "Vérifiez les champs (les liens doivent être des URL complètes)." };
+    return { error: actionMessage(locale,"profileFields") };
   }
   const input = parsed.data;
 
@@ -88,7 +90,7 @@ export async function updatePractitionerProfile(
     })
     .eq("id", practitioner.id);
 
-  if (error) return { error: "Mise à jour impossible." };
+  if (error) return { error: actionMessage(locale,"profileSave") };
 
   if (practitioner.status === "rejected") {
     const admin = createAdminClient();
@@ -96,16 +98,16 @@ export async function updatePractitionerProfile(
       .from("practitioners")
       .update({ status: "pending", admin_message: null })
       .eq("id", practitioner.id);
-    if(resubmissionError)return {error:'Votre fiche est enregistrée, mais le renvoi en validation a échoué. Réessayez l’enregistrement.'};
+    if(resubmissionError)return {error:actionMessage(locale,"profileResubmit")};
   }
 
   revalidatePath("/espace-praticien/profil");
   revalidatePath(`/praticiens/${practitioner.slug}`);
   if (practitioner.status === "rejected") {
     revalidatePath("/admin/praticiens");
-    return { success: "Profil mis à jour et renvoyé en validation." };
+    return { success: actionMessage(locale,"profileResubmitted") };
   }
-  return { success: "Profil mis à jour." };
+  return { success: actionMessage(locale,"profileUpdated") };
 }
 
 /**

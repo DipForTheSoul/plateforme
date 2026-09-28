@@ -24,30 +24,32 @@ export default async function VenuesPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ q?: string; canton?: string }>;
+  searchParams: Promise<{ q?: string; pays?: string; canton?: string }>;
 }) {
   const { locale } = await params;
-  const { q = "", canton = "" } = await searchParams;
+  const { q = "", pays = "", canton = "" } = await searchParams;
   setRequestLocale(locale);
   const t = await getTranslations("venues");
   const all = (await getVenues()).filter(isVenuePublished);
 
   // Cantons disponibles (uniquement les lieux qui en ont un), triés.
   const cantons = Array.from(
-    new Set(all.map((v) => v.canton).filter((c): c is string => Boolean(c)))
+    new Set(all.filter(v=>v.country==="CH").map((v) => v.canton).filter((c): c is string => Boolean(c)))
   ).sort();
+  const countries=Array.from(new Set(all.map(v=>v.country).filter(Boolean))).sort();
 
   const query = q.trim().toLowerCase();
   const venues = all.filter((v) => {
-    if (canton && v.canton !== canton) return false;
+    if (pays && v.country !== pays) return false;
+    if (pays === "CH" && canton && v.canton !== canton) return false;
     if (query) {
-      const haystack = `${v.name} ${v.city ?? ""} ${v.address ?? ""}`.toLowerCase();
+      const haystack = `${v.name} ${v.city ?? ""} ${v.description ?? ""}`.toLowerCase();
       if (!haystack.includes(query)) return false;
     }
     return true;
   });
 
-  const hasFilters = Boolean(query || canton);
+  const hasFilters = Boolean(query || pays || canton);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
@@ -67,7 +69,10 @@ export default async function VenuesPage({
             className="field !rounded-full !py-2.5 !pl-11"
           />
         </div>
-        <select
+        <select name="pays" defaultValue={pays} aria-label={t("country")} className="field !w-auto !rounded-full">
+          <option value="">{t("allCountries")}</option>{countries.map(c=><option key={c} value={c}>{c}</option>)}
+        </select>
+        {pays === "CH" && <select
           name="canton"
           defaultValue={canton}
           aria-label={t("canton")}
@@ -79,7 +84,7 @@ export default async function VenuesPage({
               {c}
             </option>
           ))}
-        </select>
+        </select>}
         <button type="submit" aria-label={t("searchPlaceholder")} className="btn-primary !rounded-full !py-2.5">
           <Search className="h-4 w-4" />
         </button>

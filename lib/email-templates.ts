@@ -202,6 +202,33 @@ const p = (text: string) =>
 const button = (href: string, label: string) =>
   `<p style="margin:24px 0;text-align:center;"><a href="${href}" style="display:inline-block;background:#5D4D9E;color:#ffffff;padding:14px 32px;border-radius:50px;text-decoration:none;font-size:15px;font-weight:600;">${label}</a></p>`;
 
+/** Message transmis directement au praticien depuis sa fiche publique. */
+export function practitionerContactEmail(input: {
+  visitorName: string;
+  visitorEmail: string;
+  visitorPhone?: string | null;
+  message: string;
+  createdAt: string;
+  lang?: Lang;
+}) {
+  const lang = input.lang ?? "fr";
+  const copy = {
+    fr: { heading: "Nouvelle demande via ForTheSoul", name: "Nom", email: "E-mail", phone: "Téléphone", message: "Message", date: "Date", note: "Cette demande a été envoyée depuis une fiche praticien ForTheSoul." },
+    de: { heading: "Neue Anfrage über ForTheSoul", name: "Name", email: "E-Mail", phone: "Telefon", message: "Nachricht", date: "Datum", note: "Diese Anfrage wurde über ein Anbieterprofil auf ForTheSoul gesendet." },
+    en: { heading: "New enquiry via ForTheSoul", name: "Name", email: "Email", phone: "Phone", message: "Message", date: "Date", note: "This enquiry was sent from a practitioner profile on ForTheSoul." },
+  }[lang];
+  const rows = [
+    `<strong>${copy.name}:</strong> ${escapeHtml(input.visitorName)}`,
+    `<strong>${copy.email}:</strong> ${escapeHtml(input.visitorEmail)}`,
+    input.visitorPhone ? `<strong>${copy.phone}:</strong> ${escapeHtml(input.visitorPhone)}` : "",
+    `<strong>${copy.date}:</strong> ${escapeHtml(input.createdAt)}`,
+  ].filter(Boolean).map(p).join("");
+  return {
+    subject: `Nouvelle demande via ForTheSoul — ${input.visitorName}`,
+    html: layout(lang, copy.heading, rows + p(`<strong>${copy.message}:</strong><br/>${escapeHtml(input.message).replace(/\n/g, "<br/>")}`) + p(`<em>${copy.note}</em>`)),
+  };
+}
+
 /** Confirmation de dépôt d'un événement (praticien). */
 export function submissionReceivedEmail(practitionerName: string, eventTitle: string, lang: Lang = "fr") {
   const t = i18n.submissionReceived[lang];

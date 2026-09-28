@@ -194,6 +194,22 @@ export interface Contact {
   created_at: string;
 }
 
+export interface PractitionerContactRequest {
+  id: string;
+  practitioner_id: string;
+  visitor_name: string;
+  visitor_email: string;
+  visitor_phone: string | null;
+  message: string;
+  contact_consent: boolean;
+  newsletter_consent: boolean;
+  locale: Locale;
+  send_status: "pending" | "sent" | "failed";
+  send_error: string | null;
+  ip_hash: string;
+  created_at: string;
+}
+
 export interface CreditTransaction {
   id: string;
   practitioner_id: string;

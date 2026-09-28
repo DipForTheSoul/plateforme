@@ -1,4 +1,24 @@
 {
+  "practitionerContact": {
+    "title": "Contacter ce·tte praticien·ne",
+    "intro": "Votre message lui sera transmis directement par ForTheSoul.",
+    "name": "Nom *", "email": "E-mail *", "phone": "Téléphone (facultatif)", "message": "Message *",
+    "contactConsent": "J’accepte que mes coordonnées et mon message soient transmis au/à la praticien·ne et conservés par ForTheSoul pour le suivi de ma demande.",
+    "newsletterConsent": "Je souhaite également recevoir la newsletter ForTheSoul (facultatif).",
+    "legal": "Consultez notre <privacy>politique de confidentialité</privacy> et nos <terms>conditions d’utilisation</terms>.",
+    "submit": "Envoyer mon message", "sending": "Envoi…", "success": "Votre message a bien été transmis au/à la praticien·ne.", "honeypot": "Site web",
+    "errors": {"invalid":"Vérifiez les champs et les consentements demandés.","rateLimited":"Trop de tentatives. Réessayez dans une heure.","unavailable":"Le formulaire est momentanément indisponible. Réessayez plus tard.","sendFailed":"Votre demande est conservée, mais l’e-mail n’a pas pu être envoyé. Merci de réessayer plus tard."}
+  },
+  "legalFixed":{"cgv":{"title":"Conditions générales de vente","intro":"Conditions applicables à l’achat de crédits de publication sur ForTheSoul.","provisional":"Texte provisoire — à valider par le client","sections":[{"title":"Objet","text":"Les crédits permettent aux praticien·nes validé·es de publier des expériences sur la plateforme."},{"title":"Prix et paiement","text":"Les prix affichés au moment de la commande sont en francs suisses. Le paiement est traité par le prestataire indiqué lors de l’achat."},{"title":"Utilisation des crédits","text":"Un crédit correspond à une expérience publiée, y compris une série récurrente. Les conditions affichées dans l’espace praticien au moment de l’achat s’appliquent."},{"title":"Contact","text":"Toute question peut être adressée via la page Contact de ForTheSoul."}]},"notices":{"title":"Mentions légales","intro":"Informations relatives à l’éditeur et à l’hébergement de ForTheSoul.","provisional":"Texte provisoire — à valider par le client","sections":[{"title":"Éditeur","text":"ForTheSoul — Didier Picamoles, Suisse. Coordonnées complètes à confirmer par le client."},{"title":"Hébergement","text":"Application hébergée par Vercel ; données applicatives hébergées par Supabase. Détails contractuels à confirmer."},{"title":"Propriété intellectuelle","text":"Les contenus, marques et visuels restent la propriété de leurs titulaires respectifs."}] }},
+  "becomePractitioner": {
+    "metaTitle":"Devenir praticien·ne sur ForTheSoul","metaDescription":"Présentez votre activité et publiez vos expériences conscientes auprès d’un public qualifié en Suisse.",
+    "eyebrow":"ForTheSoul pour les praticien·nes","title":"Vous êtes praticien·ne ? Rejoignez ForTheSoul","intro":"Faites connaître votre pratique au sein d’une sélection humaine, chaleureuse et exigeante.","cta":"Créer mon compte praticien","learnMore":"Découvrir le parcours",
+    "benefitsTitle":"Pourquoi rejoindre ForTheSoul ?","benefits":["Une visibilité auprès d’un public qualifié en Suisse","Une sélection humaine et personnelle par Didier","Une interface en français, allemand et anglais","Des publications simples, y compris les expériences récurrentes","Des dates faciles à ajouter à l’agenda"],
+    "stepsTitle":"Comment ça marche ?","steps":[{"title":"1. Présentez votre activité","text":"Créez votre compte et complétez les informations essentielles de votre pratique."},{"title":"2. Validation par Didier","text":"Didier relit personnellement votre profil avant sa publication."},{"title":"3. Publiez vos expériences","text":"Achetez les crédits nécessaires et déposez vos dates, ponctuelles ou récurrentes."}],
+    "packsTitle":"Packs de publication","packsIntro":"Un crédit correspond à une expérience publiée, y compris lorsqu’elle comporte plusieurs dates.","packLabel":"{count, plural, one {# publication} other {# publications}}","temporary":"Tarifs et textes commerciaux provisoires — à valider par le client.",
+    "faqTitle":"Questions des praticien·nes","faq":[{"q":"La création du profil est-elle payante ?","a":"Non, le compte et le profil praticien sont gratuits. Les expériences sont publiées à l’aide de crédits."},{"q":"Qui valide mon profil ?","a":"Didier relit personnellement chaque demande avant sa mise en ligne."},{"q":"Puis-je publier une expérience récurrente ?","a":"Oui. Une série récurrente utilise un seul crédit et ses différentes dates restent visibles."}],
+    "finalTitle":"Prêt·e à présenter votre pratique ?","finalText":"Créez votre compte, présentez votre activité et rejoignez une sélection consciente."
+  },
   "addressSearch": {
     "placeholder": "Commencez à saisir la rue, le numéro et la ville…",
     "suggestions": "Adresses proposées",
@@ -79,9 +99,9 @@
       "newsletterSuccess": "Merci ! Vous êtes bien inscrit·e.",
       "newsletterError": "Inscription impossible pour le moment. Réessayez plus tard.",
       "legal": "© {year} ForTheSoul — Suisse",
-      "becomePractitioner": "Créer un compte praticien",
+      "becomePractitioner": "Devenir praticien·ne",
       "terms": "Conditions d'utilisation",
-      "privacy": "Confidentialité"
+      "privacy": "Confidentialité", "salesTerms":"Conditions générales de vente", "legalNotices":"Mentions légales"
     },
     "noResults": "Aucun résultat pour le moment.",
     "loading": "Chargement…",
@@ -100,6 +120,7 @@
     }
   },
   "home": {
+    "recruitment":{"title":"Vous êtes praticien·ne ?","benefits":["Un public qualifié en Suisse","Une sélection humaine par Didier","Une publication simple et trilingue"],"cta":"Découvrir le parcours praticien","learnMore":"Découvrir le parcours complet."},
     "heroTitle": "Des expériences qui nourrissent l'âme",
     "heroSubtitle": "Danse libre, méditation, yoga, voyages sonores et retraites.",
     "heroCta": "Explorer les expériences",
@@ -162,6 +183,7 @@
     "heroEyebrow": "Sélectionné avec soin par Didier"
   },
   "events": {
+    "practitionerCta":"Vous êtes praticien·ne ?",
     "title": "Toutes les expériences",
     "subtitle": "Recherchez par envie, par date ou par distance — tout est validé, tout est vivant.",
     "searchPlaceholder": "Recherche libre : danse, breathwork, bols tibétains…",
@@ -239,6 +261,7 @@
     "externalLink": "Inscription / document externe ↗"
   },
   "practitioners": {
+    "practitionerCta":"Rejoindre ForTheSoul",
     "title": "Les praticien·nes",
     "subtitle": "Des femmes et des hommes rencontrés, écoutés et validés par Didier.",
     "searchPlaceholder": "Rechercher un·e praticien·ne…",
@@ -260,7 +283,7 @@
     "openInOsm": "Ouvrir dans OpenStreetMap",
     "searchPlaceholder": "Rechercher un lieu (nom, ville…)",
     "allCantons": "Tous les cantons",
-    "canton": "Canton",
+    "canton": "Canton", "country":"Pays", "allCountries":"Tous les pays",
     "filtersReset": "Réinitialiser"
   },
   "favorites": {
