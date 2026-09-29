@@ -84,7 +84,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={`${playfair.variable} ${workSans.variable}`}>
       <body className="flex min-h-screen flex-col antialiased pb-20 md:pb-0">
-        <GoogleAnalytics />
+        <GoogleAnalytics locale={locale} />
         <NextIntlClientProvider>
           <CurrencyProvider rateEur={rateEur}>
             <Header />

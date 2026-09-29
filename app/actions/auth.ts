@@ -65,8 +65,14 @@ const signUpSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
   role: z.enum(["participant", "practitioner"]),
-  name: z.string().max(120).optional(),
-  website: z.string().max(0), // honeypot anti-spam
+  firstName: z.string().min(2).max(80),
+  lastName: z.string().min(2).max(80),
+  artistName: z.string().min(2).max(120),
+  bio: z.string().min(40).max(1000),
+  specialties: z.array(z.string().min(1).max(60)).min(1).max(10),
+  website: z.string().url().optional(),
+  instagram: z.string().url().optional(),
+  fax: z.string().max(0), // honeypot anti-spam
 });
 
 /** Inscription — le rôle admin n'est JAMAIS attribuable ici (voir 0004_functions.sql). */
@@ -78,8 +84,14 @@ export async function signUp(
     email: String(formData.get("email") ?? "").trim(),
     password: String(formData.get("password") ?? ""),
     role: formData.get("role") ?? "practitioner",
-    name: String(formData.get("name") ?? "").trim() || undefined,
-    website: String(formData.get("website") ?? ""),
+    firstName: String(formData.get("firstName") ?? "").trim(),
+    lastName: String(formData.get("lastName") ?? "").trim(),
+    artistName: String(formData.get("artistName") ?? "").trim(),
+    bio: String(formData.get("bio") ?? "").trim(),
+    specialties: formData.getAll("specialties").map(String).map(value => value.trim()).filter(Boolean),
+    website: String(formData.get("website") ?? "").trim() || undefined,
+    instagram: String(formData.get("instagram") ?? "").trim() || undefined,
+    fax: String(formData.get("fax") ?? ""),
   });
   if (!parsed.success) {
     const passwordIssue = parsed.error.issues.some((i) =>
@@ -101,7 +113,17 @@ export async function signUp(
     password: parsed.data.password,
     options: {
       emailRedirectTo: `${SITE_URL}/api/auth/callback`,
-      data: { role: parsed.data.role, name: parsed.data.name, preferred_lang: ['de','en'].includes(String(formData.get('locale'))) ? String(formData.get('locale')) : 'fr' },
+      data: {
+        role: parsed.data.role,
+        name: parsed.data.artistName,
+        first_name: parsed.data.firstName,
+        last_name: parsed.data.lastName,
+        bio: parsed.data.bio,
+        specialties: parsed.data.specialties,
+        website: parsed.data.website,
+        instagram: parsed.data.instagram,
+        preferred_lang: ['de','en'].includes(String(formData.get('locale'))) ? String(formData.get('locale')) : 'fr',
+      },
     },
   });
   if (error) {
@@ -178,12 +200,21 @@ export async function createMissingPractitioner(): Promise<void> {
     .maybeSingle();
   if (existing) redirect("/espace-praticien");
 
-  const name = (user.user_metadata as Record<string, string>)?.name || user.email?.split("@")[0] || "Praticien";
+  const metadata = user.user_metadata as Record<string, unknown>;
+  const name = String(metadata?.name || user.email?.split("@")[0] || "Praticien");
   const {error:insertError}=await admin.from("practitioners").upsert({
     user_id: user.id,
     name,
     slug: `${slugify(name)}-${user.id.slice(0, 6)}`,
-    contact: { email: user.email },
+    bio: typeof metadata.bio === "string" ? metadata.bio : null,
+    specialties: Array.isArray(metadata.specialties) ? metadata.specialties.filter((item): item is string => typeof item === "string") : [],
+    contact: {
+      email: user.email,
+      ...(typeof metadata.first_name === "string" ? { first_name: metadata.first_name } : {}),
+      ...(typeof metadata.last_name === "string" ? { last_name: metadata.last_name } : {}),
+      ...(typeof metadata.website === "string" ? { website: metadata.website } : {}),
+    },
+    links: typeof metadata.instagram === "string" ? { instagram: metadata.instagram } : {},
     status: "pending",
   },{onConflict:"user_id",ignoreDuplicates:true});
   if(insertError)throw new Error("La création de votre fiche a échoué. Réessayez.");

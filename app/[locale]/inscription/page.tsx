@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { AuthCard } from "@/components/AuthCard";
 import { SignupForm } from "./SignupForm";
+import { getCategories } from "@/lib/queries";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("auth");
@@ -10,9 +11,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function SignupPage() {
   const t = await getTranslations("auth");
+  const categories = await getCategories();
   return (
-    <AuthCard title={t("signupTitle")}>
-      <SignupForm />
+    <AuthCard title={t("signupTitle")} wide>
+      <SignupForm categories={categories.map(({ id, name, slug }) => ({ id, name, slug }))} />
     </AuthCard>
   );
 }

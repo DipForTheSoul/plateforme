@@ -376,7 +376,7 @@
   },
   {
    "t": "p",
-   "x": "ForTheSoul peut utiliser des cookies et technologies similaires. Les cookies peuvent notamment servir à :"
+   "x": "ForTheSoul utilise des cookies ou stockages locaux strictement nécessaires à l’authentification, à la sécurité des comptes et à la mémorisation de certaines préférences. Les outils de mesure d’audience ou de marketing non nécessaires ne sont chargés qu’après le choix de l’utilisateur. Ces technologies peuvent notamment servir à :"
   },
   {
    "t": "li",
@@ -412,7 +412,7 @@
   },
   {
    "t": "p",
-   "x": "Les cookies strictement nécessaires au fonctionnement du site peuvent être utilisés sans consentement lorsqu'ils sont nécessaires à la fourniture du service concerné. Les cookies et technologies de suivi non nécessaires sont traités conformément aux exigences applicables en matière de protection des données et, lorsque nécessaire, avec le consentement de l'utilisateur. Le PFPDT précise que les cookies et technologies similaires peuvent permettre un suivi important des utilisateurs et que certains usages, notamment certains traitements à des fins de publicité personnalisée et de profilage, peuvent nécessiter un consentement selon les circonstances. L'utilisateur peut gérer ses préférences au moyen du mécanisme de gestion des cookies proposé sur le site, lorsque celui-ci est disponible."
+   "x": "Les technologies strictement nécessaires peuvent être utilisées sans consentement. Google Analytics, s’il est configuré, n’est chargé qu’après acceptation dans le bandeau prévu à cet effet ; le refus n’empêche pas l’utilisation de la plateforme. Le choix est mémorisé localement et peut être réinitialisé en effaçant les données du site dans le navigateur."
   },
   {
    "t": "h2",
@@ -532,7 +532,7 @@
   },
   {
    "t": "p",
-   "x": "techniques ForTheSoul peut faire appel à des prestataires externes nécessaires au fonctionnement de la plateforme, notamment pour :"
+   "x": "ForTheSoul fait appel à des prestataires nécessaires au fonctionnement de la plateforme : Vercel pour l’hébergement de l’application et les journaux techniques ; Supabase pour l’authentification, la base de données et le stockage ; Stripe pour le paiement des services de publication ; Resend pour les e-mails transactionnels ; MailerLite pour la newsletter ; OpenStreetMap pour les cartes ; et Google Analytics uniquement s’il est configuré et accepté. Ils ne traitent que les données nécessaires à leur service."
   },
   {
    "t": "li",
@@ -584,7 +584,7 @@
   },
   {
    "t": "p",
-   "x": "Lorsque ForTheSoul permet le paiement en ligne, les données nécessaires au traitement du paiement peuvent être transmises au prestataire de paiement concerné. ForTheSoul ne conserve pas nécessairement les données complètes de carte bancaire. Le traitement des paiements est également soumis aux conditions et politiques de confidentialité du prestataire de paiement utilisé."
+   "x": "Les paiements en ligne concernent l’achat de services de publication par les praticien·nes. Ils sont traités par Stripe. ForTheSoul reçoit les informations nécessaires au suivi de la transaction, mais ne conserve pas les données complètes de carte bancaire. Le traitement est également soumis à la politique de confidentialité de Stripe."
   },
   {
    "t": "h2",

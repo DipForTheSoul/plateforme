@@ -75,7 +75,7 @@ export function SettingsForm({ values }: { values: Record<string, string> }) {
 
       <div className="rounded-xl border border-soul-bronze/15 p-4">
         <p className="label mb-3">{t("promoTitle")}</p>
-        <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+        <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
           <div>
             <label htmlFor="promo_label" className="text-xs text-soul-bronze">
               {t("promoLabel")}

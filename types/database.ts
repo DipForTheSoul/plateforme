@@ -24,7 +24,7 @@ export interface Practitioner {
   slug: string;
   bio: string | null;
   photos: string[];
-  contact: { email?: string; phone?: string; website?: string };
+  contact: { email?: string; phone?: string; website?: string; first_name?: string; last_name?: string };
   specialties: string[];
   languages: string[];
   links: Record<string, string>;

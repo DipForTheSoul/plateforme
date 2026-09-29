@@ -55,7 +55,9 @@ function ProfileFormBody({
     <form {...draft.formProps} action={formAction} onSubmit={draft.submit(formAction)} className="flex flex-col gap-5">
       <DraftNotice draft={draft} busy={pending || photoBusy || logoBusy} />
       <input type="hidden" name="locale" value={locale}/>
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-3">
+        <div><label htmlFor="firstName" className="label">{t("firstName")}</label><input id="firstName" name="firstName" defaultValue={practitioner.contact.first_name ?? ""} className="field" /></div>
+        <div><label htmlFor="lastName" className="label">{t("lastName")}</label><input id="lastName" name="lastName" defaultValue={practitioner.contact.last_name ?? ""} className="field" /></div>
         <div>
           <label htmlFor="name" className="label">{t("namePublic")}</label>
           <input id="name" name="name" required defaultValue={practitioner.name} className="field" />

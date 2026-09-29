@@ -9,13 +9,14 @@ beforeAll(async()=>{
   await db.exec(sql('0002_schema.sql').replace(/  location geography[\s\S]*?  \) stored,\n/, '').replace(/^create index venues_location_idx.*;$/m,'').replace(/^create index events_title_trgm_idx.*;$/m,''));
   const original=sql('0004_functions.sql');await db.exec(original.slice(0,original.indexOf('-- Recherche instantanée')));
   await db.exec(sql('20260907193754_audit_signup_profile.sql'));
+  await db.exec(sql('20260929170000_signup_practitioner_details.sql'));
 },30000);
 afterAll(async()=>{await db?.close();});
 it('crée le compte et une seule fiche en attente dans la même transaction',async()=>{
   const id='30000000-0000-4000-8000-000000000001';
-  await db.query('insert into auth.users(id,email,raw_user_meta_data) values($1,$2,$3)',[id,'signup@example.test',JSON.stringify({role:'practitioner',name:'Marie QA',preferred_lang:'de'})]);
-  const result=await db.query('select name,status,credits from practitioners where user_id=$1',[id]);
-  expect(result.rows).toEqual([{name:'Marie QA',status:'pending',credits:0}]);
+  await db.query('insert into auth.users(id,email,raw_user_meta_data) values($1,$2,$3)',[id,'signup@example.test',JSON.stringify({role:'practitioner',name:'Marie QA',first_name:'Marie',last_name:'Dupont',bio:'Une présentation complète de la pratique.',specialties:['Méditation','Danse'],website:'https://example.test',instagram:'https://instagram.com/marie',preferred_lang:'de'})]);
+  const result=await db.query('select name,bio,specialties,contact,links,status,credits from practitioners where user_id=$1',[id]);
+  expect(result.rows).toEqual([{name:'Marie QA',bio:'Une présentation complète de la pratique.',specialties:['Méditation','Danse'],contact:{email:'signup@example.test',first_name:'Marie',last_name:'Dupont',website:'https://example.test'},links:{instagram:'https://instagram.com/marie'},status:'pending',credits:0}]);
 });
 it('ne crée pas de praticien ni d’administrateur depuis un rôle falsifié',async()=>{
   const id='30000000-0000-4000-8000-000000000002';

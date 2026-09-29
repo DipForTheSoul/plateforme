@@ -8,7 +8,7 @@
   },
   {
    "t": "p",
-   "x": "La plateforme ForTheSoul.ch est une plateforme numérique exploitée depuis la Suisse. Exploitant : ForTheSoul.ch Didier Picamoles Suisse welcome@forthesoul.ch Les présentes Conditions générales d’utilisation (« CGU ») régissent l’accès et l’utilisation de la plateforme ForTheSoul.ch ainsi que des services qui y sont proposés. En utilisant la plateforme, l’utilisateur reconnaît avoir pris connaissance des présentes CGU et les accepter."
+   "x": "La plateforme ForTheSoul.ch est exploitée depuis la Suisse.\nExploitant : ForTheSoul.ch\nDidier Picamoles\nSuisse\nwelcome@forthesoul.ch\n\nLes présentes Conditions générales d’utilisation (« CGU ») régissent l’accès et l’utilisation de la plateforme et de ses services. En utilisant la plateforme, l’utilisateur reconnaît en avoir pris connaissance et les accepter."
   },
   {
    "t": "h2",
@@ -20,19 +20,11 @@
   },
   {
    "t": "li",
-   "x": "des personnes recherchant des expériences, retraites, ateliers, événements et"
-  },
-  {
-   "t": "p",
-   "x": "autres activités contribuant au bien-être et à l’épanouissement personnel ;"
+   "x": "des personnes recherchant des expériences, retraites, ateliers, événements et autres activités contribuant au bien-être et à l’épanouissement personnel ;"
   },
   {
    "t": "li",
-   "x": "des personnes, professionnels, associations ou organisations proposant ces"
-  },
-  {
-   "t": "p",
-   "x": "expériences ;"
+   "x": "des praticien·nes, professionnel·les ou non, associations ou organisations proposant des expériences ;"
   },
   {
    "t": "li",
@@ -148,7 +140,7 @@
   },
   {
    "t": "p",
-   "x": "Lorsqu'une réservation ou un paiement est effectué directement auprès d'un Prestataire, le contrat relatif à la prestation est conclu entre le Prestataire et le participant. Les conditions de paiement, d'annulation, de remboursement et de modification applicables à la prestation sont celles communiquées par le Prestataire, sous réserve des dispositions légales impératives. Lorsque ForTheSoul intervient directement dans le processus de paiement, les conditions spécifiques applicables au paiement sont communiquées à l'utilisateur au moment de la transaction. Les éventuels frais ou commissions facturés par ForTheSoul sont indiqués de manière transparente avant leur application."
+   "x": "ForTheSoul ne gère aucune réservation ni aucun paiement entre les participants et les Prestataires. Toute inscription, réservation et tout paiement relatif à une expérience sont conclus directement avec le Prestataire, selon ses propres conditions. ForTheSoul n’est pas partie à ce contrat. Les seuls paiements encaissés par ForTheSoul concernent les services de publication achetés par les praticien·nes ; ils sont régis par les Conditions générales de vente."
   },
   {
    "t": "h2",
@@ -156,7 +148,7 @@
   },
   {
    "t": "p",
-   "x": "L'organisateur est responsable de la gestion des annulations et modifications de ses propres offres. En cas d'annulation par l'organisateur, les participants sont informés dans les meilleurs délais et les éventuelles modalités de remboursement sont déterminées conformément aux conditions applicables à la réservation et au droit impératif applicable. ForTheSoul peut, lorsque cela est techniquement possible, faciliter la transmission des informations entre le Prestataire et les participants."
+   "x": "Le Prestataire est seul responsable des modifications et annulations de ses expériences, de l’information des participants et des éventuels remboursements. Il lui appartient également de mettre à jour ou de retirer sa publication sur ForTheSoul. La plateforme n’ayant pas accès aux réservations conclues directement, elle ne peut garantir l’information individuelle des participants ni intervenir dans leur remboursement."
   },
   {
    "t": "h2",
@@ -308,7 +300,7 @@
   },
   {
    "t": "p",
-   "x": "Le traitement des données personnelles effectué dans le cadre de ForTheSoul est régi par la Politique de confidentialité de ForTheSoul. Cette politique décrit notamment les données collectées, les finalités du traitement, les éventuels destinataires, les durées de conservation ainsi que les droits des personnes concernées. La Politique de confidentialité fait partie intégrante du cadre contractuel applicable à l'utilisation de la plateforme dans la mesure prévue par le droit applicable."
+   "x": "Le traitement des données personnelles est décrit dans la Politique de confidentialité de ForTheSoul : données de compte et de profil, messages de contact, inscriptions à la newsletter, données de paiement des services de publication et données techniques nécessaires au fonctionnement. Elle précise les finalités, les prestataires concernés, les durées de conservation et les droits des personnes."
   },
   {
    "t": "h2",
@@ -316,7 +308,7 @@
   },
   {
    "t": "p",
-   "x": "ForTheSoul peut utiliser des cookies et technologies similaires nécessaires au fonctionnement de la plateforme ainsi que, lorsque cela est applicable et autorisé, des technologies destinées à mesurer l'audience, améliorer les services ou réaliser des activités de marketing. Les modalités applicables sont précisées dans la Politique de confidentialité et, lorsque nécessaire, dans le mécanisme de gestion du consentement proposé sur la plateforme."
+   "x": "ForTheSoul utilise les éléments techniques strictement nécessaires à l’authentification et à la sécurité des comptes. Les prestataires d’hébergement et de base de données peuvent également traiter des journaux techniques. Tout outil de mesure d’audience ou de marketing non nécessaire n’est activé que conformément aux préférences de l’utilisateur et aux règles applicables. Le détail figure dans la Politique de confidentialité."
   },
   {
    "t": "h2",

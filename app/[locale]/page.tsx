@@ -192,13 +192,13 @@ export default async function HomePage({
         </section>
       )}
 
-      <section className="bg-soul-violet py-14 text-white">
+      <section className="bg-soul-sand/45 py-14 text-soul-brown">
         <div className="mx-auto max-w-6xl px-4 text-center">
-          <h2 className="text-3xl text-white">{t("recruitment.title")}</h2>
+          <h2 className="text-3xl text-soul-brown">{t("recruitment.title")}</h2>
           <div className="mx-auto mt-6 grid max-w-4xl gap-3 text-left sm:grid-cols-3">
-            {(t.raw("recruitment.benefits") as string[]).map(item=><p className="rounded-2xl bg-white/10 p-4" key={item}>✓ {item}</p>)}
+            {(t.raw("recruitment.benefits") as string[]).map(item=><p className="rounded-2xl border border-soul-bronze/15 bg-white p-4 shadow-sm" key={item}>✓ {item}</p>)}
           </div>
-          <Link className="mt-7 inline-flex rounded-full bg-white px-6 py-3 font-semibold text-soul-violet" href="/devenir-praticien">{t("recruitment.cta")}</Link>
+          <Link className="btn-primary mt-7 inline-flex" href="/devenir-praticien">{t("recruitment.cta")}</Link>
         </div>
       </section>
 

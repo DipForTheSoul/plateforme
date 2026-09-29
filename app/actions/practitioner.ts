@@ -10,6 +10,8 @@ import type { ActionState } from "@/app/actions/events";
 import {actionLocale,actionMessage} from "@/lib/action-messages";
 
 const profileSchema = z.object({
+  firstName: z.string().max(80).optional().nullable(),
+  lastName: z.string().max(80).optional().nullable(),
   name: z.string().min(2).max(120),
   bio: z.string().max(4000).optional().nullable(),
   specialties: z.array(z.string().max(60)).max(10),
@@ -37,6 +39,8 @@ export async function updatePractitionerProfile(
   if (!practitioner) return { error: actionMessage(locale,"profileMissing") };
 
   const parsed = profileSchema.safeParse({
+    firstName: String(formData.get("firstName") ?? "").trim() || null,
+    lastName: String(formData.get("lastName") ?? "").trim() || null,
     name: String(formData.get("name") ?? "").trim(),
     bio: String(formData.get("bio") ?? "").trim() || null,
     specialties: String(formData.get("specialties") ?? "")
@@ -70,6 +74,8 @@ export async function updatePractitionerProfile(
       specialties: input.specialties,
       languages: input.languages,
       contact: {
+        ...(input.firstName ? { first_name: input.firstName } : {}),
+        ...(input.lastName ? { last_name: input.lastName } : {}),
         ...(input.email ? { email: input.email } : {}),
         ...(input.phone ? { phone: input.phone } : {}),
         ...(input.website ? { website: input.website } : {}),
@@ -125,6 +131,8 @@ export async function adminUpdatePractitioner(
   }
 
   const parsed = profileSchema.safeParse({
+    firstName: String(formData.get("firstName") ?? "").trim() || null,
+    lastName: String(formData.get("lastName") ?? "").trim() || null,
     name: String(formData.get("name") ?? "").trim(),
     bio: String(formData.get("bio") ?? "").trim() || null,
     specialties: String(formData.get("specialties") ?? "")
@@ -164,6 +172,8 @@ export async function adminUpdatePractitioner(
       specialties: input.specialties,
       languages: input.languages,
       contact: {
+        ...(input.firstName ? { first_name: input.firstName } : {}),
+        ...(input.lastName ? { last_name: input.lastName } : {}),
         ...(input.email ? { email: input.email } : {}),
         ...(input.phone ? { phone: input.phone } : {}),
         ...(input.website ? { website: input.website } : {}),
