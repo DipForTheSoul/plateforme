@@ -9,13 +9,13 @@
     "submit": "Send my message", "sending": "Sending…", "success": "Your message has been sent to the practitioner.", "honeypot": "Website",
     "errors": {"invalid":"Please check the fields and required consents.","rateLimited":"Too many attempts. Please try again in one hour.","unavailable":"The form is temporarily unavailable. Please try again later.","sendFailed":"Your request was saved, but the email could not be sent. Please try again later."}
   },
-  "legalFixed":{"cgv":{"title":"General terms of sale","intro":"Terms applying to purchases of publishing credits on ForTheSoul.","provisional":"Temporary copy — subject to client approval","sections":[{"title":"Purpose","text":"Credits allow approved practitioners to publish experiences on the platform."},{"title":"Prices and payment","text":"Prices shown at checkout are in Swiss francs. Payment is processed by the provider identified during purchase."},{"title":"Using credits","text":"One credit covers one published experience, including a recurring series. The terms shown in the practitioner area at purchase apply."},{"title":"Contact","text":"Questions may be sent through the ForTheSoul contact page."}]},"notices":{"title":"Legal notice","intro":"Information about the publisher and hosting of ForTheSoul.","provisional":"Temporary copy — subject to client approval","sections":[{"title":"Publisher","text":"ForTheSoul — Didier Picamoles, Switzerland. Full contact details are to be confirmed by the client."},{"title":"Hosting","text":"The application is hosted by Vercel; application data is hosted by Supabase. Contract details are to be confirmed."},{"title":"Intellectual property","text":"Content, trademarks and visuals remain the property of their respective owners."}] }},
+  "legalFixed":{"cgv":{"title":"General terms of sale","intro":"Terms applying to purchases of publishing credits on ForTheSoul.","provisional":"Temporary copy — subject to client approval","sections":[{"title":"Purpose","text":"Credits allow approved practitioners to publish experiences on the platform."},{"title":"Prices and payment","text":"Prices are displayed in Swiss francs or euros depending on the selected currency. Payment is processed by the provider identified during purchase."},{"title":"Using credits","text":"One credit covers one published experience, including a recurring series. The validity period set by the administration is displayed in the practitioner area before purchase."},{"title":"Contact","text":"Questions may be sent through the ForTheSoul contact page."}]},"notices":{"title":"Legal notice","intro":"Information about the publisher and hosting of ForTheSoul.","provisional":"Temporary copy — subject to client approval","sections":[{"title":"Publisher","text":"ForTheSoul.ch\nDidier Picamoles\nSwitzerland\nwelcome@forthesoul.ch"},{"title":"Hosting","text":"The application is hosted by Vercel; application data is hosted by Supabase."},{"title":"Intellectual property","text":"Content, trademarks and visuals remain the property of their respective owners."}] }},
   "becomePractitioner": {
     "metaTitle":"Become a practitioner on ForTheSoul","metaDescription":"Present your practice and publish conscious experiences for a qualified audience in Switzerland.",
-    "eyebrow":"ForTheSoul for practitioners","title":"Are you a practitioner? Join ForTheSoul","intro":"Bring your practice to a warm, carefully and personally curated community.","cta":"Create my practitioner account","learnMore":"Discover the process",
-    "benefitsTitle":"Why join ForTheSoul?","benefits":["Visibility with a qualified audience in Switzerland","Personal selection by Didier","An interface in French, German and English","Simple publishing, including recurring experiences","Dates that are easy to add to a calendar"],
+    "eyebrow":"ForTheSoul for practitioners","title":"Are you a practitioner? Introduce yourself and publish your offerings","intro":"Present your world and your offerings to an audience seeking conscious experiences that nourish the soul, body and mind.","cta":"Create my practitioner account","learnMore":"Discover the process",
+    "benefitsTitle":"Why join ForTheSoul?","benefits":["Offer your services to an audience seeking conscious experiences","Present yourself and your world beyond your usual networks","Benefit from a presence on a national trilingual platform"],
     "stepsTitle":"How it works","steps":[{"title":"1. Present your practice","text":"Create your account and complete the essential information about your practice."},{"title":"2. Review by Didier","text":"Didier personally reviews your profile before it is published."},{"title":"3. Publish your experiences","text":"Buy the credits you need and submit one-off or recurring dates."}],
-    "packsTitle":"Publishing packs","packsIntro":"One credit covers one published experience, including an experience with several dates.","packLabel":"{count, plural, one {# publication} other {# publications}}","temporary":"Temporary prices and sales copy — subject to client approval.",
+    "packsTitle":"Publishing packs","packsIntro":"One credit covers one published experience, including an experience with several dates.","packLabel":"{count, plural, one {# publication} other {# publications}}","packValidityDays":"Valid for {count} days",
     "faqTitle":"Practitioner questions","faq":[{"q":"Is creating a profile free?","a":"Yes. Your account and practitioner profile are free. Experiences are published using credits."},{"q":"Who reviews my profile?","a":"Didier personally reviews every application before publication."},{"q":"Can I publish a recurring experience?","a":"Yes. A recurring series uses one credit and its individual dates remain visible."}],
     "finalTitle":"Ready to present your practice?","finalText":"Create your account, present your work and join a consciously curated selection."
   },
@@ -99,7 +99,7 @@
       "newsletterSuccess": "Thank you! You're subscribed.",
       "newsletterError": "Subscription unavailable right now. Please try again later.",
       "legal": "© {year} ForTheSoul — Switzerland",
-      "becomePractitioner": "Become a practitioner",
+      "becomePractitioner": "Create a practitioner account",
       "terms": "Terms of use",
       "privacy": "Privacy", "salesTerms":"Terms of sale", "legalNotices":"Legal notice"
     },
@@ -120,9 +120,9 @@
     }
   },
   "home": {
-    "recruitment":{"title":"Are you a practitioner?","benefits":["A qualified audience in Switzerland","Personal selection by Didier","Simple trilingual publishing"],"cta":"Discover the practitioner journey","learnMore":"Discover the full journey."},
+    "recruitment":{"title":"Are you a practitioner?","benefits":["People looking for authentic experiences","A human and personalised selection","Visibility beyond your own networks"],"cta":"Discover the benefits for practitioners","learnMore":"Discover the full journey."},
     "heroTitle": "Experiences that nourish the soul",
-    "heroSubtitle": "Free dance, meditation, yoga, sound journeys and retreats.",
+    "heroSubtitle": "Retreats, workshops and experiences for body, mind and soul",
     "heroCta": "Explore experiences",
     "heroSecondary": "Meet the practitioners",
     "searchPlaceholder": "Search an experience (dance, gong, retreat…)",
@@ -133,7 +133,7 @@
     "didierText": "ForTheSoul is not just another directory: every practitioner and every experience is personally reviewed by Didier Picamoles, founder of the platform and creator of Humanic Dance.",
     "didierCta": "Discover the ForTheSoul story",
     "upcomingTitle": "Upcoming experiences",
-    "heroBadge1": "Reviewed one by one by Didier",
+    "heroBadge1": "Carefully reviewed",
     "heroBadge2": "In Switzerland and beyond",
     "heroBadge3": "No algorithm, chosen with heart",
     "categoriesSubtitle": "Find the practice that calls you",
@@ -416,11 +416,9 @@
     "creditsPacksNote": "A pack whose date has passed is automatically marked “expired”; its credits can no longer be used. However, the experiences you published while your pack was valid stay online until their date (then are automatically removed shortly after), even if the pack expired in the meantime.",
     "creditsPacksHeading": "Publication packs",
     "creditsPerPublication": "{price}.– / publication",
-    "creditsPaymentTitle": "Payment by Revolut / bank transfer",
-    "creditsPaymentIntro": "Prefer to pay by Revolut or bank transfer? Pay the amount of the chosen pack to {beneficiary}:",
-    "creditsQrAlt": "Revolut QR code ForTheSoul",
-    "creditsPayViaRevolut": "Pay via Revolut",
-    "creditsScanQr": "Scan the QR code or click “Pay via Revolut”.",
+    "creditsPackValidityDays": "Pack valid for {count} days",
+    "creditsPaymentTitle": "Payment by bank transfer",
+    "creditsPaymentIntro": "Pay the amount of the chosen pack by bank transfer to {beneficiary}:",
     "creditsIban": "IBAN",
     "creditsPaymentNote": "{note} Credits are added manually by Didier once the payment is received (1-2 business days).",
     "creditsHistory": "History",
@@ -556,6 +554,8 @@
       "credits": "Credits",
       "newsletter": "Newsletter",
       "messages": "Messages",
+      "forthesoulContact": "ForTheSoul contact",
+      "practitionerContact": "Practitioner contact",
       "settings": "Settings"
     },
     "dashboard": {
@@ -712,7 +712,7 @@
       "delete": "Delete"
     },
     "contact": {
-      "title": "Contact messages",
+      "title": "Requests to ForTheSoul",
       "empty": "No messages yet.",
       "handled": "Handled — reopen",
       "markHandled": "Mark as handled"
@@ -735,8 +735,8 @@
       "promoDiscount": "Discount %",
       "promoHint": "The label appears on packs and at checkout. With a discount, the regular price is crossed out and the reduced price is charged. Leave the label empty to end the promotion.",
       "beneficiary": "Payment — beneficiary (displayed name)",
-      "iban": "Payment — IBAN (transfer / Revolut)",
-      "ibanHint": "Displayed on the practitioner's \"Credits\" page, next to the Revolut QR code. Leave empty to only show the Revolut button/QR.",
+      "iban": "Payment — IBAN (bank transfer)",
+      "ibanHint": "Displayed on the practitioner's \"Credits\" page. Leave empty to hide the bank transfer option.",
       "saving": "Saving…",
       "saveButton": "Save settings"
     },

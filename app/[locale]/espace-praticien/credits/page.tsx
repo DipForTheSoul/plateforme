@@ -6,6 +6,7 @@ import { CREDIT_PACKS, STATIC_PAYMENT, resolvePackPriceChf, getPromo, discounted
 import { formatDate } from "@/lib/utils";
 import type { CreditPack, CreditTransaction, Locale } from "@/types/database";
 import { BuyPackButton } from "./BuyPackButton";
+import { PackPrice } from "@/components/PackPrice";
 
 export const dynamic = "force-dynamic";
 
@@ -53,6 +54,7 @@ export default async function CreditsPage({
   const beneficiary = settings.payment_beneficiary?.trim() || STATIC_PAYMENT.beneficiary;
   const iban = settings.payment_iban?.trim() || STATIC_PAYMENT.iban;
   const promo = getPromo(settings);
+  const validityDays = Math.max(1, Number(settings.pack_default_valid_days) || 365);
 
   return (
     <div className="flex flex-col gap-8">
@@ -142,10 +144,13 @@ export default async function CreditsPage({
                       {priceChf.toFixed(0)}.–
                     </span>
                   )}
-                  CHF {finalChf.toFixed(0)}.–
+                  <PackPrice valueChf={finalChf} />
                 </p>
                 <p className="mt-1 text-xs text-soul-bronze">
                   {tr("creditsPerPublication", { price: (finalChf / pack.credits).toFixed(0) })}
+                </p>
+                <p className="mt-1 text-xs text-soul-bronze">
+                  {tr("creditsPackValidityDays", { count: validityDays })}
                 </p>
                 <BuyPackButton packId={pack.id} />
               </div>

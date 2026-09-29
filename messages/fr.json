@@ -9,13 +9,13 @@
     "submit": "Envoyer mon message", "sending": "Envoi…", "success": "Votre message a bien été transmis au/à la praticien·ne.", "honeypot": "Site web",
     "errors": {"invalid":"Vérifiez les champs et les consentements demandés.","rateLimited":"Trop de tentatives. Réessayez dans une heure.","unavailable":"Le formulaire est momentanément indisponible. Réessayez plus tard.","sendFailed":"Votre demande est conservée, mais l’e-mail n’a pas pu être envoyé. Merci de réessayer plus tard."}
   },
-  "legalFixed":{"cgv":{"title":"Conditions générales de vente","intro":"Conditions applicables à l’achat de crédits de publication sur ForTheSoul.","provisional":"Texte provisoire — à valider par le client","sections":[{"title":"Objet","text":"Les crédits permettent aux praticien·nes validé·es de publier des expériences sur la plateforme."},{"title":"Prix et paiement","text":"Les prix affichés au moment de la commande sont en francs suisses. Le paiement est traité par le prestataire indiqué lors de l’achat."},{"title":"Utilisation des crédits","text":"Un crédit correspond à une expérience publiée, y compris une série récurrente. Les conditions affichées dans l’espace praticien au moment de l’achat s’appliquent."},{"title":"Contact","text":"Toute question peut être adressée via la page Contact de ForTheSoul."}]},"notices":{"title":"Mentions légales","intro":"Informations relatives à l’éditeur et à l’hébergement de ForTheSoul.","provisional":"Texte provisoire — à valider par le client","sections":[{"title":"Éditeur","text":"ForTheSoul — Didier Picamoles, Suisse. Coordonnées complètes à confirmer par le client."},{"title":"Hébergement","text":"Application hébergée par Vercel ; données applicatives hébergées par Supabase. Détails contractuels à confirmer."},{"title":"Propriété intellectuelle","text":"Les contenus, marques et visuels restent la propriété de leurs titulaires respectifs."}] }},
+  "legalFixed":{"cgv":{"title":"Conditions générales de vente","intro":"Conditions applicables à l’achat de crédits de publication sur ForTheSoul.","provisional":"Texte provisoire — à valider par le client","sections":[{"title":"Objet","text":"Les crédits permettent aux praticien·nes validé·es de publier des expériences sur la plateforme."},{"title":"Prix et paiement","text":"Les prix sont affichés en francs suisses ou en euros selon la devise sélectionnée. Le paiement est traité par le prestataire indiqué lors de l’achat."},{"title":"Utilisation des crédits","text":"Un crédit correspond à une expérience publiée, y compris une série récurrente. La durée de validité définie par l’administration est affichée dans l’espace praticien avant l’achat."},{"title":"Contact","text":"Toute question peut être adressée via la page Contact de ForTheSoul."}]},"notices":{"title":"Mentions légales","intro":"Informations relatives à l’éditeur et à l’hébergement de ForTheSoul.","provisional":"Texte provisoire — à valider par le client","sections":[{"title":"Éditeur","text":"ForTheSoul.ch\nDidier Picamoles\nSuisse\nwelcome@forthesoul.ch"},{"title":"Hébergement","text":"Application hébergée par Vercel ; données applicatives hébergées par Supabase."},{"title":"Propriété intellectuelle","text":"Les contenus, marques et visuels restent la propriété de leurs titulaires respectifs."}] }},
   "becomePractitioner": {
     "metaTitle":"Devenir praticien·ne sur ForTheSoul","metaDescription":"Présentez votre activité et publiez vos expériences conscientes auprès d’un public qualifié en Suisse.",
-    "eyebrow":"ForTheSoul pour les praticien·nes","title":"Vous êtes praticien·ne ? Rejoignez ForTheSoul","intro":"Faites connaître votre pratique au sein d’une sélection humaine, chaleureuse et exigeante.","cta":"Créer mon compte praticien","learnMore":"Découvrir le parcours",
-    "benefitsTitle":"Pourquoi rejoindre ForTheSoul ?","benefits":["Une visibilité auprès d’un public qualifié en Suisse","Une sélection humaine et personnelle par Didier","Une interface en français, allemand et anglais","Des publications simples, y compris les expériences récurrentes","Des dates faciles à ajouter à l’agenda"],
+    "eyebrow":"ForTheSoul pour les praticien·nes","title":"Vous êtes praticien·ne ? Présentez-vous et publiez vos offres","intro":"Présentez votre univers et vos offres à un public à la recherche d’expériences conscientes qui nourrissent l’âme, le corps et l’esprit.","cta":"Créer mon compte praticien","learnMore":"Découvrir le parcours",
+    "benefitsTitle":"Pourquoi rejoindre ForTheSoul ?","benefits":["Proposez vos offres à un public en recherche d’expériences conscientes","Présentez-vous et votre univers au-delà de vos réseaux habituels","Bénéficiez d’une présence sur une plateforme nationale trilingue"],
     "stepsTitle":"Comment ça marche ?","steps":[{"title":"1. Présentez votre activité","text":"Créez votre compte et complétez les informations essentielles de votre pratique."},{"title":"2. Validation par Didier","text":"Didier relit personnellement votre profil avant sa publication."},{"title":"3. Publiez vos expériences","text":"Achetez les crédits nécessaires et déposez vos dates, ponctuelles ou récurrentes."}],
-    "packsTitle":"Packs de publication","packsIntro":"Un crédit correspond à une expérience publiée, y compris lorsqu’elle comporte plusieurs dates.","packLabel":"{count, plural, one {# publication} other {# publications}}","temporary":"Tarifs et textes commerciaux provisoires — à valider par le client.",
+    "packsTitle":"Packs de publication","packsIntro":"Un crédit correspond à une expérience publiée, y compris lorsqu’elle comporte plusieurs dates.","packLabel":"{count, plural, one {# publication} other {# publications}}","packValidityDays":"Valable {count} jours",
     "faqTitle":"Questions des praticien·nes","faq":[{"q":"La création du profil est-elle payante ?","a":"Non, le compte et le profil praticien sont gratuits. Les expériences sont publiées à l’aide de crédits."},{"q":"Qui valide mon profil ?","a":"Didier relit personnellement chaque demande avant sa mise en ligne."},{"q":"Puis-je publier une expérience récurrente ?","a":"Oui. Une série récurrente utilise un seul crédit et ses différentes dates restent visibles."}],
     "finalTitle":"Prêt·e à présenter votre pratique ?","finalText":"Créez votre compte, présentez votre activité et rejoignez une sélection consciente."
   },
@@ -99,7 +99,7 @@
       "newsletterSuccess": "Merci ! Vous êtes bien inscrit·e.",
       "newsletterError": "Inscription impossible pour le moment. Réessayez plus tard.",
       "legal": "© {year} ForTheSoul — Suisse",
-      "becomePractitioner": "Devenir praticien·ne",
+      "becomePractitioner": "Créer un compte praticien",
       "terms": "Conditions d'utilisation",
       "privacy": "Confidentialité", "salesTerms":"Conditions générales de vente", "legalNotices":"Mentions légales"
     },
@@ -120,9 +120,9 @@
     }
   },
   "home": {
-    "recruitment":{"title":"Vous êtes praticien·ne ?","benefits":["Un public qualifié en Suisse","Une sélection humaine par Didier","Une publication simple et trilingue"],"cta":"Découvrir le parcours praticien","learnMore":"Découvrir le parcours complet."},
+    "recruitment":{"title":"Vous êtes praticien·ne ?","benefits":["Des personnes à la recherche d’expériences authentiques","Une sélection humaine et personnalisée","Une visibilité au-delà de vos propres réseaux"],"cta":"Découvrir les avantages pour les praticien·nes","learnMore":"Découvrir le parcours complet."},
     "heroTitle": "Des expériences qui nourrissent l'âme",
-    "heroSubtitle": "Danse libre, méditation, yoga, voyages sonores et retraites.",
+    "heroSubtitle": "Retraites, ateliers et expériences pour le corps, l’esprit et l’âme",
     "heroCta": "Explorer les expériences",
     "heroSecondary": "Rencontrer les praticien·nes",
     "searchPlaceholder": "Rechercher une expérience (danse, gong, retraite…)",
@@ -133,7 +133,7 @@
     "didierText": "ForTheSoul n'est pas un annuaire de plus : chaque praticien·ne et chaque expérience sont validés personnellement par Didier Picamoles, fondateur de la plateforme et créateur de la Humanic Dance.",
     "didierCta": "Découvrir l'histoire de ForTheSoul",
     "upcomingTitle": "Prochaines expériences",
-    "heroBadge1": "Validé un à un par Didier",
+    "heroBadge1": "Soigneusement validées",
     "heroBadge2": "En Suisse et au-delà",
     "heroBadge3": "Sans algorithme, avec le cœur",
     "categoriesSubtitle": "Trouvez la pratique qui vous appelle",
@@ -416,11 +416,9 @@
     "creditsPacksNote": "Un pack dont la date est dépassée passe automatiquement en « expiré » ; ses crédits ne sont plus utilisables. En revanche, les expériences que vous avez publiées pendant la validité de votre pack restent en ligne jusqu'à leur date (puis se retirent automatiquement peu après), même si le pack a expiré entre-temps.",
     "creditsPacksHeading": "Packs de publications",
     "creditsPerPublication": "{price}.– / publication",
-    "creditsPaymentTitle": "Paiement par Revolut / virement",
-    "creditsPaymentIntro": "Vous préférez payer par Revolut ou par virement ? Réglez le montant du pack choisi à {beneficiary} :",
-    "creditsQrAlt": "QR code Revolut ForTheSoul",
-    "creditsPayViaRevolut": "Payer via Revolut",
-    "creditsScanQr": "Scannez le QR code ou cliquez sur « Payer via Revolut ».",
+    "creditsPackValidityDays": "Pack valable {count} jours",
+    "creditsPaymentTitle": "Paiement par virement",
+    "creditsPaymentIntro": "Réglez le montant du pack choisi par virement à {beneficiary} :",
     "creditsIban": "IBAN",
     "creditsPaymentNote": "{note} Les crédits sont ajoutés manuellement par Didier à réception du paiement (1-2 jours ouvrés).",
     "creditsHistory": "Historique",
@@ -556,6 +554,8 @@
       "credits": "Crédits",
       "newsletter": "Newsletter",
       "messages": "Messages",
+      "forthesoulContact": "Contact ForTheSoul",
+      "practitionerContact": "Contact praticiens",
       "settings": "Paramètres"
     },
     "dashboard": {
@@ -712,7 +712,7 @@
       "delete": "Suppr."
     },
     "contact": {
-      "title": "Messages de contact",
+      "title": "Demandes à ForTheSoul",
       "empty": "Aucun message pour le moment.",
       "handled": "Traité — rouvrir",
       "markHandled": "Marquer traité"
@@ -735,8 +735,8 @@
       "promoDiscount": "Remise %",
       "promoHint": "L'étiquette s'affiche sur les packs et au paiement. Avec une remise, le prix normal est barré et le prix réduit est facturé. Laissez l'étiquette vide pour arrêter la promotion.",
       "beneficiary": "Paiement — bénéficiaire (nom affiché)",
-      "iban": "Paiement — IBAN (virement / Revolut)",
-      "ibanHint": "Affiché sur la page « Crédits » du praticien, à côté du QR Revolut. Laissez vide pour n'afficher que le bouton/QR Revolut.",
+      "iban": "Paiement — IBAN (virement)",
+      "ibanHint": "Affiché sur la page « Crédits » du praticien. Laissez vide pour masquer l’option de virement.",
       "saving": "Enregistrement…",
       "saveButton": "Enregistrer les paramètres"
     },

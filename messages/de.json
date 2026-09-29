@@ -9,13 +9,13 @@
     "submit": "Nachricht senden", "sending": "Wird gesendet…", "success": "Ihre Nachricht wurde erfolgreich übermittelt.", "honeypot": "Website",
     "errors": {"invalid":"Bitte prüfen Sie die Felder und erforderlichen Einwilligungen.","rateLimited":"Zu viele Versuche. Bitte versuchen Sie es in einer Stunde erneut.","unavailable":"Das Formular ist vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.","sendFailed":"Ihre Anfrage wurde gespeichert, aber die E-Mail konnte nicht gesendet werden. Bitte versuchen Sie es später erneut."}
   },
-  "legalFixed":{"cgv":{"title":"Allgemeine Verkaufsbedingungen","intro":"Bedingungen für den Kauf von Publikations-Credits auf ForTheSoul.","provisional":"Vorläufiger Text — vom Kunden zu bestätigen","sections":[{"title":"Gegenstand","text":"Credits ermöglichen validierten Anbieter·innen, Erlebnisse auf der Plattform zu veröffentlichen."},{"title":"Preise und Zahlung","text":"Die bei der Bestellung angezeigten Preise sind in Schweizer Franken. Die Zahlung wird vom angegebenen Zahlungsdienst verarbeitet."},{"title":"Verwendung der Credits","text":"Ein Credit entspricht einem veröffentlichten Erlebnis, einschließlich einer wiederkehrenden Serie. Es gelten die beim Kauf angezeigten Bedingungen."},{"title":"Kontakt","text":"Fragen können über die Kontaktseite von ForTheSoul gestellt werden."}]},"notices":{"title":"Impressum","intro":"Angaben zum Betreiber und Hosting von ForTheSoul.","provisional":"Vorläufiger Text — vom Kunden zu bestätigen","sections":[{"title":"Betreiber","text":"ForTheSoul — Didier Picamoles, Schweiz. Vollständige Angaben sind vom Kunden zu bestätigen."},{"title":"Hosting","text":"Die Anwendung wird von Vercel gehostet; Anwendungsdaten von Supabase. Vertragsdetails sind zu bestätigen."},{"title":"Geistiges Eigentum","text":"Inhalte, Marken und Bilder bleiben Eigentum ihrer jeweiligen Rechteinhaber."}] }},
+  "legalFixed":{"cgv":{"title":"Allgemeine Verkaufsbedingungen","intro":"Bedingungen für den Kauf von Publikations-Credits auf ForTheSoul.","provisional":"Vorläufiger Text — vom Kunden zu bestätigen","sections":[{"title":"Gegenstand","text":"Credits ermöglichen validierten Anbieter·innen, Erlebnisse auf der Plattform zu veröffentlichen."},{"title":"Preise und Zahlung","text":"Die Preise werden je nach gewählter Währung in Schweizer Franken oder Euro angezeigt. Die Zahlung wird vom angegebenen Zahlungsdienst verarbeitet."},{"title":"Verwendung der Credits","text":"Ein Credit entspricht einem veröffentlichten Erlebnis, einschließlich einer wiederkehrenden Serie. Die von der Verwaltung festgelegte Gültigkeitsdauer wird vor dem Kauf im Anbieterbereich angezeigt."},{"title":"Kontakt","text":"Fragen können über die Kontaktseite von ForTheSoul gestellt werden."}]},"notices":{"title":"Impressum","intro":"Angaben zum Betreiber und Hosting von ForTheSoul.","provisional":"Vorläufiger Text — vom Kunden zu bestätigen","sections":[{"title":"Betreiber","text":"ForTheSoul.ch\nDidier Picamoles\nSchweiz\nwelcome@forthesoul.ch"},{"title":"Hosting","text":"Die Anwendung wird von Vercel gehostet; Anwendungsdaten werden von Supabase gehostet."},{"title":"Geistiges Eigentum","text":"Inhalte, Marken und Bilder bleiben Eigentum ihrer jeweiligen Rechteinhaber."}] }},
   "becomePractitioner": {
     "metaTitle":"Anbieter·in bei ForTheSoul werden","metaDescription":"Präsentieren Sie Ihre Tätigkeit und veröffentlichen Sie bewusste Erlebnisse für ein qualifiziertes Publikum in der Schweiz.",
-    "eyebrow":"ForTheSoul für Anbieter·innen","title":"Sind Sie Anbieter·in? Werden Sie Teil von ForTheSoul","intro":"Machen Sie Ihre Praxis in einer menschlich und sorgfältig kuratierten Auswahl sichtbar.","cta":"Anbieterkonto erstellen","learnMore":"Ablauf entdecken",
-    "benefitsTitle":"Warum ForTheSoul?","benefits":["Sichtbarkeit bei einem qualifizierten Publikum in der Schweiz","Persönliche Auswahl durch Didier","Oberfläche auf Französisch, Deutsch und Englisch","Einfache Veröffentlichung wiederkehrender Erlebnisse","Termine lassen sich leicht zum Kalender hinzufügen"],
+    "eyebrow":"ForTheSoul für Anbieter·innen","title":"Sind Sie Anbieter·in? Stellen Sie sich vor und veröffentlichen Sie Ihre Angebote","intro":"Präsentieren Sie Ihre Welt und Ihre Angebote einem Publikum, das bewusste Erfahrungen für Seele, Körper und Geist sucht.","cta":"Anbieterkonto erstellen","learnMore":"Ablauf entdecken",
+    "benefitsTitle":"Warum ForTheSoul?","benefits":["Bieten Sie Ihre Angebote einem Publikum an, das bewusste Erfahrungen sucht","Präsentieren Sie sich und Ihre Welt über Ihre gewohnten Netzwerke hinaus","Profitieren Sie von einer Präsenz auf einer nationalen dreisprachigen Plattform"],
     "stepsTitle":"So funktioniert es","steps":[{"title":"1. Tätigkeit vorstellen","text":"Erstellen Sie Ihr Konto und ergänzen Sie die wichtigsten Angaben zu Ihrer Praxis."},{"title":"2. Prüfung durch Didier","text":"Didier prüft Ihr Profil persönlich vor der Veröffentlichung."},{"title":"3. Erlebnisse veröffentlichen","text":"Kaufen Sie die benötigten Credits und veröffentlichen Sie einzelne oder wiederkehrende Termine."}],
-    "packsTitle":"Publikationspakete","packsIntro":"Ein Credit entspricht einem veröffentlichten Erlebnis, auch bei mehreren Terminen.","packLabel":"{count, plural, one {# Veröffentlichung} other {# Veröffentlichungen}}","temporary":"Vorläufige Preise und Verkaufstexte — vom Kunden zu bestätigen.",
+    "packsTitle":"Publikationspakete","packsIntro":"Ein Credit entspricht einem veröffentlichten Erlebnis, auch bei mehreren Terminen.","packLabel":"{count, plural, one {# Veröffentlichung} other {# Veröffentlichungen}}","packValidityDays":"{count} Tage gültig",
     "faqTitle":"Fragen von Anbieter·innen","faq":[{"q":"Ist das Profil kostenpflichtig?","a":"Nein. Konto und Anbieterprofil sind kostenlos. Erlebnisse werden mit Credits veröffentlicht."},{"q":"Wer prüft mein Profil?","a":"Didier prüft jede Anfrage persönlich vor der Veröffentlichung."},{"q":"Kann ich wiederkehrende Erlebnisse veröffentlichen?","a":"Ja. Eine Serie benötigt einen Credit; die einzelnen Termine bleiben sichtbar."}],
     "finalTitle":"Möchten Sie Ihre Praxis vorstellen?","finalText":"Erstellen Sie Ihr Konto, präsentieren Sie Ihre Tätigkeit und werden Sie Teil einer bewussten Auswahl."
   },
@@ -99,7 +99,7 @@
       "newsletterSuccess": "Danke! Du bist angemeldet.",
       "newsletterError": "Anmeldung derzeit nicht möglich. Bitte versuche es später erneut.",
       "legal": "© {year} ForTheSoul — Schweiz",
-      "becomePractitioner": "Anbieter·in werden",
+      "becomePractitioner": "Anbieterkonto erstellen",
       "terms": "Nutzungsbedingungen",
       "privacy": "Datenschutz", "salesTerms":"Verkaufsbedingungen", "legalNotices":"Impressum"
     },
@@ -120,9 +120,9 @@
     }
   },
   "home": {
-    "recruitment":{"title":"Sind Sie Anbieter·in?","benefits":["Ein qualifiziertes Publikum in der Schweiz","Persönliche Auswahl durch Didier","Einfaches, dreisprachiges Veröffentlichen"],"cta":"Anbieter-Ablauf entdecken","learnMore":"Den vollständigen Ablauf entdecken."},
+    "recruitment":{"title":"Sind Sie Anbieter·in?","benefits":["Menschen auf der Suche nach authentischen Erfahrungen","Eine menschliche und persönliche Auswahl","Sichtbarkeit über Ihre eigenen Netzwerke hinaus"],"cta":"Vorteile für Anbieter·innen entdecken","learnMore":"Den vollständigen Ablauf entdecken."},
     "heroTitle": "Erlebnisse, die die Seele nähren",
-    "heroSubtitle": "Freier Tanz, Meditation, Yoga, Klangreisen und Retreats.",
+    "heroSubtitle": "Retreats, Workshops und Erfahrungen für Körper, Geist und Seele",
     "heroCta": "Erlebnisse entdecken",
     "heroSecondary": "Anbieter:innen kennenlernen",
     "searchPlaceholder": "Erlebnis suchen (Tanz, Gong, Retreat…)",
@@ -133,7 +133,7 @@
     "didierText": "ForTheSoul ist kein weiteres Verzeichnis: Jede:r Anbieter:in und jedes Erlebnis wird von Didier Picamoles, Gründer der Plattform und Schöpfer der Humanic Dance, persönlich geprüft.",
     "didierCta": "Die Geschichte von ForTheSoul entdecken",
     "upcomingTitle": "Nächste Erlebnisse",
-    "heroBadge1": "Einzeln von Didier geprüft",
+    "heroBadge1": "Sorgfältig geprüft",
     "heroBadge2": "In der Schweiz und darüber hinaus",
     "heroBadge3": "Ohne Algorithmus, mit Herz",
     "categoriesSubtitle": "Finde die Praxis, die dich ruft",
@@ -416,11 +416,9 @@
     "creditsPacksNote": "Ein Paket, dessen Datum überschritten ist, wird automatisch als „abgelaufen“ markiert; sein Guthaben ist nicht mehr nutzbar. Die Erlebnisse, die Sie während der Gültigkeit Ihres Pakets veröffentlicht haben, bleiben jedoch bis zu ihrem Datum online (und werden danach automatisch entfernt), auch wenn das Paket inzwischen abgelaufen ist.",
     "creditsPacksHeading": "Veröffentlichungspakete",
     "creditsPerPublication": "{price}.– / Veröffentlichung",
-    "creditsPaymentTitle": "Zahlung per Revolut / Überweisung",
-    "creditsPaymentIntro": "Sie zahlen lieber per Revolut oder Überweisung? Überweisen Sie den Betrag des gewählten Pakets an {beneficiary}:",
-    "creditsQrAlt": "Revolut-QR-Code ForTheSoul",
-    "creditsPayViaRevolut": "Mit Revolut bezahlen",
-    "creditsScanQr": "Scannen Sie den QR-Code oder klicken Sie auf „Mit Revolut bezahlen“.",
+    "creditsPackValidityDays": "Paket {count} Tage gültig",
+    "creditsPaymentTitle": "Zahlung per Überweisung",
+    "creditsPaymentIntro": "Überweisen Sie den Betrag des gewählten Pakets an {beneficiary}:",
     "creditsIban": "IBAN",
     "creditsPaymentNote": "{note} Die Guthaben werden von Didier nach Zahlungseingang manuell hinzugefügt (1-2 Werktage).",
     "creditsHistory": "Verlauf",
@@ -556,6 +554,8 @@
       "credits": "Guthaben",
       "newsletter": "Newsletter",
       "messages": "Nachrichten",
+      "forthesoulContact": "Kontakt ForTheSoul",
+      "practitionerContact": "Kontakt Anbieter·innen",
       "settings": "Einstellungen"
     },
     "dashboard": {
@@ -712,7 +712,7 @@
       "delete": "Löschen"
     },
     "contact": {
-      "title": "Kontaktnachrichten",
+      "title": "Anfragen an ForTheSoul",
       "empty": "Noch keine Nachrichten.",
       "handled": "Erledigt — erneut öffnen",
       "markHandled": "Als erledigt markieren"
@@ -735,8 +735,8 @@
       "promoDiscount": "Rabatt %",
       "promoHint": "Die Bezeichnung erscheint auf den Paketen und bei der Zahlung. Mit Rabatt wird der Normalpreis durchgestrichen und der reduzierte Preis berechnet. Lassen Sie die Bezeichnung leer, um die Aktion zu beenden.",
       "beneficiary": "Zahlung — Begünstigter (angezeigter Name)",
-      "iban": "Zahlung — IBAN (Überweisung / Revolut)",
-      "ibanHint": "Wird auf der Seite « Guthaben » des Praktizierenden neben dem Revolut-QR-Code angezeigt. Leer lassen, um nur den Revolut-Button/QR anzuzeigen.",
+      "iban": "Zahlung — IBAN (Überweisung)",
+      "ibanHint": "Wird auf der Seite « Guthaben » der Anbieter·innen angezeigt. Leer lassen, um die Überweisungsoption auszublenden.",
       "saving": "Wird gespeichert…",
       "saveButton": "Einstellungen speichern"
     },

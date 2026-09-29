@@ -214,7 +214,7 @@ export default async function HomePage({
             </div>
             <Link
               href="/experiences"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-soul-terracotta hover:underline"
+              className="btn-secondary inline-flex items-center gap-1.5"
             >
               {t("upcomingCta")}
               <ArrowRight className="h-4 w-4" />
@@ -226,6 +226,12 @@ export default async function HomePage({
                 <EventCard event={event} />
               </div>
             ))}
+          </div>
+          <div className="mt-10 text-center">
+            <Link href="/experiences" className="btn-primary inline-flex items-center gap-2">
+              {t("upcomingCta")}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </section>
       )}

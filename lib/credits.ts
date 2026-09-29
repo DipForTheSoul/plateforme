@@ -67,15 +67,9 @@ export function discountedChf(priceChf: number, percent: number): number {
   return Math.round(priceChf * (1 - percent / 100));
 }
 
-/**
- * Paiement manuel (en plus de Stripe) : lien Revolut + QR. L'admin attribue
- * ensuite les crédits à la main à réception.
- * // iban: optionnel — à renseigner si Didier veut aussi le virement IBAN classique.
- */
+/** Paiement manuel par IBAN. L'admin attribue les crédits à réception. */
 export const STATIC_PAYMENT = {
   beneficiary: "ForTheSoul — Didier Picamoles",
-  revolutUrl: "https://revolut.me/didierma4i/pocket/3enbaV62Rx",
-  revolutQr: "/revolut-qr.png",
-  iban: "", // optionnel — laisser vide tant que Didier ne fournit pas d'IBAN de virement
+  iban: "", // optionnel — laisser vide tant que Didier ne fournit pas d'IBAN
   note: "Indiquez votre nom de praticien·ne et le pack choisi en communication.",
 };

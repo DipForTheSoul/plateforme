@@ -26,8 +26,8 @@ export default async function AdminLayout({
     { href: "/admin/lieux", label: t("nav.venues") },
     { href: "/admin/credits", label: t("nav.credits") },
     { href: "/admin/newsletter", label: t("nav.newsletter") },
-    { href: "/admin/contact", label: t("nav.messages") },
-    { href: "/admin/demandes-contact", label: "Demandes de contact" },
+    { href: "/admin/contact", label: t("nav.forthesoulContact") },
+    { href: "/admin/demandes-contact", label: t("nav.practitionerContact") },
     { href: "/admin/parametres", label: t("nav.settings") },
   ];
 
@@ -40,7 +40,7 @@ export default async function AdminLayout({
           {t("logout")}
         </a>
       </div>
-      <nav className="mb-8 flex gap-2 overflow-x-auto pb-1">
+      <nav className="mb-8 flex flex-wrap gap-2 pb-1">
         {nav.map((item) => (
           <Link
             key={item.href}
