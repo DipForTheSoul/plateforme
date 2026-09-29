@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
  * fourni via `NEXT_PUBLIC_GA_ID` (format G-XXXXXXXXXX). Sans ID → rien n'est
  * injecté. Quand un ID est présent, le tag ne se charge qu'après le choix
  * explicite de l'utilisateur dans le bandeau de consentement.
- * // EN ATTENTE CLIENT — Didier fournit l'ID de mesure GA4 de forthesoul.ch.
  */
 const copy = {
   fr: { title: "Mesure d’audience", text: "Acceptez-vous l’utilisation de Google Analytics pour nous aider à améliorer la plateforme ?", accept: "Accepter", refuse: "Refuser" },
