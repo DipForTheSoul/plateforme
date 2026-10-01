@@ -38,12 +38,11 @@ export function GoogleAnalytics({ locale }: { locale: string }) {
     return (
       <aside
         className="fixed inset-x-0 bottom-0 z-[80] border-t border-soul-bronze/20 bg-white/95 px-4 py-2.5 shadow-[0_-6px_20px_rgba(69,48,31,0.12)] backdrop-blur-sm"
-        aria-label={t.title}
+        aria-label={t.text}
       >
-        <div className="mx-auto grid max-w-7xl grid-cols-[auto_1fr] items-center gap-x-2 gap-y-1.5 lg:grid-cols-[auto_1fr_auto] lg:gap-x-4">
-          <p className="col-start-1 row-start-1 shrink-0 text-sm font-semibold text-soul-brown">{t.title}</p>
-          <p className="col-span-2 row-start-2 min-w-0 whitespace-nowrap text-[clamp(0.62rem,2.7vw,0.75rem)] leading-relaxed text-soul-bronze lg:col-span-1 lg:col-start-2 lg:row-start-1 lg:text-xs">{t.text}</p>
-          <div className="col-start-2 row-start-1 flex justify-self-start gap-2 lg:col-start-3 lg:justify-self-end">
+        <div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:gap-4">
+          <p className="min-w-0 text-[clamp(0.62rem,2.7vw,0.875rem)] leading-snug text-soul-bronze sm:whitespace-nowrap">{t.text}</p>
+          <div className="flex justify-self-end gap-1.5 sm:gap-2">
             <button type="button" className="btn-primary !px-3 !py-1.5 !text-xs" onClick={() => choose("accepted")}>{t.accept}</button>
             <button type="button" className="btn-secondary !px-3 !py-1.5 !text-xs" onClick={() => choose("refused")}>{t.refuse}</button>
           </div>

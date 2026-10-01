@@ -32,9 +32,9 @@ export default async function HomePage({
   const upcomingNonTop = nextHomeExperiences(upcoming.filter(e => !featuredSeries.has(e.parent_event_id ?? e.id)));
 
   const badges = [
-    { icon: ShieldCheck, label: t("heroBadge1") },
+    { icon: ShieldCheck, label: t("heroBadge1"), mobileLines: [t("heroBadge1Line1"), t("heroBadge1Line2")] },
     { icon: MapPin, label: t("heroBadge2"), mobileLines: [t("heroBadge2Line1"), t("heroBadge2Line2")] },
-    { icon: Sparkles, label: t("heroBadge3") },
+    { icon: Sparkles, label: t("heroBadge3"), mobileLines: [t("heroBadge3Line1"), t("heroBadge3Line2")] },
   ];
   const recruitmentIcons = [Search, ShieldCheck, Sparkles];
 
@@ -107,7 +107,7 @@ export default async function HomePage({
           </div>
 
           {/* Badges de confiance */}
-          <ul className="mx-auto mt-10 grid w-full max-w-2xl grid-cols-3 gap-2 sm:gap-5">
+          <ul className="mx-auto mt-10 grid w-full max-w-3xl grid-cols-3 gap-2 sm:gap-5">
             {badges.map(({ icon: Icon, label, mobileLines }) => (
               <li
                 key={label}
@@ -116,7 +116,7 @@ export default async function HomePage({
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15 text-soul-cream backdrop-blur">
                   <Icon className="h-4 w-4" />
                 </span>
-                {mobileLines ? <><span className="sm:hidden">{mobileLines[0]}<br />{mobileLines[1]}</span><span className="hidden sm:inline">{label}</span></> : label}
+                {mobileLines ? <><span className="sm:hidden">{mobileLines[0]}<br />{mobileLines[1]}</span><span className="hidden whitespace-nowrap sm:inline">{label}</span></> : label}
               </li>
             ))}
           </ul>
