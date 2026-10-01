@@ -55,6 +55,7 @@ export default async function CreditsPage({
   const iban = settings.payment_iban?.trim() || STATIC_PAYMENT.iban;
   const promo = getPromo(settings);
   const validityDays = Math.max(1, Number(settings.pack_default_valid_days) || 365);
+  const validityMonths = Math.max(1, Math.round(validityDays / (365 / 12)));
 
   return (
     <div className="flex flex-col gap-8">
@@ -150,7 +151,7 @@ export default async function CreditsPage({
                   {tr("creditsPerPublication", { price: (finalChf / pack.credits).toFixed(0) })}
                 </p>
                 <p className="mt-1 text-xs text-soul-bronze">
-                  {tr("creditsPackValidityDays", { count: validityDays })}
+                  {tr("creditsPackValidityMonths", { count: validityMonths })}
                 </p>
                 <BuyPackButton packId={pack.id} />
               </div>

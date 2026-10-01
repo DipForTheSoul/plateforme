@@ -54,6 +54,7 @@ export async function uploadImage(
 
   const { error } = await supabase.storage.from("images").upload(path, blob, {
     contentType: blob.type,
+    cacheControl: "2678400",
     upsert: false,
   });
   if (error) throw new Error(`Upload impossible : ${error.message}`);

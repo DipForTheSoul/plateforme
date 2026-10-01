@@ -2,7 +2,7 @@
  * Intégration MailerLite (§7.1) — remplace Resend pour la newsletter.
  * Actif UNIQUEMENT si `MAILERLITE_API_KEY` est défini ; sinon les appels sont
  * des no-op silencieux (la source de vérité reste la table `contacts` Supabase).
- * // EN ATTENTE CLIENT — Didier fournit la clé API et l'ID du groupe.
+ * Le groupe est associé lorsque `MAILERLITE_GROUP_ID` est également défini.
  *
  * API v2 : https://connect.mailerlite.com/api/subscribers (upsert par e-mail).
  */

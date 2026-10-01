@@ -30,17 +30,19 @@ export function SettingNumberForm({
   return (
     <form action={action} onSubmit={submitWithoutReset(action)} className="flex flex-col gap-2">
       <label htmlFor={settingKey} className="label">{label}</label>
-      <div className="flex items-center gap-2">
-        <input
-          id={settingKey}
-          name={settingKey}
-          type="number"
-          min={min}
-          defaultValue={defaultValue}
-          className="field !max-w-28"
-        />
-        {suffix && <span className="text-sm text-soul-bronze">{suffix}</span>}
-        <button type="submit" disabled={pending} className="btn-secondary !py-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div className="flex min-w-0 items-center gap-2">
+          <input
+            id={settingKey}
+            name={settingKey}
+            type="number"
+            min={min}
+            defaultValue={defaultValue}
+            className="field min-w-0 flex-1 sm:!w-28 sm:!flex-none"
+          />
+          {suffix && <span className="shrink-0 text-sm text-soul-bronze">{suffix}</span>}
+        </div>
+        <button type="submit" disabled={pending} className="btn-secondary w-full !py-2 sm:w-auto">
           {pending ? "…" : (saveLabel ?? "Enregistrer")}
         </button>
       </div>

@@ -33,9 +33,10 @@ export default async function HomePage({
 
   const badges = [
     { icon: ShieldCheck, label: t("heroBadge1") },
-    { icon: MapPin, label: t("heroBadge2") },
+    { icon: MapPin, label: t("heroBadge2"), mobileLines: [t("heroBadge2Line1"), t("heroBadge2Line2")] },
     { icon: Sparkles, label: t("heroBadge3") },
   ];
+  const recruitmentIcons = [Search, ShieldCheck, Sparkles];
 
   return (
     <div>
@@ -65,12 +66,12 @@ export default async function HomePage({
         />
         <div aria-hidden className="absolute inset-0 bg-soul-terracotta/15 mix-blend-multiply" />
 
-        <div className="relative mx-auto max-w-3xl px-4 py-24 text-center md:py-32">
+        <div className="relative mx-auto max-w-3xl px-4 pb-20 pt-10 text-center sm:py-24 md:py-32">
 
           <h1 className="font-serif text-4xl leading-[1.1] text-soul-cream drop-shadow-md sm:text-5xl lg:text-6xl">
             {t("heroTitle")}
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-soul-sand drop-shadow sm:text-lg">
+          <p className="mx-auto mt-5 max-w-2xl whitespace-nowrap text-[clamp(0.58rem,2.75vw,0.875rem)] leading-relaxed text-soul-sand drop-shadow sm:text-lg">
             {t("heroSubtitle")}
           </p>
 
@@ -95,27 +96,27 @@ export default async function HomePage({
             </div>
           </form>
 
-          <div className="mt-6">
+          <div className="mt-6 flex justify-center">
             <Link
-              href="/praticiens"
+              href="/devenir-praticien"
               className="inline-flex items-center gap-1.5 text-sm font-medium text-soul-cream underline-offset-4 hover:text-soul-amber hover:underline"
             >
-              {t("heroSecondary")}
+              {t("heroPractitionerCta")}
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
 
           {/* Badges de confiance */}
-          <ul className="mt-10 flex flex-wrap justify-center gap-x-6 gap-y-3">
-            {badges.map(({ icon: Icon, label }) => (
+          <ul className="mx-auto mt-10 grid w-full max-w-2xl grid-cols-3 gap-2 sm:gap-5">
+            {badges.map(({ icon: Icon, label, mobileLines }) => (
               <li
                 key={label}
-                className="flex items-center gap-2 text-sm font-medium text-soul-cream/90"
+                className="flex min-w-0 flex-col items-center gap-2 text-center text-xs font-medium leading-tight text-soul-cream/90 sm:flex-row sm:justify-center sm:text-left sm:text-sm"
               >
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15 text-soul-cream backdrop-blur">
                   <Icon className="h-4 w-4" />
                 </span>
-                {label}
+                {mobileLines ? <><span className="sm:hidden">{mobileLines[0]}<br />{mobileLines[1]}</span><span className="hidden sm:inline">{label}</span></> : label}
               </li>
             ))}
           </ul>
@@ -192,16 +193,6 @@ export default async function HomePage({
         </section>
       )}
 
-      <section className="bg-soul-sand/45 py-14 text-soul-brown">
-        <div className="mx-auto max-w-6xl px-4 text-center">
-          <h2 className="text-3xl text-soul-brown">{t("recruitment.title")}</h2>
-          <div className="mx-auto mt-6 grid max-w-4xl gap-3 text-left sm:grid-cols-3">
-            {(t.raw("recruitment.benefits") as string[]).map(item=><p className="rounded-2xl border border-soul-bronze/15 bg-white p-4 shadow-sm" key={item}>✓ {item}</p>)}
-          </div>
-          <Link className="btn-primary mt-7 inline-flex" href="/devenir-praticien">{t("recruitment.cta")}</Link>
-        </div>
-      </section>
-
       {/* ------------------------------------------------------------------ */}
       {/* Prochaines expériences */}
       {/* ------------------------------------------------------------------ */}
@@ -235,6 +226,23 @@ export default async function HomePage({
           </div>
         </section>
       )}
+
+      <section className="relative overflow-hidden bg-gradient-to-br from-soul-sand/60 via-soul-cream to-white py-16 text-soul-brown">
+        <div aria-hidden className="absolute -right-20 -top-24 h-64 w-64 rounded-full bg-soul-violet/[0.07] blur-2xl" />
+        <div className="relative mx-auto max-w-6xl px-4 text-center">
+          <h2 className="text-3xl text-soul-brown sm:text-4xl">{t("recruitment.title")}</h2>
+          <div className="mx-auto mt-8 grid max-w-5xl gap-4 text-left sm:grid-cols-3">
+            {(t.raw("recruitment.benefits") as string[]).map((item,index)=>{const RecruitmentIcon=recruitmentIcons[index]??Sparkles;return <article className="group relative overflow-hidden rounded-3xl border border-soul-violet/10 bg-white/90 p-5 shadow-[0_10px_30px_rgba(74,52,37,0.08)] transition duration-300 hover:-translate-y-1 hover:border-soul-violet/25 hover:shadow-[0_16px_38px_rgba(74,52,37,0.13)] sm:p-6" key={item}>
+              <div aria-hidden className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-soul-violet/[0.07] transition-transform duration-300 group-hover:scale-125" />
+              <div className="relative flex items-center gap-4 sm:block">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-soul-violet text-white shadow-sm sm:h-14 sm:w-14"><RecruitmentIcon aria-hidden className="h-6 w-6 sm:h-7 sm:w-7"/></span>
+                <p className="font-medium leading-relaxed text-soul-brown sm:mt-5 sm:text-lg">{item}</p>
+              </div>
+            </article>})}
+          </div>
+          <Link className="btn-primary mt-8 inline-flex max-w-full items-center gap-2 whitespace-nowrap !px-3 text-[clamp(0.7rem,3.2vw,1rem)] shadow-lg shadow-soul-violet/15 sm:!px-6" href="/devenir-praticien">{t("recruitment.cta")}<ArrowRight className="h-4 w-4 shrink-0"/></Link>
+        </div>
+      </section>
 
       {/* ------------------------------------------------------------------ */}
       {/* FAQ */}

@@ -1,7 +1,8 @@
 /**
  * Packs de publications (Phase 6). 1 crédit = 1 dépôt d'événement
  * (une récurrence complète = 1 crédit, pas 1 par occurrence).
- * // PLACEHOLDER — tarifs indicatifs à valider avec Didier avant mise en prod.
+ * Les valeurs par défaut sont remplacées par les tarifs enregistrés dans les
+ * paramètres d'administration lorsqu'ils sont présents.
  */
 
 export interface CreditPack {

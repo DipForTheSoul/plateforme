@@ -1,6 +1,6 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { requireRole, getCurrentPractitioner } from "@/lib/auth";
-import { Link } from "@/i18n/navigation";
+import { PractitionerNavigation } from "@/components/PractitionerNavigation";
 
 export const dynamic = "force-dynamic";
 
@@ -46,22 +46,7 @@ export default async function PractitionerLayout({
         </a>
       </div>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-[200px_minmax(0,1fr)]">
-        <nav className="flex flex-row gap-2 overflow-x-auto md:flex-col md:overflow-visible">
-          {nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="relative whitespace-nowrap rounded-xl px-4 py-2 text-sm font-medium text-soul-brown hover:bg-soul-sand/50"
-            >
-              {item.label}
-              {"badge" in item && item.badge && (
-                <span className="ml-1.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">
-                  1
-                </span>
-              )}
-            </Link>
-          ))}
-        </nav>
+        <PractitionerNavigation items={nav} />
         <div className="min-w-0">{children}</div>
       </div>
     </div>

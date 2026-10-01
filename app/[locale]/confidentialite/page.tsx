@@ -8,10 +8,7 @@ export const metadata: Metadata = {
   description: "Politique de confidentialité de la plateforme ForTheSoul.",
 };
 
-/**
- * Politique de confidentialité — contenu fourni par le client (Didier), verbatim.
- * Pour mettre à jour : régénérer content/legal/confidentialite.json depuis la source.
- */
+/** Politique rendue depuis le contenu structuré de content/legal/confidentialite.json. */
 export default async function ConfidentialitePage({
   params,
 }: {

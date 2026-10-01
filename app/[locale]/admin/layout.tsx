@@ -40,7 +40,24 @@ export default async function AdminLayout({
           {t("logout")}
         </a>
       </div>
-      <nav className="mb-8 flex flex-wrap gap-2 pb-1">
+      <details className="group relative z-20 mb-6 md:hidden">
+        <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between rounded-2xl border border-soul-bronze/25 bg-white px-4 py-3 font-semibold text-soul-brown shadow-sm [&::-webkit-details-marker]:hidden">
+          <span>{t("nav.menu")}</span>
+          <span aria-hidden="true" className="text-lg transition-transform group-open:rotate-180">⌄</span>
+        </summary>
+        <nav className="mt-2 grid overflow-hidden rounded-2xl border border-soul-bronze/20 bg-white p-2 shadow-lg">
+          {nav.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="min-w-0 rounded-xl px-4 py-3 text-sm font-medium text-soul-brown hover:bg-soul-sand/50"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+      </details>
+      <nav className="mb-8 hidden flex-wrap gap-2 pb-1 md:flex">
         {nav.map((item) => (
           <Link
             key={item.href}

@@ -40,8 +40,9 @@ if(command==='verify'){
     console.log(`QA account ready: ${email} (${role})`);
   }
 }else if(command==='serve'||command==='build'||command==='start'){
-  const localEnv={...env,NEXT_PUBLIC_SUPABASE_URL:config.API_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY:config.ANON_KEY,SUPABASE_SERVICE_ROLE_KEY:config.SERVICE_ROLE_KEY,NEXT_PUBLIC_SITE_URL:'http://localhost:3100',LOCAL_MAILPIT_URL:'http://127.0.0.1:54324',CONTACT_NOTIFY_EMAIL:'admin@forthesoul.test',RESEND_API_KEY:'',MAILERLITE_API_KEY:'',STRIPE_SECRET_KEY:'',STRIPE_WEBHOOK_SECRET:'',QA_LOCAL:'1',NEXT_PUBLIC_GA_ID:'',NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:''};
-  const args=command==='build'?['run','build']:['run',command==='start'?'start':'dev','--','--port','3100','--hostname','localhost'];
+  const qaPort=process.env.QA_PORT??'3100';
+  const localEnv={...env,NEXT_PUBLIC_SUPABASE_URL:config.API_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY:config.ANON_KEY,SUPABASE_SERVICE_ROLE_KEY:config.SERVICE_ROLE_KEY,NEXT_PUBLIC_SITE_URL:`http://localhost:${qaPort}`,LOCAL_MAILPIT_URL:'http://127.0.0.1:54324',CONTACT_NOTIFY_EMAIL:'admin@forthesoul.test',RESEND_API_KEY:'',MAILERLITE_API_KEY:'',STRIPE_SECRET_KEY:'',STRIPE_WEBHOOK_SECRET:'',QA_LOCAL:'1',NEXT_PUBLIC_GA_ID:'',NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:''};
+  const args=command==='build'?['run','build']:['run',command==='start'?'start':'dev','--','--port',qaPort,'--hostname','localhost'];
   const child=spawn('npm',args,{env:localEnv,stdio:'inherit'});
   process.on('SIGINT',()=>child.kill('SIGINT'));process.on('SIGTERM',()=>child.kill('SIGTERM'));child.on('exit',code=>process.exit(code??1));
 }else throw new Error('Usage: node scripts/qa.mjs seed|verify|auth|web|serve|build|start');

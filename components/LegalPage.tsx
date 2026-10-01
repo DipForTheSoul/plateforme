@@ -3,10 +3,7 @@ import { useTranslations } from "next-intl";
 
 type Block = { t: "h2" | "h3" | "li" | "p"; x: string };
 
-/**
- * Rendu d'une page légale (CGU / Politique de confidentialité) à partir du contenu
- * fourni par le client (content/legal/*.json). Texte VERBATIM — on ne réécrit rien.
- */
+/** Rendu partagé des pages légales à partir de content/legal/*.json. */
 export function LegalPage({
   title,
   updated,
@@ -52,7 +49,7 @@ export function LegalPage({
       );
     } else {
       nodes.push(
-        <p key={i} className="leading-relaxed text-soul-ink/85">
+        <p key={i} className="whitespace-pre-line leading-relaxed text-soul-ink/85">
           {b.x}
         </p>
       );

@@ -15,12 +15,7 @@ export async function generateMetadata({
   return { title: t("title"), description: t("metaDescription") };
 }
 
-/**
- * Page « À propos » incarnée (Phase 9 — la touche Didier).
- * Les textes FR font foi ; contenu volontairement rédigé (pas de lorem ipsum).
- * // PLACEHOLDER — les paragraphes sont à relire/ajuster avec Didier, et la
- * // photo (public/didier.jpg) est à fournir par Rodrigue.
- */
+/** Page « À propos » de Didier. */
 export default async function AboutPage({
   params,
 }: {

@@ -8,10 +8,7 @@ export const metadata: Metadata = {
   description: "Conditions générales d'utilisation de la plateforme ForTheSoul.",
 };
 
-/**
- * CGU — contenu fourni par le client (Didier), rendu verbatim.
- * Pour mettre à jour : régénérer content/legal/cgu.json depuis le document source.
- */
+/** CGU rendues depuis le contenu structuré de content/legal/cgu.json. */
 export default async function CguPage({
   params,
 }: {

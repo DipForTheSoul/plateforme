@@ -136,15 +136,7 @@
   },
   {
    "t": "h2",
-   "x": "7. Réservations et paiements"
-  },
-  {
-   "t": "p",
-   "x": "ForTheSoul ne gère aucune réservation ni aucun paiement entre les participants et les Prestataires. Toute inscription, réservation et tout paiement relatif à une expérience sont conclus directement avec le Prestataire, selon ses propres conditions. ForTheSoul n’est pas partie à ce contrat. Les seuls paiements encaissés par ForTheSoul concernent les services de publication achetés par les praticien·nes ; ils sont régis par les Conditions générales de vente."
-  },
-  {
-   "t": "h2",
-   "x": "8. Annulation ou modification d'une expérience"
+   "x": "7. Annulation ou modification d'une expérience"
   },
   {
    "t": "p",
@@ -152,7 +144,7 @@
   },
   {
    "t": "h2",
-   "x": "9. Responsabilité de ForTheSoul"
+   "x": "8. Responsabilité de ForTheSoul"
   },
   {
    "t": "p",
@@ -188,7 +180,7 @@
   },
   {
    "t": "h2",
-   "x": "10. Relations entre utilisateurs et Prestataires"
+   "x": "9. Relations entre utilisateurs et Prestataires"
   },
   {
    "t": "p",
@@ -196,7 +188,7 @@
   },
   {
    "t": "h2",
-   "x": "11. Utilisation interdite"
+   "x": "10. Utilisation interdite"
   },
   {
    "t": "p",
@@ -248,7 +240,7 @@
   },
   {
    "t": "h2",
-   "x": "12. Suspension ou suppression"
+   "x": "11. Suspension ou suppression"
   },
   {
    "t": "p",
@@ -280,7 +272,7 @@
   },
   {
    "t": "h2",
-   "x": "13. Propriété intellectuelle"
+   "x": "12. Propriété intellectuelle"
   },
   {
    "t": "p",
@@ -288,7 +280,7 @@
   },
   {
    "t": "h2",
-   "x": "14. Liens et services de tiers"
+   "x": "13. Liens et services de tiers"
   },
   {
    "t": "p",
@@ -296,23 +288,23 @@
   },
   {
    "t": "h2",
-   "x": "15. Protection des données"
+   "x": "14. Protection des données"
   },
   {
    "t": "p",
-   "x": "Le traitement des données personnelles est décrit dans la Politique de confidentialité de ForTheSoul : données de compte et de profil, messages de contact, inscriptions à la newsletter, données de paiement des services de publication et données techniques nécessaires au fonctionnement. Elle précise les finalités, les prestataires concernés, les durées de conservation et les droits des personnes."
+   "x": "Le traitement des données personnelles dans le cadre de l’utilisation de ForTheSoul est effectué conformément à la Politique de confidentialité de ForTheSoul."
   },
   {
    "t": "h2",
-   "x": "16. Cookies et technologies similaires"
+   "x": "15. Cookies et technologies similaires"
   },
   {
    "t": "p",
-   "x": "ForTheSoul utilise les éléments techniques strictement nécessaires à l’authentification et à la sécurité des comptes. Les prestataires d’hébergement et de base de données peuvent également traiter des journaux techniques. Tout outil de mesure d’audience ou de marketing non nécessaire n’est activé que conformément aux préférences de l’utilisateur et aux règles applicables. Le détail figure dans la Politique de confidentialité."
+   "x": "L’utilisation des cookies et technologies similaires sur ForTheSoul est régie par la Politique de confidentialité de ForTheSoul."
   },
   {
    "t": "h2",
-   "x": "17. Disponibilité de la plateforme"
+   "x": "16. Disponibilité de la plateforme"
   },
   {
    "t": "p",
@@ -320,7 +312,7 @@
   },
   {
    "t": "h2",
-   "x": "18. Modification des CGU"
+   "x": "17. Modification des CGU"
   },
   {
    "t": "p",
@@ -328,7 +320,7 @@
   },
   {
    "t": "h2",
-   "x": "19. Droit applicable"
+   "x": "18. Droit applicable"
   },
   {
    "t": "p",
@@ -336,7 +328,7 @@
   },
   {
    "t": "h2",
-   "x": "20. For juridique"
+   "x": "19. For juridique"
   },
   {
    "t": "p",
@@ -344,19 +336,15 @@
   },
   {
    "t": "h2",
-   "x": "21. Nullité partielle"
+   "x": "20. Nullité partielle"
   },
   {
    "t": "p",
    "x": "Si une disposition des présentes CGU devait être déclarée nulle ou inapplicable, les autres dispositions resteraient pleinement applicables. La disposition concernée sera remplacée, dans la mesure du possible, par une disposition valable se rapprochant le plus possible de l'objectif économique et juridique recherché."
   },
   {
-   "t": "h2",
-   "x": "22. Contact"
-  },
-  {
    "t": "p",
-      "x": "Pour toute question concernant les présentes CGU ou l'utilisation de la plateforme :\nForTheSoul.ch\nDidier Picamoles\nSuisse\nwelcome@forthesoul.ch\n\nVersion : 2.0 — 30 septembre 2026"
+   "x": "Version : 2.0 — 30 septembre 2026"
   }
  ]
 }

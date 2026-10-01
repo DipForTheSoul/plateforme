@@ -56,10 +56,10 @@ export function LoginForm({ next }: { next?: string }) {
           <p className="mt-1 text-xs">{t("visitorNoAccountDetail")}</p>
         </div>
         <p className="pt-1 text-sm font-semibold text-soul-brown">
-          {t("practitionerQuestion")}{" "}
+          <span className="block">{t("practitionerQuestion")}</span>
           <Link
             href="/inscription"
-            className="font-bold text-soul-violet underline underline-offset-2"
+            className="mt-1 inline-block font-bold text-soul-violet underline underline-offset-2"
           >
             {t("signupTitle")}
           </Link>
