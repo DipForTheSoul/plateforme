@@ -5,9 +5,10 @@ const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   images: {
-    // Browser reads loopback Storage directly in the isolated local QA runtime.
-    // Never enable the server-side local-IP image fetcher on a public deployment.
-    unoptimized: process.env.QA_LOCAL === '1' && !process.env.VERCEL,
+    // Les téléversements sont déjà compressés en WebP (1600 px maximum) côté
+    // navigateur. Les servir directement évite de bloquer des images lorsque
+    // le quota Vercel de transformations est atteint.
+    unoptimized: true,
     // Keep the optimizer's cache warm for stable public assets. Practitioner
     // uploads use immutable UUID filenames, so a new image always gets a new URL.
     minimumCacheTTL: 2_678_400,
