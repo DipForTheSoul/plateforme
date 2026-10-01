@@ -10,9 +10,9 @@ import { useEffect, useState } from "react";
  * explicite de l'utilisateur dans le bandeau de consentement.
  */
 const copy = {
-  fr: { title: "Mesure d’audience", text: "Acceptez-vous l’utilisation de Google Analytics pour nous aider à améliorer la plateforme ?", accept: "Accepter", refuse: "Refuser" },
-  en: { title: "Audience measurement", text: "Do you agree to Google Analytics being used to help us improve the platform?", accept: "Accept", refuse: "Refuse" },
-  de: { title: "Reichweitenmessung", text: "Stimmst du der Nutzung von Google Analytics zu, damit wir die Plattform verbessern können?", accept: "Akzeptieren", refuse: "Ablehnen" },
+  fr: { title: "Mesure d’audience", text: "Autorisez-vous Google Analytics pour améliorer la plateforme ?", accept: "Accepter", refuse: "Refuser" },
+  en: { title: "Audience measurement", text: "Allow Google Analytics to help us improve the platform?", accept: "Accept", refuse: "Refuse" },
+  de: { title: "Reichweitenmessung", text: "Google Analytics zur Verbesserung der Plattform erlauben?", accept: "Akzeptieren", refuse: "Ablehnen" },
 } as const;
 
 export function GoogleAnalytics({ locale }: { locale: string }) {
@@ -40,13 +40,13 @@ export function GoogleAnalytics({ locale }: { locale: string }) {
         className="fixed inset-x-0 bottom-0 z-[80] border-t border-soul-bronze/20 bg-white/95 px-4 py-2.5 shadow-[0_-6px_20px_rgba(69,48,31,0.12)] backdrop-blur-sm"
         aria-label={t.title}
       >
-        <div className="mx-auto flex max-w-7xl flex-col items-start gap-1.5 lg:flex-row lg:items-center lg:gap-3">
-          <p className="shrink-0 text-sm font-semibold text-soul-brown">{t.title}</p>
-          <p className="min-w-0 flex-1 text-xs leading-relaxed text-soul-bronze">{t.text}</p>
-          <div className="flex shrink-0 gap-2 pt-0.5 lg:pt-0">
+        <div className="mx-auto flex max-w-7xl flex-col gap-1.5 lg:flex-row lg:items-center lg:gap-3">
+          <div className="flex items-center gap-2">
+            <p className="mr-auto shrink-0 text-sm font-semibold text-soul-brown lg:mr-0">{t.title}</p>
             <button type="button" className="btn-primary !px-3 !py-1.5 !text-xs" onClick={() => choose("accepted")}>{t.accept}</button>
             <button type="button" className="btn-secondary !px-3 !py-1.5 !text-xs" onClick={() => choose("refused")}>{t.refuse}</button>
           </div>
+          <p className="min-w-0 whitespace-nowrap text-[clamp(0.62rem,2.7vw,0.75rem)] leading-relaxed text-soul-bronze lg:flex-1">{t.text}</p>
         </div>
       </aside>
     );
