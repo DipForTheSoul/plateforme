@@ -35,7 +35,19 @@ export function GoogleAnalytics({ locale }: { locale: string }) {
       window.localStorage.setItem("fts-analytics-consent", value);
       setConsent(value);
     };
-    return <aside className="fixed inset-x-4 bottom-24 z-[80] mx-auto max-w-xl rounded-2xl border border-soul-bronze/20 bg-white p-4 shadow-xl" aria-label={t.title}><p className="font-semibold text-soul-brown">{t.title}</p><p className="mt-1 text-sm text-soul-bronze">{t.text}</p><div className="mt-3 flex gap-2"><button type="button" className="btn-primary !px-4 !py-2" onClick={() => choose("accepted")}>{t.accept}</button><button type="button" className="btn-secondary !px-4 !py-2" onClick={() => choose("refused")}>{t.refuse}</button></div></aside>;
+    return (
+      <aside
+        className="fixed bottom-4 right-4 z-[80] w-[min(22rem,calc(100vw-2rem))] rounded-xl border border-soul-bronze/20 bg-white/95 p-3 shadow-lg backdrop-blur-sm"
+        aria-label={t.title}
+      >
+        <p className="text-sm font-semibold text-soul-brown">{t.title}</p>
+        <p className="mt-1 text-xs leading-relaxed text-soul-bronze">{t.text}</p>
+        <div className="mt-2 flex gap-2">
+          <button type="button" className="btn-primary !px-3 !py-1.5 !text-xs" onClick={() => choose("accepted")}>{t.accept}</button>
+          <button type="button" className="btn-secondary !px-3 !py-1.5 !text-xs" onClick={() => choose("refused")}>{t.refuse}</button>
+        </div>
+      </aside>
+    );
   }
 
   return (
