@@ -41,10 +41,10 @@ export function GoogleAnalytics({ locale }: { locale: string }) {
         aria-label={t.text}
       >
         <div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:gap-4">
-          <p className="min-w-0 text-[clamp(0.62rem,2.7vw,0.875rem)] leading-snug text-soul-bronze sm:whitespace-nowrap">{t.text}</p>
+          <p className="min-w-0 whitespace-nowrap text-[clamp(0.44rem,2.1vw,0.875rem)] leading-snug text-soul-bronze">{t.text}</p>
           <div className="flex justify-self-end gap-1.5 sm:gap-2">
-            <button type="button" className="btn-primary !px-3 !py-1.5 !text-xs" onClick={() => choose("accepted")}>{t.accept}</button>
-            <button type="button" className="btn-secondary !px-3 !py-1.5 !text-xs" onClick={() => choose("refused")}>{t.refuse}</button>
+            <button type="button" className="btn-primary !px-2 !py-1.5 !text-[0.625rem] sm:!px-3 sm:!text-xs" onClick={() => choose("accepted")}>{t.accept}</button>
+            <button type="button" className="btn-secondary !px-2 !py-1.5 !text-[0.625rem] sm:!px-3 sm:!text-xs" onClick={() => choose("refused")}>{t.refuse}</button>
           </div>
         </div>
       </aside>
