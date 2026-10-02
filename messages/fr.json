@@ -100,7 +100,7 @@
       "newsletterSuccess": "Merci ! Vous êtes bien inscrit·e.",
       "newsletterError": "Inscription impossible pour le moment. Réessayez plus tard.",
       "legal": "© {year} ForTheSoul — Suisse",
-      "becomePractitioner": "Présenter mon activité",
+      "becomePractitioner": "Être en ligne",
       "terms": "Conditions d'utilisation",
       "privacy": "Confidentialité", "salesTerms":"Conditions générales de vente", "legalNotices":"Mentions légales"
     },
@@ -126,7 +126,7 @@
     "heroSubtitle": "Retraites, ateliers et expériences pour le corps, l’esprit et l’âme",
     "heroCta": "Explorer les expériences",
     "heroSecondary": "Rencontrer les praticien·nes",
-    "heroPractitionerCta": "Présenter mon activité",
+    "heroPractitionerCta": "Être en ligne",
     "searchPlaceholder": "Rechercher une expérience (danse, gong, retraite…)",
     "categoriesTitle": "Explorer par univers",
     "topTitle": "Sélection du moment",
