@@ -235,7 +235,30 @@ export function DescriptionEditor({defaultValue = ''}: {defaultValue?: string}) 
 
   function handlePaste(event: ClipboardEvent<HTMLDivElement>) {
     event.preventDefault();
-    insertNode(document.createTextNode(event.clipboardData.getData('text/plain')));
+    const editor = editorRef.current;
+    if (!editor) return;
+    editor.focus();
+    const range = restoreSelection();
+    if (!range) return;
+
+    // Keep paste safe by accepting plain text only, while preserving the
+    // author's paragraph and blank-line structure in the contenteditable DOM.
+    const text = event.clipboardData.getData('text/plain').replace(/\r\n?/g, '\n');
+    const fragment = document.createDocumentFragment();
+    text.split('\n').forEach((line, index) => {
+      if (index > 0) fragment.append(document.createElement('br'));
+      if (line) fragment.append(document.createTextNode(line));
+    });
+    const lastNode = fragment.lastChild;
+    range.deleteContents();
+    range.insertNode(fragment);
+    if (lastNode) range.setStartAfter(lastNode);
+    range.collapse(true);
+    const selection = window.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+    savedRange.current = range.cloneRange();
+    syncEditor();
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {

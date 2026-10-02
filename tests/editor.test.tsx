@@ -136,6 +136,14 @@ describe('éditeur visuel de description', () => {
     expect(backing(container).value).toHaveLength(7999);
   });
 
+  it('conserve les retours à la ligne et les lignes vides lors du collage', () => {
+    const {container} = view('');
+    const editor = screen.getByRole('textbox', {name: fr.descriptionEditor.editorLabel});
+    fireEvent.paste(editor, {clipboardData: {getData: () => 'Premier paragraphe\r\n\r\nDeuxième paragraphe'}});
+    expect(editor.querySelectorAll('br')).toHaveLength(2);
+    expect(backing(container)).toHaveValue('Premier paragraphe\n\nDeuxième paragraphe');
+  });
+
   it('ne détruit pas un formatage qui fait dépasser la limite', () => {
     const {container} = view('a'.repeat(7999));
     const editor = screen.getByRole('textbox', {name: fr.descriptionEditor.editorLabel});

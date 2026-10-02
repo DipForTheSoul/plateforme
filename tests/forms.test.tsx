@@ -80,6 +80,21 @@ describe('Régressions signalées par Didier', () => {
     await waitFor(()=>expect(screen.getByLabelText(fr.eventForm.durationHoursLabel)).toHaveValue('1'));
     expect(screen.getByLabelText(fr.eventForm.durationMinutesLabel)).toHaveValue('30');
   });
+  it('soumet la version serveur actuelle même si le brouillon contient une ancienne version', async () => {
+    localStorage.setItem('fts.draft.v1:event:local:versioned',JSON.stringify({
+      at:Date.now(),
+      fields:{title:['Texte restauré']},
+      extra:{images:[],recurrence:'',recurrenceCount:4,updatedAt:'2026-09-01T08:00:00Z'}
+    }));
+    const action = vi.fn(async (_previous: unknown, _data: FormData) => ({success:'Enregistré.'}));
+    const event = {id:'versioned',title:'Texte serveur',start_date:'2026-10-09T09:00:00Z',updated_at:'2026-10-02T07:00:00Z',images:[],languages:['fr']} as unknown as Event;
+    render(wrap(<EventForm categories={categories} venues={[]} defaultLanguages={['fr']} event={event} action={action}/>));
+    await waitFor(()=>expect(screen.getByLabelText(fr.eventForm.titleLabel)).toHaveValue('Texte restauré'));
+    fireEvent.submit(screen.getByLabelText(fr.eventForm.titleLabel).closest('form')!);
+    await waitFor(()=>expect(action).toHaveBeenCalled());
+    const submitted = action.mock.calls[0]?.[1] as FormData;
+    expect(submitted.get('updated_at')).toBe('2026-10-02T07:00:00Z');
+  });
   it('ne transporte pas le brouillon lorsque le compte change sans démontage de la page', () => {
     const form = (owner: string) => wrap(<EventForm draftOwner={owner} categories={categories} venues={[]} defaultLanguages={['fr']} />);
     const view = render(form('account-a'));
