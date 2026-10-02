@@ -100,7 +100,7 @@
       "newsletterSuccess": "Danke! Du bist angemeldet.",
       "newsletterError": "Anmeldung derzeit nicht möglich. Bitte versuche es später erneut.",
       "legal": "© {year} ForTheSoul — Schweiz",
-      "becomePractitioner": "Online sichtbar werden",
+      "becomePractitioner": "Auf ForTheSoul online sichtbar werden",
       "terms": "Nutzungsbedingungen",
       "privacy": "Datenschutz", "salesTerms":"Verkaufsbedingungen", "legalNotices":"Impressum"
     },
@@ -126,7 +126,7 @@
     "heroSubtitle": "Retreats, Workshops und Erfahrungen für Körper, Geist und Seele",
     "heroCta": "Erlebnisse entdecken",
     "heroSecondary": "Anbieter:innen kennenlernen",
-    "heroPractitionerCta": "Online sichtbar werden",
+    "heroPractitionerCta": "Auf ForTheSoul online sichtbar werden",
     "searchPlaceholder": "Erlebnis suchen (Tanz, Gong, Retreat…)",
     "categoriesTitle": "Nach Welten stöbern",
     "topTitle": "Aktuelle Auswahl",

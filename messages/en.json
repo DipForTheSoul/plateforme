@@ -100,7 +100,7 @@
       "newsletterSuccess": "Thank you! You're subscribed.",
       "newsletterError": "Subscription unavailable right now. Please try again later.",
       "legal": "© {year} ForTheSoul — Switzerland",
-      "becomePractitioner": "Get listed",
+      "becomePractitioner": "Get listed on ForTheSoul",
       "terms": "Terms of use",
       "privacy": "Privacy", "salesTerms":"Terms of sale", "legalNotices":"Legal notice"
     },
@@ -126,7 +126,7 @@
     "heroSubtitle": "Retreats, workshops and experiences for body, mind and soul",
     "heroCta": "Explore experiences",
     "heroSecondary": "Meet the practitioners",
-    "heroPractitionerCta": "Get listed",
+    "heroPractitionerCta": "Get listed on ForTheSoul",
     "searchPlaceholder": "Search an experience (dance, gong, retreat…)",
     "categoriesTitle": "Explore by universe",
     "topTitle": "Current selection",
