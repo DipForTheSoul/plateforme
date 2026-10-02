@@ -5,11 +5,11 @@ import {Link} from "@/i18n/navigation";
 import {createClient} from "@/lib/supabase/server";
 import {CREDIT_PACKS,resolvePackPriceChf} from "@/lib/credits";
 import {PackPrice} from "@/components/PackPrice";
-import {ArrowRight,CalendarPlus,FilePlus2,Heart,Languages,MapPin,Megaphone,Plus,ShieldCheck,Sparkles,UserRound} from "lucide-react";
+import {ArrowRight,CalendarPlus,CircleDollarSign,FilePlus2,Heart,Languages,MapPin,Megaphone,Plus,ShieldCheck,Sparkles,UserRound,UserRoundCheck} from "lucide-react";
 
 const SITE=process.env.NEXT_PUBLIC_SITE_URL??"https://forthesoul.ch";
 const heroIcons=[Megaphone,Sparkles,Languages];
-const stepIcons=[UserRound,ShieldCheck,CalendarPlus];
+const stepIcons=[UserRound,ShieldCheck,UserRoundCheck,CircleDollarSign,CalendarPlus];
 export async function generateMetadata({params}:{params:Promise<{locale:string}>}):Promise<Metadata>{const {locale}=await params;const t=await getTranslations({locale,namespace:"becomePractitioner"});const path="/devenir-praticien";return {title:t("metaTitle"),description:t("metaDescription"),alternates:{canonical:`${SITE}${locale==="fr"?"":`/${locale}`}${path}`,languages:{fr:`${SITE}${path}`,de:`${SITE}/de${path}`,en:`${SITE}/en${path}`}}};}
 
 export default async function BecomePractitionerPage({params}:{params:Promise<{locale:string}>}){const {locale}=await params;setRequestLocale(locale);const t=await getTranslations("becomePractitioner");const db=await createClient();const {data}=await db.from("settings").select("key,value");const settings=Object.fromEntries((data??[]).map(r=>[r.key,r.value]));const heroBenefits=t.raw("heroBenefits") as string[];const benefits=t.raw("benefits") as {line1:string;line2:string}[];const steps=t.raw("steps") as {title:string;text:string}[];const faq=t.raw("faq") as {q:string;a:string}[];const validityDays=Math.max(1,Number(settings.pack_default_valid_days)||365);const validityMonths=Math.max(1,Math.round(validityDays/(365/12)));
@@ -22,8 +22,8 @@ return <main>
         <span className="mt-1 block whitespace-nowrap text-[clamp(2rem,7vw,4.25rem)]">{t("titleLine2")}</span>
       </h1>
       <p className="mx-auto mt-5 max-w-3xl text-[clamp(0.9rem,2.5vw,1.125rem)] font-normal leading-relaxed text-soul-bronze/90">{t("introMobile")}</p>
-      <ul className="mx-auto mt-7 grid max-w-2xl grid-cols-3 gap-2 text-xs font-medium leading-tight text-soul-brown sm:gap-5 sm:text-sm">
-        {heroBenefits.map((item,index)=>{const HeroIcon=heroIcons[index]??Sparkles;return <li className="flex min-w-0 flex-col items-center gap-2 text-center sm:flex-row sm:justify-center sm:text-left" key={item}><HeroIcon aria-hidden className="h-5 w-5 shrink-0 text-soul-violet"/><span>{item}</span></li>})}
+      <ul className="mx-auto mt-7 grid max-w-3xl grid-cols-3 gap-2 text-[clamp(0.58rem,2.5vw,0.75rem)] font-medium leading-tight text-soul-brown sm:gap-5 sm:text-sm">
+        {heroBenefits.map((item,index)=>{const HeroIcon=heroIcons[index]??Sparkles;return <li className="flex min-w-0 flex-col items-center gap-2 text-center sm:flex-row sm:justify-center sm:text-left" key={item}><HeroIcon aria-hidden className="h-5 w-5 shrink-0 text-soul-violet"/><span className="sm:whitespace-nowrap">{item}</span></li>})}
       </ul>
       <div className="mx-auto mt-7 grid max-w-md grid-cols-[minmax(0,1.65fr)_minmax(0,0.85fr)] items-stretch justify-center gap-2.5 sm:flex sm:max-w-none sm:items-center sm:gap-3">
         <Link href="/inscription" className="btn-primary inline-flex min-h-10 min-w-0 items-center justify-center gap-1.5 whitespace-nowrap px-2 py-2 text-[clamp(0.65rem,2.8vw,0.875rem)] sm:px-6 sm:text-base">{t("cta")}<ArrowRight className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4"/></Link>
@@ -38,7 +38,7 @@ return <main>
         <div aria-hidden className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-soul-violet/[0.07] transition-transform duration-300 group-hover:scale-125" />
         <div className="relative flex items-center gap-4 lg:block">
           <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-soul-violet text-white shadow-sm lg:h-14 lg:w-14"><BenefitIcon aria-hidden className="h-6 w-6 lg:h-7 lg:w-7"/></span>
-          <p className="whitespace-nowrap text-[clamp(0.72rem,3.5vw,1.125rem)] font-medium leading-relaxed text-soul-brown lg:mt-5"><span className="block">{item.line1}</span><span className="block">{item.line2}</span></p>
+          <p className="min-w-0 text-[clamp(0.72rem,3.5vw,1.05rem)] font-medium leading-relaxed text-soul-brown lg:mt-5"><span className="block">{item.line1}</span><span className="block">{item.line2}</span></p>
         </div>
       </article>})}
     </div>
@@ -46,14 +46,14 @@ return <main>
   <section className="relative overflow-hidden bg-white/65 py-16">
     <div className="relative mx-auto max-w-6xl px-4">
       <h2 className="text-center text-[clamp(1.45rem,6vw,2.25rem)] leading-tight text-soul-brown">{t("stepsTitle")}</h2>
-      <div className="relative mt-10 grid gap-5 md:grid-cols-3">
-        <div aria-hidden className="absolute left-1/2 top-0 hidden h-px w-[62%] -translate-x-1/2 bg-gradient-to-r from-transparent via-soul-violet/35 to-transparent md:block" />
-        <div aria-hidden className="absolute bottom-8 left-7 top-8 w-px bg-soul-violet/20 md:hidden" />
-        {steps.map((step,index)=>{const StepIcon=stepIcons[index]??Sparkles;return <article className="group relative ml-4 rounded-3xl border border-soul-violet/10 bg-gradient-to-br from-white to-soul-sand/35 p-6 pl-10 shadow-[0_10px_30px_rgba(74,52,37,0.07)] md:ml-0 md:p-7 md:pt-12" key={step.title}>
-          <span className="absolute -left-4 top-6 z-10 flex h-12 w-12 items-center justify-center rounded-2xl bg-soul-violet font-serif text-xl text-white shadow-md md:left-1/2 md:top-0 md:-translate-x-1/2 md:-translate-y-1/2">{index+1}</span>
-          <StepIcon aria-hidden className="h-7 w-7 text-soul-violet transition-transform duration-300 group-hover:scale-110 md:mx-auto"/>
-          <h3 className="mt-4 text-xl text-soul-brown md:text-center">{step.title.replace(/^\d+\.\s*/,"")}</h3>
-          <p className="mt-3 leading-relaxed text-soul-ink/75 md:text-center">{step.text}</p>
+      <div className="relative mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+        <div aria-hidden className="absolute left-1/2 top-0 hidden h-px w-[82%] -translate-x-1/2 bg-gradient-to-r from-transparent via-soul-violet/35 to-transparent lg:block" />
+        <div aria-hidden className="absolute bottom-8 left-7 top-8 w-px bg-soul-violet/20 sm:hidden" />
+        {steps.map((step,index)=>{const StepIcon=stepIcons[index]??Sparkles;return <article className="group relative ml-4 rounded-3xl border border-soul-violet/10 bg-gradient-to-br from-white to-soul-sand/35 p-6 pl-10 shadow-[0_10px_30px_rgba(74,52,37,0.07)] sm:ml-0 sm:p-6 sm:pt-10" key={step.title}>
+          <span className="absolute -left-4 top-6 z-10 flex h-12 w-12 items-center justify-center rounded-2xl bg-soul-violet font-serif text-xl text-white shadow-md sm:left-1/2 sm:top-0 sm:-translate-x-1/2 sm:-translate-y-1/2">{index+1}</span>
+          <StepIcon aria-hidden className="h-7 w-7 text-soul-violet transition-transform duration-300 group-hover:scale-110 sm:mx-auto"/>
+          <h3 className="mt-4 text-lg leading-tight text-soul-brown sm:text-center">{step.title.replace(/^\d+\.\s*/,"")}</h3>
+          <p className="mt-3 text-sm leading-relaxed text-soul-ink/75 sm:text-center">{step.text}</p>
         </article>})}
       </div>
     </div>
@@ -105,7 +105,7 @@ return <main>
       <p className="mt-4 font-serif text-4xl text-soul-brown"><PackPrice valueChf={price}/></p>
       <p className="mt-3 text-sm font-medium text-soul-ink/70"><PackPrice valueChf={price/pack.credits}/> {t("perPublication")}</p>
       <p className="mt-2 text-sm text-soul-bronze">{t("packValidityMonths",{count:validityMonths})}</p>
-      <p className="mt-5 whitespace-nowrap border-t border-soul-bronze/10 pt-4 text-[clamp(0.65rem,3.2vw,0.875rem)] leading-relaxed text-soul-ink/70">{t(`packDescriptions.${index}`)}</p>
+      <p className="mt-5 border-t border-soul-bronze/10 pt-4 text-[clamp(0.65rem,3.2vw,0.875rem)] leading-relaxed text-soul-ink/70">{t(`packDescriptions.${index}`)}</p>
     </article>})}</div>
     <div className="mt-8 text-center">
       <Link href="/inscription" className="btn-primary inline-flex items-center justify-center gap-2 whitespace-nowrap">{t("cta")}<ArrowRight className="h-4 w-4"/></Link>

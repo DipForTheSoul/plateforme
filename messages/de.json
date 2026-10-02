@@ -15,7 +15,7 @@
     "metaTitle":"Anbieter·in bei ForTheSoul werden","metaDescription":"Präsentieren Sie Ihre Tätigkeit und veröffentlichen Sie bewusste Erlebnisse für ein qualifiziertes Publikum in der Schweiz.",
     "eyebrow":"ForTheSoul für Anbieter·innen","title":"Sie sind Anbieter? Veröffentlichen Sie Ihre Angebote.","titleLine1":"Sie sind Anbieter?","titleLine2":"Veröffentlichen Sie Ihre Angebote.","intro":"Präsentieren Sie Ihre Welt und Ihre Angebote einem Publikum auf der Suche nach bewussten Erlebnissen.","introMobile":"Präsentieren Sie Ihre Welt und Ihre Angebote einem Publikum auf der Suche nach bewussten Erlebnissen.","heroBenefits":["Angebote veröffentlichen","Ihre Welt präsentieren","Nationale dreisprachige Präsenz"],"cta":"Anbieterkonto erstellen","loginCta":"Anmelden","learnMore":"Ablauf entdecken",
     "benefitsTitle":"Warum ForTheSoul?","benefits":[{"line1":"Bieten Sie Ihre Angebote einem Publikum an","line2":"das bewusste Erlebnisse sucht"},{"line1":"Präsentieren Sie sich und Ihre Welt","line2":"über Ihre gewohnten Netzwerke hinaus"},{"line1":"Profitieren Sie von einer Präsenz","line2":"auf einer nationalen dreisprachigen Plattform"}],
-    "stepsTitle":"So funktioniert es","steps":[{"title":"1. Tätigkeit vorstellen","text":"Erstellen Sie Ihr Konto und ergänzen Sie die wichtigsten Angaben zu Ihrer Praxis."},{"title":"2. Prüfung durch Didier","text":"Didier prüft Ihr Profil persönlich vor der Veröffentlichung."},{"title":"3. Erlebnisse veröffentlichen","text":"Kaufen Sie die benötigten Credits und veröffentlichen Sie einzelne oder wiederkehrende Termine."}],
+    "stepsTitle":"So funktioniert es","steps":[{"title":"1. Stellen Sie sich und Ihre Welt vor","text":"Erstellen Sie Ihr Konto und geben Sie die wichtigsten Informationen für die Prüfung Ihres Profils an."},{"title":"2. Profilprüfung","text":"Ihr Profil mit den wichtigsten Informationen wird geprüft und freigegeben."},{"title":"3. Profil vervollständigen","text":"Nach der Freigabe ergänzen Sie alle nützlichen Informationen zu Ihrer Tätigkeit."},{"title":"4. Paket auswählen","text":"Wählen Sie das passende Publikationspaket. Das erste ist derzeit kostenlos."},{"title":"5. Angebote veröffentlichen","text":"Veröffentlichen Sie über Ihr Dashboard einmalige oder wiederkehrende Angebote."}],
     "packsTitle":"Publikationspakete","packsIntro":"Ein Credit entspricht einem veröffentlichten Erlebnis, auch bei mehreren Terminen.","publicationEyebrow":"Ihr Erlebnis im besten Licht","publicationImageAlt":"Geführte Meditation in der Natur","publicationCaption":"So wird Ihr Erlebnis präsentiert","publicationMock":{"homeLabel":"Auf der Startseite","detailLabel":"In der Detailansicht","date":"Samstag, 24.10.2026 · 16:30","title":"Geführte Meditation in der Natur","practitioner":"Ihr Name","category":"Meditation & Achtsamkeit","description":"Stellen Sie Ihr Erlebnis, seine Absicht und das vor, was die Teilnehmenden mit Ihnen erleben werden. Beschreiben Sie Ablauf, Atmosphäre und Wirkung.","location":"Lausanne · VD · Schweiz","price":"CHF 45.–","proposedBy":"Angeboten von","validated":"Von Didier bestätigt","reserve":"Reservieren","calendar":"Zum Kalender hinzufügen","aboutTitle":"Über dieses Erlebnis"},"packFeatured":"Am beliebtesten","packLabel":"{count, plural, one {# Veröffentlichung} other {# Veröffentlichungen}}","perPublication":"pro Veröffentlichung","packValidityDays":"{count} Tage gültig","packValidityMonths":"{count, plural, one {# Monat gültig} other {# Monate gültig}}","packDescriptions":["Für die Veröffentlichung eines ersten Erlebnisses.","Für mehrere Termine im Laufe des Jahres.","Für eine nachhaltige Präsenz auf ForTheSoul."],
     "faqTitle":"Fragen von Anbieter·innen","faqSubtitle":"Alles, was Sie vor Ihrem Beitritt zu ForTheSoul wissen sollten","faq":[{"q":"Ist das Profil kostenpflichtig?","a":"Nein. Konto und Anbieterprofil sind kostenlos. Erlebnisse werden mit Credits veröffentlicht."},{"q":"Wer prüft mein Profil?","a":"Didier prüft jede Anfrage persönlich vor der Veröffentlichung."},{"q":"Kann ich wiederkehrende Erlebnisse veröffentlichen?","a":"Ja. Eine Serie benötigt einen Credit; die einzelnen Termine bleiben sichtbar."}],
     "finalTitle":"Möchten Sie Ihre Praxis vorstellen?","finalText":"Erstellen Sie Ihr Konto, präsentieren Sie Ihre Tätigkeit und werden Sie Teil einer bewussten Auswahl."
@@ -100,7 +100,7 @@
       "newsletterSuccess": "Danke! Du bist angemeldet.",
       "newsletterError": "Anmeldung derzeit nicht möglich. Bitte versuche es später erneut.",
       "legal": "© {year} ForTheSoul — Schweiz",
-      "becomePractitioner": "Anbieterkonto erstellen",
+      "becomePractitioner": "Meine Tätigkeit vorstellen",
       "terms": "Nutzungsbedingungen",
       "privacy": "Datenschutz", "salesTerms":"Verkaufsbedingungen", "legalNotices":"Impressum"
     },
@@ -126,7 +126,7 @@
     "heroSubtitle": "Retreats, Workshops und Erfahrungen für Körper, Geist und Seele",
     "heroCta": "Erlebnisse entdecken",
     "heroSecondary": "Anbieter:innen kennenlernen",
-    "heroPractitionerCta": "Anbieter:in werden",
+    "heroPractitionerCta": "Meine Tätigkeit vorstellen",
     "searchPlaceholder": "Erlebnis suchen (Tanz, Gong, Retreat…)",
     "categoriesTitle": "Nach Welten stöbern",
     "topTitle": "Aktuelle Auswahl",
