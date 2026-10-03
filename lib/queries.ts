@@ -128,12 +128,22 @@ export async function getApprovedEvents(
     if (filters.durationMax !== undefined)
       query = query.lte("duration_minutes", filters.durationMax);
     if (venueIds) query = query.in("venue_id", venueIds);
-    if (filters.q) query = query.ilike("title", `%${filters.q}%`);
-
     const data = await readPages((from,to)=>query.range(from,to));
     let events = ((data as unknown as EventRowRaw[]) ?? []).map(mapEventRow);
 
     // Filtres sur les relations (appliqués après jointure).
+    // La recherche libre couvre l'expérience et son praticien. Elle est faite
+    // après la jointure afin d'éviter une requête PostgREST ambiguë entre les
+    // deux tables et de conserver la pagination exhaustive du catalogue.
+    if (filters.q) {
+      const needle = filters.q.trim().toLocaleLowerCase();
+      if (needle) {
+        events = events.filter((event) =>
+          event.title.toLocaleLowerCase().includes(needle)
+          || event.practitioner?.name.toLocaleLowerCase().includes(needle)
+        );
+      }
+    }
     if (filters.category)
       events = events.filter((e) =>
         e.categories.some((c) => c.slug === filters.category)

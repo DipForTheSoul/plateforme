@@ -15,7 +15,7 @@
     "metaTitle":"Devenir praticien·ne sur ForTheSoul","metaDescription":"Présentez votre activité et publiez vos expériences conscientes auprès d’un public qualifié en Suisse.",
     "eyebrow":"ForTheSoul pour les praticien·nes","title":"Vous êtes praticien ? Publiez vos offres.","titleLine1":"Vous êtes praticien ?","titleLine2":"Publiez vos offres.","intro":"Présentez votre univers et vos offres à un public en quête d’expériences conscientes.","introMobile":"Présentez votre univers et vos offres à un public en quête d’expériences conscientes.","heroBenefits":["Publiez vos offres","Présentez votre univers","Visibilité nationale trilingue"],"cta":"Créer mon compte praticien","loginCta":"Connexion","learnMore":"Découvrir le parcours",
     "benefitsTitle":"Pourquoi rejoindre ForTheSoul ?","benefits":[{"line1":"Proposez vos offres à un public","line2":"en recherche d’expériences conscientes"},{"line1":"Présentez-vous et votre univers","line2":"au-delà de vos réseaux habituels"},{"line1":"Bénéficiez d’une présence sur","line2":"une plateforme nationale trilingue"}],
-    "stepsTitle":"Comment ça marche ?","steps":[{"title":"1. Présentez-vous et votre univers","text":"Créez votre compte et renseignez les informations essentielles permettant de valider votre profil."},{"title":"2. Validation du profil","text":"Votre profil contenant les informations essentielles est vérifié et validé."},{"title":"3. Complétez votre profil","text":"Une fois validé, enrichissez votre profil avec toutes les informations utiles sur votre activité."},{"title":"4. Choisissez un pack","text":"Sélectionnez le pack de publications adapté à vos besoins. Le premier est actuellement gratuit."},{"title":"5. Publiez vos offres","text":"Depuis votre tableau de bord, publiez vos offres ponctuelles ou récurrentes."}],
+    "stepsTitle":"Comment ça marche ?","steps":[{"title":"1. Présentez-vous et votre univers","text":"Créez votre compte et renseignez les informations essentielles permettant de valider votre profil."},{"title":"2. Validation du profil","text":"Votre profil contenant les informations essentielles est vérifié et validé."},{"title":"3. Complétez votre profil","text":"Une fois validé, enrichissez votre profil avec toutes les informations utiles sur votre activité."},{"title":"4. Choisissez un pack","text":"Sélectionnez le pack de publications adapté à vos besoins."},{"title":"5. Publiez vos offres","text":"Depuis votre tableau de bord, publiez vos offres ponctuelles ou récurrentes."}],
     "packsTitle":"Packs de publication","packsIntro":"Un crédit correspond à une expérience publiée, y compris lorsqu’elle comporte plusieurs dates.","publicationEyebrow":"Votre expérience, mise en lumière","publicationImageAlt":"Séance de méditation guidée en pleine nature","publicationCaption":"Voici comment votre expérience sera présentée","publicationMock":{"homeLabel":"Sur la page d’accueil","detailLabel":"Dans la fiche détaillée","date":"Samedi 24.10.2026 · 16:30","title":"Méditation guidée en pleine nature","practitioner":"Votre nom","category":"Méditation & Pleine conscience","description":"Présentez votre expérience, son intention et ce que les participant·es vont vivre à vos côtés. Décrivez le déroulement, l’atmosphère et les bienfaits de ce moment.","location":"Lausanne · VD · Suisse","price":"CHF 45.–","proposedBy":"Proposé par","validated":"Validé par Didier","reserve":"Réserver","calendar":"Ajouter à mon agenda","aboutTitle":"À propos de cette expérience"},"packFeatured":"Le plus choisi","packLabel":"{count, plural, one {# publication} other {# publications}}","perPublication":"par publication","packValidityDays":"Valable {count} jours","packValidityMonths":"Valable {count, plural, one {# mois} other {# mois}}","packDescriptions":["Pour publier une première expérience.","Pour proposer plusieurs rendez-vous au fil de l’année.","Pour développer durablement votre présence sur ForTheSoul."],
     "faqTitle":"Questions des praticien·nes","faqSubtitle":"Tout ce qu’il faut savoir avant de rejoindre ForTheSoul","faq":[{"q":"La création du profil est-elle payante ?","a":"Non, le compte et le profil praticien sont gratuits. Les expériences sont publiées à l’aide de crédits."},{"q":"Qui valide mon profil ?","a":"Didier relit personnellement chaque demande avant sa mise en ligne."},{"q":"Puis-je publier une expérience récurrente ?","a":"Oui. Une série récurrente utilise un seul crédit et ses différentes dates restent visibles."}],
     "finalTitle":"Prêt·e à présenter votre pratique ?","finalText":"Créez votre compte, présentez votre activité et rejoignez une sélection consciente."
@@ -100,7 +100,7 @@
       "newsletterSuccess": "Merci ! Vous êtes bien inscrit·e.",
       "newsletterError": "Inscription impossible pour le moment. Réessayez plus tard.",
       "legal": "© {year} ForTheSoul — Suisse",
-      "becomePractitioner": "Être en ligne sur ForTheSoul",
+      "becomePractitioner": "Créer un compte praticien",
       "terms": "Conditions d'utilisation",
       "privacy": "Confidentialité", "salesTerms":"Conditions générales de vente", "legalNotices":"Mentions légales"
     },
@@ -126,8 +126,8 @@
     "heroSubtitle": "Retraites, ateliers et expériences pour le corps, l’esprit et l’âme",
     "heroCta": "Explorer les expériences",
     "heroSecondary": "Rencontrer les praticien·nes",
-    "heroPractitionerCta": "Être en ligne sur ForTheSoul",
-    "searchPlaceholder": "Rechercher une expérience (danse, gong, retraite…)",
+    "heroPractitionerCta": "Créer un compte praticien",
+    "searchPlaceholder": "Rechercher une expérience ou un·e praticien·ne…",
     "categoriesTitle": "Explorer par univers",
     "topTitle": "Sélection du moment",
     "topSubtitle": "Les expériences mises en avant",

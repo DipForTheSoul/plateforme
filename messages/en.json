@@ -15,7 +15,7 @@
     "metaTitle":"Become a practitioner on ForTheSoul","metaDescription":"Present your practice and publish conscious experiences for a qualified audience in Switzerland.",
     "eyebrow":"ForTheSoul for practitioners","title":"Are you a practitioner? Publish your offers.","titleLine1":"Are you a practitioner?","titleLine2":"Publish your offers.","intro":"Present your world and your offers to an audience seeking conscious experiences.","introMobile":"Present your world and your offers to an audience seeking conscious experiences.","heroBenefits":["Publish your offers","Present your world","National trilingual visibility"],"cta":"Create my practitioner account","loginCta":"Sign in","learnMore":"Discover the process",
     "benefitsTitle":"Why join ForTheSoul?","benefits":[{"line1":"Offer your services to an audience","line2":"seeking conscious experiences"},{"line1":"Present yourself and your world","line2":"beyond your usual networks"},{"line1":"Benefit from a presence","line2":"on a national trilingual platform"}],
-    "stepsTitle":"How it works","steps":[{"title":"1. Present yourself and your world","text":"Create your account and provide the essential information needed to review your profile."},{"title":"2. Profile review","text":"Your profile containing the essential information is reviewed and approved."},{"title":"3. Complete your profile","text":"Once approved, add all the useful information about your practice."},{"title":"4. Choose a pack","text":"Select the publishing pack that suits your needs. The first one is currently free."},{"title":"5. Publish your offers","text":"From your dashboard, publish one-off or recurring offers."}],
+    "stepsTitle":"How it works","steps":[{"title":"1. Present yourself and your world","text":"Create your account and provide the essential information needed to review your profile."},{"title":"2. Profile review","text":"Your profile containing the essential information is reviewed and approved."},{"title":"3. Complete your profile","text":"Once approved, add all the useful information about your practice."},{"title":"4. Choose a pack","text":"Select the publishing pack that suits your needs."},{"title":"5. Publish your offers","text":"From your dashboard, publish one-off or recurring offers."}],
     "packsTitle":"Publishing packs","packsIntro":"One credit covers one published experience, including an experience with several dates.","publicationEyebrow":"Put your experience in the spotlight","publicationImageAlt":"Guided meditation session in nature","publicationCaption":"This is how your experience will be presented","publicationMock":{"homeLabel":"On the home page","detailLabel":"Inside the full listing","date":"Saturday 24.10.2026 · 16:30","title":"Guided meditation in nature","practitioner":"Your name","category":"Meditation & Mindfulness","description":"Present your experience, its intention and what participants will experience with you. Describe the flow, atmosphere and benefits of the moment.","location":"Lausanne · VD · Switzerland","price":"CHF 45.–","proposedBy":"Hosted by","validated":"Validated by Didier","reserve":"Book","calendar":"Add to my calendar","aboutTitle":"About this experience"},"packFeatured":"Most popular","packLabel":"{count, plural, one {# publication} other {# publications}}","perPublication":"per publication","packValidityDays":"Valid for {count} days","packValidityMonths":"Valid for {count, plural, one {# month} other {# months}}","packDescriptions":["For publishing your first experience.","For offering several dates throughout the year.","For building a lasting presence on ForTheSoul."],
     "faqTitle":"Practitioner questions","faqSubtitle":"Everything you need to know before joining ForTheSoul","faq":[{"q":"Is creating a profile free?","a":"Yes. Your account and practitioner profile are free. Experiences are published using credits."},{"q":"Who reviews my profile?","a":"Didier personally reviews every application before publication."},{"q":"Can I publish a recurring experience?","a":"Yes. A recurring series uses one credit and its individual dates remain visible."}],
     "finalTitle":"Ready to present your practice?","finalText":"Create your account, present your work and join a consciously curated selection."
@@ -100,7 +100,7 @@
       "newsletterSuccess": "Thank you! You're subscribed.",
       "newsletterError": "Subscription unavailable right now. Please try again later.",
       "legal": "© {year} ForTheSoul — Switzerland",
-      "becomePractitioner": "Get listed on ForTheSoul",
+      "becomePractitioner": "Create a practitioner account",
       "terms": "Terms of use",
       "privacy": "Privacy", "salesTerms":"Terms of sale", "legalNotices":"Legal notice"
     },
@@ -126,8 +126,8 @@
     "heroSubtitle": "Retreats, workshops and experiences for body, mind and soul",
     "heroCta": "Explore experiences",
     "heroSecondary": "Meet the practitioners",
-    "heroPractitionerCta": "Get listed on ForTheSoul",
-    "searchPlaceholder": "Search an experience (dance, gong, retreat…)",
+    "heroPractitionerCta": "Create a practitioner account",
+    "searchPlaceholder": "Search an experience or practitioner…",
     "categoriesTitle": "Explore by universe",
     "topTitle": "Current selection",
     "topSubtitle": "Highlighted experiences",

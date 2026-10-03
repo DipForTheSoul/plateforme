@@ -1,12 +1,12 @@
 import {beforeEach,it,expect,vi} from 'vitest';
 import {getApprovedEvents,getApprovedPractitioners,getVenues} from '@/lib/queries';
-const state=vi.hoisted(()=>({failed:false,ranges:[] as number[],or:vi.fn(),gte:vi.fn()}));
+const state=vi.hoisted(()=>({failed:false,ranges:[] as number[],or:vi.fn(),gte:vi.fn(),practitionerName:'QA'}));
 vi.mock('@/lib/supabase/server',()=>({createClient:async()=>({from:(table:string)=>{
   let offset=0,end=999;
-  const query={select:()=>query,eq:()=>query,or:(filter:string)=>{state.or(filter);return query;},gte:(...args:unknown[])=>{state.gte(...args);return query;},order:()=>query,limit:(n:number)=>{end=n-1;return query;},range:(from:number,to:number)=>{offset=from;end=to;state.ranges.push(from);return query;},maybeSingle:async()=>({data:{value:'15'},error:null}),then:(resolve:(v:unknown)=>unknown)=>resolve({error:state.failed?{message:'unavailable'}:null,data:table!=='settings'?Array.from({length:1105},(_,i)=>({id:String(i),name:'QA',title:'Atelier',category:{id:'c',slug:i===1104?'rare':'common'},event_categories:[]})).slice(offset,end+1):[]})};
+  const query={select:()=>query,eq:()=>query,or:(filter:string)=>{state.or(filter);return query;},gte:(...args:unknown[])=>{state.gte(...args);return query;},order:()=>query,limit:(n:number)=>{end=n-1;return query;},range:(from:number,to:number)=>{offset=from;end=to;state.ranges.push(from);return query;},maybeSingle:async()=>({data:{value:'15'},error:null}),then:(resolve:(v:unknown)=>unknown)=>resolve({error:state.failed?{message:'unavailable'}:null,data:table!=='settings'?Array.from({length:1105},(_,i)=>({id:String(i),name:'QA',title:i===4?'Méditation':'Atelier',practitioner:{id:'p',name:state.practitionerName,slug:'didier'},category:{id:'c',slug:i===1104?'rare':'common'},event_categories:[]})).slice(offset,end+1):[]})};
   return query;
 }})}));
-beforeEach(()=>{state.failed=false;state.ranges=[];state.or.mockClear();state.gte.mockClear();});
+beforeEach(()=>{state.failed=false;state.ranges=[];state.practitionerName='QA';state.or.mockClear();state.gte.mockClear();});
 it('décompte le délai depuis la fin du séjour et conserve le filtre de début choisi',async()=>{
   vi.spyOn(Date,'now').mockReturnValue(Date.parse('2026-09-30T12:00:00Z'));
   try {
@@ -19,6 +19,11 @@ it('décompte le délai depuis la fin du séjour et conserve le filtre de début
 });
 it('retrouve une catégorie au-delà des 100 et des 1000 premières expériences',async()=>{
   const events=await getApprovedEvents({category:'rare'});expect(events.map(e=>e.id)).toEqual(['1104']);expect(state.ranges.length).toBeGreaterThan(1);
+});
+it('retrouve les expériences par leur titre ou par le nom du praticien',async()=>{
+  expect((await getApprovedEvents({q:'Méditation'})).map(event=>event.id)).toEqual(['4']);
+  state.practitionerName='Didier Picamoles';
+  expect(await getApprovedEvents({q:'didier'})).toHaveLength(1105);
 });
 it('ne présente pas une panne de catalogue comme une absence de résultats',async()=>{
   state.failed=true;await expect(getApprovedEvents()).rejects.toThrow();

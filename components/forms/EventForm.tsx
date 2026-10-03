@@ -144,7 +144,9 @@ function EventFormBody({
       }
       if (Array.isArray(data.venueList)) setVenueList(data.venueList as Venue[]);
       if (typeof data.submissionId === 'string') setSubmissionId(data.submissionId);
-      if (typeof data.updatedAt === 'string') setUpdatedAt(data.updatedAt);
+      // A browser draft may predate the freshly loaded server record. Restore
+      // its editable content, never its stale optimistic-lock timestamp: the
+      // current page version must be submitted to avoid a false conflict.
       const restoredCustom = fields.occurrence_dates ?? data.customDates;
       if (Array.isArray(restoredCustom)) setCustomDates(restoredCustom.filter((v): v is string => typeof v === 'string'));
     }, { persistent: true, updatedAt });
