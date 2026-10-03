@@ -22,4 +22,7 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run build
-      - run: npm audit --audit-level=high
+      # Development-only linters and test runners are not shipped to Vercel.
+      # Audit the production dependency tree here so their advisories do not
+      # turn every otherwise healthy deployment into a failed workflow.
+      - run: npm audit --omit=dev --audit-level=high

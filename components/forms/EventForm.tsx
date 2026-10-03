@@ -501,7 +501,7 @@ function EventFormBody({
               badge: t("featuredRequest.badge"),
               title: t("featuredRequest.title"),
               description: t("featuredRequest.description"),
-              duration: t("featuredRequest.duration"),
+              duration: t("featuredRequest.duration", { days: 30 }),
               priceLabel: t("featuredRequest.priceLabel"),
               choice: t("featuredRequest.choice"),
               paymentHint: t("featuredRequest.paymentHint"),
