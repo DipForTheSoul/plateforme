@@ -526,7 +526,17 @@
     "geocoding": "Géocodage…",
     "createVenue": "Créer le lieu",
     "externalLabel": "Lien d’inscription / document externe — facultatif",
-    "externalHint": "Adresse d’un formulaire, document ou site externe. Ce lien est affiché séparément du bouton Réserver."
+    "externalHint": "Adresse d’un formulaire, document ou site externe. Ce lien est affiché séparément du bouton Réserver.",
+    "featuredRequest": {
+      "badge": "Option visibilité",
+      "title": "Mettre cette offre en avant",
+      "description": "Signalez à Didier que vous souhaitez mettre cette offre en avant sur ForTheSoul.",
+      "duration": "Mise en avant pendant {days} jours après validation.",
+      "priceLabel": "Supplément",
+      "choice": "Je souhaite la mise en avant",
+      "paymentHint": "Le paiement sera proposé après l’envoi de votre expérience.",
+      "selected": "Votre demande sera transmise avec l’expérience. Vous pourrez ensuite procéder au paiement."
+    }
   },
   "uploader": {
     "loginRequired": "Connexion requise pour téléverser.",

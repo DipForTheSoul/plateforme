@@ -14,6 +14,7 @@ import { createEvent, updateEvent, type ActionState } from "@/app/actions/events
 import { removeOccurrence } from "@/app/actions/events";
 import { createVenue } from "@/app/actions/venues";
 import { ImageUploader } from "@/components/forms/ImageUploader";
+import { FeaturedRequestCard } from "@/components/forms/FeaturedRequestCard";
 import { LANGUAGE_LABELS } from "@/lib/utils";
 import type { Category, Event, Venue } from "@/types/database";
 
@@ -491,6 +492,23 @@ function EventFormBody({
             <input key={url} type="hidden" name="images" value={url} />
           ))}
         </div>
+
+        {!practitioners && (
+          <FeaturedRequestCard
+            priceChf={20}
+            durationDays={30}
+            copy={{
+              badge: t("featuredRequest.badge"),
+              title: t("featuredRequest.title"),
+              description: t("featuredRequest.description"),
+              duration: t("featuredRequest.duration"),
+              priceLabel: t("featuredRequest.priceLabel"),
+              choice: t("featuredRequest.choice"),
+              paymentHint: t("featuredRequest.paymentHint"),
+              selected: t("featuredRequest.selected"),
+            }}
+          />
+        )}
 
         {state.error && <div role="alert" className="text-sm text-red-700"><p>{state.error}</p>
           {state.fieldErrors && <ul>{Object.entries(state.fieldErrors).map(([name, message]) => <li key={name}><a href={`#${name}`}>{message}</a></li>)}</ul>}
