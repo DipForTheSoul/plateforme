@@ -52,7 +52,7 @@ export function FeaturedRequestCard({
             <p className="text-xs uppercase tracking-[0.12em] text-soul-bronze">{copy.priceLabel}</p>
             <p className="font-serif text-3xl text-soul-brown">CHF {priceChf.toFixed(0)}.–</p>
           </div>
-          <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-soul-violet shadow-sm ring-1 ring-soul-violet/25 transition hover:bg-soul-violet/5">
+          <label className="inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-full bg-white px-3 py-2.5 text-xs font-semibold text-soul-violet shadow-sm ring-1 ring-soul-violet/25 transition hover:bg-soul-violet/5 sm:px-4 sm:text-sm">
             <input
               type="checkbox"
               name={name}
