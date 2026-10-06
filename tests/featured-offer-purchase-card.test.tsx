@@ -7,7 +7,7 @@ describe("FeaturedOfferPurchaseCard", () => {
     render(<FeaturedOfferPurchaseCard />);
     expect(screen.queryByRole("button", { name: "Payer avec Stripe" })).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Mettre en avant" }));
+    fireEvent.click(screen.getAllByRole("button", { name: "Mettre en avant" })[0]);
 
     expect(screen.getByText("CHF 20.–")).toBeInTheDocument();
     expect(screen.getByText("30 jours")).toBeInTheDocument();

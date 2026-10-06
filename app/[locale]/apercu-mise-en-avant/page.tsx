@@ -7,14 +7,14 @@ export default function FeaturedRequestPreviewPage() {
         <div className="mb-7">
           <span className="text-sm font-semibold uppercase tracking-[0.14em] text-soul-violet">Aperçu praticien</span>
           <h1 className="mt-2 font-serif text-3xl text-soul-brown sm:text-4xl">Mes expériences</h1>
-          <p className="mt-3 text-soul-ink/75">Le praticien peut demander la mise en avant d’une offre déjà validée, directement depuis son tableau de bord.</p>
+          <p className="mt-3 text-soul-ink/75">Le praticien choisit une offre déjà validée. L’option de mise en avant s’affiche directement sous l’offre sélectionnée.</p>
         </div>
 
         <div className="card flex flex-col gap-5 p-5 sm:p-8">
           <FeaturedOfferPurchaseCard />
         </div>
 
-        <p className="mt-5 text-xs text-soul-bronze">Clique sur « Mettre en avant » pour afficher le parcours. Aperçu uniquement : aucun paiement n’est déclenché.</p>
+        <p className="mt-5 text-xs text-soul-bronze">Clique sur « Mettre en avant » sous l’une des offres. Le prix et la durée seront modifiables dans l’administration. Aperçu uniquement : aucun paiement n’est déclenché.</p>
       </div>
     </main>
   );
