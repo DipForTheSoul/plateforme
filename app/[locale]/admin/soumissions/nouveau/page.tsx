@@ -26,6 +26,7 @@ export default async function AdminNewEventPage() {
         defaultLanguages={["fr"]}
         action={adminCreateEvent}
         practitioners={practitioners.map((p) => ({ id: p.id, name: p.name }))}
+        successRedirect="/admin/soumissions?cree=1"
       />
     </div>
   );

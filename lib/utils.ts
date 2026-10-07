@@ -170,6 +170,13 @@ export function slugify(input: string): string {
     .slice(0, 80);
 }
 
+/** Accepte un domaine saisi naturellement (« monsite.ch ») comme une URL web. */
+export function normalizeHttpUrl(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed || /^https?:\/\//i.test(trimmed)) return trimmed;
+  return `https://${trimmed}`;
+}
+
 /** Suffixe aléatoire court pour garantir l'unicité d'un slug. */
 export function uniqueSlug(base: string): string {
   return `${slugify(base)}-${Math.random().toString(36).slice(2, 7)}`;

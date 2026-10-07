@@ -1,18 +1,13 @@
 "use client";
 
 import { useActionState } from "react";
-import { WebUrlInput } from '@/components/forms/WebUrlInput';
-import { useDraftForm } from '@/components/forms/useDraftForm';
-import { DraftNotice } from '@/components/forms/DraftNotice';
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { createVenue } from "@/app/actions/venues";
 import type { ActionState } from "@/app/actions/events";
 import type { Venue } from "@/types/database";
-import { isVenuePublished } from '@/lib/venue-publication';
 
 interface Props {
-  draftOwner: string;
   venue?: Venue;
   action?: (
     prev: ActionState & { venueId?: string },
@@ -20,38 +15,20 @@ interface Props {
   ) => Promise<ActionState & { venueId?: string }>;
 }
 
-export function VenueForm({ venue, action, draftOwner }: Props) {
-  return <VenueFormBody key={`${draftOwner}:${venue?.id ?? 'new'}`} venue={venue} action={action} draftOwner={draftOwner} />;
-}
-
-function VenueFormBody({ venue, action, draftOwner }: Props) {
+export function VenueForm({ venue, action }: Props) {
   const router = useRouter();
   const t = useTranslations("admin.venues");
-  const td = useTranslations('draft');
-  const draft = useDraftForm(`venue:${draftOwner}:${venue?.id ?? 'new'}`, {}, undefined, { persistent: true });
   const [state, formAction, pending] = useActionState(
     async (prev: ActionState & { venueId?: string }, formData: FormData) => {
-      try {
-        const result = await (action ?? createVenue)(prev, formData);
-        if (result.success) { draft.clear(); router.push("/admin/lieux"); }
-        return result;
-      } catch { return { error: td('networkError') }; }
+      const result = await (action ?? createVenue)(prev, formData);
+      if (result.venueId || result.success) router.push("/admin/lieux");
+      return result;
     },
     {}
   );
 
   return (
-    <form {...draft.formProps} action={formAction} onSubmit={draft.submit(formAction)} className="card flex flex-col gap-4 p-6">
-      <DraftNotice draft={draft} busy={pending} />
-      <div>
-        <label className="label" htmlFor="is_public">{t('publication')}</label>
-        <select id="is_public" name="is_public" className="field"
-          defaultValue={venue && isVenuePublished(venue) ? 'true' : 'false'}>
-          <option value="false">{t('unpublished')}</option>
-          <option value="true">{t('published')}</option>
-        </select>
-        <p className="mt-2 text-sm text-soul-bronze">{t('publicationHelp')}</p>
-      </div>
+    <form action={formAction} className="card flex flex-col gap-4 p-6">
       <div>
         <label className="label" htmlFor="name">{t("venueName")}</label>
         <input id="name" name="name" required defaultValue={venue?.name} className="field" />
@@ -87,12 +64,12 @@ function VenueFormBody({ venue, action, draftOwner }: Props) {
       </div>
       <div>
         <label className="label" htmlFor="website">{t("website")}</label>
-        <WebUrlInput id="website" name="website"
-          defaultValue={venue?.contact?.website ?? ""} placeholder="https://…" className="field" />
+          <input id="website" name="website" type="text" inputMode="url"
+            defaultValue={venue?.contact?.website ?? ""} placeholder="ex. monsite.ch" className="field" />
       </div>
       {state.error && <p className="text-sm text-red-700">{state.error}</p>}
       {state.success && <p className="text-sm text-green-700">{state.success}</p>}
-      <button type="submit" disabled={draft.conflict || pending} className="btn-primary self-start">
+      <button type="submit" disabled={pending} className="btn-primary self-start">
         {pending ? t("geocoding") : venue ? t("save") : t("createAndGeocode")}
       </button>
     </form>

@@ -6,6 +6,7 @@ import { webUrlSchema } from '@/lib/web-url';
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentPractitioner, getCurrentProfile } from "@/lib/auth";
+import { normalizeHttpUrl } from "@/lib/utils";
 import type { ActionState } from "@/app/actions/events";
 import {actionLocale,actionMessage} from "@/lib/action-messages";
 
@@ -50,13 +51,13 @@ export async function updatePractitionerProfile(
     languages: formData.getAll("languages").map(String).filter(Boolean),
     email: String(formData.get("email") ?? "").trim() || null,
     phone: String(formData.get("phone") ?? "").trim() || null,
-    website: String(formData.get("website") ?? "").trim() || null,
-    instagram: String(formData.get("instagram") ?? "").trim() || null,
-    facebook: String(formData.get("facebook") ?? "").trim() || null,
-    googleUrl: String(formData.get("googleUrl") ?? "").trim() || null,
+    website: normalizeHttpUrl(String(formData.get("website") ?? "")) || null,
+    instagram: normalizeHttpUrl(String(formData.get("instagram") ?? "")) || null,
+    facebook: normalizeHttpUrl(String(formData.get("facebook") ?? "")) || null,
+    googleUrl: normalizeHttpUrl(String(formData.get("googleUrl") ?? "")) || null,
     googleRating: String(formData.get("googleRating") ?? "").trim() || null,
     googleCount: String(formData.get("googleCount") ?? "").trim() || null,
-    review_url: String(formData.get("review_url") ?? "").trim() || null,
+    review_url: normalizeHttpUrl(String(formData.get("review_url") ?? "")) || null,
     logo_url: String(formData.get("logo_url") ?? "").trim() || null,
     photos: formData.getAll("photos").map(String).filter(Boolean),
   });
@@ -142,13 +143,13 @@ export async function adminUpdatePractitioner(
     languages: formData.getAll("languages").map(String).filter(Boolean),
     email: String(formData.get("email") ?? "").trim() || null,
     phone: String(formData.get("phone") ?? "").trim() || null,
-    website: String(formData.get("website") ?? "").trim() || null,
-    instagram: String(formData.get("instagram") ?? "").trim() || null,
-    facebook: String(formData.get("facebook") ?? "").trim() || null,
-    googleUrl: String(formData.get("googleUrl") ?? "").trim() || null,
+    website: normalizeHttpUrl(String(formData.get("website") ?? "")) || null,
+    instagram: normalizeHttpUrl(String(formData.get("instagram") ?? "")) || null,
+    facebook: normalizeHttpUrl(String(formData.get("facebook") ?? "")) || null,
+    googleUrl: normalizeHttpUrl(String(formData.get("googleUrl") ?? "")) || null,
     googleRating: String(formData.get("googleRating") ?? "").trim() || null,
     googleCount: String(formData.get("googleCount") ?? "").trim() || null,
-    review_url: String(formData.get("review_url") ?? "").trim() || null,
+    review_url: normalizeHttpUrl(String(formData.get("review_url") ?? "")) || null,
     logo_url: String(formData.get("logo_url") ?? "").trim() || null,
     photos: formData.getAll("photos").map(String).filter(Boolean),
   });
