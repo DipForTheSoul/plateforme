@@ -39,7 +39,7 @@ export function FeaturedOfferPurchaseCard() {
                     <p className="mt-2 text-base text-soul-brown">Mettre cette offre en avant pendant <strong>30 jours</strong>.</p>
                   </div>
                   <div className="flex shrink-0 items-center gap-4 sm:text-right">
-                    <p className="text-xl font-semibold text-soul-brown">CHF 20.–</p>
+                    <p className="font-serif text-3xl text-soul-brown">CHF 20.–</p>
                     <button type="button" className="btn-primary !px-4 !py-2.5 text-sm">Payer avec Stripe</button>
                   </div>
                 </div>

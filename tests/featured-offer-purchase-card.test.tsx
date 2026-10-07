@@ -9,7 +9,7 @@ describe("FeaturedOfferPurchaseCard", () => {
 
     fireEvent.click(screen.getAllByRole("button", { name: "Mettre en avant" })[0]);
 
-    expect(screen.getByText("CHF 20.–")).toBeInTheDocument();
+    expect(screen.getByText("CHF 20.–")).toHaveClass("font-serif", "text-3xl");
     expect(screen.getByText("30 jours")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Payer avec Stripe" })).toBeInTheDocument();
   });
