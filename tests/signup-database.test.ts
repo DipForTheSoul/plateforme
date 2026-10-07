@@ -14,7 +14,7 @@ beforeAll(async()=>{
     'oliver@example.test',
     JSON.stringify({role:'practitioner',name:'Oliver Rust',first_name:'Oliver',last_name:'Rust',bio:'Bio saisie avant la correction de la migration.',specialties:['Yoga'],website:'https://oliver.example.test',instagram:'https://instagram.com/oliver',preferred_lang:'fr'})
   ]);
-  await db.exec(sql('20261007160000_signup_details_and_community_universe.sql'));
+  await db.exec(sql('20261007160000_signup_details_fix.sql'));
 },30000);
 afterAll(async()=>{await db?.close();});
 it('crée le compte et une seule fiche en attente dans la même transaction',async()=>{
@@ -32,7 +32,4 @@ it('ne crée pas de praticien ni d’administrateur depuis un rôle falsifié',a
 it('restaure les détails encore présents dans les métadonnées des inscriptions existantes',async()=>{
   const result=await db.query('select bio,specialties,contact,links from practitioners where user_id=$1',['30000000-0000-4000-8000-000000000000']);
   expect(result.rows).toEqual([{bio:'Bio saisie avant la correction de la migration.',specialties:['Yoga'],contact:{email:'oliver@example.test',first_name:'Oliver',last_name:'Rust',website:'https://oliver.example.test'},links:{instagram:'https://instagram.com/oliver'}}]);
-});
-it('ajoute le nouvel univers demandé par Didier',async()=>{
-  expect((await db.query("select name,position from categories where slug='cercles-rituels-communautes'")).rows).toEqual([{name:'Cercles, rituels, communautés',position:6}]);
 });

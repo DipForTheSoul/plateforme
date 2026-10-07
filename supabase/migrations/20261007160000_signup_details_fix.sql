@@ -1,13 +1,6 @@
 -- Retours recette du 7 octobre 2026 :
 -- 1. conserver tous les champs saisis lors d'une inscription praticien ;
--- 2. restaurer les champs encore présents dans auth.users pour les comptes existants ;
--- 3. ajouter l'univers « Cercles, rituels, communautés ».
-
-insert into public.categories (name, slug, position)
-values ('Cercles, rituels, communautés', 'cercles-rituels-communautes', 6)
-on conflict (slug) do update
-set name = excluded.name,
-    position = excluded.position;
+-- 2. restaurer les champs encore présents dans auth.users pour les comptes existants.
 
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer set search_path = public as $$
