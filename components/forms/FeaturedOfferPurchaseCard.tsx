@@ -36,7 +36,7 @@ export function FeaturedOfferPurchaseCard() {
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-sm font-semibold uppercase tracking-[0.1em] text-soul-violet">Option visibilité</p>
-                    <p className="mt-2 text-base text-soul-brown sm:whitespace-nowrap">Mettre cette offre en avant pendant <strong>30 jours</strong>.</p>
+                    <p className="mt-2 whitespace-nowrap text-[13px] tracking-[-0.01em] text-soul-brown sm:text-base">Mettre cette offre en avant pendant <strong>30 jours</strong>.</p>
                   </div>
                   <div className="flex shrink-0 items-center gap-4 sm:text-right">
                     <p className="font-serif text-3xl text-soul-brown">CHF 20.–</p>
