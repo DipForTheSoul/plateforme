@@ -1,24 +1,67 @@
 "use client";
 
-import { useActionState } from "react";
-import { submitWithoutReset } from "@/components/forms/submitWithoutReset";
+import { useState, type FormEvent } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { requestPasswordReset, type AuthState } from "@/app/actions/auth";
+import { requestPasswordReset } from "@/app/actions/auth";
+import { createClient } from "@/lib/supabase/client";
 
 export function ForgotPasswordForm() {
   const locale = useLocale();
   const t = useTranslations("auth");
-  const [state, formAction, pending] = useActionState<AuthState, FormData>(
-    requestPasswordReset,
-    {}
-  );
+  const [state, setState] = useState<{ error?: string; success?: string }>({});
+  const [pending, setPending] = useState(false);
+
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    setPending(true);
+    setState({});
+
+    const allowed = await requestPasswordReset({}, formData);
+    if (allowed.error) {
+      setState({ error: allowed.error });
+      setPending(false);
+      return;
+    }
+    if (allowed.success !== "resetAllowed") {
+      setState({ success: "resetSent" });
+      setPending(false);
+      return;
+    }
+
+    const email = String(formData.get("email") ?? "").trim();
+    const localizedResetPath = ["de", "en"].includes(locale)
+      ? `/${locale}/reinitialiser-mot-de-passe`
+      : "/reinitialiser-mot-de-passe";
+    const callback = new URL("/api/auth/callback", window.location.origin);
+    callback.searchParams.set("next", localizedResetPath);
+
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: callback.toString(),
+      });
+
+      // Ne jamais révéler si l'adresse correspond à un compte. Seule une panne
+      // technique générale est affichée à l'utilisateur.
+      if (error && (!error.status || error.status >= 500)) {
+        setState({ error: "generic" });
+      } else {
+        setState({ success: "resetSent" });
+      }
+    } catch {
+      setState({ error: "generic" });
+    } finally {
+      setPending(false);
+    }
+  }
 
   if (state.success) {
     return <p className="text-center text-sm text-soul-brown">{t("resetSent")}</p>;
   }
 
   return (
-    <form action={formAction} onSubmit={submitWithoutReset(formAction)} className="flex flex-col gap-4">
+    <form onSubmit={onSubmit} className="flex flex-col gap-4">
       <input type="hidden" name="locale" value={locale} />
       <p className="text-sm text-soul-bronze">{t("resetHelp")}</p>
       <div>

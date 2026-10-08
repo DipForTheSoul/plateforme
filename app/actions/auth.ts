@@ -138,7 +138,7 @@ export async function signUp(
   return { success: "checkEmail" };
 }
 
-/** Envoi du lien de réinitialisation de mot de passe. */
+/** Valide et limite une demande avant l'envoi navigateur du lien Supabase. */
 export async function requestPasswordReset(
   _prev: AuthState,
   formData: FormData
@@ -150,14 +150,10 @@ export async function requestPasswordReset(
     (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
   if (await isRateLimited(`reset:${ip}`)) return { success: "resetSent" };
 
-  const supabase = await createClient();
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${SITE_URL}/api/auth/callback?next=${encodeURIComponent(localizedPath(formData, '/reinitialiser-mot-de-passe'))}`,
-  });
-  // Un refus lié au compte reste indiscernable d'un succès, mais une panne
-  // générale ne doit pas promettre un e-mail qui n'a pas pu être envoyé.
-  if (error && (!error.status || error.status >= 500)) return { error: 'generic' };
-  return { success: "resetSent" };
+  // L'envoi Supabase est volontairement effectué dans le navigateur : le
+  // vérificateur PKCE doit être conservé sur la même origine que celle qui
+  // recevra le callback (domaine live, www éventuel ou URL de prévisualisation).
+  return { success: "resetAllowed" };
 }
 
 /** Définition du nouveau mot de passe (après clic sur le lien). */
