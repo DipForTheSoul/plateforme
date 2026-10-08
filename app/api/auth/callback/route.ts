@@ -9,7 +9,22 @@ import { safeRedirectPath } from '@/lib/safe-redirect';
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
+  const tokenHash = searchParams.get("token_hash");
+  const type = searchParams.get("type");
   const next = safeRedirectPath(searchParams.get("next"));
+
+  // Le token_hash est autonome : contrairement au code PKCE, il fonctionne
+  // aussi lorsque l'e-mail est ouvert dans un autre navigateur ou appareil.
+  if (tokenHash && type === "recovery") {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.verifyOtp({
+      token_hash: tokenHash,
+      type: "recovery",
+    });
+    if (!error) {
+      return NextResponse.redirect(`${origin}${next}`);
+    }
+  }
 
   if (code) {
     const supabase = await createClient();
