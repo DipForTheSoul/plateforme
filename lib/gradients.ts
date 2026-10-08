@@ -25,7 +25,7 @@ const VISUALS: Record<string, CategoryVisual> = {
   "yoga-somatique": {
     gradient: "linear-gradient(135deg, #9e7c52 0%, #c9a97a 55%, #fffeed 100%)",
     emoji: "🌿",
-    image: "/cat-yoga.jpg",
+    image: "/cat-yoga.png",
   },
   "voyages-spirituels": {
     gradient: "linear-gradient(135deg, #171200 0%, #443420 45%, #9e7c52 100%)",
