@@ -66,7 +66,8 @@ export async function getCategories(): Promise<Category[]> {
       .order("position");
     if(error) throw new Error('Lecture indisponible.');
     return (data as Category[]) ?? [];
-  } catch {
+  } catch (error) {
+    console.error("[queries/getCategories]", error instanceof Error ? error.message : "read failed");
     throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");
   }
 }
@@ -156,7 +157,8 @@ export async function getApprovedEvents(
       events = events.filter((e) => e.venue?.country === filters.country);
 
     return events;
-  } catch {
+  } catch (error) {
+    console.error("[queries/getApprovedEvents]", error instanceof Error ? error.message : "read failed");
     throw new Error('Le catalogue est momentanément indisponible. Merci de réessayer.');
   }
 }
@@ -177,7 +179,8 @@ export async function getTopEvents(limit = 3): Promise<EventWithRelations[]> {
       .limit(limit);
     if(error) throw new Error('Lecture indisponible.');
     return ((data as unknown as EventRowRaw[]) ?? []).map(mapEventRow);
-  } catch {
+  } catch (error) {
+    console.error("[queries/getTopEvents]", error instanceof Error ? error.message : "read failed");
     throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");
   }
 }

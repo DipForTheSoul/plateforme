@@ -11,6 +11,5 @@ export default defineConfig({
     { find: 'next/image', replacement: fixture('image.tsx') },
     { find: '@', replacement: root },
   ] },
-  esbuild: { jsx: 'automatic' },
   server: { host: '127.0.0.1', port: 3101, strictPort: true, fs: { allow: [root] } },
 });
