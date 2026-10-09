@@ -15,12 +15,19 @@ const copy = {
   de: { title: "Reichweitenmessung", text: "Google Analytics zur Verbesserung der Plattform erlauben?", accept: "Akzeptieren", refuse: "Ablehnen" },
 } as const;
 
-export function GoogleAnalytics({ locale }: { locale: string }) {
+export function GoogleAnalytics({
+  locale,
+  initialConsent = null,
+}: {
+  locale: string;
+  initialConsent?: "accepted" | "refused" | null;
+}) {
   const t = copy[locale as keyof typeof copy] ?? copy.fr;
   const id = process.env.NEXT_PUBLIC_GA_ID;
-  const [consent, setConsent] = useState<"accepted" | "refused" | null>(null);
+  const [consent, setConsent] = useState<"accepted" | "refused" | null>(initialConsent);
 
   useEffect(() => {
+    if (initialConsent) return;
     try {
       const saved = window.localStorage.getItem("fts-analytics-consent");
       if (saved === "accepted" || saved === "refused") {
@@ -32,7 +39,7 @@ export function GoogleAnalytics({ locale }: { locale: string }) {
       // Le bandeau doit rester utilisable même si le choix ne peut pas être
       // conservé entre deux visites.
     }
-  }, []);
+  }, [initialConsent]);
 
   if (!id) return null;
   if (consent !== "accepted") {
@@ -53,8 +60,12 @@ export function GoogleAnalytics({ locale }: { locale: string }) {
         <div className="mx-auto flex max-w-7xl flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-4">
           <p className="min-w-0 text-xs leading-snug text-soul-bronze sm:whitespace-nowrap sm:text-sm">{t.text}</p>
           <div className="flex shrink-0 gap-1.5 sm:gap-2">
-            <button type="button" className="btn-primary !px-2 !py-1.5 !text-[0.625rem] sm:!px-3 sm:!text-xs" onClick={() => choose("accepted")}>{t.accept}</button>
-            <button type="button" className="btn-secondary !px-2 !py-1.5 !text-[0.625rem] sm:!px-3 sm:!text-xs" onClick={() => choose("refused")}>{t.refuse}</button>
+            <form action="/api/analytics-consent" method="post" onSubmit={(event) => { event.preventDefault(); choose("accepted"); }}>
+              <button type="submit" name="consent" value="accepted" className="btn-primary !px-2 !py-1.5 !text-[0.625rem] sm:!px-3 sm:!text-xs">{t.accept}</button>
+            </form>
+            <form action="/api/analytics-consent" method="post" onSubmit={(event) => { event.preventDefault(); choose("refused"); }}>
+              <button type="submit" name="consent" value="refused" className="btn-secondary !px-2 !py-1.5 !text-[0.625rem] sm:!px-3 sm:!text-xs">{t.refuse}</button>
+            </form>
           </div>
         </div>
       </aside>

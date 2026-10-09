@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Work_Sans } from "next/font/google";
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
@@ -69,10 +70,17 @@ export default async function LocaleLayout({
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
 
-  const [profile, rateEur] = await Promise.all([
+  const [profile, rateEur, cookieStore] = await Promise.all([
     getCurrentProfile(),
     getExchangeRateEur(),
+    cookies(),
   ]);
+  const savedCurrency = cookieStore.get("fts-currency")?.value;
+  const initialCurrency = savedCurrency === "EUR" ? "EUR" : "CHF";
+  const savedConsent = cookieStore.get("fts-analytics-consent")?.value;
+  const initialConsent = savedConsent === "accepted" || savedConsent === "refused"
+    ? savedConsent
+    : null;
   const accountHref = !profile
     ? "/connexion"
     : profile.role === "admin"
@@ -84,9 +92,9 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={`${playfair.variable} ${workSans.variable}`}>
       <body className="flex min-h-screen flex-col antialiased pb-20 md:pb-0">
-        <GoogleAnalytics locale={locale} />
+        <GoogleAnalytics locale={locale} initialConsent={initialConsent} />
         <NextIntlClientProvider>
-          <CurrencyProvider rateEur={rateEur}>
+          <CurrencyProvider rateEur={rateEur} initialCurrency={initialCurrency}>
             <Header />
             <main className="flex-1">{children}</main>
             <Footer />
