@@ -409,6 +409,8 @@
     "photosLabel": "Photos (the first is your main profile picture on your public page)",
     "saving": "Saving…",
     "saveProfile": "Save my profile",
+    "draftRestored": "Draft restored automatically.",
+    "clearDraft": "Clear draft",
     "instagram": "Instagram",
     "facebook": "Facebook",
     "profileSubtitle": "This information feeds your public profile and pre-fills your experience submissions.",
@@ -504,6 +506,8 @@
     "occurrencesList": "Dates published in this series",
     "saveBeforeDelete": "Save your changes before deleting a date. Your input is preserved.",
     "removeOccurrence": "Delete this date",
+    "draftRestored": "Draft restored automatically.",
+    "clearDraft": "Clear draft",
     "videoLabel": "Video link (YouTube or Vimeo) — optional",
     "videoPlaceholder": "https://youtu.be/… or https://vimeo.com/…",
     "videoHint": "The video will be embedded on the experience page.",
@@ -526,7 +530,17 @@
     "geocoding": "Geocoding…",
     "createVenue": "Create venue",
     "externalLabel": "Registration / external document link — optional",
-    "externalHint": "Address of an external form, document or website. This link appears separately from the Reserve button."
+    "externalHint": "Address of an external form, document or website. This link appears separately from the Reserve button.",
+    "featuredRequest": {
+      "badge": "Visibility option",
+      "title": "Feature this offer",
+      "description": "Let Didier know that you would like this offer to be featured on ForTheSoul.",
+      "duration": "Featured for {days} days after approval.",
+      "priceLabel": "Extra",
+      "choice": "I would like this offer featured",
+      "paymentHint": "Payment will be offered after you submit your experience.",
+      "selected": "Your request will be sent with the experience. You can then proceed with payment."
+    }
   },
   "uploader": {
     "loginRequired": "Sign-in required to upload.",

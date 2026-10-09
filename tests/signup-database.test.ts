@@ -9,7 +9,12 @@ beforeAll(async()=>{
   await db.exec(sql('0002_schema.sql').replace(/  location geography[\s\S]*?  \) stored,\n/, '').replace(/^create index venues_location_idx.*;$/m,'').replace(/^create index events_title_trgm_idx.*;$/m,''));
   const original=sql('0004_functions.sql');await db.exec(original.slice(0,original.indexOf('-- Recherche instantanée')));
   await db.exec(sql('20260907193754_audit_signup_profile.sql'));
-  await db.exec(sql('20260929170000_signup_practitioner_details.sql'));
+  await db.query('insert into auth.users(id,email,raw_user_meta_data) values($1,$2,$3)',[
+    '30000000-0000-4000-8000-000000000000',
+    'oliver@example.test',
+    JSON.stringify({role:'practitioner',name:'Oliver Rust',first_name:'Oliver',last_name:'Rust',bio:'Bio saisie avant la correction de la migration.',specialties:['Yoga'],website:'https://oliver.example.test',instagram:'https://instagram.com/oliver',preferred_lang:'fr'})
+  ]);
+  await db.exec(sql('20261007160000_signup_details_fix.sql'));
 },30000);
 afterAll(async()=>{await db?.close();});
 it('crée le compte et une seule fiche en attente dans la même transaction',async()=>{
@@ -23,4 +28,8 @@ it('ne crée pas de praticien ni d’administrateur depuis un rôle falsifié',a
   await db.query('insert into auth.users(id,email,raw_user_meta_data) values($1,$2,$3)',[id,'visitor@example.test',JSON.stringify({role:'admin',preferred_lang:'xx'})]);
   expect((await db.query('select role,preferred_lang from profiles where id=$1',[id])).rows).toEqual([{role:'participant',preferred_lang:'fr'}]);
   expect((await db.query('select id from practitioners where user_id=$1',[id])).rows).toHaveLength(0);
+});
+it('restaure les détails encore présents dans les métadonnées des inscriptions existantes',async()=>{
+  const result=await db.query('select bio,specialties,contact,links from practitioners where user_id=$1',['30000000-0000-4000-8000-000000000000']);
+  expect(result.rows).toEqual([{bio:'Bio saisie avant la correction de la migration.',specialties:['Yoga'],contact:{email:'oliver@example.test',first_name:'Oliver',last_name:'Rust',website:'https://oliver.example.test'},links:{instagram:'https://instagram.com/oliver'}}]);
 });
