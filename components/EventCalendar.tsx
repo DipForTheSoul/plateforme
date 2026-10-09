@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
+import { usePathname } from "@/i18n/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Props {
@@ -25,8 +27,15 @@ function toKey(d: Date): string {
 export function EventCalendar({ eventDays, from, to, onSelect }: Props) {
   const t = useTranslations("events.calendar");
   const locale = useLocale();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [month, setMonth] = useState(() => {
-    const d = from ? new Date(from) : new Date();
+    const calendarMonth = searchParams.get("calendrier");
+    const d = calendarMonth
+      ? new Date(`${calendarMonth}-01T12:00:00`)
+      : from
+        ? new Date(`${from}T12:00:00`)
+        : new Date();
     return new Date(d.getFullYear(), d.getMonth(), 1);
   });
 
@@ -61,33 +70,49 @@ export function EventCalendar({ eventDays, from, to, onSelect }: Props) {
     });
   }, [locale]);
 
-  function handleDayClick(key: string) {
+  function nextSelection(key: string): [string | undefined, string | undefined] {
     if (from && !to && key > from) {
-      onSelect(from, key); // deuxième clic → période
-    } else if (from === key && !to) {
-      onSelect(undefined, undefined); // re-clic → efface
-    } else {
-      onSelect(key, undefined); // premier clic → jour seul
+      return [from, key]; // deuxième clic → période
     }
+    if (from === key && !to) return [undefined, undefined]; // re-clic → efface
+    return [key, undefined]; // premier clic → jour seul
+  }
+
+  function hrefFor(updates: Record<string, string | undefined>) {
+    const params = new URLSearchParams(searchParams.toString());
+    for (const [key, value] of Object.entries(updates)) {
+      if (value) params.set(key, value);
+      else params.delete(key);
+    }
+    const query = params.toString();
+    return `${pathname}${query ? `?${query}` : ""}`;
+  }
+
+  function monthKey(date: Date) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
   }
 
   const todayKey = toKey(new Date());
+  const previousMonth = new Date(month.getFullYear(), month.getMonth() - 1, 1);
+  const nextMonth = new Date(month.getFullYear(), month.getMonth() + 1, 1);
 
   return (
     <div className="card p-4">
       <div className="mb-2 flex items-center justify-between">
         <p className="text-sm font-semibold capitalize text-soul-brown">{monthLabel}</p>
         <div className="flex gap-1">
-          <button type="button" aria-label={t("prevMonth")}
-            onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
-            className="rounded-lg p-1 text-soul-bronze hover:bg-soul-sand/50">
+          <a aria-label={t("prevMonth")}
+            href={hrefFor({ calendrier: monthKey(previousMonth) })}
+            onClick={(event) => { event.preventDefault(); setMonth(previousMonth); }}
+            className="inline-flex min-h-11 min-w-11 touch-manipulation items-center justify-center rounded-lg text-soul-bronze hover:bg-soul-sand/50">
             <ChevronLeft className="h-4 w-4" />
-          </button>
-          <button type="button" aria-label={t("nextMonth")}
-            onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
-            className="rounded-lg p-1 text-soul-bronze hover:bg-soul-sand/50">
+          </a>
+          <a aria-label={t("nextMonth")}
+            href={hrefFor({ calendrier: monthKey(nextMonth) })}
+            onClick={(event) => { event.preventDefault(); setMonth(nextMonth); }}
+            className="inline-flex min-h-11 min-w-11 touch-manipulation items-center justify-center rounded-lg text-soul-bronze hover:bg-soul-sand/50">
             <ChevronRight className="h-4 w-4" />
-          </button>
+          </a>
         </div>
       </div>
 
@@ -102,13 +127,17 @@ export function EventCalendar({ eventDays, from, to, onSelect }: Props) {
           const selected =
             (from && !to && key === from) ||
             (from && to && key >= from && key <= to);
+          const [nextFrom, nextTo] = nextSelection(key);
           return (
-            <button
+            <a
               key={key}
-              type="button"
-              onClick={() => handleDayClick(key)}
+              href={hrefFor({ du: nextFrom, au: nextTo })}
+              onClick={(event) => {
+                event.preventDefault();
+                onSelect(nextFrom, nextTo);
+              }}
               className={[
-                "relative rounded-lg py-1.5 transition",
+                "relative inline-flex min-h-11 touch-manipulation items-center justify-center rounded-lg transition",
                 inMonth ? "text-soul-ink" : "text-soul-bronze/40",
                 selected ? "bg-soul-violet font-semibold !text-white" : "hover:bg-soul-sand/60",
                 key === todayKey && !selected ? "ring-1 ring-soul-bronze/50" : "",
@@ -120,16 +149,17 @@ export function EventCalendar({ eventDays, from, to, onSelect }: Props) {
                   selected ? "bg-soul-amber" : "bg-soul-terracotta"
                 }`} />
               )}
-            </button>
+            </a>
           );
         })}
       </div>
 
       {(from || to) && (
-        <button type="button" onClick={() => onSelect(undefined, undefined)}
+        <a href={hrefFor({ du: undefined, au: undefined })}
+          onClick={(event) => { event.preventDefault(); onSelect(undefined, undefined); }}
           className="mt-2 text-xs text-soul-terracotta underline">
           {t("clear")}
-        </button>
+        </a>
       )}
       <p className="mt-2 text-xs text-soul-bronze">{t("help")}</p>
     </div>
