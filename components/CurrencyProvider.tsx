@@ -23,12 +23,14 @@ const Ctx = createContext<CurrencyContext>({
 
 export function CurrencyProvider({
   rateEur,
+  initialCurrency = "CHF",
   children,
 }: {
   rateEur: number;
+  initialCurrency?: Currency;
   children: React.ReactNode;
 }) {
-  const [currency, setState] = useState<Currency>("CHF");
+  const [currency, setState] = useState<Currency>(initialCurrency);
 
   useEffect(() => {
     // Hydratation depuis le choix persistant (localStorage indispo côté serveur).

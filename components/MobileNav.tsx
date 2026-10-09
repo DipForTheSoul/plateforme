@@ -1,7 +1,4 @@
-"use client";
-
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 
 interface NavLink {
@@ -16,43 +13,35 @@ export function MobileNav({
   links: NavLink[];
   authLink: NavLink;
 }) {
-  const [open, setOpen] = useState(false);
-
   return (
-    <div className="xl:hidden">
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
+    <details className="group xl:hidden">
+      <summary
+        role="button"
         aria-label="Menu"
-        aria-expanded={open}
-        className="rounded-lg p-2 text-soul-brown"
+        className="cursor-pointer list-none rounded-lg p-2 text-soul-brown [&::-webkit-details-marker]:hidden"
       >
-        {open ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
-      </button>
+        <Menu className="h-7 w-7" />
+      </summary>
 
-      {open && (
-        <div className="absolute inset-x-0 top-16 border-b border-soul-bronze/15 bg-soul-cream shadow-lg">
-          <nav className="flex flex-col gap-1 p-4">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-3 text-lg font-medium text-soul-brown hover:bg-soul-sand/50"
-              >
-                {link.label}
-              </Link>
-            ))}
+      <div className="absolute inset-x-0 top-16 border-b border-soul-bronze/15 bg-soul-cream shadow-lg">
+        <nav className="flex flex-col gap-1 p-4">
+          {links.map((link) => (
             <Link
-              href={authLink.href}
-              onClick={() => setOpen(false)}
-              className="btn-primary mt-2 justify-center"
+              key={link.href}
+              href={link.href}
+              className="rounded-lg px-3 py-3 text-lg font-medium text-soul-brown hover:bg-soul-sand/50"
             >
-              {authLink.label}
+              {link.label}
             </Link>
-          </nav>
-        </div>
-      )}
-    </div>
+          ))}
+          <Link
+            href={authLink.href}
+            className="btn-primary mt-2 justify-center"
+          >
+            {authLink.label}
+          </Link>
+        </nav>
+      </div>
+    </details>
   );
 }
