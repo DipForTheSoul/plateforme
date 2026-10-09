@@ -5,6 +5,7 @@ import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import type { Practitioner } from "@/types/database";
+import { withPrivateContact } from "@/lib/practitioner-private";
 
 export const dynamic = "force-dynamic";
 
@@ -23,8 +24,8 @@ export default async function AdminEditPractitionerPage({
     .select("*")
     .eq("id", id)
     .maybeSingle();
-  const practitioner = data as Practitioner | null;
-  if (!practitioner) notFound();
+  if (!data) notFound();
+  const practitioner = await withPrivateContact(supabase, data as Practitioner);
 
   return (
     <div className="flex flex-col gap-6">

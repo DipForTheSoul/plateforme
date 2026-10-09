@@ -6,6 +6,7 @@ import { moderatePractitioner } from "@/app/actions/admin";
 import { StatusBadge } from "@/components/StatusBadge";
 import { getTranslations } from "next-intl/server";
 import type { Practitioner } from "@/types/database";
+import { withPrivateContacts } from "@/lib/practitioner-private";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,10 @@ export default async function AdminPractitionersPage() {
     .select("*")
     .order("created_at", { ascending: false }).order("id");
   const data = await readPages((from,to)=>query.range(from,to));
-  const practitioners = await withLiveCredits(supabase,(data as Practitioner[]) ?? []);
+  const practitioners = await withPrivateContacts(
+    supabase,
+    await withLiveCredits(supabase,(data as Practitioner[]) ?? []),
+  );
   const pending = practitioners.filter((p) => p.status === "pending");
   const others = practitioners.filter((p) => p.status !== "pending");
 

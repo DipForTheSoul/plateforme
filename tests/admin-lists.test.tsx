@@ -19,7 +19,7 @@ vi.mock('@/app/actions/admin',()=>({moderateEvent:()=>{},moderatePractitioner:()
 vi.mock('@/app/actions/contact',()=>({toggleContactHandled:()=>{}}));
 vi.mock('@/lib/supabase/server',()=>({createClient:async()=>({from:()=>{
   let start=0,end=999;
-  const q={select:()=>q,is:()=>q,eq:()=>q,order:()=>q,limit:(n:number)=>{end=n-1;return q;},range:(a:number,b:number)=>{start=a;end=b;return q;},maybeSingle:async()=>({data:{value:'30'},error:null}),
+  const q={select:()=>q,is:()=>q,eq:()=>q,in:()=>q,order:()=>q,limit:(n:number)=>{end=n-1;return q;},range:(a:number,b:number)=>{start=a;end=b;return q;},maybeSingle:async()=>({data:{value:'30'},error:null}),
     then:(resolve:(v:unknown)=>unknown)=>resolve({error:null,count:1105,data:Array.from({length:1105},(_,i)=>({id:String(i),name:`QA-${i}`,title:`QA-${i}`,email:'qa@example.test',message:`Message-${i}`,status:'pending',start_date:'2026-10-30T10:00:00Z',created_at:'2026-09-01T10:00:00Z',specialties:[],interests:[],contact:{},credits:0})).slice(start,end+1)})};return q;
 }})}));
 it('un ancien message reste consultable au-delà de la limite de 200',async()=>{

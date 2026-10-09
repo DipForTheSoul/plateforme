@@ -82,34 +82,9 @@ export default async function EventPage({
     .limit(26);
   const siblings = (siblingsData as Pick<Event, "id" | "slug" | "start_date">[]) ?? [];
 
-  // E-mail du praticien pour le bouton « Réserver » (contact direct — pas de
-  // système de paiement : la réservation se fait auprès du/de la praticien·ne).
-  let practitionerEmail: string | undefined;
-  if (event.practitioner) {
-    const { data: pr } = await supabase
-      .from("practitioners")
-      .select("contact")
-      .eq("id", event.practitioner.id)
-      .maybeSingle();
-    practitionerEmail = (pr?.contact as { email?: string } | null)?.email ?? undefined;
-  }
   const venueLocation = event.venue
     ? `${event.venue.name}, ${event.venue.address}`
     : null;
-  // §8 — message de réservation pré-rempli (titre + date + lieu).
-  const reservationDate = formatEventSchedule(event.start_date, event.end_date, currentLocale);
-  const mailtoBody =
-    `Bonjour,\n\n` +
-    `Je souhaite réserver ou avoir des informations sur « ${event.title} ».\n\n` +
-    `• Date : ${reservationDate}\n` +
-    (venueLocation ? `• Lieu : ${venueLocation}\n` : "") +
-    `\nMerci !`;
-  const mailtoHref = practitionerEmail
-    ? `mailto:${practitionerEmail}?subject=${encodeURIComponent(
-        `Réservation — ${event.title}`
-      )}&body=${encodeURIComponent(mailtoBody)}`
-    : null;
-
   // Avis de l'expérience.
   const { data: reviewsData } = await supabase
     .from("reviews")
@@ -212,9 +187,7 @@ export default async function EventPage({
 
       {/* Actions : réserver + ajouter à l'agenda */}
       <div className="mt-6 flex flex-wrap items-center gap-3">
-        {mailtoHref ? (
-          <a href={mailtoHref} className="btn-accent">{t("reserve")}</a>
-        ) : event.practitioner ? (
+        {event.practitioner ? (
           <Link href={`/praticiens/${event.practitioner.slug}`} className="btn-accent">
             {t("reserve")}
           </Link>

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getPrivateContactEmail } from "@/lib/practitioner-private";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
@@ -50,7 +51,7 @@ export async function moderateEvent(formData: FormData): Promise<void> {
 
   const { data: event } = await supabase
     .from("events")
-    .select("id, title, slug, practitioner:practitioners(name, contact, user_id)")
+    .select("id, title, slug, practitioner:practitioners(id, name, user_id)")
     .eq("id", eventId)
     .single();
   if (!event) return;
@@ -65,10 +66,10 @@ export async function moderateEvent(formData: FormData): Promise<void> {
   // E-mail automatique validé / refusé (avec message admin).
   const practitioner = event.practitioner as unknown as {
     name: string;
-    contact: { email?: string };
+    id: string;
     user_id: string | null;
   } | null;
-  const to = practitioner?.contact?.email;
+  const to = practitioner ? await getPrivateContactEmail(supabase, practitioner.id) : undefined;
   if (to) {
     const lang = await getPractitionerLang(supabase, practitioner?.user_id);
     const tpl =
@@ -160,7 +161,7 @@ export async function moderatePractitioner(formData: FormData): Promise<void> {
   const supabase = await createClient();
   const { data: practitioner } = await supabase
     .from("practitioners")
-    .select("name, slug, contact, user_id")
+    .select("id, name, slug, user_id")
     .eq("id", practitionerId)
     .single();
 
@@ -170,7 +171,7 @@ export async function moderatePractitioner(formData: FormData): Promise<void> {
     .eq("id", practitionerId);
   if(updateError)throw new Error('La décision n’a pas pu être enregistrée. Aucune notification envoyée.');
 
-  const to = (practitioner?.contact as { email?: string } | null)?.email;
+  const to = practitioner ? await getPrivateContactEmail(supabase, practitioner.id) : undefined;
   if (to && practitioner) {
     const lang = await getPractitionerLang(supabase, practitioner.user_id);
     const tpl =
