@@ -32,15 +32,21 @@ export function CurrencyProvider({
 
   useEffect(() => {
     // Hydratation depuis le choix persistant (localStorage indispo côté serveur).
-    const saved = localStorage.getItem("fts-currency");
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (saved === "EUR" || saved === "CHF") setState(saved);
+    try {
+      const saved = window.localStorage.getItem("fts-currency");
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (saved === "EUR" || saved === "CHF") setState(saved);
+    } catch {
+      // Safari/iPadOS peut interdire le stockage (navigation privée ou
+      // protection renforcée). La devise reste alors en CHF, sans casser
+      // l'hydratation ni les autres interactions de la page.
+    }
   }, []);
 
   const setCurrency = (c: Currency) => {
     setState(c);
     try {
-      localStorage.setItem("fts-currency", c);
+      window.localStorage.setItem("fts-currency", c);
     } catch {
       /* stockage indisponible — sans gravité */
     }

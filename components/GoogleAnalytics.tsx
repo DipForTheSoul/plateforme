@@ -21,10 +21,16 @@ export function GoogleAnalytics({ locale }: { locale: string }) {
   const [consent, setConsent] = useState<"accepted" | "refused" | null>(null);
 
   useEffect(() => {
-    const saved = window.localStorage.getItem("fts-analytics-consent");
-    if (saved === "accepted" || saved === "refused") {
-      const timer = window.setTimeout(() => setConsent(saved), 0);
-      return () => window.clearTimeout(timer);
+    try {
+      const saved = window.localStorage.getItem("fts-analytics-consent");
+      if (saved === "accepted" || saved === "refused") {
+        const timer = window.setTimeout(() => setConsent(saved), 0);
+        return () => window.clearTimeout(timer);
+      }
+    } catch {
+      // Sur certains réglages Safari/iPadOS, localStorage lève SecurityError.
+      // Le bandeau doit rester utilisable même si le choix ne peut pas être
+      // conservé entre deux visites.
     }
   }, []);
 
@@ -32,7 +38,11 @@ export function GoogleAnalytics({ locale }: { locale: string }) {
   if (consent !== "accepted") {
     if (consent === "refused") return null;
     const choose = (value: "accepted" | "refused") => {
-      window.localStorage.setItem("fts-analytics-consent", value);
+      try {
+        window.localStorage.setItem("fts-analytics-consent", value);
+      } catch {
+        // Le choix s'applique tout de même pour la visite courante.
+      }
       setConsent(value);
     };
     return (
