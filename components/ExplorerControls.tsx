@@ -185,17 +185,15 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
         <div className="min-w-0">
           <label htmlFor="date-from" className="label">{t("filters.from")}</label>
           <input id="date-from" name="du" type="date"
-            value={searchParams.get("du") ?? ""}
-            onChange={(e) => setParams({ du: e.target.value || undefined })}
-            className="field min-w-0 max-w-full appearance-none" />
+            defaultValue={searchParams.get("du") ?? ""}
+            className="field min-h-11 min-w-0 max-w-full appearance-auto touch-manipulation" />
         </div>
         <div className="min-w-0">
           <label htmlFor="date-to" className="label">{t("filters.to")}</label>
           <input id="date-to" name="au" type="date"
-            value={searchParams.get("au") ?? ""}
+            defaultValue={searchParams.get("au") ?? ""}
             min={searchParams.get("du") ?? undefined}
-            onChange={(e) => setParams({ au: e.target.value || undefined })}
-            className="field min-w-0 max-w-full appearance-none" />
+            className="field min-h-11 min-w-0 max-w-full appearance-auto touch-manipulation" />
         </div>
         <button type="submit" className="btn-secondary col-span-2 !py-2">
           {t("filters.apply")}

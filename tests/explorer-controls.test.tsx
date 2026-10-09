@@ -34,14 +34,16 @@ it('cumule les changements rapides de filtres avant la réponse de navigation',(
   const url=new URL(replace.mock.calls.at(-1)![0],'http://localhost');
   expect(Object.fromEntries(url.searchParams)).toEqual({langue:'fr',pays:'CH',prix:'50',duree:'90'});
 });
-it('conserve la vue choisie quand une date et une langue changent sans réponse serveur',()=>{
+it('laisse choisir les deux dates avant de soumettre le filtre',()=>{
   render(<NextIntlClientProvider locale="fr" messages={fr}><ExplorerNavigation><ViewToggle/><ExplorerControls categories={[]} practitioners={[]} countries={[]} cantons={[]} eventDays={[]}/></ExplorerNavigation></NextIntlClientProvider>);
   fireEvent.click(screen.getByRole('button',{name:'Carte'}));
   fireEvent.change(screen.getByLabelText('Du'),{target:{value:'2026-10-17'}});
+  fireEvent.change(screen.getByLabelText('Au'),{target:{value:'2026-10-18'}});
+  expect(screen.getByLabelText('Du')).toHaveValue('2026-10-17');
+  expect(screen.getByLabelText('Au')).toHaveValue('2026-10-18');
+  const form=screen.getByRole('button',{name:'Filtrer'}).closest('form')!;
+  expect(Object.fromEntries(new FormData(form))).toEqual({du:'2026-10-17',au:'2026-10-18'});
   fireEvent.change(screen.getByRole('combobox',{name:'Langue'}),{target:{value:'fr'}});
   const url=new URL(replace.mock.calls.at(-1)![0],'http://localhost');
-  expect(Object.fromEntries(url.searchParams)).toEqual({vue:'carte',du:'2026-10-17',langue:'fr'});
-  fireEvent.click(screen.getByRole('button',{name:'Liste'}));
-  fireEvent.change(screen.getByLabelText('Au'),{target:{value:'2026-10-18'}});
-  expect(Object.fromEntries(new URL(replace.mock.calls.at(-1)![0],'http://localhost').searchParams)).toEqual({du:'2026-10-17',au:'2026-10-18',langue:'fr'});
+  expect(Object.fromEntries(url.searchParams)).toEqual({vue:'carte',langue:'fr'});
 });
