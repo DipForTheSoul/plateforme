@@ -1,4 +1,5 @@
 import { ContactRequestResults } from "@/components/admin/ContactRequestResults";
+import { FeaturedRequestCard } from "@/components/forms/FeaturedRequestCard";
 
 export default function MobileReviewPage() {
   return (
@@ -11,6 +12,29 @@ export default function MobileReviewPage() {
       </div>
 
       <section className="mt-8">
+        <h1 className="text-2xl text-soul-brown">Demande de mise en avant — formulaire praticien</h1>
+        <p className="mt-2 text-sm text-soul-bronze">
+          Maquette interactive uniquement : le choix ci-dessous ne déclenche aucun paiement et n’enregistre aucune donnée.
+        </p>
+        <div className="mt-5">
+          <FeaturedRequestCard
+            priceChf={20}
+            durationDays={30}
+            copy={{
+              badge: "Option visibilité",
+              title: "Mettre cette offre en avant",
+              description: "Votre expérience pourra apparaître dans la sélection mise en avant de ForTheSoul après sa validation par Didier.",
+              duration: "Mise en avant pendant {days} jours après validation.",
+              priceLabel: "Supplément",
+              choice: "Je souhaite la mise en avant",
+              paymentHint: "Le paiement sera proposé après l’envoi de votre expérience.",
+              selected: "Option sélectionnée — vous serez dirigé·e vers le paiement après l’envoi.",
+            }}
+          />
+        </div>
+      </section>
+
+      <section className="mt-12">
         <h1 className="text-2xl text-soul-brown">Contacts praticiens — vue administrateur mobile</h1>
         <p className="mt-2 text-sm text-soul-bronze">
           Le contact doit être entièrement lisible sous forme de carte, sans texte coupé ni défilement horizontal.

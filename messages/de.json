@@ -409,6 +409,8 @@
     "photosLabel": "Fotos (das erste ist Ihr grosses Profilbild auf Ihrer öffentlichen Seite)",
     "saving": "Wird gespeichert…",
     "saveProfile": "Profil speichern",
+    "draftRestored": "Entwurf wurde automatisch wiederhergestellt.",
+    "clearDraft": "Entwurf löschen",
     "instagram": "Instagram",
     "facebook": "Facebook",
     "profileSubtitle": "Diese Angaben speisen Ihr öffentliches Profil und füllen Ihre Erlebnis-Einreichungen vor.",
@@ -504,6 +506,8 @@
     "occurrencesList": "Veröffentlichte Termine dieser Serie",
     "saveBeforeDelete": "Speichern Sie zuerst Ihre Änderungen, bevor Sie einen Termin löschen. Ihre Eingaben bleiben erhalten.",
     "removeOccurrence": "Diesen Termin löschen",
+    "draftRestored": "Entwurf wurde automatisch wiederhergestellt.",
+    "clearDraft": "Entwurf löschen",
     "videoLabel": "Video-Link (YouTube oder Vimeo) — optional",
     "videoPlaceholder": "https://youtu.be/… oder https://vimeo.com/…",
     "videoHint": "Das Video wird eingebettet auf der Erlebnis-Seite angezeigt.",
@@ -526,7 +530,17 @@
     "geocoding": "Geokodierung…",
     "createVenue": "Ort erstellen",
     "externalLabel": "Anmelde- / Dokumentlink — optional",
-    "externalHint": "Adresse eines externen Formulars, Dokuments oder einer Website. Dieser Link erscheint zusätzlich zur Schaltfläche Reservieren."
+    "externalHint": "Adresse eines externen Formulars, Dokuments oder einer Website. Dieser Link erscheint zusätzlich zur Schaltfläche Reservieren.",
+    "featuredRequest": {
+      "badge": "Sichtbarkeitsoption",
+      "title": "Dieses Angebot hervorheben",
+      "description": "Teilen Sie Didier mit, dass Sie dieses Angebot auf ForTheSoul hervorheben möchten.",
+      "duration": "Hervorhebung für {days} Tage nach der Freigabe.",
+      "priceLabel": "Aufpreis",
+      "choice": "Ich möchte dieses Angebot hervorheben",
+      "paymentHint": "Die Zahlung wird nach dem Einreichen Ihres Erlebnisses angeboten.",
+      "selected": "Ihre Anfrage wird zusammen mit dem Erlebnis übermittelt. Anschliessend können Sie die Zahlung vornehmen."
+    }
   },
   "uploader": {
     "loginRequired": "Anmeldung zum Hochladen erforderlich.",
