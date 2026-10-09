@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Practitioner, Profile } from "@/types/database";
 import { redirect } from "next/navigation";
+import { withPrivateContact } from "@/lib/practitioner-private";
 
 /** Utilisateur courant + profil (null si non connecté). */
 export async function getCurrentProfile(): Promise<Profile | null> {
@@ -31,7 +32,7 @@ export async function getCurrentPractitioner(): Promise<Practitioner | null> {
     if (!data) return null;
     const {data: balance,error} = await supabase.rpc('get_credit_balance',{p_practitioner_id:data.id});
     if(error) throw new Error('Le solde de crédits est momentanément indisponible.');
-    return {...data,credits:balance} as Practitioner;
+    return withPrivateContact(supabase, {...data,credits:balance} as Practitioner);
 }
 
 /** Garde de layout : exige un rôle, sinon redirige. */

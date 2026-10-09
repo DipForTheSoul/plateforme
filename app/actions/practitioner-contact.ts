@@ -35,7 +35,9 @@ export async function sendPractitionerContact(_previous:PractitionerContactState
   const {data:practitioner,error:practitionerError}=await admin.from("practitioners")
     .select("id,user_id,name,contact,status").eq("id",parsed.data.practitioner_id).eq("status","approved").maybeSingle();
   if(practitionerError||!practitioner)return {status:"error",code:"unavailable"};
-  const contact=(practitioner.contact??{}) as {email?:string};
+  const {data:privateRow}=await admin.from("practitioner_private_contacts")
+    .select("contact").eq("practitioner_id",practitioner.id).maybeSingle();
+  const contact=(privateRow?.contact??{}) as {email?:string};
   let recipient=contact.email?.trim()||"";
   let preferredLang:Locale="fr";
   if(practitioner.user_id){

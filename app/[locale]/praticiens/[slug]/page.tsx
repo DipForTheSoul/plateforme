@@ -50,7 +50,7 @@ export default async function PractitionerPage({
   const events = await getApprovedEvents({ practitioner: slug });
   // A linked account always has an auth/profile email; the address itself is
   // deliberately resolved only inside the server action and never exposed.
-  const hasContactRecipient = Boolean(practitioner.contact.email?.trim() || practitioner.user_id);
+  const hasContactRecipient = Boolean(practitioner.user_id);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
