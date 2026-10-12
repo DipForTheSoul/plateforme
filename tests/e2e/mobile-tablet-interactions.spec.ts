@@ -159,7 +159,9 @@ test("les dates et les choix Analytics ne se chevauchent pas sur petit mobile", 
     locale: "fr-FR",
   });
   const page = await context.newPage();
-  await page.goto("/experiences", { waitUntil: "networkidle" });
+  // Un tag analytics autorisé peut maintenir une connexion réseau ouverte :
+  // le rendu utile suffit ici, sans attendre un hypothétique network idle.
+  await page.goto("/experiences", { waitUntil: "domcontentloaded" });
 
   const viewportWidth = page.viewportSize()!.width;
   const from = await page.locator("#date-from").boundingBox();
