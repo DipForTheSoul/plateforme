@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useExplorerNavigation } from "@/components/ExplorerNavigation";
@@ -34,6 +34,9 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [locating, setLocating] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
+  // Après une navigation serveur, le HTML peut apparaître avant que React ait
+  // rattaché les événements. Empêche qu'un toucher très rapide soit perdu.
+  const hydrated=useSyncExternalStore(()=>()=>{},()=>true,()=>false);
 
   // Recherche instantanée (debounce).
   useEffect(() => {
@@ -202,9 +205,9 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
 
       {/* Bouton Filtres — sur mobile uniquement (desktop : filtres toujours ouverts) + réinitialiser */}
       <div className="flex items-center justify-between gap-3">
-        <button type="button" onClick={() => setShowFilters((v) => !v)}
+        <button type="button" disabled={!hydrated} onClick={() => setShowFilters((v) => !v)}
           aria-expanded={showFilters}
-          className={`md:hidden ${showFilters ? "btn-primary !py-2" : "btn-secondary !py-2"}`}>
+          className={`md:hidden disabled:cursor-wait disabled:opacity-60 ${showFilters ? "btn-primary !py-2" : "btn-secondary !py-2"}`}>
           <SlidersHorizontal className="h-4 w-4" />
           {t("filters.title")}{activeCount > 0 ? ` (${activeCount})` : ""}
         </button>

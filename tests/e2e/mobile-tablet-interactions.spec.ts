@@ -63,8 +63,11 @@ test("les interactions tactiles essentielles restent actives", async ({ page, ba
 
   const nextMonth = page.getByRole("link", { name: /mois suivant|next month|nächster monat/i });
   if (!await nextMonth.isVisible()) {
-    await page.locator('button[aria-expanded]').filter({ hasText: /filtres|filter/i }).click();
+    const filtersButton=page.locator('button[aria-expanded]').filter({ hasText: /filtres|filter/i });
+    await expect(filtersButton).toBeEnabled();
+    await filtersButton.click();
   }
+  await expect(nextMonth).toBeVisible();
   await nextMonth.click();
   const calendarDay = page.locator('a[href*="du="]').filter({ hasText: /^15$/ }).first();
   await calendarDay.click();
