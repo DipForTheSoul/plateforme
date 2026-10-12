@@ -10,7 +10,7 @@ export async function Footer() {
 
   return (
     <footer className="mt-16 border-t border-soul-bronze/15 bg-soul-sand text-soul-brown">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 md:grid-cols-3">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 lg:grid-cols-3">
         <div>
           <LogoLink footer />
           <p className="mt-3 text-sm text-soul-brown/70">{t("tagline")}</p>

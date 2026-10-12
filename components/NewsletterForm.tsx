@@ -35,7 +35,7 @@ export function NewsletterForm({
   }
 
   return (
-    <form action={formAction} onSubmit={submitWithoutReset(formAction)} className="flex flex-col gap-2">
+    <form action={formAction} onSubmit={submitWithoutReset(formAction)} className="relative isolate z-10 flex flex-col gap-2">
       {/* Pot-de-miel anti-spam : invisible pour les humains. */}
       <input
         type="text"
@@ -46,20 +46,20 @@ export function NewsletterForm({
         className="absolute -left-[9999px] h-0 w-0 opacity-0"
       />
       {interest && <input type="hidden" name="interests" value={interest} />}
-      <div className="flex gap-2">
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
         <input
           type="email"
           name="email"
           required
           placeholder={placeholder}
-          className="w-full rounded-full border border-soul-bronze/25 bg-white px-4 py-2.5 text-sm text-soul-brown placeholder:text-soul-bronze/60 focus:outline-none focus:ring-2 focus:ring-soul-violet/40"
+          className="min-h-11 min-w-0 w-full rounded-full border border-soul-bronze/25 bg-white px-4 py-2.5 text-sm text-soul-brown placeholder:text-soul-bronze/60 focus:outline-none focus:ring-2 focus:ring-soul-violet/40"
         />
-        <button type="submit" disabled={pending} className="btn-accent shrink-0 !py-2.5">
+        <button type="submit" disabled={pending} className="btn-accent min-h-11 shrink-0 touch-manipulation !py-2.5">
           {buttonLabel}
         </button>
       </div>
       <label className="flex items-start gap-2 text-xs text-soul-brown/70">
-        <input type="checkbox" name="consent" required className="mt-0.5" />
+        <input type="checkbox" name="consent" required className="mt-0.5 h-5 w-5 shrink-0 touch-manipulation" />
         {consentLabel}
       </label>
       {state.status === "error" && (

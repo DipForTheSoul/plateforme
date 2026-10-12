@@ -2,6 +2,7 @@ import {expect,it} from 'vitest';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {EventDescription} from '@/components/EventDescription';
 import {descriptionText} from '@/lib/description-text';
+import {normalizeDescriptionSpacing} from '@/lib/description-spacing';
 it('rend italique et souligné imbriqués et les retire du texte des agendas',()=>{
   const text='**Important et *doux*** __Souligné__ 😊';
   const html=renderToStaticMarkup(<EventDescription text={text}/>);
@@ -20,4 +21,10 @@ it('affiche gras, listes et lien externe sans interpréter du HTML',()=>{
 it('ne rend jamais cliquables les protocoles dangereux ni les identifiants dans une URL',()=>{
   const html=renderToStaticMarkup(<EventDescription text={'[clic](javascript:alert(1)) [clic](https://user:password@example.ch) <img src=x onerror=alert(1)>'}/>);
   expect(html).not.toContain('href=');expect(html).not.toContain('<img');
+});
+it('limite les espaces entre paragraphes sans supprimer les paragraphes voulus',()=>{
+  expect(normalizeDescriptionSpacing('Premier\n\n\n\nDeuxième  \n')).toBe('Premier\n\nDeuxième');
+  const html=renderToStaticMarkup(<EventDescription text={'Premier\n\n\n\nDeuxième'}/>);
+  expect(html.match(/<p/g)).toHaveLength(2);
+  expect(html).not.toContain('min-h');
 });

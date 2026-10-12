@@ -2,9 +2,22 @@ import { createClient } from "@/lib/supabase/server";
 import type { Practitioner, Profile } from "@/types/database";
 import { redirect } from "next/navigation";
 import { withPrivateContact } from "@/lib/practitioner-private";
+import { cookies } from "next/headers";
+
+async function hasSupabaseSessionCookie() {
+  try {
+    return (await cookies()).getAll().some(({ name }) =>
+      name.startsWith("sb-") && name.includes("auth-token")
+    );
+  } catch {
+    // Tests unitaires et appels hors cycle Next : laisser le client Auth décider.
+    return true;
+  }
+}
 
 /** Utilisateur courant + profil (null si non connecté). */
 export async function getCurrentProfile(): Promise<Profile | null> {
+  if (!await hasSupabaseSessionCookie()) return null;
   const supabase = await createClient();
   const {data:{user},error:authError}=await supabase.auth.getUser();
   if(authError && (!authError.status || authError.status>=500))throw new Error('La connexion est momentanément indisponible. Réessayez.');
@@ -16,6 +29,7 @@ export async function getCurrentProfile(): Promise<Profile | null> {
 
 /** Fiche praticien liée à l'utilisateur connecté (null si absente). */
 export async function getCurrentPractitioner(): Promise<Practitioner | null> {
+    if (!await hasSupabaseSessionCookie()) return null;
     const supabase = await createClient();
     const {
       data: { user },error:authError,
