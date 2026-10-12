@@ -3,6 +3,10 @@ import { getApprovedEvents, getApprovedPractitioners } from "@/lib/queries";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://forthesoul.ch";
 
+// Le sitemap dépend de la base publique : ne pas tenter de le figer pendant
+// un build CI sans Supabase. Les lectures restent couvertes par le cache 5 min.
+export const dynamic = "force-dynamic";
+
 /** URL localisée : FR sans préfixe, DE/EN préfixées (voir i18n/routing.ts). */
 function localized(path: string) {
   return {
