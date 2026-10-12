@@ -94,11 +94,23 @@ export async function deleteContact(formData: FormData): Promise<void> {
  * des contacts existants). No-op si la clé API n'est pas configurée.
  * Renvoie un message indiquant le nombre de contacts synchronisés.
  */
-export async function syncContactsToMailerLite(afterId?: string): Promise<ActionState & {nextCursor?:string;processed?:number}> {
+export interface MailerLiteSyncResult extends ActionState {
+  nextCursor?: string;
+  processed?: number;
+  synced?: number;
+  warnings?: string[];
+}
+
+function maskEmail(email: string) {
+  const [local, domain] = email.split("@");
+  return `${local?.slice(0, 1) || "?"}***@${domain || "?"}`;
+}
+
+export async function syncContactsToMailerLite(afterId?: string): Promise<MailerLiteSyncResult> {
   await assertAdmin();
   if(afterId && !z.uuid().safeParse(afterId).success)return {error:'Curseur de synchronisation invalide.'};
 
-  const { mailerliteEnabled, upsertSubscriber } = await import("@/lib/mailerlite");
+  const { mailerliteEnabled, upsertSubscriberDetailed } = await import("@/lib/mailerlite");
   if (!mailerliteEnabled()) {
     return { error: "MailerLite non configuré — ajoutez MAILERLITE_API_KEY." };
   }
@@ -114,10 +126,20 @@ export async function syncContactsToMailerLite(afterId?: string): Promise<Action
   if(error)return {error:'Impossible de lire les contacts. Aucune synchronisation confirmée.'};
   const contacts = ((data as { id:string;email: string; interests: string[] }[]) ?? []).slice(0,5);
 
-  let ok = 0;
-  const results=await Promise.all(contacts.map(c=>upsertSubscriber({ email: c.email, interests: c.interests })));
-  ok=results.filter(Boolean).length;
-  if(ok!==contacts.length)return {error:`Synchronisation interrompue : ${ok}/${contacts.length} contacts du dernier lot confirmés. Réessayez après vérification du service ; aucun contact local n’a été supprimé.`,processed:ok};
+  const results=await Promise.all(contacts.map(async c=>({
+    contact:c,
+    result:await upsertSubscriberDetailed({ email: c.email, interests: c.interests }),
+  })));
+  const ok=results.filter(item=>item.result.ok).length;
+  const warnings=results
+    .filter(item=>!item.result.ok)
+    .map(item=>`${maskEmail(item.contact.email)} : ${item.result.reason ?? "refus sans détail"}`);
   revalidatePath("/admin/newsletter");
-  return { success: `${ok} contacts synchronisés vers MailerLite.`,processed:ok,nextCursor:(data?.length??0)>5?contacts.at(-1)?.id:undefined };
+  return {
+    success: `${ok}/${contacts.length} contacts confirmés dans ce lot.`,
+    processed:contacts.length,
+    synced:ok,
+    warnings,
+    nextCursor:(data?.length??0)>5?contacts.at(-1)?.id:undefined,
+  };
 }

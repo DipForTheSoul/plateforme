@@ -10,17 +10,18 @@ export function MailerLiteSync() {
   const [processed,setProcessed]=useState(0);
   const [state, action, pending] = useActionState<ActionState, FormData>(
     async () => {
-      let cursor:string|undefined;let total=0;setProcessed(0);
+      let cursor:string|undefined;let attempted=0;let synced=0;const warnings:string[]=[];setProcessed(0);
       try {
         do {
           const result=await syncContactsToMailerLite(cursor);
-          total+=result.processed??0;setProcessed(total);
+          attempted+=result.processed??0;synced+=result.synced??0;warnings.push(...(result.warnings??[]));setProcessed(attempted);
           if(result.error)return {error:result.error};
           cursor=result.nextCursor;
           // At most five provider requests per three seconds from this run.
           if(cursor)await new Promise(resolve=>setTimeout(resolve,3000));
         }while(cursor);
-        return {success:`${total} contacts synchronisés vers MailerLite.`};
+        if(warnings.length)return {error:`${synced}/${attempted} contacts synchronisés. ${warnings.join(" · ")}. Les autres contacts ont continué à être traités et aucun contact local n’a été supprimé.`};
+        return {success:`${synced} contacts synchronisés vers MailerLite.`};
       }catch{return {error:'Connexion interrompue. Relancez la synchronisation ; les contacts locaux sont conservés.'};}
     },
     {}
