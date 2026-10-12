@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { submitWithoutReset } from "@/components/forms/submitWithoutReset";
 import {
   subscribeToNewsletter,
@@ -29,9 +29,18 @@ export function NewsletterForm({
     subscribeToNewsletter,
     { status: "idle" }
   );
+  const resultRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (state.status === "idle") return;
+    // Une action serveur peut modifier la hauteur du pied de page. Replace la
+    // confirmation dans la zone visible sans renvoyer l'utilisateur en haut.
+    resultRef.current?.scrollIntoView({ block: "nearest" });
+    resultRef.current?.focus({ preventScroll: true });
+  }, [state.status]);
 
   if (state.status === "success") {
-    return <p className="text-sm text-soul-amber">{successMessage}</p>;
+    return <p ref={resultRef} role="status" tabIndex={-1} className="min-h-24 text-sm text-soul-amber outline-none">{successMessage}</p>;
   }
 
   return (
@@ -63,7 +72,7 @@ export function NewsletterForm({
         {consentLabel}
       </label>
       {state.status === "error" && (
-        <p className="text-xs text-soul-terracotta">{errorMessage}</p>
+        <p ref={resultRef} role="alert" tabIndex={-1} className="text-xs text-soul-terracotta outline-none">{errorMessage}</p>
       )}
     </form>
   );

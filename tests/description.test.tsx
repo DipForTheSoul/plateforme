@@ -28,3 +28,21 @@ it('limite les espaces entre paragraphes sans supprimer les paragraphes voulus',
   expect(html.match(/<p/g)).toHaveLength(2);
   expect(html).not.toContain('min-h');
 });
+it('répare les anciens marqueurs de gras séparés sans afficher d’étoiles',()=>{
+  const legacy='**Ein Ort zum Ankommen.\n**\n\n**Gemeinsam wachsen.\n**\n**\nTexte normal';
+  expect(normalizeDescriptionSpacing(legacy)).toBe('**Ein Ort zum Ankommen.**\n\n**Gemeinsam wachsen.**\nTexte normal');
+  const html=renderToStaticMarkup(<EventDescription text={legacy}/>);
+  expect(html).toContain('<strong>Ein Ort zum Ankommen.</strong>');
+  expect(html).toContain('<strong>Gemeinsam wachsen.</strong>');
+  expect(html).not.toContain('**');
+  expect(descriptionText(legacy)).toBe('Ein Ort zum Ankommen.\n\nGemeinsam wachsen.\nTexte normal');
+});
+it('répare aussi la fermeture placée au début du paragraphe suivant',()=>{
+  const legacy='**Innehalten. Spüren. Klarer sehen.\n**Manchmal vient le texte suivant.';
+  expect(normalizeDescriptionSpacing(legacy)).toBe('**Innehalten. Spüren. Klarer sehen.**\nManchmal vient le texte suivant.');
+  const html=renderToStaticMarkup(<EventDescription text={legacy}/>);
+  expect(html).toContain('<strong>Innehalten. Spüren. Klarer sehen.</strong>');
+  expect(html).toContain('Manchmal vient le texte suivant.');
+  expect(html).not.toContain('**');
+  expect(descriptionText(legacy)).not.toContain('**');
+});

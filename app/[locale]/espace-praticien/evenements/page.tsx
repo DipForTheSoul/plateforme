@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { deleteEvent } from "@/app/actions/events";
 import { formatDate, formatTime } from "@/lib/utils";
 import type { Event, Locale } from "@/types/database";
+import { BuyFeaturedButton } from "./BuyFeaturedButton";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,7 @@ export const dynamic = "force-dynamic";
 export default async function MyEventsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ depose?: string; modifie?: string }>;
+  searchParams: Promise<{ depose?: string; modifie?: string; mise_en_avant?: string }>;
 }) {
   const t = await getTranslations("practitioner");
   const locale = await getLocale() as Locale;
@@ -33,6 +34,11 @@ export default async function MyEventsPage({
     .is("parent_event_id", null)
     .order("start_date", { ascending: false }).order('id').range(from,to));
   const events = (data as Event[]) ?? [];
+  const {data:featuredSettings,error:featuredSettingsError}=await supabase.from("settings").select("key,value").in("key",["featured_price_chf","featured_default_days"]);
+  if(featuredSettingsError)throw new Error("L’option de mise en avant est momentanément indisponible.");
+  const settings=Object.fromEntries((featuredSettings??[]).map(row=>[row.key,row.value]));
+  const featuredPrice=Number(settings.featured_price_chf??"20");
+  const featuredDays=Number(settings.featured_default_days??"30");
 
   return (
     <div className="flex flex-col gap-6">
@@ -46,6 +52,8 @@ export default async function MyEventsPage({
           {t("flagModified")}
         </div>
       )}
+      {flags.mise_en_avant === "succes" && <div role="status" className="rounded-2xl border border-green-300 bg-green-50 p-4 text-sm text-green-800">{t("featuredPurchaseSuccess")}</div>}
+      {flags.mise_en_avant === "annule" && <div className="rounded-2xl border border-soul-amber/50 bg-soul-ivory p-4 text-sm text-soul-brown">{t("featuredPurchaseCancelled")}</div>}
 
       <div className="flex items-center justify-between">
         <h2 className="text-xl text-soul-brown">{t("navEvents")}</h2>
@@ -90,6 +98,9 @@ export default async function MyEventsPage({
                 </span>
               )}
               <StatusBadge status={event.status} />
+              {event.status === "approved" && !event.is_top && Number.isFinite(featuredPrice) && Number.isInteger(featuredDays) && (
+                <BuyFeaturedButton eventId={event.id} pendingLabel={t("featuredPaymentOpening")} label={t("featuredPurchase",{price:featuredPrice,days:featuredDays})}/>
+              )}
               <Link
                 href={`/espace-praticien/evenements/${event.id}`}
                 className="text-sm text-soul-brown underline"

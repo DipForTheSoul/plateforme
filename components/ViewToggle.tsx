@@ -25,11 +25,11 @@ export function ViewToggle() {
 
   return (
     <div className="inline-flex rounded-full border border-soul-bronze/25 bg-white p-1 text-sm">
-      <Link href={href()} aria-current={!isMap ? "page" : undefined}
+      <Link href={href()} scroll={false} aria-current={!isMap ? "page" : undefined}
         className={`${base} touch-manipulation ${isMap ? idle : active}`}>
         <List className="h-4 w-4" /> {t("viewList")}
       </Link>
-      <Link href={href("carte")} aria-current={isMap ? "page" : undefined}
+      <Link href={href("carte")} scroll={false} aria-current={isMap ? "page" : undefined}
         className={`${base} touch-manipulation ${isMap ? active : idle}`}>
         <MapIcon className="h-4 w-4" /> {t("viewMap")}
       </Link>
