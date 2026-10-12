@@ -54,17 +54,17 @@ export function GoogleAnalytics({
     };
     return (
       <aside
-        className="fixed inset-x-0 bottom-0 z-[80] border-t border-soul-bronze/20 bg-white/95 px-4 py-2.5 shadow-[0_-6px_20px_rgba(69,48,31,0.12)] backdrop-blur-sm"
+        className="fixed inset-x-0 bottom-0 z-[80] border-t border-soul-bronze/20 bg-white/95 px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-6px_20px_rgba(69,48,31,0.12)] backdrop-blur-sm sm:px-4 sm:py-3"
         aria-label={t.text}
       >
-        <div className="mx-auto flex max-w-7xl flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-4">
-          <p className="min-w-0 text-xs leading-snug text-soul-bronze sm:whitespace-nowrap sm:text-sm">{t.text}</p>
-          <div className="flex shrink-0 gap-1.5 sm:gap-2">
-            <form action="/api/analytics-consent" method="post" onSubmit={(event) => { event.preventDefault(); choose("accepted"); }}>
-              <button type="submit" name="consent" value="accepted" className="btn-primary !px-2 !py-1.5 !text-[0.625rem] sm:!px-3 sm:!text-xs">{t.accept}</button>
+        <div className="mx-auto grid max-w-7xl gap-2.5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-4">
+          <p className="min-w-0 text-xs leading-snug text-soul-bronze sm:text-sm">{t.text}</p>
+          <div className="grid w-full grid-cols-2 gap-2 sm:w-auto">
+            <form className="min-w-0" action="/api/analytics-consent" method="post" onSubmit={(event) => { event.preventDefault(); choose("refused"); }}>
+              <button type="submit" name="consent" value="refused" className="btn-secondary min-h-11 w-full whitespace-nowrap !px-3 !py-2 !text-xs sm:min-w-28">{t.refuse}</button>
             </form>
-            <form action="/api/analytics-consent" method="post" onSubmit={(event) => { event.preventDefault(); choose("refused"); }}>
-              <button type="submit" name="consent" value="refused" className="btn-secondary !px-2 !py-1.5 !text-[0.625rem] sm:!px-3 sm:!text-xs">{t.refuse}</button>
+            <form className="min-w-0" action="/api/analytics-consent" method="post" onSubmit={(event) => { event.preventDefault(); choose("accepted"); }}>
+              <button type="submit" name="consent" value="accepted" className="btn-primary min-h-11 w-full whitespace-nowrap !px-3 !py-2 !text-xs sm:min-w-28">{t.accept}</button>
             </form>
           </div>
         </div>

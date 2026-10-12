@@ -176,7 +176,7 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
       {/* Dates — primordial, toujours visible (de / à).
           min-w-0 sur la cellule ET l'input : sans ça, les <input type="date">
           iOS gardent leur largeur native intrinsèque et débordent de la grille. */}
-      <form method="get" className="grid grid-cols-2 gap-3">
+      <form method="get" className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2">
         {Array.from(searchParams.entries())
           .filter(([key]) => key !== "du" && key !== "au")
           .map(([key, value]) => (
@@ -195,7 +195,7 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
             min={searchParams.get("du") ?? undefined}
             className="field min-h-11 min-w-0 max-w-full appearance-auto touch-manipulation" />
         </div>
-        <button type="submit" className="btn-secondary col-span-2 !py-2">
+        <button type="submit" className="btn-secondary min-[480px]:col-span-2 !py-2">
           {t("filters.apply")}
         </button>
       </form>
