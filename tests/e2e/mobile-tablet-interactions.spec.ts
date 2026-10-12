@@ -32,6 +32,12 @@ test("les interactions tactiles essentielles restent actives", async ({ page, ba
   await expect(mapLink).toHaveAttribute("href", /vue=carte/);
   await mapLink.click();
   await expect(page).toHaveURL(/vue=carte/);
+  const map = page.locator(".leaflet-container");
+  await expect(map).toBeVisible();
+  await expect.poll(() => map.locator(".leaflet-tile").count()).toBeGreaterThan(0);
+  const mapBox = await map.boundingBox();
+  expect(mapBox).not.toBeNull();
+  expect(mapBox!.y).toBeLessThan(page.viewportSize()!.height);
   const listLink = page.getByRole("link", { name: /liste|list/i }).first();
   await listLink.click();
   await expect(page).not.toHaveURL(/vue=carte/);
