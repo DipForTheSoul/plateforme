@@ -72,6 +72,15 @@ describe('éditeur visuel de description', () => {
     expect(backing(container)).toHaveValue('**Important** et *doux*');
   });
 
+  it('répare à l’ouverture les anciens marqueurs de gras coupés sur deux lignes', () => {
+    const {container} = view('**Texte ancien\n**\n\nSuite');
+    const editor = screen.getByRole('textbox', {name: fr.descriptionEditor.editorLabel});
+    expect(editor.innerHTML).toContain('<strong>Texte ancien</strong>');
+    expect(editor).not.toHaveTextContent('**');
+    // La valeur stockée reste intacte jusqu’à une véritable modification.
+    expect(backing(container)).toHaveValue('**Texte ancien\n**\n\nSuite');
+  });
+
   it('applique gras, italique, souligné, liste et emoji en conservant le Markdown du formulaire', () => {
     const {container} = view('Important');
     const editor = screen.getByRole('textbox', {name: fr.descriptionEditor.editorLabel});

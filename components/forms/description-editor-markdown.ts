@@ -1,5 +1,6 @@
 import {descriptionParts, type DescriptionPart} from '@/lib/description-format';
 import {webUrlSchema} from '@/lib/web-url';
+import {normalizeDescriptionSpacing} from '@/lib/description-spacing';
 
 const escapeHtml = (value: string) => value
   .replaceAll('&', '&amp;')
@@ -25,7 +26,7 @@ function inlineHtml(parts: DescriptionPart[]): string {
 /** Converts the existing, deliberately small Markdown vocabulary to safe editor HTML. */
 export function markdownToEditorHtml(markdown: string): string {
   if (!markdown) return '';
-  const lines = markdown.split('\n');
+  const lines = normalizeDescriptionSpacing(markdown).split('\n');
   const blocks: string[] = [];
   for (let index = 0; index < lines.length; index++) {
     if (/^[-*] /.test(lines[index])) {
