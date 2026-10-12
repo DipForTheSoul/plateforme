@@ -9,7 +9,7 @@ import { CurrencyProvider, useCurrency } from '@/components/CurrencyProvider';
 import de from '@/messages/de.json';
 import en from '@/messages/en.json';
 const {replace}=vi.hoisted(()=>({replace:vi.fn()}));
-vi.mock('next/navigation',()=>({useSearchParams:()=>new URLSearchParams()}));
+vi.mock('next/navigation',()=>({useSearchParams:()=>new URLSearchParams(),usePathname:()=>'/experiences'}));
 vi.mock('@/i18n/navigation',()=>({useRouter:()=>({replace}),usePathname:()=>'/experiences'}));
 function SwitchCurrency(){const {setCurrency}=useCurrency();return <><button onClick={()=>setCurrency('EUR')}>Euros</button><button onClick={()=>setCurrency('CHF')}>Francs</button></>;}
 it.each([['fr',fr,'Prix max'],['de',de,'Max. Preis'],['en',en,'Max price']] as const)('conserve le seuil affiché en CHF en %s quelle que soit la devise du catalogue', (locale,messages,label)=>{
@@ -36,7 +36,7 @@ it('cumule les changements rapides de filtres avant la réponse de navigation',(
 });
 it('laisse choisir les deux dates avant de soumettre le filtre',()=>{
   render(<NextIntlClientProvider locale="fr" messages={fr}><ExplorerNavigation><ViewToggle/><ExplorerControls categories={[]} practitioners={[]} countries={[]} cantons={[]} eventDays={[]}/></ExplorerNavigation></NextIntlClientProvider>);
-  fireEvent.click(screen.getByRole('button',{name:'Carte'}));
+  expect(screen.getByRole('link',{name:'Carte'})).toHaveAttribute('href','/experiences?vue=carte');
   fireEvent.change(screen.getByLabelText('Du'),{target:{value:'2026-10-17'}});
   fireEvent.change(screen.getByLabelText('Au'),{target:{value:'2026-10-18'}});
   expect(screen.getByLabelText('Du')).toHaveValue('2026-10-17');
@@ -45,5 +45,5 @@ it('laisse choisir les deux dates avant de soumettre le filtre',()=>{
   expect(Object.fromEntries(new FormData(form))).toEqual({du:'2026-10-17',au:'2026-10-18'});
   fireEvent.change(screen.getByRole('combobox',{name:'Langue'}),{target:{value:'fr'}});
   const url=new URL(replace.mock.calls.at(-1)![0],'http://localhost');
-  expect(Object.fromEntries(url.searchParams)).toEqual({vue:'carte',langue:'fr'});
+  expect(Object.fromEntries(url.searchParams)).toEqual({langue:'fr'});
 });

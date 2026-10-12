@@ -1,4 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/public";
+import { publicCache } from "@/lib/public-cache";
 import { readPages } from "@/lib/read-pages";
 import {
   EVENT_WITH_RELATIONS,
@@ -34,17 +35,54 @@ export interface EventFilters {
   radiusKm?: number;
 }
 
+const cachedSettings = publicCache(async () => {
+  const { data, error } = await createPublicClient().from("settings").select("key,value");
+  if (error) throw new Error("Lecture des réglages indisponible.");
+  return Object.fromEntries(((data ?? []) as { key: string; value: string }[]).map((row) => [row.key, row.value]));
+}, ["public-settings-v1"], ["public-settings"]);
+
+const cachedCategories = publicCache(async () => {
+  const { data, error } = await createPublicClient().from("categories").select("*").order("position");
+  if (error) throw new Error("Lecture des univers indisponible.");
+  return (data as Category[]) ?? [];
+}, ["public-categories-v1"], ["public-categories"]);
+
+const cachedEvents = publicCache(async () => {
+  const query = createPublicClient().from("events").select(EVENT_WITH_RELATIONS)
+    .eq("status", "approved")
+    .order("is_top", { ascending: false })
+    .order("start_date", { ascending: true })
+    .order("id", { ascending: true });
+  const data = await readPages((from, to) => query.range(from, to));
+  return ((data as unknown as EventRowRaw[]) ?? []).map(mapEventRow);
+}, ["public-approved-events-v1"], ["public-events"]);
+
+const cachedPractitioners = publicCache(async () => {
+  const query = createPublicClient().from("practitioners").select("*")
+    .eq("status", "approved").order("name").order("id");
+  const data = await readPages((from, to) => query.range(from, to));
+  return ((data as Practitioner[]) ?? []).filter((p) => p.name.trim().toLowerCase() !== "praticien test");
+}, ["public-practitioners-v1"], ["public-practitioners"]);
+
+const cachedVenues = publicCache(async () => {
+  const query = createPublicClient().from("venues").select("*").order("name").order("id");
+  const data = await readPages((from, to) => query.range(from, to));
+  return (data as Venue[]) ?? [];
+}, ["public-venues-v1"], ["public-venues"]);
+
+function distanceKm(lat1: number, lng1: number, lat2: number, lng2: number) {
+  const radians = (value: number) => value * Math.PI / 180;
+  const dLat = radians(lat2 - lat1);
+  const dLng = radians(lng2 - lng1);
+  const a = Math.sin(dLat / 2) ** 2
+    + Math.cos(radians(lat1)) * Math.cos(radians(lat2)) * Math.sin(dLng / 2) ** 2;
+  return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
 /** Lit un paramètre éditable en admin (table `settings`). */
 export async function getSetting(key: string): Promise<string | null> {
-  const supabase = await createClient();
   try {
-    const { data, error } = await supabase
-      .from("settings")
-      .select("value")
-      .eq("key", key)
-      .maybeSingle();
-    if(error) throw new Error('Lecture indisponible.');
-    return (data as { value: string } | null)?.value ?? null;
+    return (await cachedSettings())[key] ?? null;
   } catch {
     return null;
   }
@@ -58,14 +96,8 @@ export async function getExchangeRateEur(): Promise<number> {
 }
 
 export async function getCategories(): Promise<Category[]> {
-  const supabase = await createClient();
   try {
-    const { data, error } = await supabase
-      .from("categories")
-      .select("*")
-      .order("position");
-    if(error) throw new Error('Lecture indisponible.');
-    return (data as Category[]) ?? [];
+    return await cachedCategories();
   } catch (error) {
     console.error("[queries/getCategories]", error instanceof Error ? error.message : "read failed");
     throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");
@@ -75,62 +107,28 @@ export async function getCategories(): Promise<Category[]> {
 export async function getApprovedEvents(
   filters: EventFilters = {}
 ): Promise<EventWithRelations[]> {
-  const supabase = await createClient();
   try {
-
     // Auto-délistage : un événement reste listé jusqu'à N jours après sa fin
     // (réglé par l'admin via `settings.event_delist_days`, défaut 15). Au-delà,
     // il n'apparaît plus dans le catalogue/la recherche — mais sa PAGE reste en
     // ligne (accessible par URL, pour le référencement).
-    const { data: delistRow, error: delistError } = await supabase
-      .from("settings")
-      .select("value")
-      .eq("key", "event_delist_days")
-      .maybeSingle();
-    if(delistError) throw new Error('Paramètres de recherche indisponibles.');
-    const delistDays = Number((delistRow as { value: string } | null)?.value ?? 15);
+    const delistDays = Number((await cachedSettings()).event_delist_days ?? 15);
     const floorDays = Number.isFinite(delistDays) && delistDays >= 0 ? delistDays : 15;
     const delistFloor = new Date(Date.now() - floorDays * 86_400_000).toISOString();
 
-    // Rayon km : on résout d'abord les lieux dans le périmètre (PostGIS).
-    let venueIds: string[] | null = null;
-    if (
-      filters.radiusKm &&
-      filters.lat !== undefined &&
-      filters.lng !== undefined
-    ) {
-      const { data: nearby, error: nearbyError } = await supabase.rpc("venues_within_radius", {
-        center_lat: filters.lat,
-        center_lng: filters.lng,
-        radius_km: filters.radiusKm,
-      });
-      if(nearbyError) throw new Error('Recherche géographique indisponible.');
-      venueIds = ((nearby as { venue_id: string }[]) ?? []).map(
-        (v) => v.venue_id
-      );
-      if (venueIds.length === 0) return [];
+    let events = (await cachedEvents()).filter((event) =>
+      (event.end_date ?? event.start_date) >= delistFloor || event.start_date >= delistFloor
+    );
+
+    if (filters.dateFrom) events = events.filter((event) => event.start_date >= filters.dateFrom!);
+    if (filters.dateTo) events = events.filter((event) => event.start_date <= filters.dateTo!);
+    if (filters.language) events = events.filter((event) => event.languages.includes(filters.language!));
+    if (filters.priceMax !== undefined) events = events.filter((event) => event.price !== null && event.price <= filters.priceMax!);
+    if (filters.durationMax !== undefined) events = events.filter((event) => event.duration_minutes !== null && event.duration_minutes <= filters.durationMax!);
+    if (filters.radiusKm && filters.lat !== undefined && filters.lng !== undefined) {
+      events = events.filter((event) => event.venue?.lat != null && event.venue.lng != null
+        && distanceKm(filters.lat!, filters.lng!, event.venue.lat, event.venue.lng) <= filters.radiusKm!);
     }
-
-    let query = supabase
-      .from("events")
-      .select(EVENT_WITH_RELATIONS)
-      .eq("status", "approved")
-      // Also keep a future start when a legacy row has an erroneous earlier end.
-      // Do not silently hide that event or invent a corrected client date.
-      .or(`end_date.gte.${delistFloor},start_date.gte.${delistFloor}`)
-      .order("is_top", { ascending: false })
-      .order("start_date", { ascending: true })
-      .order("id", { ascending: true });
-
-    if (filters.dateFrom) query = query.gte("start_date", filters.dateFrom);
-    if (filters.dateTo) query = query.lte("start_date", filters.dateTo);
-    if (filters.language) query = query.contains("languages", [filters.language]);
-    if (filters.priceMax !== undefined) query = query.lte("price", filters.priceMax);
-    if (filters.durationMax !== undefined)
-      query = query.lte("duration_minutes", filters.durationMax);
-    if (venueIds) query = query.in("venue_id", venueIds);
-    const data = await readPages((from,to)=>query.range(from,to));
-    let events = ((data as unknown as EventRowRaw[]) ?? []).map(mapEventRow);
 
     // Filtres sur les relations (appliqués après jointure).
     // La recherche libre couvre l'expérience et son praticien. Elle est faite
@@ -164,21 +162,11 @@ export async function getApprovedEvents(
 }
 
 export async function getTopEvents(limit = 3): Promise<EventWithRelations[]> {
-  const supabase = await createClient();
   try {
     const now = new Date().toISOString();
-    const { data, error } = await supabase
-      .from("events")
-      .select(EVENT_WITH_RELATIONS)
-      .eq("status", "approved")
-      .eq("is_top", true)
-      // §6.1 — mise en avant expirée à la lecture (featured_until dépassé).
-      .or(`featured_until.is.null,featured_until.gt.${now}`)
-      .gte("start_date", now)
-      .order("start_date")
-      .limit(limit);
-    if(error) throw new Error('Lecture indisponible.');
-    return ((data as unknown as EventRowRaw[]) ?? []).map(mapEventRow);
+    return (await cachedEvents()).filter((event) => event.is_top
+      && (!event.featured_until || event.featured_until > now)
+      && event.start_date >= now).slice(0, limit);
   } catch (error) {
     console.error("[queries/getTopEvents]", error instanceof Error ? error.message : "read failed");
     throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");
@@ -188,15 +176,8 @@ export async function getTopEvents(limit = 3): Promise<EventWithRelations[]> {
 export async function getEventBySlug(
   slug: string
 ): Promise<EventWithRelations | null> {
-  const supabase = await createClient();
   try {
-    const { data, error } = await supabase
-      .from("events")
-      .select(EVENT_WITH_RELATIONS)
-      .eq("slug", slug)
-      .maybeSingle();
-    if(error) throw new Error('Lecture indisponible.');
-    return data ? mapEventRow(data as unknown as EventRowRaw) : null;
+    return (await cachedEvents()).find((event) => event.slug === slug) ?? null;
   } catch {
     throw new Error("La fiche est momentanément indisponible. Merci de réessayer.");
   }
@@ -210,32 +191,14 @@ export async function getAdjacentEvents(
   currentStartDate: string,
   currentId: string
 ): Promise<{ prev: { slug: string; title: string } | null; next: { slug: string; title: string } | null }> {
-  const supabase = await createClient();
   try {
-    const [{ data: prev, error: prevError }, { data: next, error: nextError }] = await Promise.all([
-      supabase
-        .from("events")
-        .select("slug, title")
-        .eq("status", "approved")
-        .or(`start_date.lt.${currentStartDate},and(start_date.eq.${currentStartDate},id.lt.${currentId})`)
-        .order("start_date", { ascending: false })
-        .order("id", { ascending: false })
-        .limit(1)
-        .maybeSingle(),
-      supabase
-        .from("events")
-        .select("slug, title")
-        .eq("status", "approved")
-        .or(`start_date.gt.${currentStartDate},and(start_date.eq.${currentStartDate},id.gt.${currentId})`)
-        .order("start_date", { ascending: true })
-        .order("id", { ascending: true })
-        .limit(1)
-        .maybeSingle(),
-    ]);
-    if(prevError || nextError) throw new Error('Navigation indisponible.');
+    const events = [...await cachedEvents()].sort((a, b) => a.start_date.localeCompare(b.start_date) || a.id.localeCompare(b.id));
+    const index = events.findIndex((event) => event.start_date === currentStartDate && event.id === currentId);
+    const prev = index > 0 ? events[index - 1] : null;
+    const next = index >= 0 && index < events.length - 1 ? events[index + 1] : null;
     return {
-      prev: (prev as { slug: string; title: string } | null) ?? null,
-      next: (next as { slug: string; title: string } | null) ?? null,
+      prev: prev ? { slug: prev.slug, title: prev.title } : null,
+      next: next ? { slug: next.slug, title: next.title } : null,
     };
   } catch {
     throw new Error('La navigation entre les expériences est momentanément indisponible. Réessayez.');
@@ -243,15 +206,8 @@ export async function getAdjacentEvents(
 }
 
 export async function getApprovedPractitioners(): Promise<Practitioner[]> {
-  const supabase = await createClient();
   try {
-    const query = supabase
-      .from("practitioners")
-      .select("*")
-      .eq("status", "approved")
-      .order("name").order("id");
-    const data = await readPages((from,to)=>query.range(from,to));
-    return ((data as Practitioner[]) ?? []).filter((p)=>p.name.trim().toLowerCase()!=="praticien test");
+    return await cachedPractitioners();
   } catch {
     throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");
   }
@@ -260,41 +216,24 @@ export async function getApprovedPractitioners(): Promise<Practitioner[]> {
 export async function getPractitionerBySlug(
   slug: string
 ): Promise<Practitioner | null> {
-  const supabase = await createClient();
   try {
-    const { data, error } = await supabase
-      .from("practitioners")
-      .select("*")
-      .eq("slug", slug)
-      .maybeSingle();
-    if(error) throw new Error('Lecture indisponible.');
-    return (data as Practitioner) ?? null;
+    return (await cachedPractitioners()).find((practitioner) => practitioner.slug === slug) ?? null;
   } catch {
     throw new Error("La fiche est momentanément indisponible. Merci de réessayer.");
   }
 }
 
 export async function getVenueById(id: string): Promise<Venue | null> {
-  const supabase = await createClient();
   try {
-    const { data, error } = await supabase
-      .from("venues")
-      .select("*")
-      .eq("id", id)
-      .maybeSingle();
-    if(error) throw new Error('Lecture indisponible.');
-    return (data as Venue) ?? null;
+    return (await cachedVenues()).find((venue) => venue.id === id) ?? null;
   } catch {
     throw new Error("La fiche est momentanément indisponible. Merci de réessayer.");
   }
 }
 
 export async function getVenues(): Promise<Venue[]> {
-  const supabase = await createClient();
   try {
-    const query = supabase.from("venues").select("*").order("name").order("id");
-    const data = await readPages((from,to)=>query.range(from,to));
-    return (data as Venue[]) ?? [];
+    return await cachedVenues();
   } catch {
     throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");
   }
@@ -304,15 +243,9 @@ export async function getEventsByIds(
   ids: string[]
 ): Promise<EventWithRelations[]> {
   if (!ids.length) return [];
-  const supabase = await createClient();
   try {
-    const { data, error } = await supabase
-      .from("events")
-      .select(EVENT_WITH_RELATIONS)
-      .in("id", ids)
-      .eq("status", "approved");
-    if(error) throw new Error('Lecture indisponible.');
-    return ((data as unknown as EventRowRaw[]) ?? []).map(mapEventRow);
+    const requested = new Set(ids);
+    return (await cachedEvents()).filter((event) => requested.has(event.id));
   } catch {
     throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");
   }
@@ -322,15 +255,9 @@ export async function getPractitionersByIds(
   ids: string[]
 ): Promise<Practitioner[]> {
   if (!ids.length) return [];
-  const supabase = await createClient();
   try {
-    const { data, error } = await supabase
-      .from("practitioners")
-      .select("*")
-      .in("id", ids)
-      .eq("status", "approved");
-    if(error) throw new Error('Lecture indisponible.');
-    return (data as Practitioner[]) ?? [];
+    const requested = new Set(ids);
+    return (await cachedPractitioners()).filter((practitioner) => requested.has(practitioner.id));
   } catch {
     throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");
   }

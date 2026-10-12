@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { eventLocalToIso, shiftEventDate } from './event-time';
 import { webUrlSchema } from './web-url';
 import {DESCRIPTION_STORAGE_MAX, DESCRIPTION_VISIBLE_MAX, descriptionVisibleLength} from './description-format';
+import {normalizeDescriptionSpacing} from './description-spacing';
 
 const date = z.string().transform((value, ctx) => {
   try { return eventLocalToIso(value); }
@@ -51,7 +52,7 @@ export function parseEventForm(formData: FormData) {
     }
   }
   return eventSchema.safeParse({
-    title: text('title'), description: text('description'), category_ids: formData.getAll('category_ids'),
+    title: text('title'), description: normalizeDescriptionSpacing(text('description')), category_ids: formData.getAll('category_ids'),
     venue_id: text('venue_id') || null, start_date: text('start_date'), end_date: endDate || null,
     duration_minutes: durationMinutes,
     price_mode: text('price_mode'),

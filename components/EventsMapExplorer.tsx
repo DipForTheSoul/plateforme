@@ -55,7 +55,12 @@ export function EventsMapExplorer({
       if (cancelled || !containerRef.current || mapRef.current) return;
       LRef.current = L;
 
-      const map = L.map(containerRef.current, { scrollWheelZoom: false }).setView(
+      const map = L.map(containerRef.current, {
+        scrollWheelZoom: false,
+        zoomAnimation: false,
+        fadeAnimation: false,
+        markerZoomAnimation: false,
+      }).setView(
         [46.8, 8.23],
         7
       );
@@ -99,9 +104,21 @@ export function EventsMapExplorer({
     })();
     return () => {
       cancelled = true;
-      mapRef.current?.remove();
+      const map = mapRef.current;
       mapRef.current = null;
       markersRef.current = {};
+      if (map) {
+        // Stoppe les animations avant le démontage : Leaflet pouvait encore
+        // déplacer un marqueur supprimé lors d'une bascule Carte → Liste rapide.
+        try {
+          map.stop();
+          map.off();
+          map.remove();
+        } catch {
+          // Le DOM peut déjà avoir été retiré par React lors d'une navigation
+          // tactile très rapide. La carte est de toute façon abandonnée.
+        }
+      }
     };
   }, [items, hrefPrefix]);
 
