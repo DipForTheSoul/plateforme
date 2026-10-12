@@ -25,7 +25,7 @@ export default async function AdminFeaturedPage() {
   const supabase = await createClient();
   const [{ data: settingData,error:settingError }, featuredData, candidateData] =
     await Promise.all([
-      supabase.from("settings").select("value").eq("key", "featured_default_days").maybeSingle(),
+      supabase.from("settings").select("key,value").in("key", ["featured_default_days","featured_price_chf"]),
       readPages((from,to)=>supabase
         .from("events")
         .select("id, title, is_top, featured_until")
@@ -44,7 +44,9 @@ export default async function AdminFeaturedPage() {
     ]);
   if(settingError)throw new Error('Les paramètres de mise en avant sont indisponibles.');
 
-  const defaultDays = (settingData as { value: string } | null)?.value ?? "30";
+  const settingValues=Object.fromEntries(((settingData as {key:string;value:string}[]|null)??[]).map(row=>[row.key,row.value]));
+  const defaultDays = settingValues.featured_default_days ?? "30";
+  const defaultPrice = settingValues.featured_price_chf ?? "20";
   const featured = (featuredData as Row[]) ?? [];
   const candidates = (candidateData as Row[]) ?? [];
   const now = new Date();
@@ -58,13 +60,21 @@ export default async function AdminFeaturedPage() {
         </p>
       </div>
 
-      <section className="card p-6">
+      <section className="card grid gap-6 p-6 sm:grid-cols-2">
         <SettingNumberForm
           settingKey="featured_default_days"
           label={t("defaultDuration")}
           hint={t("defaultDurationHint")}
           defaultValue={defaultDays}
           suffix={tc("days")}
+          saveLabel={tc("save")}
+        />
+        <SettingNumberForm
+          settingKey="featured_price_chf"
+          label={t("price")}
+          hint={t("priceHint")}
+          defaultValue={defaultPrice}
+          suffix="CHF"
           saveLabel={tc("save")}
         />
       </section>

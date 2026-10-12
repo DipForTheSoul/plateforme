@@ -43,6 +43,17 @@ export async function POST(request: NextRequest) {
     }
 
     const practitionerId = session.metadata?.practitioner_id;
+    if (session.metadata?.kind === "featured_event") {
+      const eventId=session.metadata.event_id;const durationDays=Number(session.metadata.duration_days);const amountChf=Number(session.metadata.amount_chf);
+      const expectedAmount=Math.round(amountChf*100);
+      if(!eventId||!practitionerId||!Number.isInteger(durationDays)||durationDays<1||durationDays>36500||!Number.isFinite(amountChf)||amountChf<=0||session.currency!=="chf"||session.amount_total!==expectedAmount){
+        console.error("[stripe] métadonnées de mise en avant invalides",session.id);return NextResponse.json({received:true});
+      }
+      const admin=createAdminClient();const {data:activated,error}=await admin.rpc("activate_featured_purchase",{p_event_id:eventId,p_practitioner_id:practitionerId,p_stripe_session_id:session.id,p_duration_days:durationDays,p_amount_chf:amountChf});
+      if(error){console.error("[stripe] activation mise en avant échouée:",error.message);return NextResponse.json({error:"Erreur interne."},{status:500});}
+      if(activated===false)console.info("[stripe] mise en avant déjà traitée:",session.id);
+      return NextResponse.json({received:true});
+    }
     const credits = Number(session.metadata?.credits ?? "0");
     if (!practitionerId || !/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(practitionerId) || !Number.isInteger(credits) || credits <= 0 || credits > 10000) {
       console.error("[stripe] metadata invalide sur la session", session.id);

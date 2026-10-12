@@ -6,6 +6,7 @@ const mocks=vi.hoisted(()=>({construct:vi.fn(),rpc:vi.fn()}));
 vi.mock('@/lib/stripe',()=>({getStripe:()=>({webhooks:{constructEvent:mocks.construct}})}));
 vi.mock('@/lib/supabase/admin',()=>({createAdminClient:()=>({rpc:mocks.rpc})}));
 const fixture=(type='checkout.session.completed',status='paid',credits='5')=>({type,data:{object:{id:'cs_test_local',payment_status:status,metadata:{practitioner_id:'20000000-0000-4000-8000-000000000001',credits}}}});
+const featuredFixture=()=>({type:'checkout.session.completed',data:{object:{id:'cs_featured_local',payment_status:'paid',currency:'chf',amount_total:2000,metadata:{kind:'featured_event',event_id:'10000000-0000-4000-8000-000000000001',practitioner_id:'20000000-0000-4000-8000-000000000001',duration_days:'30',amount_chf:'20'}}}});
 const request=(signature=true)=>new NextRequest('http://localhost/api/stripe/webhook',{method:'POST',body:'raw-body',headers:signature?{'stripe-signature':'test-signature'}:{}});
 beforeEach(()=>{vi.stubEnv('STRIPE_WEBHOOK_SECRET','whsec_test_local');mocks.rpc.mockReset().mockResolvedValue({data:true,error:null});mocks.construct.mockReset().mockReturnValue(fixture());});
 afterEach(()=>vi.unstubAllEnvs());
@@ -16,3 +17,5 @@ it('traite un paiement différé confirmé',async()=>{mocks.construct.mockReturn
 it('refuse des crédits partiellement numériques',async()=>{mocks.construct.mockReturnValue(fixture(undefined,undefined,'5bad'));await POST(request());expect(mocks.rpc).not.toHaveBeenCalled();});
 it('renvoie 500 si la base échoue pour permettre la relivraison Stripe',async()=>{mocks.rpc.mockResolvedValue({error:{message:'test outage'}});expect((await POST(request())).status).toBe(500);});
 it('accepte un événement déjà traité sans nouveau crédit côté SQL',async()=>{mocks.rpc.mockResolvedValue({data:false,error:null});expect((await POST(request())).status).toBe(200);});
+it('active une mise en avant payée par une opération SQL idempotente',async()=>{mocks.construct.mockReturnValue(featuredFixture());expect((await POST(request())).status).toBe(200);expect(mocks.rpc).toHaveBeenCalledWith('activate_featured_purchase',{p_event_id:'10000000-0000-4000-8000-000000000001',p_practitioner_id:'20000000-0000-4000-8000-000000000001',p_stripe_session_id:'cs_featured_local',p_duration_days:30,p_amount_chf:20});});
+it('n’active pas une mise en avant si le montant signé ne correspond pas',async()=>{const event=featuredFixture();event.data.object.amount_total=100; mocks.construct.mockReturnValue(event);await POST(request());expect(mocks.rpc).not.toHaveBeenCalled();});

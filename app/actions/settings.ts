@@ -22,6 +22,7 @@ export async function updateSettings(
   const keys = [
     "exchange_rate_eur",
     "featured_default_days",
+    "featured_price_chf",
     "pack_default_valid_days",
     "event_delist_days",
     "payment_beneficiary",
@@ -47,7 +48,7 @@ export async function updateSettings(
     return { error: "Le taux de change doit être un nombre positif (ex. 1.05)." };
   }
   for (const row of rows) {
-    if (row.key.startsWith('price_pack_')) {
+    if (row.key.startsWith('price_pack_') || row.key === 'featured_price_chf') {
       const value = Number(row.value.replace(',', '.'));
       if (!Number.isFinite(value) || value <= 0 || value > 999999) return {error: 'Le prix du pack doit être un montant positif et valide.'};
       row.value = String(value);
