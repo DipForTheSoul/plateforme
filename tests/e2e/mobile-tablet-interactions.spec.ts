@@ -151,3 +151,37 @@ test("l’acceptation Analytics reste cliquable", async ({ page }) => {
     .click();
   await expect(consent).toBeHidden();
 });
+
+test("les dates et les choix Analytics ne se chevauchent pas sur petit mobile", async ({ browser, baseURL }) => {
+  const context = await browser.newContext({
+    ...devices["iPhone SE"],
+    baseURL,
+    locale: "fr-FR",
+  });
+  const page = await context.newPage();
+  await page.goto("/experiences", { waitUntil: "networkidle" });
+
+  const viewportWidth = page.viewportSize()!.width;
+  const from = await page.locator("#date-from").boundingBox();
+  const to = await page.locator("#date-to").boundingBox();
+  expect(from).not.toBeNull();
+  expect(to).not.toBeNull();
+  expect(from!.x).toBeGreaterThanOrEqual(0);
+  expect(to!.x).toBeGreaterThanOrEqual(0);
+  expect(from!.x + from!.width).toBeLessThanOrEqual(viewportWidth + 1);
+  expect(to!.x + to!.width).toBeLessThanOrEqual(viewportWidth + 1);
+  expect(to!.y).toBeGreaterThanOrEqual(from!.y + from!.height);
+
+  const consent = page.getByRole("complementary", { name: /Google Analytics/ });
+  if (await consent.isVisible()) {
+    const refuse = await consent.getByRole("button", { name: "Refuser" }).boundingBox();
+    const accept = await consent.getByRole("button", { name: "Accepter" }).boundingBox();
+    expect(refuse).not.toBeNull();
+    expect(accept).not.toBeNull();
+    expect(Math.abs(refuse!.y - accept!.y)).toBeLessThanOrEqual(1);
+    expect(refuse!.x + refuse!.width).toBeLessThanOrEqual(accept!.x);
+    expect(accept!.x + accept!.width).toBeLessThanOrEqual(viewportWidth + 1);
+  }
+
+  await context.close();
+});
