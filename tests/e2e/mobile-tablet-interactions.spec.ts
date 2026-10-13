@@ -4,7 +4,9 @@ test("les interactions tactiles essentielles restent actives", async ({ page, ba
   const runtimeErrors: string[] = [];
   page.on("pageerror", (error) => runtimeErrors.push(error.message));
 
-  await page.goto("/experiences", { waitUntil: "networkidle" });
+  // Les cartes et images peuvent garder le réseau actif. On attend ensuite
+  // chaque contrôle utile, plutôt que l'arrêt de toutes les requêtes.
+  await page.goto("/experiences", { waitUntil: "domcontentloaded" });
 
   const consent = page.getByRole("complementary", {
     name: /Google Analytics/,
@@ -56,10 +58,15 @@ test("les interactions tactiles essentielles restent actives", async ({ page, ba
   await expect(page).toHaveURL(/\/de\/experiences/);
 
   const from = page.locator("#date-from");
+  // La soumission doit rester dans le document déjà initialisé, comme les
+  // autres filtres, et ne pas relancer le flux HTML/React sur Firefox.
+  await expect(page.locator('button[aria-expanded]').filter({ hasText: /filtres|filter/i })).toBeEnabled();
+  await page.evaluate(() => { document.documentElement.dataset.dateNavigation = "ready"; });
   await from.fill("2026-11-01");
   await expect(from).toHaveValue("2026-11-01");
   await from.locator("xpath=ancestor::form").getByRole("button").click();
   await expect(page).toHaveURL(/du=2026-11-01/);
+  await expect(page.locator("html")).toHaveAttribute("data-date-navigation", "ready");
 
   const nextMonth = page.getByRole("link", { name: /mois suivant|next month|nächster monat/i });
   if (!await nextMonth.isVisible()) {
@@ -70,8 +77,12 @@ test("les interactions tactiles essentielles restent actives", async ({ page, ba
   await expect(nextMonth).toBeVisible();
   await nextMonth.click();
   const calendarDay = page.locator('a[href*="du="]').filter({ hasText: /^15$/ }).first();
+  const selectedDates = new URL((await calendarDay.getAttribute("href"))!, page.url()).searchParams;
   await calendarDay.click();
-  await expect(page).toHaveURL(/du=/);
+  await expect.poll(() => new URL(page.url()).searchParams.get("du")).toBe(selectedDates.get("du"));
+  await expect.poll(() => new URL(page.url()).searchParams.get("au")).toBe(selectedDates.get("au"));
+  await expect(from).toHaveValue(selectedDates.get("du") ?? "");
+  await expect(page.locator("#date-to")).toHaveValue(selectedDates.get("au") ?? "");
 
   const experienceLink = page.locator('main a[href*="/experiences/"]').first();
   if (await experienceLink.count()) {
@@ -108,7 +119,7 @@ test("le parcours essentiel fonctionne même sans JavaScript", async ({ browser,
     javaScriptEnabled: false,
   });
   const page = await context.newPage();
-  await page.goto("/experiences");
+  await page.goto("/experiences", { waitUntil: "domcontentloaded" });
 
   const consent = page.getByRole("complementary", { name: /Google Analytics/ });
   if (await consent.isVisible()) {
@@ -149,7 +160,7 @@ test("le parcours essentiel fonctionne même sans JavaScript", async ({ browser,
 });
 
 test("l’acceptation Analytics reste cliquable", async ({ page }) => {
-  await page.goto("/", { waitUntil: "networkidle" });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
   const consent = page.getByRole("complementary", {
     name: /Google Analytics/,
   });

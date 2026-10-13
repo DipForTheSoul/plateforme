@@ -179,7 +179,18 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
       {/* Dates — primordial, toujours visible (de / à).
           min-w-0 sur la cellule ET l'input : sans ça, les <input type="date">
           iOS gardent leur largeur native intrinsèque et débordent de la grille. */}
-      <form method="get" className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2">
+      <form method="get" className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2"
+        onSubmit={(event) => {
+          event.preventDefault();
+          const dates = new FormData(event.currentTarget);
+          // Même navigation que les autres filtres : garde le document React
+          // chargé et les changements de filtres encore en cours. Le GET
+          // natif reste disponible si JavaScript n'est pas chargé.
+          setParams({
+            du: String(dates.get("du") ?? "") || undefined,
+            au: String(dates.get("au") ?? "") || undefined,
+          });
+        }}>
         {Array.from(searchParams.entries())
           .filter(([key]) => key !== "du" && key !== "au")
           .map(([key, value]) => (
@@ -187,13 +198,13 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
           ))}
         <div className="min-w-0">
           <label htmlFor="date-from" className="label">{t("filters.from")}</label>
-          <input id="date-from" name="du" type="date"
+          <input key={`from-${searchParams.get("du") ?? ""}`} id="date-from" name="du" type="date"
             defaultValue={searchParams.get("du") ?? ""}
             className="field min-h-11 min-w-0 max-w-full appearance-auto touch-manipulation" />
         </div>
         <div className="min-w-0">
           <label htmlFor="date-to" className="label">{t("filters.to")}</label>
-          <input id="date-to" name="au" type="date"
+          <input key={`to-${searchParams.get("au") ?? ""}`} id="date-to" name="au" type="date"
             defaultValue={searchParams.get("au") ?? ""}
             min={searchParams.get("du") ?? undefined}
             className="field min-h-11 min-w-0 max-w-full appearance-auto touch-manipulation" />
@@ -337,6 +348,7 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
           )}
 
           <EventCalendar
+            key={searchParams.get("calendrier") ?? searchParams.get("du") ?? "current"}
             eventDays={eventDays}
             from={searchParams.get("du") ?? undefined}
             to={searchParams.get("au") ?? undefined}
