@@ -4,6 +4,7 @@ import {NextRequest} from 'next/server';
 import {POST} from '@/app/api/stripe/featured-checkout/route';
 
 const mocks=vi.hoisted(()=>({configured:vi.fn(),create:vi.fn(),user:vi.fn(),event:vi.fn(),settings:vi.fn()}));
+vi.mock('@/lib/supabase/admin',()=>({createAdminClient:()=>({from:()=>({select:()=>({in:mocks.settings})})})}));
 vi.mock('@/lib/stripe',()=>({isStripeConfigured:mocks.configured,getStripe:()=>({checkout:{sessions:{create:mocks.create}}})}));
 vi.mock('@/lib/supabase/server',()=>({createClient:async()=>({
   auth:{getUser:mocks.user},
@@ -36,4 +37,15 @@ it('utilise exclusivement le prix et la durée du serveur',async()=>{
 });
 
 it('refuse un identifiant arbitraire avant Stripe',async()=>{expect((await POST(request('{"eventId":"bad"}'))).status).toBe(400);expect(mocks.create).not.toHaveBeenCalled();});
+it('reprend un tarif modifié et ne facture pas le montant par défaut',async()=>{
+  mocks.settings.mockResolvedValue({data:[{key:'featured_price_chf',value:'27.5'},{key:'featured_default_days',value:'45'}],error:null});
+  expect((await POST(request(JSON.stringify({eventId})))).status).toBe(200);
+  expect(mocks.create.mock.calls[0][0].line_items[0].price_data.unit_amount).toBe(2750);
+  expect(mocks.create.mock.calls[0][0].metadata.duration_days).toBe('45');
+});
+it('ne remplace pas un tarif manquant par 20 CHF',async()=>{
+  mocks.settings.mockResolvedValue({data:[],error:null});
+  expect((await POST(request(JSON.stringify({eventId})))).status).toBe(503);
+  expect(mocks.create).not.toHaveBeenCalled();
+});
 it('refuse une offre non détenue ou non publiée',async()=>{mocks.event.mockReset().mockResolvedValueOnce({data:{id:'20000000-0000-4000-8000-000000000001',name:'Praticien'}}).mockResolvedValueOnce({data:null,error:null});expect((await POST(request(JSON.stringify({eventId})))).status).toBe(403);expect(mocks.create).not.toHaveBeenCalled();});

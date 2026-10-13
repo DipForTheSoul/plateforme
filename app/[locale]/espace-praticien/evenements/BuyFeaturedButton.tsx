@@ -19,7 +19,7 @@ export function BuyFeaturedButton({eventId,label,pendingLabel}:{eventId:string;l
   }
 
   return <div className="flex flex-col items-end gap-1">
-    <button type="button" onClick={checkout} disabled={pending} className="btn-secondary !px-3 !py-2 text-xs">{pending?pendingLabel:label}</button>
+    <button type="button" onClick={checkout} disabled={pending} className="btn-primary !px-4 !py-2.5 text-sm">{pending?pendingLabel:label}</button>
     {error&&<p role="alert" className="max-w-56 text-right text-xs text-red-700">{error}</p>}
   </div>;
 }

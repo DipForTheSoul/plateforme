@@ -50,6 +50,7 @@ export async function updateSettings(
   for (const row of rows) {
     if (row.key.startsWith('price_pack_') || row.key === 'featured_price_chf') {
       const value = Number(row.value.replace(',', '.'));
+      if (row.key === 'featured_price_chf' && (value < 0.5 || Math.abs(value * 100 - Math.round(value * 100)) > 0.000001)) return {error: 'Le tarif de mise en avant doit être d’au moins CHF 0.50, avec deux décimales maximum.'};
       if (!Number.isFinite(value) || value <= 0 || value > 999999) return {error: 'Le prix du pack doit être un montant positif et valide.'};
       row.value = String(value);
     }

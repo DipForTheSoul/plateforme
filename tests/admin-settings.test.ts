@@ -23,3 +23,12 @@ it('refuse un compte non administrateur',async()=>{
   mocks.profile.mockResolvedValue({role:'practitioner'});
   expect((await updateSettings({},new FormData())).error).toBeTruthy();expect(mocks.upsert).not.toHaveBeenCalled();
 });
+it('enregistre le tarif de mise en avant avec ses centimes',async()=>{
+  const fd=new FormData();fd.set('featured_price_chf','27,50');
+  expect((await updateSettings({},fd)).success).toBeTruthy();
+  expect(mocks.upsert.mock.calls[0][0][0]).toMatchObject({key:'featured_price_chf',value:'27.5'});
+});
+it.each(['0.10','20.001'])('refuse un tarif incompatible avec le paiement : %s',async(value)=>{
+  const fd=new FormData();fd.set('featured_price_chf',value);
+  expect((await updateSettings({},fd)).error).toBeTruthy();expect(mocks.upsert).not.toHaveBeenCalled();
+});

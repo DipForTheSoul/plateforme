@@ -649,7 +649,7 @@
     },
     "featured": {
       "title": "Featured experiences",
-      "description": "Selection is manual. A feature expires automatically after the set duration.",
+      "description": "Practitioner purchases activate automatically after payment is confirmed. You can also feature an offer here. Each feature expires automatically after its set duration.",
       "defaultDuration": "Default duration of a feature",
       "defaultDurationHint": "Applied when you feature an experience or extend it.",
       "price": "Feature price",

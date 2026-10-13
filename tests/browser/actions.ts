@@ -12,6 +12,7 @@ async function persist(_prev: unknown,data:FormData) {
   return {success:'Test : enregistrement réussi.'};
 }
 export const createEvent=persist;
+export const subscribeToNewsletter=async()=>({status:mode==='success'?'success':'error'});
 export const updateEvent=async(_id:string,prev:unknown,data:FormData)=>persist(prev,data);
 export const updatePractitionerProfile=persist;
 export const removeOccurrence=async()=>({success:'Date supprimée.'});
