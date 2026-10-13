@@ -99,6 +99,7 @@ export interface MailerLiteSyncResult extends ActionState {
   processed?: number;
   synced?: number;
   warnings?: string[];
+  issues?: {email:string;reason:string}[];
 }
 
 function maskEmail(email: string) {
@@ -140,6 +141,8 @@ export async function syncContactsToMailerLite(afterId?: string): Promise<Mailer
     processed:contacts.length,
     synced:ok,
     warnings,
+    // Only returned after assertAdmin; never expose this list in public logs.
+    issues: results.filter(item=>!item.result.ok).map(item=>({email:item.contact.email,reason:item.result.reason??'Refus sans détail'})),
     nextCursor:(data?.length??0)>5?contacts.at(-1)?.id:undefined,
   };
 }

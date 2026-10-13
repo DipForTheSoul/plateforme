@@ -8,7 +8,8 @@ import { createClient } from "@/lib/supabase/server";
 import { deleteEvent } from "@/app/actions/events";
 import { formatDate, formatTime } from "@/lib/utils";
 import type { Event, Locale } from "@/types/database";
-import { BuyFeaturedButton } from "./BuyFeaturedButton";
+import { FeaturedPurchasePanel } from "@/components/forms/FeaturedPurchasePanel";
+import {getFeaturedSettings} from '@/lib/featured-settings';
 
 export const dynamic = "force-dynamic";
 
@@ -34,11 +35,7 @@ export default async function MyEventsPage({
     .is("parent_event_id", null)
     .order("start_date", { ascending: false }).order('id').range(from,to));
   const events = (data as Event[]) ?? [];
-  const {data:featuredSettings,error:featuredSettingsError}=await supabase.from("settings").select("key,value").in("key",["featured_price_chf","featured_default_days"]);
-  if(featuredSettingsError)throw new Error("L’option de mise en avant est momentanément indisponible.");
-  const settings=Object.fromEntries((featuredSettings??[]).map(row=>[row.key,row.value]));
-  const featuredPrice=Number(settings.featured_price_chf??"20");
-  const featuredDays=Number(settings.featured_default_days??"30");
+  const {price:featuredPrice,days:featuredDays}=await getFeaturedSettings();
 
   return (
     <div className="flex flex-col gap-6">
@@ -98,9 +95,6 @@ export default async function MyEventsPage({
                 </span>
               )}
               <StatusBadge status={event.status} />
-              {event.status === "approved" && !event.is_top && Number.isFinite(featuredPrice) && Number.isInteger(featuredDays) && (
-                <BuyFeaturedButton eventId={event.id} pendingLabel={t("featuredPaymentOpening")} label={t("featuredPurchase",{price:featuredPrice,days:featuredDays})}/>
-              )}
               <Link
                 href={`/espace-praticien/evenements/${event.id}`}
                 className="text-sm text-soul-brown underline"
@@ -114,6 +108,9 @@ export default async function MyEventsPage({
                 </button>
               </form>
             </div>
+            {event.status === "approved" && !event.is_top && Number.isFinite(featuredPrice) && featuredPrice >= 0.5 && Number.isInteger(featuredDays) && featuredDays > 0 && (
+              <FeaturedPurchasePanel eventId={event.id} price={featuredPrice} days={featuredDays} pendingLabel={t("featuredPaymentOpening")}/>
+            )}
           </div>
         ))}
       </div>

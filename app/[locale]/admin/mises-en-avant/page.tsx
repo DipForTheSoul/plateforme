@@ -71,6 +71,8 @@ export default async function AdminFeaturedPage() {
         />
         <SettingNumberForm
           settingKey="featured_price_chf"
+          min={0.5}
+          step={0.01}
           label={t("price")}
           hint={t("priceHint")}
           defaultValue={defaultPrice}

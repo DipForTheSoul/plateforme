@@ -57,7 +57,12 @@ function nodeToMarkdown(node: Node): string {
       .map(child => `- ${childrenMarkdown(child)}`)
       .join('\n') + '\n';
   }
-  if (tag === 'div' || tag === 'p') return childrenMarkdown(node) + '\n';
+  // A lone BR is the browser's placeholder for an empty paragraph, not an
+  // additional line break. Counting both made blank lines grow on each save.
+  if (tag === 'div' || tag === 'p') {
+    const children = childrenMarkdown(node);
+    return children === '\n' ? '\n' : children + '\n';
+  }
   if (tag === 'strong' || tag === 'b') return `**${childrenMarkdown(node)}**`;
   if (tag === 'em' || tag === 'i') return `*${childrenMarkdown(node)}*`;
   if (tag === 'u') return `__${childrenMarkdown(node)}__`;

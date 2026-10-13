@@ -12,6 +12,7 @@ export function SettingNumberForm({
   defaultValue,
   suffix,
   min = 1,
+  step = 1,
   saveLabel,
 }: {
   settingKey: string;
@@ -20,6 +21,7 @@ export function SettingNumberForm({
   defaultValue: string;
   suffix?: string;
   min?: number;
+  step?: number;
   saveLabel?: string;
 }) {
   const [state, action, pending] = useActionState<ActionState, FormData>(
@@ -37,6 +39,7 @@ export function SettingNumberForm({
             name={settingKey}
             type="number"
             min={min}
+            step={step}
             defaultValue={defaultValue}
             className="field min-w-0 flex-1 sm:!w-28 sm:!flex-none"
           />

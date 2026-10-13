@@ -649,7 +649,7 @@
     },
     "featured": {
       "title": "Mises en avant",
-      "description": "La sélection reste manuelle. Une mise en avant s'arrête d'elle-même au terme du délai fixé (expiration appliquée automatiquement).",
+      "description": "Les achats des praticiens sont activés automatiquement après confirmation du paiement. Vous pouvez aussi mettre une offre en avant ici. Chaque mise en avant expire automatiquement au terme de sa durée.",
       "defaultDuration": "Durée par défaut d'une mise en avant",
       "defaultDurationHint": "Appliquée quand vous mettez une expérience en avant ou que vous la prolongez.",
       "price": "Prix d’une mise en avant",

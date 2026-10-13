@@ -649,7 +649,7 @@
     },
     "featured": {
       "title": "Hervorgehobene Erlebnisse",
-      "description": "Die Auswahl erfolgt manuell. Eine Hervorhebung endet automatisch nach Ablauf der festgelegten Frist.",
+      "description": "Käufe von Praktizierenden werden nach bestätigter Zahlung automatisch aktiviert. Sie können Angebote auch hier hervorheben. Jede Hervorhebung endet automatisch nach der festgelegten Dauer.",
       "defaultDuration": "Standarddauer einer Hervorhebung",
       "defaultDurationHint": "Wird angewendet, wenn Sie ein Erlebnis hervorheben oder verlängern.",
       "price": "Preis einer Hervorhebung",
