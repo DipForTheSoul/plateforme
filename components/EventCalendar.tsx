@@ -1,9 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { usePathname } from "@/i18n/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Props {

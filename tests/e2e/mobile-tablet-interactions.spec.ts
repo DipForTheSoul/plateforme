@@ -154,8 +154,10 @@ test("le parcours essentiel fonctionne même sans JavaScript", async ({ browser,
 
   await page.getByRole("link", { name: /mois suivant|next month|nächster monat/i }).click();
   await expect(page).toHaveURL(/calendrier=/);
+  await expect(page).toHaveURL(/\/de\/experiences/);
   await page.locator('a[href*="du="]').filter({ hasText: /^15$/ }).first().click();
   await expect(page).toHaveURL(/du=/);
+  await expect(page).toHaveURL(/\/de\/experiences/);
   await context.close();
 });
 
