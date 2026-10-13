@@ -43,7 +43,11 @@ it('laisse choisir les deux dates avant de soumettre le filtre',()=>{
   expect(screen.getByLabelText('Au')).toHaveValue('2026-10-18');
   const form=screen.getByRole('button',{name:'Filtrer'}).closest('form')!;
   expect(Object.fromEntries(new FormData(form))).toEqual({du:'2026-10-17',au:'2026-10-18'});
+  const submit=new Event('submit',{bubbles:true,cancelable:true});
+  fireEvent(form,submit);
+  expect(submit.defaultPrevented).toBe(true);
+  expect(Object.fromEntries(new URL(replace.mock.calls.at(-1)![0],'http://localhost').searchParams)).toEqual({du:'2026-10-17',au:'2026-10-18'});
   fireEvent.change(screen.getByRole('combobox',{name:'Langue'}),{target:{value:'fr'}});
   const url=new URL(replace.mock.calls.at(-1)![0],'http://localhost');
-  expect(Object.fromEntries(url.searchParams)).toEqual({langue:'fr'});
+  expect(Object.fromEntries(url.searchParams)).toEqual({du:'2026-10-17',au:'2026-10-18',langue:'fr'});
 });
