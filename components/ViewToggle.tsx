@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
+import {useExplorerNavigation, useExplorerSearchParams} from './ExplorerNavigation';
 import { useTranslations } from "next-intl";
 import { List, Map as MapIcon } from "lucide-react";
 
@@ -9,7 +10,8 @@ import { List, Map as MapIcon } from "lucide-react";
 export function ViewToggle() {
   const t = useTranslations("events");
   const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const searchParams = useExplorerSearchParams();
+  const setParams = useExplorerNavigation();
   const isMap = searchParams.get("vue") === "carte";
 
   function href(value?: string) {
@@ -25,11 +27,11 @@ export function ViewToggle() {
 
   return (
     <div className="inline-flex rounded-full border border-soul-bronze/25 bg-white p-1 text-sm">
-      <Link href={href()} scroll={false} aria-current={!isMap ? "page" : undefined}
+      <Link href={href()} scroll={false} onNavigate={event => {event.preventDefault(); setParams({vue: undefined});}} aria-current={!isMap ? "page" : undefined}
         className={`${base} touch-manipulation ${isMap ? idle : active}`}>
         <List className="h-4 w-4" /> {t("viewList")}
       </Link>
-      <Link href={href("carte")} scroll={false} aria-current={isMap ? "page" : undefined}
+      <Link href={href("carte")} scroll={false} onNavigate={event => {event.preventDefault(); setParams({vue: 'carte'});}} aria-current={isMap ? "page" : undefined}
         className={`${base} touch-manipulation ${isMap ? active : idle}`}>
         <MapIcon className="h-4 w-4" /> {t("viewMap")}
       </Link>

@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import type * as LeafletNS from "leaflet";
 import {escapeHtml} from '@/lib/html';
+import {StaticEventsMap} from './StaticEventsMap';
+import {useTranslations} from 'next-intl';
 
 export interface MapItem {
   id: string;
@@ -45,17 +47,24 @@ export function EventsMapExplorer({
   const markersRef = useRef<Record<string, LeafletNS.Marker>>({});
   const cardRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
   const [selected, setSelected] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const t = useTranslations('events');
 
   // Initialisation de la carte + marqueurs (une fois par jeu d'items).
   useEffect(() => {
     let cancelled = false;
+    let resize: ResizeObserver | undefined;
     (async () => {
       if (!containerRef.current || mapRef.current) return;
       const L = (await import("leaflet")).default;
       if (cancelled || !containerRef.current || mapRef.current) return;
+      setReady(false);
+      setFailed(false);
       LRef.current = L;
 
       const map = L.map(containerRef.current, {
+        zoomControl: false,
         scrollWheelZoom: false,
         zoomAnimation: false,
         fadeAnimation: false,
@@ -64,10 +73,11 @@ export function EventsMapExplorer({
         [46.8, 8.23],
         7
       );
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap",
+      L.control.zoom({position:'bottomleft'}).addTo(map);
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
         maxZoom: 18,
-      }).addTo(map);
+      }).on('tileload', () => {if(!cancelled) setReady(true);}).on('tileerror', () => {if(!cancelled) setFailed(true);}).addTo(map);
       mapRef.current = map;
 
       const points: [number, number][] = [];
@@ -87,7 +97,8 @@ export function EventsMapExplorer({
           : "";
         const recurrence = it.recurrenceLabel ? `<div style="background:#604ca0;color:white;border-radius:999px;padding:3px 8px;display:inline-block;margin-top:6px">${escapeHtml(it.recurrenceLabel)}</div>` : '';
         marker.bindPopup(
-          `<a href="${escapeHtml(hrefPrefix)}/experiences/${encodeURIComponent(it.slug)}" style="font-family:serif;font-weight:600;color:#443420;font-size:14px;text-decoration:none;">${escapeHtml(it.title)}</a>${venue}<div style="color:#9e7c52;font-size:12px;margin-top:2px;">${escapeHtml(it.dateLabel)} · ${escapeHtml(it.priceLabel)}</div>${recurrence}`
+          `<a href="${escapeHtml(hrefPrefix)}/experiences/${encodeURIComponent(it.slug)}" style="font-family:serif;font-weight:600;color:#443420;font-size:14px;text-decoration:none;overflow-wrap:anywhere;">${escapeHtml(it.title)}</a>${venue}<div style="color:#9e7c52;font-size:12px;margin-top:2px;overflow-wrap:anywhere;">${escapeHtml(it.dateLabel)} · ${escapeHtml(it.priceLabel)}</div>${recurrence}`,
+          {maxWidth:Math.max(100,Math.min(300,map.getSize().x-80)), autoPanPadding:[16,16], keepInView:true}
         );
         marker.on("click", () => {
           setSelected(it.id);
@@ -101,9 +112,24 @@ export function EventsMapExplorer({
       if (points.length > 0) {
         map.fitBounds(points, { padding: [40, 40], maxZoom: 12 });
       }
-    })();
+      resize = new ResizeObserver(() => {
+        if (!cancelled) {
+          map.invalidateSize();
+          if(points.length) map.fitBounds(points, {padding:[40,40], maxZoom:12});
+          for(const marker of Object.values(markersRef.current)) {
+            const popup = marker.getPopup();
+            if(popup) {
+              popup.options.maxWidth = Math.max(100,Math.min(300,map.getSize().x-80));
+              if(popup.isOpen()) popup.update();
+            }
+          }
+        }
+      });
+      resize.observe(containerRef.current);
+    })().catch(() => {if(!cancelled) setFailed(true);});
     return () => {
       cancelled = true;
+      resize?.disconnect();
       const map = mapRef.current;
       mapRef.current = null;
       markersRef.current = {};
@@ -145,8 +171,8 @@ export function EventsMapExplorer({
   }, [selected]);
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(0,380px)_1fr]">
-      <div className="order-2 flex max-h-[72vh] flex-col gap-3 overflow-y-auto lg:order-1 lg:pr-1">
+    <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,280px)_minmax(0,1fr)]">
+      <div className="order-2 flex max-h-[72vh] flex-col gap-3 overflow-y-auto xl:order-1 xl:pr-1">
         {items.map((it) => (
           <a
             key={it.id}
@@ -187,11 +213,17 @@ export function EventsMapExplorer({
         ))}
       </div>
 
-      <div className="order-1 lg:order-2">
+      <div className="order-1 min-w-0 xl:order-2">
+        {failed && <p role="status" className="mb-2 text-sm">{t('mapUnavailable')}</p>}
+        <div className="relative h-[52vh] min-h-64 overflow-hidden rounded-2xl border border-soul-bronze/15 lg:sticky lg:top-24 lg:h-[72vh]">
+        {!ready && <StaticEventsMap items={items} hrefPrefix={hrefPrefix} />}
         <div
           ref={containerRef}
-          className="h-[52vh] w-full overflow-hidden rounded-2xl border border-soul-bronze/15 lg:sticky lg:top-24 lg:h-[72vh]"
+          aria-hidden={!ready}
+          style={{visibility: ready ? 'visible' : 'hidden'}}
+          className="absolute inset-0 h-full w-full"
         />
+        </div>
       </div>
     </div>
   );

@@ -36,7 +36,7 @@ test("les interactions tactiles essentielles restent actives", async ({ page, ba
   await expect(page).toHaveURL(/vue=carte/);
   const map = page.locator(".leaflet-container");
   await expect(map).toBeVisible();
-  await expect.poll(() => map.locator(".leaflet-tile").count()).toBeGreaterThan(0);
+  await expect.poll(() => map.locator("img.leaflet-tile").evaluateAll(images => images.filter(image => (image as HTMLImageElement).naturalWidth > 0).length)).toBeGreaterThan(0);
   const mapBox = await map.boundingBox();
   expect(mapBox).not.toBeNull();
   expect(mapBox!.y).toBeLessThan(page.viewportSize()!.height);
@@ -60,17 +60,17 @@ test("les interactions tactiles essentielles restent actives", async ({ page, ba
   const from = page.locator("#date-from");
   // La soumission doit rester dans le document déjà initialisé, comme les
   // autres filtres, et ne pas relancer le flux HTML/React sur Firefox.
-  await expect(page.locator('button[aria-expanded]').filter({ hasText: /filtres|filter/i })).toBeEnabled();
+  await expect(page.locator('summary').filter({ hasText: /filtres|filter/i })).toBeVisible();
   await page.evaluate(() => { document.documentElement.dataset.dateNavigation = "ready"; });
   await from.fill("2026-11-01");
   await expect(from).toHaveValue("2026-11-01");
-  await from.locator("xpath=ancestor::form").getByRole("button").click();
+  await from.locator("xpath=ancestor::form").getByRole("button", {name:/filtrer|filter/i}).first().click();
   await expect(page).toHaveURL(/du=2026-11-01/);
   await expect(page.locator("html")).toHaveAttribute("data-date-navigation", "ready");
 
   const nextMonth = page.getByRole("link", { name: /mois suivant|next month|nächster monat/i });
   if (!await nextMonth.isVisible()) {
-    const filtersButton=page.locator('button[aria-expanded]').filter({ hasText: /filtres|filter/i });
+    const filtersButton=page.locator('summary').filter({ hasText: /filtres|filter/i });
     await expect(filtersButton).toBeEnabled();
     await filtersButton.click();
   }
@@ -136,6 +136,7 @@ test("le parcours essentiel fonctionne même sans JavaScript", async ({ browser,
   await expect(mapLink).toHaveAttribute("href", /vue=carte/);
   await mapLink.click();
   await expect(page).toHaveURL(/vue=carte/);
+  await expect(page.getByTestId('static-map')).toBeVisible();
 
   if (baseURL?.startsWith("https://")) {
     await page.getByRole("button", { name: "EUR" }).click();
@@ -149,12 +150,14 @@ test("le parcours essentiel fonctionne même sans JavaScript", async ({ browser,
   await expect(page).toHaveURL(/\/de\/experiences/);
 
   await page.locator("#date-from").fill("2026-11-01");
-  await page.locator("#date-from").locator("xpath=ancestor::form").getByRole("button").click();
+  await page.locator("#date-from").locator("xpath=ancestor::form").getByRole("button", {name:/filtrer|filter/i}).first().click();
   await expect(page).toHaveURL(/du=2026-11-01/);
 
+  await page.locator('summary').filter({hasText:/filtres|filter/i}).click();
   await page.getByRole("link", { name: /mois suivant|next month|nächster monat/i }).click();
   await expect(page).toHaveURL(/calendrier=/);
   await expect(page).toHaveURL(/\/de\/experiences/);
+  await page.locator('summary').filter({hasText:/filtres|filter/i}).click();
   await page.locator('a[href*="du="]').filter({ hasText: /^15$/ }).first().click();
   await expect(page).toHaveURL(/du=/);
   await expect(page).toHaveURL(/\/de\/experiences/);

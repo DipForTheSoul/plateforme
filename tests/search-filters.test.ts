@@ -1,5 +1,9 @@
 import { it, expect } from 'vitest';
 import { parseSearchFilters } from '@/lib/search-filters';
+it('ignore un ancien canton suisse après un changement de pays sans JavaScript',()=>{
+  expect(parseSearchFilters({pays:'DE',canton:'VD'}).canton).toBeUndefined();
+  expect(parseSearchFilters({pays:'CH',canton:'VD'}).canton).toBe('VD');
+});
 it('ignore les dates/coordonnées invalides sans planter le catalogue',()=>{
   expect(()=>parseSearchFilters({du:'pas-une-date',au:'2026-02-30',lat:'Infinity',lng:'999',rayon:'-1'})).not.toThrow();
   expect(parseSearchFilters({du:'bad',lat:'Infinity'}).dateFrom).toBeUndefined();
