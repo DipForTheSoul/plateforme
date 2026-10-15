@@ -124,6 +124,7 @@ export default async function ExperiencesPage({
             </p>
           ) : sp.vue === "carte" ? (
             <EventsMapExplorer
+              key={events.map(event => event.id).join(',')}
               hrefPrefix={currentLocale === "fr" ? "" : `/${currentLocale}`}
               items={events.reduce<MapItem[]>((acc, e) => {
                 if (e.venue?.lat != null && e.venue?.lng != null) {

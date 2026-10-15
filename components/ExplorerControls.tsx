@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useExplorerNavigation } from "@/components/ExplorerNavigation";
+import { useExplorerNavigation, useExplorerSearchParams } from "@/components/ExplorerNavigation";
 import { EventCalendar } from "@/components/EventCalendar";
 import { LANGUAGE_LABELS } from "@/lib/utils";
 import type { Category } from "@/types/database";
@@ -25,42 +25,39 @@ interface Props {
 export function ExplorerControls({ categories, practitioners, countries, cantons, eventDays }: Props) {
   const t = useTranslations("events");
   const tCat = useTranslations("categories");
-  const searchParams = useSearchParams();
+  const searchParams = useExplorerSearchParams();
+  const pathname = usePathname();
   const setParams = useExplorerNavigation();
   // Price filtering always uses and displays its source currency: CHF.
   const priceLabel = (chf: number) => `≤ CHF ${chf}.–`;
 
-  const [q, setQ] = useState(searchParams.get("q") ?? "");
+  const urlQ = searchParams.get("q") ?? "";
+  const [draft, setDraft] = useState({source: urlQ, value: urlQ});
+  const q = draft.source === urlQ ? draft.value : urlQ;
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [locating, setLocating] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
-  // Après une navigation serveur, le HTML peut apparaître avant que React ait
-  // rattaché les événements. Empêche qu'un toucher très rapide soit perdu.
-  const hydrated=useSyncExternalStore(()=>()=>{},()=>true,()=>false);
-
-  // Recherche instantanée (debounce).
-  useEffect(() => {
-    if (debounce.current) clearTimeout(debounce.current);
-    debounce.current = setTimeout(() => {
-      if ((searchParams.get("q") ?? "") !== q) setParams({ q: q || undefined });
-    }, 300);
-    return () => {
-      if (debounce.current) clearTimeout(debounce.current);
-    };
-  }, [q, setParams, searchParams]);
+  // Seule une saisie déclenche une recherche : une navigation / un retour
+  // historique ne doit jamais être réécrit par un ancien brouillon.
+  useEffect(() => () => { if (debounce.current) clearTimeout(debounce.current); }, [urlQ]);
 
   const radiusActive = Boolean(searchParams.get("rayon"));
-  const [showFilters, setShowFilters] = useState(false);
 
   const filterKeys = ["categorie", "langue", "praticien", "pays", "canton", "prix", "duree", "rayon"];
-  const isSwitzerland = searchParams.get("pays") === "CH";
   const activeCount = filterKeys.filter((k) => searchParams.get(k)).length;
   const hasAnyFilter =
     activeCount > 0 || q || searchParams.get("du") || searchParams.get("au");
 
   function resetAll() {
-    setQ("");
+    if (debounce.current) clearTimeout(debounce.current);
+    setDraft({source: "", value: ""});
     setParams({}, true);
+  }
+
+  function withoutFilters(keys: string[]) {
+    const params = new URLSearchParams(searchParams);
+    for (const key of keys) params.delete(key);
+    return `${pathname}${params.size ? `?${params}` : ''}`;
   }
 
   // §8 — puces des filtres actifs (visibles + retirables) pour voir d'un coup d'œil
@@ -163,14 +160,28 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <form method="get" action={pathname} className="flex flex-col gap-4" onSubmit={(event) => {
+      event.preventDefault();
+      if (debounce.current) clearTimeout(debounce.current);
+      const values = new FormData(event.currentTarget);
+      const updates = Object.fromEntries(Array.from(values, ([key, value]) => [key, String(value) || undefined]));
+      setParams(updates, true);
+    }}>
+      {["vue", "lat", "lng", "rayon"].filter(key => searchParams.has(key)).map(key =>
+        <input key={key} type="hidden" name={key} value={searchParams.get(key)!} />)}
       {/* Recherche — toujours visible */}
       <div className="relative">
         <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-soul-bronze" />
         <input
           type="search"
+          name="q"
           value={q}
-          onChange={(e) => setQ(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            setDraft({source: urlQ, value});
+            if (debounce.current) clearTimeout(debounce.current);
+            debounce.current = setTimeout(() => setParams({q: value || undefined}), 300);
+          }}
           placeholder={t("searchPlaceholder")}
           className="field !rounded-full !py-3 !pl-11"
         />
@@ -179,23 +190,7 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
       {/* Dates — primordial, toujours visible (de / à).
           min-w-0 sur la cellule ET l'input : sans ça, les <input type="date">
           iOS gardent leur largeur native intrinsèque et débordent de la grille. */}
-      <form method="get" className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2"
-        onSubmit={(event) => {
-          event.preventDefault();
-          const dates = new FormData(event.currentTarget);
-          // Même navigation que les autres filtres : garde le document React
-          // chargé et les changements de filtres encore en cours. Le GET
-          // natif reste disponible si JavaScript n'est pas chargé.
-          setParams({
-            du: String(dates.get("du") ?? "") || undefined,
-            au: String(dates.get("au") ?? "") || undefined,
-          });
-        }}>
-        {Array.from(searchParams.entries())
-          .filter(([key]) => key !== "du" && key !== "au")
-          .map(([key, value]) => (
-            <input key={`${key}-${value}`} type="hidden" name={key} value={value} />
-          ))}
+      <div className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2">
         <div className="min-w-0">
           <label htmlFor="date-from" className="label">{t("filters.from")}</label>
           <input key={`from-${searchParams.get("du") ?? ""}`} id="date-from" name="du" type="date"
@@ -212,21 +207,15 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
         <button type="submit" className="btn-secondary min-[480px]:col-span-2 !py-2">
           {t("filters.apply")}
         </button>
-      </form>
+      </div>
 
       {/* Bouton Filtres — sur mobile uniquement (desktop : filtres toujours ouverts) + réinitialiser */}
       <div className="flex items-center justify-between gap-3">
-        <button type="button" disabled={!hydrated} onClick={() => setShowFilters((v) => !v)}
-          aria-expanded={showFilters}
-          className={`md:hidden disabled:cursor-wait disabled:opacity-60 ${showFilters ? "btn-primary !py-2" : "btn-secondary !py-2"}`}>
-          <SlidersHorizontal className="h-4 w-4" />
-          {t("filters.title")}{activeCount > 0 ? ` (${activeCount})` : ""}
-        </button>
         {hasAnyFilter && (
-          <button type="button" onClick={resetAll}
-            className="text-sm text-soul-violet underline">
+          <a href={pathname} onClick={(event) => {event.preventDefault(); resetAll();}}
+            className="inline-flex min-h-11 items-center text-sm text-soul-violet underline">
             {t("filters.reset")}
-          </button>
+          </a>
         )}
       </div>
 
@@ -234,25 +223,27 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
       {activeChips.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {activeChips.map((chip) => (
-            <button
+            <a
               key={chip.key}
-              type="button"
-              onClick={() => setParams(chip.remove)}
-              className="inline-flex items-center gap-1 rounded-full bg-soul-violet/10 px-3 py-1 text-xs font-medium text-soul-violet transition hover:bg-soul-violet/20"
+              href={withoutFilters(Object.keys(chip.remove))}
+              onClick={(event) => {event.preventDefault(); setParams(chip.remove);}}
+              className="inline-flex min-h-11 items-center gap-1 rounded-full bg-soul-violet/10 px-3 py-1 text-xs font-medium text-soul-violet transition hover:bg-soul-violet/20"
             >
               {chip.label}
               <X className="h-3 w-3" />
-            </button>
+            </a>
           ))}
         </div>
       )}
 
       {/* Filtres : repliés par défaut sur mobile, toujours visibles sur desktop (§8) */}
-      <div className={`${showFilters ? "flex" : "hidden"} flex-col gap-4 rounded-2xl border border-soul-bronze/15 bg-white p-4 md:flex`}>
+      <details className="rounded-2xl border border-soul-bronze/15 bg-white p-4">
+        <summary className="min-h-11 cursor-pointer text-soul-violet"><SlidersHorizontal className="mr-2 inline h-4 w-4" />{t("filters.title")}{activeCount > 0 ? ` (${activeCount})` : ""}</summary>
+        <div className="flex flex-col gap-4">
           {/* Filtres empilés (1 colonne) : la colonne latérale est étroite,
               en 2 colonnes le texte des menus était tronqué. */}
           <div className="grid gap-3">
-            <select value={searchParams.get("categorie") ?? ""}
+            <select name="categorie" value={searchParams.get("categorie") ?? ""}
               onChange={(e) => setParams({ categorie: e.target.value || undefined })}
               className="field" aria-label={t("filters.category")}>
               <option value="">{t("filters.allCategories")}</option>
@@ -261,7 +252,7 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
               ))}
             </select>
 
-            <select value={searchParams.get("langue") ?? ""}
+            <select name="langue" value={searchParams.get("langue") ?? ""}
               onChange={(e) => setParams({ langue: e.target.value || undefined })}
               className="field" aria-label={t("filters.language")}>
               <option value="">{t("filters.allLanguages")}</option>
@@ -270,7 +261,7 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
               ))}
             </select>
 
-            <select value={searchParams.get("praticien") ?? ""}
+            <select name="praticien" value={searchParams.get("praticien") ?? ""}
               onChange={(e) => setParams({ praticien: e.target.value || undefined })}
               className="field" aria-label={t("filters.practitioner")}>
               <option value="">{t("filters.allPractitioners")}</option>
@@ -279,7 +270,7 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
               ))}
             </select>
 
-            <select value={searchParams.get("pays") ?? ""}
+            <select name="pays" value={searchParams.get("pays") ?? ""}
               onChange={(e) => setParams({ pays: e.target.value || undefined, canton: undefined })}
               className="field" aria-label={t("filters.country")}>
               <option value="">{t("filters.allCountries")}</option>
@@ -289,8 +280,8 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
             </select>
 
             {/* Canton uniquement si la Suisse est sélectionnée (§2.1). */}
-            {isSwitzerland && cantons.length > 0 && (
-              <select value={searchParams.get("canton") ?? ""}
+            {searchParams.get('pays') === 'CH' && cantons.length > 0 && (
+              <select name="canton" value={searchParams.get("canton") ?? ""}
                 onChange={(e) => setParams({ canton: e.target.value || undefined })}
                 className="field" aria-label={t("filters.canton")}>
                 <option value="">{t("filters.allCantons")}</option>
@@ -300,7 +291,7 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
               </select>
             )}
 
-            <select value={searchParams.get("prix") ?? ""}
+            <select name="prix" value={searchParams.get("prix") ?? ""}
               onChange={(e) => setParams({ prix: e.target.value || undefined })}
               className="field min-w-0 w-full" aria-label={t("filters.priceMax", { currency: "CHF" })}>
               <option value="">{t("filters.priceMax", { currency: "CHF" })} : —</option>
@@ -309,7 +300,7 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
               ))}
             </select>
 
-            <select value={searchParams.get("duree") ?? ""}
+            <select name="duree" value={searchParams.get("duree") ?? ""}
               onChange={(e) => setParams({ duree: e.target.value || undefined })}
               className="field" aria-label={t("filters.durationMax")}>
               <option value="">{t("filters.anyDuration")}</option>
@@ -318,6 +309,7 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
               <option value="480">{t("filters.dur480")}</option>
             </select>
           </div>
+          <button type="submit" className="btn-secondary">{t("filters.apply")}</button>
 
           <div className="flex flex-wrap items-center gap-3">
             <button type="button" onClick={toggleRadius} disabled={locating}
@@ -355,6 +347,7 @@ export function ExplorerControls({ categories, practitioners, countries, cantons
             onSelect={(from, to) => setParams({ du: from, au: to })}
           />
         </div>
-    </div>
+      </details>
+    </form>
   );
 }

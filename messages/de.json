@@ -237,7 +237,8 @@
     "empty": "Kein Erlebnis entspricht diesen Kriterien — erweitere die Suche oder schau bald wieder vorbei.",
     "top": "Hervorgehoben",
     "viewList": "Liste",
-    "viewMap": "Karte"
+    "viewMap": "Karte",
+    "mapUnavailable": "Die Karte konnte nicht vollständig geladen werden. Die Erlebnisse bleiben in der Liste erreichbar."
   },
   "event": {
     "date": "Datum",

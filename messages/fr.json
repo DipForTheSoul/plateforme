@@ -237,7 +237,8 @@
     "empty": "Aucune expérience ne correspond à ces critères — élargissez la recherche ou revenez bientôt : la programmation vit chaque semaine.",
     "top": "Mise en avant",
     "viewList": "Liste",
-    "viewMap": "Carte"
+    "viewMap": "Carte",
+    "mapUnavailable": "Le chargement de la carte est incomplet. Les expériences restent accessibles dans la liste."
   },
   "event": {
     "date": "Date",

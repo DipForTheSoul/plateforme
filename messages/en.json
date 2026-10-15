@@ -237,7 +237,8 @@
     "empty": "No experience matches these criteria — widen your search or come back soon: the programme evolves every week.",
     "top": "Highlighted",
     "viewList": "List",
-    "viewMap": "Map"
+    "viewMap": "Map",
+    "mapUnavailable": "The map could not fully load. Experiences remain available in the list."
   },
   "event": {
     "date": "Date",

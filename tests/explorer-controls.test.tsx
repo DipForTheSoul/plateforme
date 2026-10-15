@@ -26,7 +26,7 @@ it.each([['fr',fr,'Prix max'],['de',de,'Max. Preis'],['en',en,'Max price']] as c
 });
 it('cumule les changements rapides de filtres avant la réponse de navigation',()=>{
   render(<NextIntlClientProvider locale="fr" messages={fr}><ExplorerNavigation><ExplorerControls categories={[]} practitioners={[]} countries={[{code:'CH',name:'Suisse'}]} cantons={['VD']} eventDays={[]}/></ExplorerNavigation></NextIntlClientProvider>);
-  fireEvent.click(screen.getByRole('button',{name:'Filtres'}));
+  fireEvent.click(screen.getByText('Filtres'));
   fireEvent.change(screen.getByRole('combobox',{name:'Langue'}),{target:{value:'fr'}});
   fireEvent.change(screen.getByRole('combobox',{name:'Pays'}),{target:{value:'CH'}});
   fireEvent.change(screen.getByRole('combobox',{name:'Prix max (CHF)'}),{target:{value:'50'}});
@@ -41,8 +41,8 @@ it('laisse choisir les deux dates avant de soumettre le filtre',()=>{
   fireEvent.change(screen.getByLabelText('Au'),{target:{value:'2026-10-18'}});
   expect(screen.getByLabelText('Du')).toHaveValue('2026-10-17');
   expect(screen.getByLabelText('Au')).toHaveValue('2026-10-18');
-  const form=screen.getByRole('button',{name:'Filtrer'}).closest('form')!;
-  expect(Object.fromEntries(new FormData(form))).toEqual({du:'2026-10-17',au:'2026-10-18'});
+  const form=screen.getAllByRole('button',{name:'Filtrer'})[0].closest('form')!;
+  expect(Object.fromEntries(new FormData(form))).toMatchObject({du:'2026-10-17',au:'2026-10-18',q:'',categorie:'',langue:'',pays:''});
   const submit=new Event('submit',{bubbles:true,cancelable:true});
   fireEvent(form,submit);
   expect(submit.defaultPrevented).toBe(true);

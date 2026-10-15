@@ -8,7 +8,7 @@ export function parseSearchFilters(sp: Record<string,string | string[] | undefin
   const from=day(text('du'));
   const until=day(text('au') || text('du'),true);
   return {q:text('q')?.slice(0,200),category:text('categorie'),language:text('langue'),practitioner:text('praticien'),
-    country:text('pays'),canton:text('canton'),priceMax:number('prix',0,99999999),durationMax:number('duree',1,525600),
+    country:text('pays'),canton:!text('pays') || text('pays')==='CH' ? text('canton') : undefined,priceMax:number('prix',0,99999999),durationMax:number('duree',1,525600),
     dateFrom:from,dateTo:until && (!from || until>=from)?until:undefined,
     lat:number('lat',-90,90),lng:number('lng',-180,180),radiusKm:number('rayon',1,1000)};
 }
