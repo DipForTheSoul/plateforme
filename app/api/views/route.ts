@@ -1,9 +1,16 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
+import { isAutomatedAgent } from "@/lib/traffic-policy";
 
 /** Ping analytics sans cookies — insert best-effort dans page_views. */
 export async function POST(request: NextRequest) {
+  // Before the distributed limiter: rejected analytics must cost zero DB calls.
+  if (isAutomatedAgent(request.headers.get("user-agent")) ||
+      request.headers.get("purpose") === "prefetch" ||
+      request.headers.get("sec-purpose")?.includes("prefetch")) {
+    return new NextResponse(null, { status: 204, headers: { "Cache-Control": "no-store" } });
+  }
   try {
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
     if (await isRateLimited(`views:${ip}`)) {
