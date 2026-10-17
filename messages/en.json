@@ -609,6 +609,8 @@
       "newsletterContacts": "Newsletter contacts",
       "topExperiences": "Most viewed experiences",
       "audience30d": "Audience (30 days)",
+      "loading": "Loading statistics…",
+      "unavailable": "Statistics are temporarily unavailable. Other sections remain accessible. Reload the page to retry.",
       "pageViews": "{count} page views — internal tracking, no cookies",
       "noData": "No data yet.",
       "analyticsNote": "This is an internal overview without cookies. Detailed Google Analytics statistics are only available if that service has been configured separately."

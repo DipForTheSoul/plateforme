@@ -2,6 +2,7 @@ import { LogoLink } from "@/components/LogoLink";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { NewsletterForm } from "@/components/NewsletterForm";
+import { AudiencePreferences } from '@/components/AudiencePreferences';
 
 export async function Footer() {
   const t = await getTranslations("common");
@@ -43,6 +44,7 @@ export async function Footer() {
           </Link>
           <Link href="/cgv" className="hover:text-soul-violet">{t("footer.salesTerms")}</Link>
           <Link href="/mentions-legales" className="hover:text-soul-violet">{t("footer.legalNotices")}</Link>
+          <AudiencePreferences />
         </nav>
 
         <div>

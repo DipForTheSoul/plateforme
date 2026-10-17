@@ -609,6 +609,8 @@
       "newsletterContacts": "Newsletter-Kontakte",
       "topExperiences": "Meistbesuchte Erlebnisse",
       "audience30d": "Publikum (30 Tage)",
+      "loading": "Statistiken werden geladen…",
+      "unavailable": "Statistiken sind vorübergehend nicht verfügbar. Andere Bereiche bleiben zugänglich. Laden Sie die Seite erneut.",
       "pageViews": "{count} Seitenaufrufe — interne Messung ohne Cookies",
       "noData": "Noch keine Daten.",
       "analyticsNote": "Dies ist eine interne Übersicht ohne Cookies. Detaillierte Google-Analytics-Statistiken sind nur verfügbar, wenn dieser Dienst separat eingerichtet wurde."

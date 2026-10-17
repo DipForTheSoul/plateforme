@@ -1,6 +1,6 @@
 {
  "title": "Politique de confidentialité",
- "updated": "20 août 2026",
+ "updated": "17 octobre 2026",
  "blocks": [
   {
    "t": "h2",
@@ -412,7 +412,11 @@
   },
   {
    "t": "p",
-   "x": "Les technologies strictement nécessaires peuvent être utilisées sans consentement. Google Analytics, s’il est configuré, n’est chargé qu’après acceptation dans le bandeau prévu à cet effet ; le refus n’empêche pas l’utilisation de la plateforme. Le choix est mémorisé localement et peut être réinitialisé en effaçant les données du site dans le navigateur."
+   "x": "Les technologies strictement nécessaires peuvent être utilisées sans consentement. La mesure d’audience interne et Google Analytics, s’il est configuré, ne sont activés qu’après acceptation dans le bandeau ; le refus n’empêche pas l’utilisation de la plateforme. Le choix est mémorisé pendant un an et peut être modifié dans « Préférences cookies », en bas de page."
+  },
+  {
+   "t": "p",
+   "x": "La mesure interne utilise un identifiant aléatoire de navigateur, renouvelé après 30 jours dans le stockage local. Le serveur conserve cet identifiant et le jour du passage, sans le rattacher au nom, à l’adresse e-mail ou au compte d’un utilisateur. Le tableau de bord déduplique les navigateurs sur les 30 derniers jours ; il ne représente pas un nombre certain de personnes. Les comptes connectés, les prévisualisations et les robots identifiés sont exclus. Le retrait du consentement arrête les nouveaux relevés et efface l’identifiant local ; il ne supprime pas rétroactivement les relevés déjà enregistrés."
   },
   {
    "t": "h2",

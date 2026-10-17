@@ -1,12 +1,13 @@
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
-import { readPages } from '@/lib/read-pages';
+import { Suspense } from 'react';
+import { AdminAudience } from './Audience';
 
 export const dynamic = "force-dynamic";
 
-/** Tableau de bord admin : compteurs clés + analytics interne sans cookies. */
-export default async function AdminDashboard() {
+/** Tableau de bord : compteurs métier et mesure d'audience indépendante. */
+export async function AdminCards() {
   const supabase = await createClient();
   const t = await getTranslations("admin");
 
@@ -21,8 +22,6 @@ export default async function AdminDashboard() {
     activePractitioners,
     creditsConsumed,
     contacts,
-    topPages,
-    topExperiences,
   ] = await Promise.all([
     supabase.from("events").select("id", { count: "exact", head: true }).eq("status", "pending").is("parent_event_id", null),
     supabase.from("practitioners").select("id", { count: "exact", head: true }).eq("status", "pending"),
@@ -31,23 +30,11 @@ export default async function AdminDashboard() {
     supabase.from("practitioners").select("id", { count: "exact", head: true }).eq("status", "approved"),
     supabase.from("credit_transactions").select("id", { count: "exact", head: true }).eq("type", "consumption").gte("created_at", since.toISOString()),
     supabase.from("contacts").select("id", { count: "exact", head: true }),
-    readPages<{path:string}>((from,to)=>supabase.from("page_views").select("path").gte("created_at", since.toISOString()).order('id').range(from,to)),
-    supabase.from("events").select("title, slug, view_count").eq("status", "approved").order("view_count", { ascending: false }).limit(8),
-  ]);
-  if ([pendingEvents,pendingPractitioners,approvedEvents,rejectedEvents,activePractitioners,creditsConsumed,contacts,topExperiences].some(result=>result.error)) {
-    throw new Error('Les statistiques sont momentanément indisponibles. Réessayez.');
+  ].map(query=>query.abortSignal(AbortSignal.timeout(4000))));
+  if ([pendingEvents,pendingPractitioners,approvedEvents,rejectedEvents,activePractitioners,creditsConsumed,contacts].some(result=>result.error)) {
+    return <p role="status">{t('dashboard.unavailable')}</p>;
   }
-  const topExp = (topExperiences.data as { title: string; slug: string; view_count: number }[] ?? []).filter((e) => e.view_count > 0);
 
-  const counts = new Map<string, number>();
-  let publicViews=0;
-  for (const row of topPages) {
-    const path=row.path.split(/[?#]/,1)[0];
-    if(/^\/(?:fr\/|de\/|en\/)?(?:admin|espace-praticien)(?:\/|$)/.test(path))continue;
-    publicViews++;
-    counts.set(path, (counts.get(path) ?? 0) + 1);
-  }
-  const top = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
 
   const cards = [
     { label: t("dashboard.pendingSubmissions"), value: pendingEvents.count ?? 0, href: "/admin/soumissions", accent: true },
@@ -71,51 +58,14 @@ export default async function AdminDashboard() {
         ))}
       </div>
 
-      {topExp.length > 0 && (
-        <div className="card p-6">
-          <h2 className="mb-4 font-serif text-lg text-soul-brown">
-            {t("dashboard.topExperiences")}
-          </h2>
-          <ul className="flex flex-col gap-2">
-            {topExp.map((e) => (
-              <li key={e.slug} className="flex items-center gap-3 text-sm">
-                <span className="w-14 shrink-0 text-right font-medium text-soul-brown">
-                  {e.view_count}
-                </span>
-                <div className="h-2 rounded-full bg-soul-violet/70"
-                  style={{ width: `${Math.max(4, (e.view_count / topExp[0].view_count) * 60)}%` }} />
-                <Link href={`/experiences/${e.slug}`} className="truncate text-soul-bronze hover:text-soul-violet">
-                  {e.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      <div className="card p-6">
-        <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="font-serif text-lg text-soul-brown">{t("dashboard.audience30d")}</h2>
-          <p className="text-sm text-soul-bronze">
-            {t("dashboard.pageViews", { count: publicViews })}
-          </p>
-        </div>
-        {top.length === 0 ? (
-          <p className="text-sm text-soul-bronze">{t("dashboard.noData")}</p>
-        ) : (
-          <ul className="flex flex-col gap-2">
-            {top.map(([path, count]) => (
-              <li key={path} className="flex items-center gap-3 text-sm">
-                <span className="w-24 shrink-0 text-right font-medium text-soul-brown">{count}</span>
-                <div className="h-2 rounded-full bg-soul-terracotta/70"
-                  style={{ width: `${Math.max(4, (count / top[0][1]) * 60)}%` }} />
-                <span className="truncate text-soul-bronze">{path}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-        <p className="mt-4 text-xs text-soul-bronze">{t("dashboard.analyticsNote")}</p>
-      </div>
     </div>
   );
+}
+
+export default async function AdminDashboard() {
+  const t=await getTranslations('admin');
+  return <div className="flex flex-col gap-8">
+    <Suspense fallback={<p role="status">{t('dashboard.loading')}</p>}><AdminCards /></Suspense>
+    <Suspense fallback={<p role="status">{t('dashboard.audience30d')}…</p>}><AdminAudience /></Suspense>
+  </div>;
 }
