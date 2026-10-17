@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   const form = await request.formData();
   const consent = form.get("consent") === "accepted" ? "accepted" : "refused";
   const response = NextResponse.redirect(returnUrl(request), { status: 303 });
-  response.cookies.set("fts-analytics-consent", consent, {
+  response.cookies.set("fts-audience-consent-v2", consent, {
     path: "/",
     maxAge: 60 * 60 * 24 * 365,
     sameSite: "lax",

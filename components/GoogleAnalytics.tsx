@@ -2,6 +2,7 @@
 
 import Script from "next/script";
 import { useEffect, useState } from "react";
+import { AUDIENCE_CONSENT, AUDIENCE_ID, AUDIENCE_EVENT, AUDIENCE_PREFERENCES } from '@/lib/audience';
 
 /**
  * Google Analytics 4 (§7.2). Le tag ne se charge QUE si l'identifiant est
@@ -27,9 +28,13 @@ export function GoogleAnalytics({
   const [consent, setConsent] = useState<"accepted" | "refused" | null>(initialConsent);
 
   useEffect(() => {
-    if (initialConsent) return;
+    if (initialConsent) {
+      try { window.localStorage.setItem(AUDIENCE_CONSENT,initialConsent); } catch {}
+      window.dispatchEvent(new Event(AUDIENCE_EVENT));
+      return;
+    }
     try {
-      const saved = window.localStorage.getItem("fts-analytics-consent");
+      const saved = window.localStorage.getItem(AUDIENCE_CONSENT);
       if (saved === "accepted" || saved === "refused") {
         const timer = window.setTimeout(() => setConsent(saved), 0);
         return () => window.clearTimeout(timer);
@@ -41,24 +46,34 @@ export function GoogleAnalytics({
     }
   }, [initialConsent]);
 
-  if (!id) return null;
+  useEffect(()=>{
+    const open=()=>setConsent(null);
+    window.addEventListener(AUDIENCE_PREFERENCES,open);
+    return()=>window.removeEventListener(AUDIENCE_PREFERENCES,open);
+  },[]);
+
   if (consent !== "accepted") {
     if (consent === "refused") return null;
     const choose = (value: "accepted" | "refused") => {
+      const withdraw=value==='refused' && document.cookie.includes(`${AUDIENCE_CONSENT}=accepted`);
       try {
-        window.localStorage.setItem("fts-analytics-consent", value);
+        window.localStorage.setItem(AUDIENCE_CONSENT, value);
+        if(value==='refused')window.localStorage.removeItem(AUDIENCE_ID);
       } catch {
         // Le choix s'applique tout de même pour la visite courante.
       }
       setConsent(value);
+      document.cookie = `${AUDIENCE_CONSENT}=${value}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol==='https:'?'; Secure':''}`;
+      window.dispatchEvent(new Event(AUDIENCE_EVENT));
+      if(withdraw)window.location.reload();
     };
     return (
       <aside
         className="fixed inset-x-0 bottom-0 z-[80] border-t border-soul-bronze/20 bg-white/95 px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-6px_20px_rgba(69,48,31,0.12)] backdrop-blur-sm sm:px-4 sm:py-3"
-        aria-label={t.text}
+        aria-label={t.title}
       >
         <div className="mx-auto grid max-w-7xl gap-2.5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-4">
-          <p className="min-w-0 text-xs leading-snug text-soul-bronze sm:text-sm">{t.text}</p>
+          <p className="min-w-0 text-xs leading-snug text-soul-bronze sm:text-sm">{locale==='de'?'Erlauben Sie die Besuchermessung mit einer zufälligen Browser-Kennung (30 Tage)?':locale==='en'?'Allow audience measurement using a random browser identifier (30 days)?':'Autorisez-vous la mesure d’audience avec un identifiant aléatoire de navigateur (30 jours) ?'} {id?t.text:''}</p>
           <div className="grid w-full grid-cols-2 gap-2 sm:w-auto">
             <form className="min-w-0" action="/api/analytics-consent" method="post" onSubmit={(event) => { event.preventDefault(); choose("refused"); }}>
               <button type="submit" name="consent" value="refused" className="btn-secondary min-h-11 w-full whitespace-nowrap !px-3 !py-2 !text-xs sm:min-w-28">{t.refuse}</button>
@@ -74,6 +89,7 @@ export function GoogleAnalytics({
 
   return (
     <>
+      {id && <>
       <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${id}`}
         strategy="afterInteractive"
@@ -84,6 +100,7 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', '${id}');`}
       </Script>
+      </>}
     </>
   );
 }

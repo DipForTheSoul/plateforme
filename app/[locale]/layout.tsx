@@ -77,7 +77,7 @@ export default async function LocaleLayout({
   ]);
   const savedCurrency = cookieStore.get("fts-currency")?.value;
   const initialCurrency = savedCurrency === "EUR" ? "EUR" : "CHF";
-  const savedConsent = cookieStore.get("fts-analytics-consent")?.value;
+  const savedConsent = cookieStore.get("fts-audience-consent-v2")?.value;
   const initialConsent = savedConsent === "accepted" || savedConsent === "refused"
     ? savedConsent
     : null;

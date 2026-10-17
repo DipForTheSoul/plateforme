@@ -11,10 +11,29 @@ import proxy from "../proxy";
 beforeEach(() => {
   vi.clearAllMocks(); state.rate.mockResolvedValue(false);
   state.insert.mockResolvedValue({ error: null });
-  state.admin.mockReturnValue({ from: () => ({ insert: state.insert }) });
+  state.admin.mockReturnValue({ from: () => ({ upsert: state.insert }) });
   state.session.mockImplementation(async (_req, response) => response);
 });
 describe("crawl cost boundary", () => {
+  it.each(['', 'fts-audience-consent-v2=refused', 'fts-audience-consent-v2=accepted; sb-local-auth-token.0=local-fixture'])("ignores absent/refused consent and authenticated sessions: %s",async(cookie)=>{
+    const res=await POST(new NextRequest('https://example.test/api/views',{method:'POST',headers:{origin:'https://example.test',cookie},body:'{}'}));
+    expect(res.status).toBe(204);expect(state.rate).not.toHaveBeenCalled();
+  });
+  it('ignores preview traffic before any database call',async()=>{
+    vi.stubEnv('VERCEL_ENV','preview');
+    try {
+      const res=await POST(new NextRequest('https://example.test/api/views',{method:'POST',headers:{origin:'https://example.test',cookie:'fts-audience-consent-v2=accepted'},body:'{}'}));
+      expect(res.status).toBe(204);expect(state.rate).not.toHaveBeenCalled();
+    } finally {vi.unstubAllEnvs();}
+  });
+  it('rejects cross-origin writes before database access',async()=>{
+    const res=await POST(new NextRequest('https://example.test/api/views',{method:'POST',headers:{origin:'https://other.test',cookie:'fts-audience-consent-v2=accepted'},body:'{}'}));
+    expect(res.status).toBe(403);expect(state.rate).not.toHaveBeenCalled();
+  });
+  it.each(['/admin','/de/admin','/espace-praticien/evenements','/auth/callback','//other.test'])("never records private path %s",async(path)=>{
+    const res=await POST(new NextRequest('https://example.test/api/views',{method:'POST',headers:{origin:'https://example.test',cookie:'fts-audience-consent-v2=accepted'},body:JSON.stringify({path,browserId:'11111111-1111-4111-8111-111111111111'})}));
+    expect(res.status).toBe(204);expect(state.admin).not.toHaveBeenCalled();
+  });
   it.each(["Lightpanda/1.0", "Mozilla/5.0 (compatible; meta-externalagent/1.1)", "Googlebot/2.1"])("drops bot analytics before any DB call: %s", async (ua) => {
     const res = await POST(new NextRequest("https://example.test/api/views", { method: "POST", headers: { "user-agent": ua }, body: "{}" }));
     expect(res.status).toBe(204); expect(state.rate).not.toHaveBeenCalled(); expect(state.admin).not.toHaveBeenCalled();
@@ -23,8 +42,8 @@ describe("crawl cost boundary", () => {
     expect(isAutomatedAgent(ua)).toBe(false);
     const page = await proxy(new NextRequest("https://example.test/de/experiences?du=2026-10-17&vue=carte", { headers: { "user-agent": ua } }));
     expect(page.status).toBe(200); expect(state.session).toHaveBeenCalledOnce();
-    const res = await POST(new NextRequest("https://example.test/api/views", { method: "POST", headers: { "user-agent": ua }, body: JSON.stringify({ path: "/de/experiences", locale: "de" }) }));
-    expect(res.status).toBe(200); expect(state.insert).toHaveBeenCalledWith({ path: "/de/experiences", locale: "de" });
+    const res = await POST(new NextRequest("https://example.test/api/views", { method: "POST", headers: { "user-agent": ua,origin:'https://example.test',cookie:'fts-audience-consent-v2=accepted' }, body: JSON.stringify({ path: "/de/experiences", browserId:'11111111-1111-4111-8111-111111111111' }) }));
+    expect(res.status).toBe(200); expect(state.insert).toHaveBeenCalledWith({ browser_id:'11111111-1111-4111-8111-111111111111' },{onConflict:'day,browser_id',ignoreDuplicates:true});
   });
   it.each(["", "/fr", "/de", "/en"])("blocks crawl combinations before session/render for %s", async (prefix) => {
     const response = await proxy(new NextRequest(`https://example.test${prefix}/experiences?calendrier=2099-12`, { headers: { "user-agent": "Lightpanda/1.0" } }));
@@ -35,7 +54,7 @@ describe("crawl cost boundary", () => {
   });
   it("retains the existing human rate limit", async () => {
     state.rate.mockResolvedValue(true);
-    const response = await POST(new NextRequest("https://example.test/api/views", { method: "POST", body: "{}" }));
+    const response = await POST(new NextRequest("https://example.test/api/views", { method: "POST", headers:{origin:'https://example.test',cookie:'fts-audience-consent-v2=accepted'}, body: "{}" }));
     expect(response.status).toBe(429); expect(state.admin).not.toHaveBeenCalled();
   });
   it("does not intercept server action POSTs", async () => {
@@ -47,7 +66,7 @@ describe("crawl cost boundary", () => {
     expect(response.status).toBe(204); expect(state.rate).not.toHaveBeenCalled();
   });
   it("keeps a database failure visible and recovers on next human request", async () => {
-    const request = () => new NextRequest("https://example.test/api/views", { method: "POST", body: JSON.stringify({ path: "/experiences", locale: "fr" }) });
+    const request = () => new NextRequest("https://example.test/api/views", { method: "POST", headers:{origin:'https://example.test',cookie:'fts-audience-consent-v2=accepted'}, body: JSON.stringify({ path: "/experiences", browserId:'11111111-1111-4111-8111-111111111111' }) });
     state.insert.mockResolvedValueOnce({ error: { message: "offline" } });
     expect((await POST(request())).status).toBe(503);
     expect((await POST(request())).status).toBe(200);

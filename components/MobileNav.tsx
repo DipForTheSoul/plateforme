@@ -1,3 +1,5 @@
+"use client";
+
 import { Menu } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 
@@ -24,7 +26,11 @@ export function MobileNav({
       </summary>
 
       <div className="absolute inset-x-0 top-16 border-b border-soul-bronze/15 bg-soul-cream shadow-lg">
-        <nav className="flex flex-col gap-1 p-4">
+        <nav className="flex flex-col gap-1 p-4" onClick={(event) => {
+          if ((event.target as HTMLElement).closest('a')) {
+            event.currentTarget.closest('details')?.removeAttribute('open');
+          }
+        }}>
           {links.map((link) => (
             <Link
               key={link.href}
