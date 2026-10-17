@@ -9,7 +9,9 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "*",
         allow: "/",
         // Espaces privés et API hors index.
-        disallow: ["/admin", "/espace-praticien", "/api/", "/de/admin", "/en/admin"],
+        disallow: ["/admin", "/espace-praticien", "/api/", "/de/admin", "/en/admin",
+          // Calendar combinations are navigation controls, not indexable pages.
+          "/*?*du=", "/*?*au=", "/*?*calendrier=", "/*?*vue="],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
