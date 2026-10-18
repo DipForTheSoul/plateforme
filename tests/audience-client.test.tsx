@@ -4,13 +4,22 @@ import {PageViewTracker} from '@/components/PageViewTracker';
 import {GoogleAnalytics} from '@/components/GoogleAnalytics';
 import {AudiencePreferences} from '@/components/AudiencePreferences';
 import {AUDIENCE_CONSENT,AUDIENCE_EVENT,AUDIENCE_ID} from '@/lib/audience';
-vi.mock('next/navigation',()=>({usePathname:()=>'/experiences'}));
+const state=vi.hoisted(()=>({path:'/experiences'}));
+vi.mock('next/navigation',()=>({usePathname:()=>state.path}));
 vi.mock('next-intl',()=>({useLocale:()=> 'fr'}));
 vi.mock('next/script',()=>({default:()=>null}));
 beforeEach(()=>{
+ state.path='/experiences';
  vi.spyOn(document,'visibilityState','get').mockReturnValue('visible');
  vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,status:200}));
  document.cookie=`${AUDIENCE_CONSENT}=; Max-Age=0; Path=/`;
+});
+it('mesure une seconde page même si le navigateur a déjà été compté aujourd’hui',async()=>{
+ localStorage.setItem(AUDIENCE_CONSENT,'accepted');const view=render(<PageViewTracker/>);
+ await waitFor(()=>expect(fetch).toHaveBeenCalledTimes(1));await waitFor(()=>expect(JSON.parse(localStorage.getItem(AUDIENCE_ID)!).paths).toContain('/experiences'));
+ state.path='/lieux';view.rerender(<PageViewTracker/>);
+ await waitFor(()=>expect(fetch).toHaveBeenCalledTimes(2));await waitFor(()=>expect(JSON.parse(localStorage.getItem(AUDIENCE_ID)!).paths).toContain('/lieux'));
+ state.path='/experiences';view.rerender(<PageViewTracker/>);expect(fetch).toHaveBeenCalledTimes(2);
 });
 it('ne compte rien avant accord, puis une seule fois par jour malgré un remontage',async()=>{
  const first=render(<PageViewTracker/>);expect(fetch).not.toHaveBeenCalled();

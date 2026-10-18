@@ -38,6 +38,8 @@ export async function POST(request: NextRequest) {
     const supabase = createAdminClient();
     const {error}=await supabase.from('audience_visitors').upsert({browser_id:browserId},{onConflict:'day,browser_id',ignoreDuplicates:true});
     if(error)return NextResponse.json({ok:false},{status:503});
+    const {error:pageError}=await supabase.from('audience_page_visitors').upsert({browser_id:browserId,path:cleanPath},{onConflict:'day,browser_id,path',ignoreDuplicates:true});
+    if(pageError)return NextResponse.json({ok:false},{status:503});
   } catch {
     return NextResponse.json({ok:false},{status:503});
   }
