@@ -44,6 +44,7 @@ describe("crawl cost boundary", () => {
     expect(page.status).toBe(200); expect(state.session).toHaveBeenCalledOnce();
     const res = await POST(new NextRequest("https://example.test/api/views", { method: "POST", headers: { "user-agent": ua,origin:'https://example.test',cookie:'fts-audience-consent-v2=accepted' }, body: JSON.stringify({ path: "/de/experiences", browserId:'11111111-1111-4111-8111-111111111111' }) }));
     expect(res.status).toBe(200); expect(state.insert).toHaveBeenCalledWith({ browser_id:'11111111-1111-4111-8111-111111111111' },{onConflict:'day,browser_id',ignoreDuplicates:true});
+    expect(state.insert).toHaveBeenCalledWith({browser_id:'11111111-1111-4111-8111-111111111111',path:'/de/experiences'},{onConflict:'day,browser_id,path',ignoreDuplicates:true});
   });
   it.each(["", "/fr", "/de", "/en"])("blocks crawl combinations before session/render for %s", async (prefix) => {
     const response = await proxy(new NextRequest(`https://example.test${prefix}/experiences?calendrier=2099-12`, { headers: { "user-agent": "Lightpanda/1.0" } }));
