@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from 'react';
 import { AdminAudience } from './Audience';
+import { AdminExperienceViews } from './ExperienceViews';
+import { AdminPageViews } from './PageViews';
 
 export const dynamic = "force-dynamic";
 
@@ -67,5 +69,7 @@ export default async function AdminDashboard() {
   return <div className="flex flex-col gap-8">
     <Suspense fallback={<p role="status">{t('dashboard.loading')}</p>}><AdminCards /></Suspense>
     <Suspense fallback={<p role="status">{t('dashboard.audience30d')}…</p>}><AdminAudience /></Suspense>
+    <Suspense fallback={<p role="status">{t('dashboard.topExperiences')}…</p>}><AdminExperienceViews /></Suspense>
+    <Suspense fallback={<p role="status">{t('dashboard.audience30d')}…</p>}><AdminPageViews /></Suspense>
   </div>;
 }
