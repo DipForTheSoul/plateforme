@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { getCurrentPractitioner, getCurrentProfile } from '@/lib/auth';
 import { parseEventForm, occurrenceSchedule } from '@/lib/event-input';
@@ -45,6 +45,7 @@ async function save(eventId: string | null, formData: FormData, admin: boolean):
     try { await sendEmail({ to: practitioner.contact.email, ...submissionReceivedEmail(practitioner.name, parsed.data.title, profile.preferred_lang) }); }
     catch { console.error('[events] Notification de dépôt non envoyée'); }
   }
+  updateTag('public-events');
   revalidatePath('/', 'layout');
   return { success: actionMessage(locale,eventId?'updated':'created'), updatedAt: data.updated_at, occurrences: data.occurrences,
     ...(!eventId || !admin ? { redirectTo: admin ? '/admin/soumissions?cree=1' : '/espace-praticien/evenements?' + (eventId ? 'modifie' : 'depose') + '=1' } : {}) };

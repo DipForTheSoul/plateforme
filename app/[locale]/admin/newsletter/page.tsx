@@ -12,6 +12,7 @@ export const dynamic = "force-dynamic";
 export default async function AdminNewsletterPage() {
   const supabase = await createClient();
   const t = await getTranslations("admin.newsletter");
+  const tCategory = await getTranslations("categories");
 
   const [data, categories, { count: newCount,error:countError }] = await Promise.all([
     readPages((from,to)=>supabase.from("contacts").select("*").order("created_at", { ascending: false }).order('id').range(from,to)),
@@ -59,7 +60,7 @@ export default async function AdminNewsletterPage() {
               {[...allTags].sort().map((tag) => (
                 <a key={tag} href={`/api/admin/newsletter-export?interest=${encodeURIComponent(tag)}`}
                   className="rounded-full border border-soul-bronze/30 bg-white px-3 py-1.5 text-xs text-soul-brown hover:bg-soul-sand/50">
-                  {tag}
+                  {tCategory.has(tag as never) ? tCategory(tag as never) : tag}
                 </a>
               ))}
             </div>

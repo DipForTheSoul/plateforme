@@ -6,7 +6,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { eventInclusiveDays, formatEventSchedule } from "@/lib/event-display";
 import { getLocale, getTranslations } from "next-intl/server";
 import type { EventWithRelations, Locale } from "@/types/database";
-import { EVENT_WITH_RELATIONS } from "@/types/database";
+import { EVENT_WITH_RELATIONS, mapEventRow, type EventRowRaw } from "@/types/database";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +14,7 @@ export default async function SubmissionsPage() {
   const locale = await getLocale() as Locale;
   const supabase = await createClient();
   const t = await getTranslations("admin.submissions");
+  const tCategory = await getTranslations("categories");
 
   const query = supabase
     .from("events")
@@ -24,15 +25,15 @@ export default async function SubmissionsPage() {
     .order("id");
   const data = await readPages((from,to)=>query.range(from,to));
 
-  const events = ((data as unknown as EventWithRelations[]) ?? []);
+  const events = ((data as unknown as EventRowRaw[]) ?? []).map(mapEventRow);
   const pending = events.filter((e) => e.status === "pending");
   const others = events.filter((e) => e.status !== "pending");
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl text-soul-brown">{t("title")}</h1>
-        <Link href="/admin/soumissions/nouveau" className="btn-primary">
+      <div className="flex min-w-0 flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="shrink-0 text-xl text-soul-brown">{t("title")}</h1>
+        <Link href="/admin/soumissions/nouveau" className="btn-primary min-h-11 max-w-full whitespace-nowrap !px-4 !text-sm sm:!px-6 sm:!text-base">
           {t("createEvent")}
         </Link>
       </div>
@@ -46,7 +47,7 @@ export default async function SubmissionsPage() {
         )}
         <div className="flex flex-col gap-4">
           {pending.map((event) => (
-            <SubmissionCard key={event.id} event={event} t={t} locale={locale} showActions />
+            <SubmissionCard key={event.id} event={event} t={t} tCategory={tCategory} locale={locale} showActions />
           ))}
         </div>
       </section>
@@ -55,7 +56,7 @@ export default async function SubmissionsPage() {
         <h2 className="mb-4 text-xl text-soul-brown">{t("history")}</h2>
         <div className="flex flex-col gap-4">
           {others.map((event) => (
-            <SubmissionCard key={event.id} event={event} t={t} locale={locale} />
+            <SubmissionCard key={event.id} event={event} t={t} tCategory={tCategory} locale={locale} />
           ))}
         </div>
       </section>
@@ -66,12 +67,14 @@ export default async function SubmissionsPage() {
 function SubmissionCard({
   event,
   t,
+  tCategory,
   locale,
   showActions = false,
 }: {
   event: EventWithRelations;
   locale: Locale;
   t: Awaited<ReturnType<typeof getTranslations<"admin.submissions">>>;
+  tCategory: Awaited<ReturnType<typeof getTranslations<"categories">>>;
   showActions?: boolean;
 }) {
   return (
@@ -80,7 +83,7 @@ function SubmissionCard({
         <div className="min-w-0">
           <p className="font-serif text-lg text-soul-brown">{event.title}</p>
           <p className="text-sm text-soul-bronze">
-            {event.practitioner?.name ?? "?"} · {event.category?.name ?? "—"}
+            {event.practitioner?.name ?? "?"} · {event.categories.map(category => tCategory.has(category.slug as never) ? tCategory(category.slug as never) : category.name).join(" · ") || "—"}
             {event.venue && <> · {event.venue.name}</>}
             {event.recurrence && <> · {t("recurrent", { count: event.recurrence_count ?? 0 })}</>}
           </p>

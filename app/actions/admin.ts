@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { getPrivateContactEmail } from "@/lib/practitioner-private";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth";
@@ -62,6 +62,7 @@ export async function moderateEvent(formData: FormData): Promise<void> {
     .or(`id.eq.${eventId},parent_event_id.eq.${eventId}`).select('id');
   // A single SQL UPDATE commits the decision for the whole series together.
   if(updateError || !changed?.length)throw new Error('La décision n’a pas pu être enregistrée. Aucune notification envoyée.');
+  updateTag("public-events");
 
   // E-mail automatique validé / refusé (avec message admin).
   const practitioner = event.practitioner as unknown as {
@@ -110,6 +111,7 @@ export async function toggleTopListing(formData: FormData): Promise<void> {
     .update({ is_top: !isTop, featured_until })
     .eq("id", eventId).select('id');
   if (error || !changed?.length) throw new Error('La mise en avant n’a pas pu être enregistrée.');
+  updateTag("public-events");
   revalidatePath("/admin/soumissions");
   revalidatePath("/admin/mises-en-avant");
 }
@@ -146,6 +148,7 @@ export async function extendFeatured(formData: FormData): Promise<void> {
     .update({ is_top: true, featured_until })
     .eq("id", eventId).select('id');
   if (error || !changed?.length) throw new Error('La prolongation n’a pas pu être enregistrée.');
+  updateTag("public-events");
   revalidatePath("/admin/mises-en-avant");
   revalidatePath("/admin/soumissions");
 }
