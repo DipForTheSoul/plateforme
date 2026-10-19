@@ -99,7 +99,7 @@ export async function getCategories(): Promise<Category[]> {
   try {
     const categories = await cachedCategories();
     // Visual review only: do not mutate production reference data for a preview.
-    if (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_GIT_COMMIT_REF === "codex/univers-lieux-preview") {
+    if (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_GIT_COMMIT_REF === "apercu-univers-lieux") {
       const proposed: Category[] = [
         { id: "preview-cercles", name: "Cercles, rituels & cérémonies", slug: "cercles-rituels-ceremonies", position: 7 },
         { id: "preview-tantra", name: "Tantra & Intimité consciente", slug: "tantra-intimite-consciente", position: 8 },
