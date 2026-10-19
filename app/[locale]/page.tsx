@@ -131,14 +131,14 @@ export default async function HomePage({
           <h2 className="font-serif text-3xl text-soul-brown">{t("categoriesTitle")}</h2>
           <p className="text-soul-bronze">{t("categoriesSubtitle")}</p>
         </div>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-6">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {categories.map((category) => {
             const visual = categoryVisual(category.slug);
             return (
               <Link
                 key={category.id}
                 href={`/experiences?categorie=${category.slug}`}
-                className="group relative flex h-44 items-end overflow-hidden rounded-2xl shadow-sm transition hover:shadow-lg"
+                className="group relative flex h-44 min-w-0 items-end overflow-hidden rounded-2xl shadow-sm transition hover:shadow-lg"
                 style={visual.image ? undefined : { background: visual.gradient }}
               >
                 {visual.image ? (
@@ -146,7 +146,7 @@ export default async function HomePage({
                     src={visual.image}
                     alt=""
                     fill
-                    sizes="(max-width: 768px) 50vw, 16vw"
+                    sizes="(max-width: 768px) 50vw, (max-width: 1152px) 25vw, 280px"
                     className="object-cover transition duration-500 group-hover:scale-105"
                   />
                 ) : (

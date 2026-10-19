@@ -7,7 +7,8 @@ import { getVenueById } from "@/lib/queries";
 import { createClient } from "@/lib/supabase/server";
 import { EVENT_WITH_RELATIONS, mapEventRow, type EventRowRaw } from "@/types/database";
 import { formatVenueLocationFull } from "@/lib/utils";
-import { Globe, MapPin, Navigation, Users } from "lucide-react";
+import { ArrowLeft, Globe, MapPin, Navigation, Users } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -57,6 +58,9 @@ export default async function VenuePage({
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
+      <Link href="/lieux" className="mb-6 inline-flex min-h-11 items-center gap-2 text-sm text-soul-violet underline underline-offset-4">
+        <ArrowLeft aria-hidden className="h-4 w-4" />{t("backToVenues")}
+      </Link>
       <header className="max-w-3xl">
         <h1 className="text-3xl text-soul-brown sm:text-4xl">{venue.name}</h1>
 

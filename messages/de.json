@@ -281,6 +281,20 @@
     "notFound": "Dieses Profil existiert nicht oder wurde noch nicht geprüft."
   },
   "venues": {
+    "suggestions": "Vorschläge für Städte und Orte",
+    "suggestionCity": "Stadt",
+    "suggestionVenue": "Ort",
+    "backToVenues": "Zurück zu den Orten",
+    "proposal": {
+      "emailSubject": "Ort für ForTheSoul vorschlagen",
+      "emailBody": "Guten Tag,\n\nIch möchte meinen Veranstaltungsort auf ForTheSoul vorstellen.\n\nName des Ortes:\nVollständige Adresse:\nKapazität:\nBeschreibung:\nVerfügbare Ausstattung (Küche, Bodenbelag, Musikanlage…):\nWebseite:\nKontaktname und Telefonnummer:\n\nBitte informieren Sie mich über die Veröffentlichungs- und Zahlungsmodalitäten für das Angebot zu CHF 49.– / 12 Monate.\n\nFreundliche Grüsse",
+      "title": "Möchten Sie Ihren Veranstaltungsort bekannt machen?",
+      "description": "Wir kümmern uns um die Veröffentlichung. Senden Sie uns die nötigen Informationen per E-Mail und wir erstellen Ihren Eintrag.",
+      "price": "CHF 49.– / 12 Monate",
+      "button": "Meinen Ort vorschlagen",
+      "question": "Wie kann ich meinen Ort auf ForTheSoul vorstellen?",
+      "answer": "Orte werden von ForTheSoul veröffentlicht.\n\nSenden Sie uns einfach per E-Mail die Informationen, die Sie für wichtig halten, zum Beispiel die Anzahl der Plätze, die Küche, den Bodenbelag, die Musikanlage, die verfügbare Ausstattung usw.\n\nNach der Prüfung erstellen und veröffentlichen wir Ihren Eintrag. Ihr Ort wird dann aufgelistet, sichtbar und leicht zu finden sein.\n\nPreis: CHF 49.– für 12 Monate\nAlle weiteren Informationen erhalten Sie in unserer Antwort auf Ihre E-Mail."
+    },
     "capacity": "Kapazität: {count} Personen",
     "upcoming": "Erlebnisse an diesem Ort",
     "notFound": "Dieser Ort existiert nicht.",
@@ -559,6 +573,8 @@
     "rejected": "Abgelehnt"
   },
   "categories": {
+    "cercles-rituels-ceremonies": "Kreise, Rituale & Zeremonien",
+    "tantra-intimite-consciente": "Tantra & bewusste Intimität",
     "chamanisme": "(Neo-)Schamanismus",
     "danse-mouvement": "Tanz & Bewegung",
     "meditation": "Meditation & Achtsamkeit",

@@ -97,7 +97,16 @@ export async function getExchangeRateEur(): Promise<number> {
 
 export async function getCategories(): Promise<Category[]> {
   try {
-    return await cachedCategories();
+    const categories = await cachedCategories();
+    // Visual review only: do not mutate production reference data for a preview.
+    if (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_GIT_COMMIT_REF === "codex/univers-lieux-preview") {
+      const proposed: Category[] = [
+        { id: "preview-cercles", name: "Cercles, rituels & cérémonies", slug: "cercles-rituels-ceremonies", position: 7 },
+        { id: "preview-tantra", name: "Tantra & Intimité consciente", slug: "tantra-intimite-consciente", position: 8 },
+      ];
+      return [...categories, ...proposed.filter(item => !categories.some(existing => existing.slug === item.slug))].sort((a, b) => a.position - b.position);
+    }
+    return categories;
   } catch (error) {
     console.error("[queries/getCategories]", error instanceof Error ? error.message : "read failed");
     throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");

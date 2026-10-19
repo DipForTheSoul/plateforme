@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getVenues } from "@/lib/queries";
+import { VenueSearch } from "@/components/VenueSearch";
 import { isVenuePublished } from '@/lib/venue-publication';
 import { formatVenueLocationFull } from "@/lib/utils";
-import { MapPin, Search, Users, X } from "lucide-react";
+import { ArrowRight, MapPin, Plus, Search, Users, X } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,7 @@ export default async function VenuesPage({
   const { q = "", pays = "", canton = "" } = await searchParams;
   setRequestLocale(locale);
   const t = await getTranslations("venues");
+  const proposalMailto = `mailto:welcome@forthesoul.ch?subject=${encodeURIComponent(t("proposal.emailSubject"))}&body=${encodeURIComponent(t("proposal.emailBody"))}`;
   const all = (await getVenues()).filter(isVenuePublished);
 
   // Cantons disponibles (uniquement les lieux qui en ont un), triés.
@@ -58,17 +60,12 @@ export default async function VenuesPage({
 
       {/* Filtres : recherche libre + canton (formulaire GET, préserve la locale). */}
       <form method="get" className="mt-6 flex flex-wrap items-center gap-3">
-        <div className="relative min-w-[240px] flex-1">
-          <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-soul-bronze" />
-          <input
-            type="search"
-            name="q"
-            defaultValue={q}
-            placeholder={t("searchPlaceholder")}
-            aria-label={t("searchPlaceholder")}
-            className="field !rounded-full !py-2.5 !pl-11"
-          />
-        </div>
+        <VenueSearch key={`${locale}:${q}:${pays}`} initialValue={q}
+          suggestions={[
+            ...Array.from(new Set(all.filter(v => !pays || v.country === pays).map(v => v.city?.trim()).filter((city): city is string => Boolean(city)))).sort().map(value => ({ value, kind: "city" as const })),
+            ...all.filter(v => !pays || v.country === pays).map(v => ({ value: v.name, kind: "venue" as const })),
+          ]}
+          labels={{ placeholder: t("searchPlaceholder"), suggestions: t("suggestions"), city: t("suggestionCity"), venue: t("suggestionVenue") }} />
         <select name="pays" defaultValue={pays} aria-label={t("country")} className="field !w-auto !rounded-full">
           <option value="">{t("allCountries")}</option>{countries.map(c=><option key={c} value={c}>{c}</option>)}
         </select>
@@ -98,6 +95,24 @@ export default async function VenuesPage({
           </Link>
         )}
       </form>
+
+      <section aria-labelledby="propose-venue-title" className="relative mt-6 overflow-hidden rounded-2xl border border-soul-bronze/10 bg-gradient-to-br from-soul-sand/60 via-soul-cream to-white p-4 sm:p-6">
+        <div aria-hidden className="pointer-events-none absolute -left-12 -top-12 h-48 w-48 rounded-full bg-soul-amber/10 blur-3xl" />
+        <div className="relative grid items-center gap-4 md:grid-cols-[1.4fr_1fr] md:gap-6">
+          <div className="min-w-0">
+            <h2 id="propose-venue-title" className="font-serif text-xl leading-tight text-soul-brown sm:text-2xl">{t("proposal.title")}</h2>
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-soul-bronze">{t("proposal.description")}</p>
+          </div>
+          <div className="min-w-0 text-center [container-type:inline-size]">
+            <p className="whitespace-nowrap font-serif text-[clamp(1rem,7cqw,1.5rem)] leading-tight text-soul-brown">{t("proposal.price")}</p>
+            <a href={proposalMailto} className="btn-primary mt-3 inline-flex min-h-11 max-w-full items-center justify-center gap-2 whitespace-nowrap !px-3 !text-sm sm:!px-5">{t("proposal.button")}<ArrowRight aria-hidden className="h-4 w-4 shrink-0" /></a>
+          </div>
+        </div>
+        <details className="group relative mt-4 border-t border-soul-bronze/15">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 pt-3 font-serif text-base text-soul-brown marker:content-none [&::-webkit-details-marker]:hidden">{t("proposal.question")}<Plus aria-hidden className="h-5 w-5 shrink-0 text-soul-bronze transition-transform duration-200 group-open:rotate-45" /></summary>
+          <p className="max-w-3xl pt-3 whitespace-pre-line text-sm leading-relaxed text-soul-ink/75">{t("proposal.answer")}</p>
+        </details>
+      </section>
 
       {venues.length === 0 ? (
         <p className="mt-10 rounded-2xl bg-soul-sand/40 p-8 text-center text-soul-brown">

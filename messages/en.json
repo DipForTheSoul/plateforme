@@ -281,6 +281,20 @@
     "notFound": "This profile doesn't exist or hasn't been reviewed yet."
   },
   "venues": {
+    "suggestions": "City and venue suggestions",
+    "suggestionCity": "City",
+    "suggestionVenue": "Venue",
+    "backToVenues": "Back to venues",
+    "proposal": {
+      "emailSubject": "Venue proposal for ForTheSoul",
+      "emailBody": "Hello,\n\nI would like to propose my venue for ForTheSoul.\n\nVenue name:\nFull address:\nCapacity:\nDescription:\nAvailable facilities (kitchen, flooring, sound system…):\nWebsite:\nContact name and phone number:\n\nPlease let me know the publication and payment arrangements for the CHF 49.– / 12 months offer.\n\nBest regards",
+      "title": "Have a venue you would like people to discover?",
+      "description": "We take care of publishing it. Email us the necessary information and we will create your listing.",
+      "price": "CHF 49.– / 12 months",
+      "button": "Suggest my venue",
+      "question": "How can I list my venue on ForTheSoul?",
+      "answer": "Venue listings are published by ForTheSoul.\n\nSimply email us the information you consider relevant, such as capacity, kitchen facilities, flooring, sound system, available equipment, and so on.\n\nAfter reviewing it, we create and publish your listing. Your venue will then be listed, visible and easy to find.\n\nPrice: CHF 49.– for 12 months\nYou will receive all the details in our reply to your email."
+    },
     "capacity": "Capacity: {count} people",
     "upcoming": "Experiences at this venue",
     "notFound": "This venue doesn't exist.",
@@ -559,6 +573,8 @@
     "rejected": "Rejected"
   },
   "categories": {
+    "cercles-rituels-ceremonies": "Circles, rituals & ceremonies",
+    "tantra-intimite-consciente": "Tantra & conscious intimacy",
     "chamanisme": "(Neo) Shamanism",
     "danse-mouvement": "Dance & Movement",
     "meditation": "Meditation & Mindfulness",
