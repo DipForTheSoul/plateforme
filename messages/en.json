@@ -151,6 +151,13 @@
     "didierQuote": "I wish for you to live the same magnificent experiences as those I have lived.",
     "didierSignature": "Didier Picamoles, founder",
     "faq": {
+      "propose": {
+        "question": "How can I propose an experience or a venue?",
+        "experience": "To publish an experience, create a practitioner account and complete your profile.",
+        "experienceLink": "Discover the practitioner journey",
+        "venue": "No account is needed to propose a venue: email the information to ForTheSoul from the Venues page.",
+        "venueLink": "Propose my venue"
+      },
       "title": "Frequently asked questions",
       "subtitle": "Everything to know before you begin",
       "items": [
