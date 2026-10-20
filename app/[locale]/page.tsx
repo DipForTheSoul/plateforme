@@ -253,7 +253,15 @@ export default async function HomePage({
           <p className="mt-1 text-soul-bronze">{t("faq.subtitle")}</p>
         </div>
         <div className="flex flex-col gap-3">
-          <details className="group rounded-2xl border border-soul-bronze/15 bg-white px-5 transition open:shadow-sm">
+          {(t.raw("faq.items") as { q: string; a: string }[]).flatMap((item, i) => [
+            <details key={i} className="group rounded-2xl border border-soul-bronze/15 bg-white px-5 transition open:shadow-sm">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-serif text-lg text-soul-brown marker:content-none [&::-webkit-details-marker]:hidden">
+                {item.q}
+                <Plus className="h-5 w-5 shrink-0 text-soul-bronze transition-transform duration-200 group-open:rotate-45" />
+              </summary>
+              <p className="pb-5 leading-relaxed text-soul-ink/75">{item.a}{i===4&&<> <Link className="text-soul-violet underline" href="/devenir-praticien">{t("recruitment.learnMore")}</Link></>}</p>
+            </details>,
+            ...(i === 4 ? [<details key="propose" className="group rounded-2xl border border-soul-bronze/15 bg-white px-5 transition open:shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-serif text-lg text-soul-brown marker:content-none [&::-webkit-details-marker]:hidden">
               {t("faq.propose.question")}
               <Plus className="h-5 w-5 shrink-0 text-soul-bronze transition-transform duration-200 group-open:rotate-45" />
@@ -262,19 +270,8 @@ export default async function HomePage({
               <p>{t("faq.propose.experience")} <Link className="text-soul-violet underline" href="/devenir-praticien">{t("faq.propose.experienceLink")}</Link></p>
               <p>{t("faq.propose.venue")} <Link className="text-soul-violet underline" href="/lieux#propose-venue-title">{t("faq.propose.venueLink")}</Link></p>
             </div>
-          </details>
-          {(t.raw("faq.items") as { q: string; a: string }[]).map((item, i) => (
-            <details
-              key={i}
-              className="group rounded-2xl border border-soul-bronze/15 bg-white px-5 transition open:shadow-sm"
-            >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-serif text-lg text-soul-brown marker:content-none [&::-webkit-details-marker]:hidden">
-                {item.q}
-                <Plus className="h-5 w-5 shrink-0 text-soul-bronze transition-transform duration-200 group-open:rotate-45" />
-              </summary>
-              <p className="pb-5 leading-relaxed text-soul-ink/75">{item.a}{i===4&&<> <Link className="text-soul-violet underline" href="/devenir-praticien">{t("recruitment.learnMore")}</Link></>}</p>
-            </details>
-          ))}
+          </details>] : []),
+          ])}
         </div>
       </section>
 
