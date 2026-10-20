@@ -66,8 +66,10 @@ export default async function EventPage({
   if (!event || event.status !== "approved") notFound();
 
   const supabase = await createClient();
-  // Compteur de vues (analytics sans cookies) — best-effort.
-  await supabase.rpc("increment_event_view", { p_event_id: event.id });
+  // The protected preview shares reference data: reviewing it must not add real views.
+  if (process.env.VERCEL_ENV !== "preview") {
+    await supabase.rpc("increment_event_view", { p_event_id: event.id });
+  }
 
   // Autres dates (occurrences liées, passées exclues).
   const parentId = event.parent_event_id ?? event.id;
