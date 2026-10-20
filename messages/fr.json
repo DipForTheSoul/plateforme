@@ -152,9 +152,7 @@
     "didierSignature": "Didier Picamoles, fondateur",
     "faq": {
       "propose": {
-        "question": "Comment proposer une expérience ou un lieu ?",
-        "experience": "Pour publier une expérience, créez un compte praticien et complétez votre profil.",
-        "experienceLink": "Découvrir le parcours praticien",
+        "question": "Comment proposer un lieu ?",
         "venue": "Pour proposer un lieu, aucun compte n’est nécessaire : envoyez les informations par email à ForTheSoul depuis la page Lieux.",
         "venueLink": "Proposer mon lieu"
       },

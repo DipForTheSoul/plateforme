@@ -152,9 +152,7 @@
     "didierSignature": "Didier Picamoles, Gründer",
     "faq": {
       "propose": {
-        "question": "Wie kann ich ein Erlebnis oder einen Ort vorschlagen?",
-        "experience": "Um ein Erlebnis zu veröffentlichen, erstelle ein Anbieterkonto und vervollständige dein Profil.",
-        "experienceLink": "Mehr über den Anbieterbereich erfahren",
+        "question": "Wie kann ich einen Ort vorschlagen?",
         "venue": "Um einen Ort vorzuschlagen, brauchst du kein Konto: Sende ForTheSoul die Informationen per E-Mail über die Seite Orte.",
         "venueLink": "Meinen Ort vorschlagen"
       },
