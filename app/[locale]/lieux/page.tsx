@@ -59,7 +59,7 @@ export default async function VenuesPage({
       <p className="mt-2 max-w-2xl text-soul-bronze">{t("pageSubtitle")}</p>
 
       {/* Filtres : recherche libre + canton (formulaire GET, préserve la locale). */}
-      <form method="get" className="mt-6 flex flex-wrap items-center gap-3">
+      <form method="get" className="mt-6 flex flex-wrap items-center gap-3 pr-[17px] sm:pr-[25px]">
         <VenueSearch key={`${locale}:${q}:${pays}`} initialValue={q}
           suggestions={[
             ...Array.from(new Set(all.filter(v => !pays || v.country === pays).map(v => v.city?.trim()).filter((city): city is string => Boolean(city)))).sort().map(value => ({ value, kind: "city" as const })),
@@ -82,13 +82,13 @@ export default async function VenuesPage({
             </option>
           ))}
         </select>}
-        <button type="submit" aria-label={t("searchPlaceholder")} className="btn-primary min-h-11 !rounded-full !py-2.5">
+        <button type="submit" aria-label={t("searchPlaceholder")} className="btn-primary ml-auto min-h-11 !rounded-full !py-2.5">
           <Search className="h-4 w-4" />
         </button>
         {hasFilters && (
           <Link
             href="/lieux"
-            className="inline-flex items-center gap-1 text-sm text-soul-violet underline"
+            className="inline-flex basis-full items-center gap-1 text-sm text-soul-violet underline"
           >
             <X className="h-3.5 w-3.5" />
             {t("filtersReset")}
@@ -96,14 +96,14 @@ export default async function VenuesPage({
         )}
       </form>
 
-      <section aria-labelledby="propose-venue-title" className="relative mt-6 overflow-hidden rounded-2xl border border-soul-bronze/10 bg-gradient-to-br from-soul-sand/60 via-soul-cream to-white p-4 sm:p-6 md:pr-[4.75rem]">
+      <section aria-labelledby="propose-venue-title" className="relative mt-6 overflow-hidden rounded-2xl border border-soul-bronze/10 bg-gradient-to-br from-soul-sand/60 via-soul-cream to-white p-4 sm:p-6">
         <div aria-hidden className="pointer-events-none absolute -left-12 -top-12 h-48 w-48 rounded-full bg-soul-amber/10 blur-3xl" />
         <div className="relative grid items-center gap-4 md:grid-cols-[1.4fr_1fr] md:gap-6">
           <div className="min-w-0">
             <h2 id="propose-venue-title" className="font-serif text-xl leading-tight text-soul-brown sm:text-2xl">{t("proposal.title")}</h2>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-soul-bronze">{t("proposal.description")}</p>
           </div>
-          <div className="min-w-0 text-center [container-type:inline-size] md:text-right">
+          <div className="min-w-0 text-right [container-type:inline-size]">
             <p className="whitespace-nowrap font-serif text-[clamp(1rem,7cqw,1.5rem)] leading-tight text-soul-brown">{t("proposal.price")}</p>
             <a href={proposalMailto} className="btn-primary mt-3 inline-flex min-h-11 max-w-full items-center justify-center gap-2 whitespace-nowrap !px-3 !text-sm sm:!px-5">{t("proposal.button")}<ArrowRight aria-hidden className="h-4 w-4 shrink-0" /></a>
           </div>
