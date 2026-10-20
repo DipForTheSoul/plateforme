@@ -287,7 +287,7 @@
     "backToVenues": "Retour aux lieux",
     "proposal": {
       "emailSubject": "Proposition de lieu pour ForTheSoul",
-      "emailBody": "Bonjour,\n\nJe souhaite proposer mon lieu sur ForTheSoul.\n\nNom du lieu :\nAdresse complète :\nCapacité d’accueil :\nDescription :\nÉquipements disponibles (cuisine, sol, sono…) :\nSite internet :\nNom et téléphone de contact :\n\nMerci de m’indiquer les modalités de publication et de paiement pour l’offre à CHF 49.– / 12 mois.\n\nBonne journée",
+      "emailBody": "Bonjour,\n\nJe souhaite proposer mon lieu sur ForTheSoul.\n\nNom du lieu :\nAdresse complète :\nCapacité d’accueil :\nDescription :\nÉquipements disponibles (cuisine, sol, sono…) :\nSite internet :\n\nMerci de m’indiquer les modalités de publication et de paiement pour l’offre à CHF 49.– / 12 mois.\n\nBonne journée",
       "title": "Vous avez un lieu à faire découvrir ?",
       "description": "Nous nous occupons de sa publication. Envoyez-nous les informations nécessaires par email et nous créons votre fiche.",
       "price": "CHF 49.– / 12 mois",

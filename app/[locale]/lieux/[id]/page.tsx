@@ -3,6 +3,7 @@ import { isVenuePublished } from '@/lib/venue-publication';
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { EventCard } from "@/components/EventCard";
+import { VenueMap } from "@/components/VenueMap";
 import { getVenueById } from "@/lib/queries";
 import { createClient } from "@/lib/supabase/server";
 import { EVENT_WITH_RELATIONS, mapEventRow, type EventRowRaw } from "@/types/database";
@@ -113,13 +114,7 @@ export default async function VenuePage({
       {venue.lat !== null && venue.lng !== null && (
         <div className="mt-6">
           <div className="overflow-hidden rounded-2xl border border-soul-bronze/20 shadow-sm">
-            <iframe
-              title={`Carte — ${venue.name}`}
-              className="h-72 w-full"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              src={`https://www.openstreetmap.org/export/embed.html?bbox=${venue.lng - 0.012}%2C${venue.lat - 0.007}%2C${venue.lng + 0.012}%2C${venue.lat + 0.007}&layer=mapnik&marker=${venue.lat}%2C${venue.lng}`}
-            />
+            <VenueMap lat={venue.lat} lng={venue.lng} label={venue.name} />
           </div>
           <a
             href={`https://www.openstreetmap.org/?mlat=${venue.lat}&mlon=${venue.lng}#map=16/${venue.lat}/${venue.lng}`}

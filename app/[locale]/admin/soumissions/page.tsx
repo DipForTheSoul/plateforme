@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Link } from "@/i18n/navigation";
 import { moderateEvent } from "@/app/actions/admin";
 import { StatusBadge } from "@/components/StatusBadge";
+import { descriptionText } from "@/lib/description-text";
 import { eventInclusiveDays, formatEventSchedule } from "@/lib/event-display";
 import { getLocale, getTranslations } from "next-intl/server";
 import type { EventWithRelations, Locale } from "@/types/database";
@@ -104,7 +105,7 @@ function SubmissionCard({
       </div>
 
       {event.description && (
-        <p className="mt-3 line-clamp-3 text-sm text-soul-ink/80">{event.description}</p>
+        <p className="mt-3 line-clamp-3 text-sm text-soul-ink/80">{descriptionText(event.description)}</p>
       )}
 
       {event.venue && <p className="mt-3 text-sm text-soul-brown">

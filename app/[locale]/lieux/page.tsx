@@ -59,7 +59,7 @@ export default async function VenuesPage({
       <p className="mt-2 max-w-2xl text-soul-bronze">{t("pageSubtitle")}</p>
 
       {/* Filtres : recherche libre + canton (formulaire GET, préserve la locale). */}
-      <form method="get" className="mt-6 flex flex-wrap items-center gap-3">
+      <form method="get" className="mt-6 flex flex-wrap items-center gap-3 sm:pr-6">
         <VenueSearch key={`${locale}:${q}:${pays}`} initialValue={q}
           suggestions={[
             ...Array.from(new Set(all.filter(v => !pays || v.country === pays).map(v => v.city?.trim()).filter((city): city is string => Boolean(city)))).sort().map(value => ({ value, kind: "city" as const })),
@@ -82,7 +82,7 @@ export default async function VenuesPage({
             </option>
           ))}
         </select>}
-        <button type="submit" aria-label={t("searchPlaceholder")} className="btn-primary !rounded-full !py-2.5">
+        <button type="submit" aria-label={t("searchPlaceholder")} className="btn-primary min-h-11 !rounded-full !py-2.5">
           <Search className="h-4 w-4" />
         </button>
         {hasFilters && (
@@ -103,7 +103,7 @@ export default async function VenuesPage({
             <h2 id="propose-venue-title" className="font-serif text-xl leading-tight text-soul-brown sm:text-2xl">{t("proposal.title")}</h2>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-soul-bronze">{t("proposal.description")}</p>
           </div>
-          <div className="min-w-0 text-center [container-type:inline-size]">
+          <div className="min-w-0 text-center [container-type:inline-size] md:text-right">
             <p className="whitespace-nowrap font-serif text-[clamp(1rem,7cqw,1.5rem)] leading-tight text-soul-brown">{t("proposal.price")}</p>
             <a href={proposalMailto} className="btn-primary mt-3 inline-flex min-h-11 max-w-full items-center justify-center gap-2 whitespace-nowrap !px-3 !text-sm sm:!px-5">{t("proposal.button")}<ArrowRight aria-hidden className="h-4 w-4 shrink-0" /></a>
           </div>

@@ -20,7 +20,7 @@ vi.mock('@/app/actions/events', () => ({ adminUpdateEvent: () => {} }));
 vi.mock('@/lib/auth', () => ({ requireRole: async () => ({ id: 'admin-qa' }) }));
 vi.mock('@/lib/queries', () => ({ getCategories: async () => [], getVenues: async () => [] }));
 vi.mock('@/lib/supabase/server', () => ({ createClient: async () => ({ from: () => {
-  const event = { id: 'event-qa', title: 'Séjour QA', start_date: '2026-09-11T09:00:00Z', end_date: state.end, status: state.status, languages: ['fr'],
+  const event = { id: 'event-qa', title: 'Séjour QA', description: '**Bienvenue **dans mon offre.\n**\n**', start_date: '2026-09-11T09:00:00Z', end_date: state.end, status: state.status, languages: ['fr'],
     category: {id:'cercles',slug:'cercles-rituels-ceremonies',name:'Cercles, rituels & cérémonies'},
     event_categories:[{category:{id:'tantra',slug:'tantra-intimite-consciente',name:'Tantra & Intimité consciente'}}] };
   const q = { select: () => q, is: () => q, eq: () => q, order: () => q, range: () => q,
@@ -30,6 +30,13 @@ vi.mock('@/lib/supabase/server', () => ({ createClient: async () => ({ from: () 
   return q;
 } }) }));
 beforeEach(() => { state.locale = 'fr'; state.end = '2026-09-13T14:00:00Z'; state.status = 'pending'; });
+
+it.each(['pending', 'approved', 'rejected'])('nettoie les marqueurs anciens sans modifier les données de la carte %s', async status => {
+  state.status = status;
+  const html = renderToStaticMarkup(await SubmissionsPage());
+  expect(html).toContain('Bienvenue dans mon offre.');
+  expect(html).not.toContain('**');
+});
 
 it.each(['fr','de','en'] as const)('affiche et traduit les deux univers en %s dans les soumissions',async locale=>{
   state.locale=locale;
