@@ -59,7 +59,7 @@ export default async function VenuesPage({
       <p className="mt-2 max-w-2xl text-soul-bronze">{t("pageSubtitle")}</p>
 
       {/* Filtres : recherche libre + canton (formulaire GET, préserve la locale). */}
-      <form method="get" className="mt-6 flex flex-wrap items-center gap-3 sm:pr-6">
+      <form method="get" className="mt-6 flex flex-wrap items-center gap-3">
         <VenueSearch key={`${locale}:${q}:${pays}`} initialValue={q}
           suggestions={[
             ...Array.from(new Set(all.filter(v => !pays || v.country === pays).map(v => v.city?.trim()).filter((city): city is string => Boolean(city)))).sort().map(value => ({ value, kind: "city" as const })),
@@ -96,7 +96,7 @@ export default async function VenuesPage({
         )}
       </form>
 
-      <section aria-labelledby="propose-venue-title" className="relative mt-6 overflow-hidden rounded-2xl border border-soul-bronze/10 bg-gradient-to-br from-soul-sand/60 via-soul-cream to-white p-4 sm:p-6">
+      <section aria-labelledby="propose-venue-title" className="relative mt-6 overflow-hidden rounded-2xl border border-soul-bronze/10 bg-gradient-to-br from-soul-sand/60 via-soul-cream to-white p-4 sm:p-6 md:pr-[4.75rem]">
         <div aria-hidden className="pointer-events-none absolute -left-12 -top-12 h-48 w-48 rounded-full bg-soul-amber/10 blur-3xl" />
         <div className="relative grid items-center gap-4 md:grid-cols-[1.4fr_1fr] md:gap-6">
           <div className="min-w-0">
