@@ -99,14 +99,6 @@ export default async function VenuePage({
               <Globe className="h-4 w-4" /> {t("website")}
             </a>
           )}
-          <a
-            href={mapsDirections}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary !py-2.5 sm:ml-auto"
-          >
-            <Navigation className="h-4 w-4" /> {t("directions")}
-          </a>
         </div>
       </header>
 
@@ -126,6 +118,17 @@ export default async function VenuePage({
           </a>
         </div>
       )}
+
+      <div className="mt-4 flex justify-start">
+        <a
+          href={mapsDirections}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-primary min-h-11 max-w-full !py-2.5"
+        >
+          <Navigation aria-hidden className="h-4 w-4 shrink-0" /> {t("directions")}
+        </a>
+      </div>
 
       <section className="mt-12">
         <h2 className="mb-6 text-2xl text-soul-brown">{t("upcoming")}</h2>

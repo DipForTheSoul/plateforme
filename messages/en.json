@@ -292,7 +292,7 @@
     "backToVenues": "Back to venues",
     "proposal": {
       "emailSubject": "Venue proposal for ForTheSoul",
-      "emailBody": "Hello,\n\nI would like to propose my venue for ForTheSoul.\n\nVenue name:\nFull address:\nCapacity:\nDescription:\nAvailable facilities (kitchen, flooring, sound system…):\nWebsite:\n\nPlease let me know the publication and payment arrangements for the CHF 49.– / 12 months offer.\n\nBest regards",
+      "emailBody": "Hello,\n\nI would like to propose my venue for ForTheSoul.\n\nVenue name:\nFull address:\nCapacity:\nDescription:\nAvailable facilities (kitchen, flooring, sound system…):\nWebsite:\nContact name and phone number (will not be published; only used to clarify any details if needed):\n\nPlease let me know the publication and payment arrangements for the CHF 49.– / 12 months offer.\n\nBest regards",
       "title": "Have a venue you would like people to discover?",
       "description": "We take care of publishing it. Email us the necessary information and we will create your listing.",
       "price": "CHF 49.– / 12 months",
