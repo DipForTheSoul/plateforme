@@ -59,14 +59,14 @@ export default async function VenuesPage({
       <p className="mt-2 max-w-2xl text-soul-bronze">{t("pageSubtitle")}</p>
 
       {/* Filtres : recherche libre + canton (formulaire GET, préserve la locale). */}
-      <form method="get" className="mt-6 grid grid-cols-[minmax(0,1fr)_minmax(0,9rem)_2.75rem] items-center gap-2 lg:flex lg:flex-wrap lg:gap-3">
+      <form method="get" className="mt-6 flex flex-wrap items-center gap-3 [&>div:first-child]:basis-full sm:[&>div:first-child]:basis-60">
         <VenueSearch key={`${locale}:${q}:${pays}`} initialValue={q}
           suggestions={[
             ...Array.from(new Set(all.filter(v => !pays || v.country === pays).map(v => v.city?.trim()).filter((city): city is string => Boolean(city)))).sort().map(value => ({ value, kind: "city" as const })),
             ...all.filter(v => !pays || v.country === pays).map(v => ({ value: v.name, kind: "venue" as const })),
           ]}
           labels={{ placeholder: t("searchPlaceholder"), suggestions: t("suggestions"), city: t("suggestionCity"), venue: t("suggestionVenue") }} />
-        <select name="pays" defaultValue={pays} aria-label={t("country")} className="field min-h-11 !rounded-full !pl-3 !text-xs sm:!text-sm lg:!w-auto lg:!pl-4">
+        <select name="pays" defaultValue={pays} aria-label={t("country")} className="field min-h-11 !w-auto !rounded-full">
           <option value="">{t("allCountries")}</option>{countries.map(c=><option key={c} value={c}>{c}</option>)}
         </select>
         {pays === "CH" && <select
@@ -103,7 +103,7 @@ export default async function VenuesPage({
             <h2 id="propose-venue-title" className="scroll-mt-24 font-serif text-xl leading-tight text-soul-brown sm:text-2xl">{t("proposal.title")}</h2>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-soul-bronze">{t("proposal.description")}</p>
           </div>
-          <div className="flex min-w-0 flex-col items-center justify-self-end">
+          <div className="flex min-w-0 flex-col items-center justify-self-center md:justify-self-end">
             <p className="whitespace-nowrap font-serif text-base leading-tight text-soul-brown md:text-lg">{t("proposal.price")}</p>
             <a href={proposalMailto} className="btn-primary mt-3 inline-flex min-h-11 max-w-full items-center justify-center gap-2 whitespace-nowrap !px-3 !text-sm sm:!px-5">{t("proposal.button")}<ArrowRight aria-hidden className="h-4 w-4 shrink-0" /></a>
           </div>

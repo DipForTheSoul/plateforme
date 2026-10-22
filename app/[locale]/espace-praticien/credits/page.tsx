@@ -142,13 +142,13 @@ export default async function CreditsPage({
                 <p className="mt-2 font-serif text-3xl text-soul-brown">
                   {hasDiscount && (
                     <span className="mr-2 align-middle text-xl text-soul-bronze/60 line-through">
-                      {priceChf.toFixed(0)}.–
+                      <PackPrice valueChf={priceChf} />
                     </span>
                   )}
                   <PackPrice valueChf={finalChf} />
                 </p>
                 <p className="mt-1 text-xs text-soul-bronze">
-                  {tr("creditsPerPublication", { price: (finalChf / pack.credits).toFixed(0) })}
+                  {tr("creditsPerPublication", { price: (finalChf / pack.credits).toFixed(2) })}
                 </p>
                 <p className="mt-1 text-xs text-soul-bronze">
                   {tr("creditsPackValidityMonths", { count: validityMonths })}

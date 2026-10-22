@@ -3,7 +3,7 @@ import Image from "next/image";
 import {getTranslations,setRequestLocale} from "next-intl/server";
 import {Link} from "@/i18n/navigation";
 import {createClient} from "@/lib/supabase/server";
-import {CREDIT_PACKS,resolvePackPriceChf} from "@/lib/credits";
+import {CREDIT_PACKS,resolvePackPriceChf,getPromo,discountedChf} from "@/lib/credits";
 import {PackPrice} from "@/components/PackPrice";
 import {ArrowRight,CalendarPlus,CircleDollarSign,FilePlus2,Heart,Languages,MapPin,Megaphone,Plus,ShieldCheck,Sparkles,UserRound,UserRoundCheck} from "lucide-react";
 
@@ -99,9 +99,11 @@ return <main>
         </div>
       </figure>
     </div>
-    <div className="mt-10 grid gap-5 sm:grid-cols-3">{CREDIT_PACKS.map((pack,index)=>{const price=resolvePackPriceChf(pack,settings);return <article className={`relative overflow-hidden rounded-3xl border bg-white p-6 shadow-[0_10px_30px_rgba(74,52,37,0.08)] ${index===1?"border-soul-violet/35 ring-2 ring-soul-violet/10":"border-soul-bronze/10"}`} key={pack.id}>
+    <div className="mt-10 grid gap-5 sm:grid-cols-3">{CREDIT_PACKS.map((pack,index)=>{const basePrice=resolvePackPriceChf(pack,settings);const promo=getPromo(settings);const hasDiscount=!!promo&&promo.percent>0;const price=hasDiscount?discountedChf(basePrice,promo.percent):basePrice;return <article className={`relative overflow-hidden rounded-3xl border bg-white p-6 shadow-[0_10px_30px_rgba(74,52,37,0.08)] ${index===1?"border-soul-violet/35 ring-2 ring-soul-violet/10":"border-soul-bronze/10"}`} key={pack.id}>
       {index===1&&<span className="absolute right-0 top-0 rounded-bl-2xl bg-soul-violet px-3 py-1.5 text-xs font-semibold text-white">{t("packFeatured")}</span>}
       <p className="text-sm font-semibold uppercase tracking-[0.14em] text-soul-bronze">{t("packLabel",{count:pack.credits})}</p>
+      {promo&&<p className="mt-3 text-sm font-semibold text-soul-violet">{promo.label}{hasDiscount&&` · −${promo.percent} %`}</p>}
+      {hasDiscount&&<p className="mt-3 text-lg text-soul-bronze"><del><PackPrice valueChf={basePrice}/></del></p>}
       <p className="mt-4 font-serif text-4xl text-soul-brown"><PackPrice valueChf={price}/></p>
       <p className="mt-3 text-sm font-medium text-soul-ink/70"><PackPrice valueChf={price/pack.credits}/> {t("perPublication")}</p>
       <p className="mt-2 text-sm text-soul-bronze">{t("packValidityMonths",{count:validityMonths})}</p>
