@@ -17,6 +17,6 @@ it('refuse un montant inférieur au minimum',async()=>{mocks.settings.mockResolv
 it.each([['pack-1',2250],['pack-5',9000],['pack-10',16200]])('applique exactement 10 %% au pack %s',async(packId,amount)=>{
  mocks.settings.mockResolvedValue({data:[{key:'promo_label',value:'Offre Méditation'},{key:'promo_discount_percent',value:'10'}],error:null});
  expect((await POST(request(JSON.stringify({packId})))).status).toBe(200);
- expect(mocks.create).toHaveBeenCalledWith(expect.objectContaining({line_items:[expect.objectContaining({price_data:expect.objectContaining({unit_amount:amount})})]}));
+ expect(mocks.create).toHaveBeenCalledWith(expect.objectContaining({line_items:[expect.objectContaining({price_data:expect.objectContaining({unit_amount:amount,product_data:expect.objectContaining({name:expect.stringContaining(' · −10 %')})})})]}));
 });
 it('ne transmet pas le détail privé d’une erreur Stripe au navigateur',async()=>{mocks.create.mockRejectedValue(new Error('private-provider-detail'));const response=await POST(request('{"packId":"pack-5"}'));expect(response.status).toBe(502);expect(await response.text()).not.toContain('private-provider-detail');});

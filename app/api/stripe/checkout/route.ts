@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
   if (!Number.isSafeInteger(unitAmount) || unitAmount < 50 || unitAmount > 99999999) return NextResponse.json({error:'Le montant du pack doit être vérifié par l’administrateur.'}, {status:503});
   const localePrefix = stripeLocale === 'fr' ? '' : `/${stripeLocale}`;
   const productName = promo
-    ? `ForTheSoul — ${pack.labelFr} · ${promo.label}`
+    ? `ForTheSoul — ${pack.labelFr} · ${promo.label}${promo.percent > 0 ? ` · −${promo.percent} %` : ''}`
     : `ForTheSoul — ${pack.labelFr}`;
 
   try {

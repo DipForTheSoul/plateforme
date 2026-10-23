@@ -134,11 +134,12 @@ export default async function CreditsPage({
             const finalChf = hasDiscount ? discountedChf(priceChf, promo!.percent) : priceChf;
             return (
               <div key={pack.id} className="card flex flex-col p-6">
-                <div className="flex items-start justify-between gap-2">
+                <div className="flex min-w-0 flex-col items-start gap-2">
                   <p className="font-serif text-lg text-soul-brown">{pack.labelFr}</p>
                   {promo && (
-                    <span className="rounded-full bg-soul-violet/10 px-2.5 py-0.5 text-xs font-semibold text-soul-violet">
+                    <span className="max-w-full rounded-xl bg-soul-violet/10 px-3 py-1.5 text-xs font-semibold leading-relaxed text-soul-violet [overflow-wrap:anywhere]">
                       {promo.label}
+                      {hasDiscount && <span className="whitespace-nowrap"> · −{promo.percent} %</span>}
                     </span>
                   )}
                 </div>
