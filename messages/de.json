@@ -286,6 +286,7 @@
     "notFound": "Dieses Profil existiert nicht oder wurde noch nicht geprüft."
   },
   "venues": {
+    "filterPanel": {"title":"Filter","apply":"Filter anwenden","close":"Filter schließen","empty":"Keine weiteren Filter verfügbar."},
     "searchAction": "Suchen",
     "suggestions": "Vorschläge für Städte und Orte",
     "suggestionCity": "Stadt",

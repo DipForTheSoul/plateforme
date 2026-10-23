@@ -286,6 +286,7 @@
     "notFound": "This profile doesn't exist or hasn't been reviewed yet."
   },
   "venues": {
+    "filterPanel": {"title":"Filters","apply":"Apply filters","close":"Close filters","empty":"No additional filters available."},
     "searchAction": "Search",
     "suggestions": "City and venue suggestions",
     "suggestionCity": "City",

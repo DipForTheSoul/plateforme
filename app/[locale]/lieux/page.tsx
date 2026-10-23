@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getVenues } from "@/lib/queries";
-import { VenueSearch } from "@/components/VenueSearch";
+import { VenueFilters } from "@/components/VenueFilters";
 import { isVenuePublished } from '@/lib/venue-publication';
 import { formatVenueLocationFull } from "@/lib/utils";
-import { ArrowRight, MapPin, Plus, Search, Users, X } from "lucide-react";
+import { ArrowRight, MapPin, Plus, Users, X } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -59,43 +59,22 @@ export default async function VenuesPage({
       <p className="mt-2 max-w-2xl text-soul-bronze">{t("pageSubtitle")}</p>
 
       {/* Filtres : recherche libre + canton (formulaire GET, préserve la locale). */}
-      <form method="get" className="mt-6 grid grid-cols-2 items-center gap-3 sm:flex sm:flex-wrap [&>div:first-child]:col-span-2 [&>div:first-child]:basis-full sm:[&>div:first-child]:basis-60">
-        <VenueSearch key={`${locale}:${q}:${pays}`} initialValue={q}
-          suggestions={[
+      <VenueFilters key={`${locale}:${q}:${pays}:${canton}`} country={pays} canton={canton} countries={countries} cantons={cantons}
+        countryNames={Object.fromEntries(countries.map(code => [code, new Intl.DisplayNames([locale], {type:"region"}).of(code) ?? code]))}
+        labels={{filters:t("filterPanel.title"),search:t("searchAction"),country:t("country"),canton:t("canton"),allCountries:t("allCountries"),allCantons:t("allCantons"),reset:t("filtersReset"),apply:t("filterPanel.apply"),close:t("filterPanel.close"),empty:t("filterPanel.empty")}}
+        search={{initialValue:q, suggestions:[
             ...Array.from(new Set(all.filter(v => !pays || v.country === pays).map(v => v.city?.trim()).filter((city): city is string => Boolean(city)))).sort().map(value => ({ value, kind: "city" as const })),
             ...all.filter(v => !pays || v.country === pays).map(v => ({ value: v.name, kind: "venue" as const })),
-          ]}
-          labels={{ placeholder: t("searchPlaceholder"), suggestions: t("suggestions"), city: t("suggestionCity"), venue: t("suggestionVenue") }} />
-        <select name="pays" defaultValue={pays} aria-label={t("country")} className="field min-h-11 min-w-0 !w-full !rounded-full sm:!w-auto">
-          <option value="">{t("allCountries")}</option>{countries.map(c=><option key={c} value={c}>{c}</option>)}
-        </select>
-        {pays === "CH" && <select
-          name="canton"
-          defaultValue={canton}
-          aria-label={t("canton")}
-          className="field col-span-2 row-start-3 min-h-11 min-w-0 !w-full !rounded-full sm:!w-auto"
-        >
-          <option value="">{t("allCantons")}</option>
-          {cantons.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>}
-        <button type="submit" aria-label={t("searchPlaceholder")} className="btn-primary col-start-2 row-start-2 min-h-11 w-full justify-center gap-2 !rounded-full !px-3 !py-2.5 sm:ml-auto sm:w-auto lg:!px-6">
-          <Search aria-hidden className="h-4 w-4 shrink-0" />
-          <span className="sm:hidden">{t("searchAction")}</span>
-        </button>
+          ], labels:{ placeholder: t("searchPlaceholder"), suggestions: t("suggestions"), city: t("suggestionCity"), venue: t("suggestionVenue") }}} />
         {hasFilters && (
           <Link
             href="/lieux"
-            className="col-span-2 inline-flex basis-full items-center gap-1 text-sm text-soul-violet underline"
+            className="mt-3 inline-flex items-center gap-1 text-sm text-soul-violet underline"
           >
             <X className="h-3.5 w-3.5" />
             {t("filtersReset")}
           </Link>
         )}
-      </form>
 
       <section id="proposer-un-lieu" aria-labelledby="propose-venue-title" className="relative mt-6 scroll-mt-24 overflow-hidden rounded-2xl border border-soul-bronze/10 bg-gradient-to-br from-soul-sand/60 via-soul-cream to-white p-4 sm:p-6">
         <div aria-hidden className="pointer-events-none absolute -left-12 -top-12 h-48 w-48 rounded-full bg-soul-amber/10 blur-3xl" />
