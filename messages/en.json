@@ -286,6 +286,7 @@
     "notFound": "This profile doesn't exist or hasn't been reviewed yet."
   },
   "venues": {
+    "searchAction": "Search",
     "suggestions": "City and venue suggestions",
     "suggestionCity": "City",
     "suggestionVenue": "Venue",

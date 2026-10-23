@@ -59,21 +59,21 @@ export default async function VenuesPage({
       <p className="mt-2 max-w-2xl text-soul-bronze">{t("pageSubtitle")}</p>
 
       {/* Filtres : recherche libre + canton (formulaire GET, préserve la locale). */}
-      <form method="get" className="mt-6 flex flex-wrap items-center gap-3 [&>div:first-child]:basis-full sm:[&>div:first-child]:basis-60">
+      <form method="get" className="mt-6 grid grid-cols-2 items-center gap-3 sm:flex sm:flex-wrap [&>div:first-child]:col-span-2 [&>div:first-child]:basis-full sm:[&>div:first-child]:basis-60">
         <VenueSearch key={`${locale}:${q}:${pays}`} initialValue={q}
           suggestions={[
             ...Array.from(new Set(all.filter(v => !pays || v.country === pays).map(v => v.city?.trim()).filter((city): city is string => Boolean(city)))).sort().map(value => ({ value, kind: "city" as const })),
             ...all.filter(v => !pays || v.country === pays).map(v => ({ value: v.name, kind: "venue" as const })),
           ]}
           labels={{ placeholder: t("searchPlaceholder"), suggestions: t("suggestions"), city: t("suggestionCity"), venue: t("suggestionVenue") }} />
-        <select name="pays" defaultValue={pays} aria-label={t("country")} className="field min-h-11 !w-auto !rounded-full">
+        <select name="pays" defaultValue={pays} aria-label={t("country")} className="field min-h-11 min-w-0 !w-full !rounded-full sm:!w-auto">
           <option value="">{t("allCountries")}</option>{countries.map(c=><option key={c} value={c}>{c}</option>)}
         </select>
         {pays === "CH" && <select
           name="canton"
           defaultValue={canton}
           aria-label={t("canton")}
-          className="field col-span-2 row-start-2 min-h-11 !w-auto !rounded-full"
+          className="field col-span-2 row-start-3 min-h-11 min-w-0 !w-full !rounded-full sm:!w-auto"
         >
           <option value="">{t("allCantons")}</option>
           {cantons.map((c) => (
@@ -82,13 +82,14 @@ export default async function VenuesPage({
             </option>
           ))}
         </select>}
-        <button type="submit" aria-label={t("searchPlaceholder")} className="btn-primary col-start-3 row-start-1 ml-auto min-h-11 !rounded-full !px-3 !py-2.5 lg:!px-6">
-          <Search className="h-4 w-4" />
+        <button type="submit" aria-label={t("searchPlaceholder")} className="btn-primary col-start-2 row-start-2 min-h-11 w-full justify-center gap-2 !rounded-full !px-3 !py-2.5 sm:ml-auto sm:w-auto lg:!px-6">
+          <Search aria-hidden className="h-4 w-4 shrink-0" />
+          <span className="sm:hidden">{t("searchAction")}</span>
         </button>
         {hasFilters && (
           <Link
             href="/lieux"
-            className="col-span-3 inline-flex basis-full items-center gap-1 text-sm text-soul-violet underline"
+            className="col-span-2 inline-flex basis-full items-center gap-1 text-sm text-soul-violet underline"
           >
             <X className="h-3.5 w-3.5" />
             {t("filtersReset")}

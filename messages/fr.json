@@ -286,6 +286,7 @@
     "notFound": "Cette fiche n'existe pas ou n'est pas encore validée."
   },
   "venues": {
+    "searchAction": "Rechercher",
     "suggestions": "Suggestions de villes et de lieux",
     "suggestionCity": "Ville",
     "suggestionVenue": "Lieu",
