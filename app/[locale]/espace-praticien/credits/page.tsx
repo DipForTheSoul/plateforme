@@ -127,7 +127,7 @@ export default async function CreditsPage({
 
       <section>
         <h2 className="mb-4 text-xl text-soul-brown">{tr("creditsPacksHeading")}</h2>
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {CREDIT_PACKS.map((pack) => {
             const priceChf = resolvePackPriceChf(pack, settings);
             const hasDiscount = promo !== null && promo.percent > 0;
