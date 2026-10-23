@@ -14,6 +14,11 @@ beforeAll(async()=>{
     'oliver@example.test',
     JSON.stringify({role:'practitioner',name:'Oliver Rust',first_name:'Oliver',last_name:'Rust',bio:'Bio saisie avant la correction de la migration.',specialties:['Yoga'],website:'https://oliver.example.test',instagram:'https://instagram.com/oliver',preferred_lang:'fr'})
   ]);
+  // Production still uses this old trigger: signup metadata is retained,
+  // but the practitioner row receives no bio until the corrective migration.
+  expect((await db.query('select bio from practitioners where user_id=$1',[
+    '30000000-0000-4000-8000-000000000000',
+  ])).rows).toEqual([{bio:null}]);
   await db.exec(sql('20261007160000_signup_details_fix.sql'));
 },30000);
 afterAll(async()=>{await db?.close();});
@@ -32,4 +37,12 @@ it('ne crée pas de praticien ni d’administrateur depuis un rôle falsifié',a
 it('restaure les détails encore présents dans les métadonnées des inscriptions existantes',async()=>{
   const result=await db.query('select bio,specialties,contact,links from practitioners where user_id=$1',['30000000-0000-4000-8000-000000000000']);
   expect(result.rows).toEqual([{bio:'Bio saisie avant la correction de la migration.',specialties:['Yoga'],contact:{email:'oliver@example.test',first_name:'Oliver',last_name:'Rust',website:'https://oliver.example.test'},links:{instagram:'https://instagram.com/oliver'}}]);
+});
+it('préserve une bio déjà corrigée et la conserve après validation',async()=>{
+  const id='30000000-0000-4000-8000-000000000003';
+  await db.query('insert into auth.users(id,email,raw_user_meta_data) values($1,$2,$3)',[id,'preserved@example.test',JSON.stringify({role:'practitioner',bio:'Présentation initiale.'})]);
+  await db.query('update practitioners set bio=$1 where user_id=$2',['Présentation enrichie après inscription.',id]);
+  await db.exec(sql('20261007160000_signup_details_fix.sql'));
+  await db.query("update practitioners set status='approved' where user_id=$1",[id]);
+  expect((await db.query('select bio,status from practitioners where user_id=$1',[id])).rows).toEqual([{bio:'Présentation enrichie après inscription.',status:'approved'}]);
 });
