@@ -61,7 +61,7 @@ export default async function VenuesPage({
       {/* Filtres : recherche libre + canton (formulaire GET, préserve la locale). */}
       <VenueFilters key={`${locale}:${q}:${pays}:${canton}`} country={pays} canton={canton} countries={countries} cantons={cantons}
         countryNames={Object.fromEntries(countries.map(code => [code, new Intl.DisplayNames([locale], {type:"region"}).of(code) ?? code]))}
-        labels={{filters:t("filterPanel.title"),search:t("searchAction"),country:t("country"),canton:t("canton"),allCountries:t("allCountries"),allCantons:t("allCantons"),reset:t("filtersReset"),apply:t("filterPanel.apply"),close:t("filterPanel.close"),empty:t("filterPanel.empty")}}
+        labels={{search:t("searchAction"),country:t("country"),canton:t("canton"),allCountries:t("allCountries"),allCantons:t("allCantons")}}
         search={{initialValue:q, suggestions:[
             ...Array.from(new Set(all.filter(v => !pays || v.country === pays).map(v => v.city?.trim()).filter((city): city is string => Boolean(city)))).sort().map(value => ({ value, kind: "city" as const })),
             ...all.filter(v => !pays || v.country === pays).map(v => ({ value: v.name, kind: "venue" as const })),
