@@ -442,7 +442,7 @@
     "creditsActive": "Active",
     "creditsPacksNote": "A pack whose date has passed is automatically marked “expired”; its credits can no longer be used. However, the experiences you published while your pack was valid stay online until their date (then are automatically removed shortly after), even if the pack expired in the meantime.",
     "creditsPacksHeading": "Publication packs",
-    "creditsPerPublication": "{price}.– / publication",
+    "creditsPerPublication": "CHF {price} / publication",
     "creditsPackValidityDays": "Pack valid for {count} days",
     "creditsPackValidityMonths": "Valid for {count, plural, one {# month} other {# months}}",
     "creditsPaymentTitle": "Payment by bank transfer",

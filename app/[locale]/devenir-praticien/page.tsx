@@ -2,8 +2,8 @@ import type {Metadata} from "next";
 import Image from "next/image";
 import {getTranslations,setRequestLocale} from "next-intl/server";
 import {Link} from "@/i18n/navigation";
-import {createClient} from "@/lib/supabase/server";
-import {CREDIT_PACKS,resolvePackPriceChf} from "@/lib/credits";
+import {readPackSettings} from "@/lib/pack-settings";
+import {CREDIT_PACKS,resolvePackPriceChf,getPromo,discountedChf} from "@/lib/credits";
 import {PackPrice} from "@/components/PackPrice";
 import {ArrowRight,CalendarPlus,CircleDollarSign,FilePlus2,Heart,Languages,MapPin,Megaphone,Plus,ShieldCheck,Sparkles,UserRound,UserRoundCheck} from "lucide-react";
 
@@ -12,7 +12,7 @@ const heroIcons=[Megaphone,Sparkles,Languages];
 const stepIcons=[UserRound,ShieldCheck,UserRoundCheck,CircleDollarSign,CalendarPlus];
 export async function generateMetadata({params}:{params:Promise<{locale:string}>}):Promise<Metadata>{const {locale}=await params;const t=await getTranslations({locale,namespace:"becomePractitioner"});const path="/devenir-praticien";return {title:t("metaTitle"),description:t("metaDescription"),alternates:{canonical:`${SITE}${locale==="fr"?"":`/${locale}`}${path}`,languages:{fr:`${SITE}${path}`,de:`${SITE}/de${path}`,en:`${SITE}/en${path}`}}};}
 
-export default async function BecomePractitionerPage({params}:{params:Promise<{locale:string}>}){const {locale}=await params;setRequestLocale(locale);const t=await getTranslations("becomePractitioner");const db=await createClient();const {data}=await db.from("settings").select("key,value");const settings=Object.fromEntries((data??[]).map(r=>[r.key,r.value]));const heroBenefits=t.raw("heroBenefits") as string[];const benefits=t.raw("benefits") as {line1:string;line2:string}[];const steps=t.raw("steps") as {title:string;text:string}[];const faq=t.raw("faq") as {q:string;a:string}[];const validityDays=Math.max(1,Number(settings.pack_default_valid_days)||365);const validityMonths=Math.max(1,Math.round(validityDays/(365/12)));
+export default async function BecomePractitionerPage({params}:{params:Promise<{locale:string}>}){const {locale}=await params;setRequestLocale(locale);const t=await getTranslations("becomePractitioner");const {data,error}=await readPackSettings();if(error)throw new Error("Les tarifs sont momentanément indisponibles.");const settings=Object.fromEntries((data??[]).map(r=>[r.key,r.value]));const heroBenefits=t.raw("heroBenefits") as string[];const benefits=t.raw("benefits") as {line1:string;line2:string}[];const steps=t.raw("steps") as {title:string;text:string}[];const faq=t.raw("faq") as {q:string;a:string}[];const validityDays=Math.max(1,Number(settings.pack_default_valid_days)||365);const validityMonths=Math.max(1,Math.round(validityDays/(365/12)));
 return <main>
   <section className="relative overflow-hidden bg-gradient-to-br from-soul-sand/80 via-soul-cream to-white px-4 py-16 text-center sm:py-20">
     <div aria-hidden className="absolute left-1/2 top-0 h-48 w-48 -translate-x-1/2 rounded-full bg-soul-amber/10 blur-3xl" />
@@ -99,9 +99,11 @@ return <main>
         </div>
       </figure>
     </div>
-    <div className="mt-10 grid gap-5 sm:grid-cols-3">{CREDIT_PACKS.map((pack,index)=>{const price=resolvePackPriceChf(pack,settings);return <article className={`relative overflow-hidden rounded-3xl border bg-white p-6 shadow-[0_10px_30px_rgba(74,52,37,0.08)] ${index===1?"border-soul-violet/35 ring-2 ring-soul-violet/10":"border-soul-bronze/10"}`} key={pack.id}>
+    <div className="mt-10 grid gap-5 sm:grid-cols-3">{CREDIT_PACKS.map((pack,index)=>{const basePrice=resolvePackPriceChf(pack,settings);const promo=getPromo(settings);const hasDiscount=!!promo&&promo.percent>0;const price=hasDiscount?discountedChf(basePrice,promo.percent):basePrice;return <article className={`relative overflow-hidden rounded-3xl border bg-white p-6 shadow-[0_10px_30px_rgba(74,52,37,0.08)] ${index===1?"border-soul-violet/35 ring-2 ring-soul-violet/10":"border-soul-bronze/10"}`} key={pack.id}>
       {index===1&&<span className="absolute right-0 top-0 rounded-bl-2xl bg-soul-violet px-3 py-1.5 text-xs font-semibold text-white">{t("packFeatured")}</span>}
       <p className="text-sm font-semibold uppercase tracking-[0.14em] text-soul-bronze">{t("packLabel",{count:pack.credits})}</p>
+      {promo&&<p className="mt-3 text-sm font-semibold text-soul-violet">{promo.label}{hasDiscount&&` · −${promo.percent} %`}</p>}
+      {hasDiscount&&<p className="mt-3 text-lg text-soul-bronze"><del><PackPrice valueChf={basePrice}/></del></p>}
       <p className="mt-4 font-serif text-4xl text-soul-brown"><PackPrice valueChf={price}/></p>
       <p className="mt-3 text-sm font-medium text-soul-ink/70"><PackPrice valueChf={price/pack.credits}/> {t("perPublication")}</p>
       <p className="mt-2 text-sm text-soul-bronze">{t("packValidityMonths",{count:validityMonths})}</p>

@@ -442,7 +442,7 @@
     "creditsActive": "Aktiv",
     "creditsPacksNote": "Ein Paket, dessen Datum überschritten ist, wird automatisch als „abgelaufen“ markiert; sein Guthaben ist nicht mehr nutzbar. Die Erlebnisse, die Sie während der Gültigkeit Ihres Pakets veröffentlicht haben, bleiben jedoch bis zu ihrem Datum online (und werden danach automatisch entfernt), auch wenn das Paket inzwischen abgelaufen ist.",
     "creditsPacksHeading": "Veröffentlichungspakete",
-    "creditsPerPublication": "{price}.– / Veröffentlichung",
+    "creditsPerPublication": "CHF {price} / Veröffentlichung",
     "creditsPackValidityDays": "Paket {count} Tage gültig",
     "creditsPackValidityMonths": "{count, plural, one {# Monat gültig} other {# Monate gültig}}",
     "creditsPaymentTitle": "Zahlung per Überweisung",

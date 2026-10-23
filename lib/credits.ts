@@ -63,9 +63,9 @@ export function getPromo(settings: Record<string, string | undefined>): Promo | 
   return { label, percent };
 }
 
-/** Prix après remise, arrondi au franc. */
+/** Prix après remise, arrondi au centime comme le montant facturé. */
 export function discountedChf(priceChf: number, percent: number): number {
-  return Math.round(priceChf * (1 - percent / 100));
+  return Math.round(priceChf * (1 - percent / 100) * 100) / 100;
 }
 
 /** Paiement manuel par IBAN. L'admin attribue les crédits à réception. */
