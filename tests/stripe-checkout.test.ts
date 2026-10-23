@@ -3,6 +3,7 @@ import {beforeEach, expect, it, vi} from 'vitest';
 import {NextRequest} from 'next/server';
 import {POST} from '@/app/api/stripe/checkout/route';
 const mocks=vi.hoisted(()=>({configured:vi.fn(),create:vi.fn(),user:vi.fn(),settings:vi.fn()}));
+vi.mock('@/lib/pack-settings',()=>({readPackSettings:()=>mocks.settings()}));
 vi.mock('@/lib/stripe',()=>({isStripeConfigured:mocks.configured,getStripe:()=>({checkout:{sessions:{create:mocks.create}}})}));
 vi.mock('@/lib/supabase/server',()=>({createClient:async()=>({auth:{getUser:mocks.user},from:(table:string)=>({select:()=> table==='settings'?mocks.settings():{eq:()=>({maybeSingle:async()=>({data:table==='profiles'?{preferred_lang:'de'}:{id:'20000000-0000-4000-8000-000000000001',name:'Test'}})})}})})}));
 const request=(body:string)=>new NextRequest('http://localhost/api/stripe/checkout',{method:'POST',headers:{'content-type':'application/json'},body});

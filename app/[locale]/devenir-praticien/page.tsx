@@ -2,7 +2,7 @@ import type {Metadata} from "next";
 import Image from "next/image";
 import {getTranslations,setRequestLocale} from "next-intl/server";
 import {Link} from "@/i18n/navigation";
-import {createClient} from "@/lib/supabase/server";
+import {readPackSettings} from "@/lib/pack-settings";
 import {CREDIT_PACKS,resolvePackPriceChf,getPromo,discountedChf} from "@/lib/credits";
 import {PackPrice} from "@/components/PackPrice";
 import {ArrowRight,CalendarPlus,CircleDollarSign,FilePlus2,Heart,Languages,MapPin,Megaphone,Plus,ShieldCheck,Sparkles,UserRound,UserRoundCheck} from "lucide-react";
@@ -12,7 +12,7 @@ const heroIcons=[Megaphone,Sparkles,Languages];
 const stepIcons=[UserRound,ShieldCheck,UserRoundCheck,CircleDollarSign,CalendarPlus];
 export async function generateMetadata({params}:{params:Promise<{locale:string}>}):Promise<Metadata>{const {locale}=await params;const t=await getTranslations({locale,namespace:"becomePractitioner"});const path="/devenir-praticien";return {title:t("metaTitle"),description:t("metaDescription"),alternates:{canonical:`${SITE}${locale==="fr"?"":`/${locale}`}${path}`,languages:{fr:`${SITE}${path}`,de:`${SITE}/de${path}`,en:`${SITE}/en${path}`}}};}
 
-export default async function BecomePractitionerPage({params}:{params:Promise<{locale:string}>}){const {locale}=await params;setRequestLocale(locale);const t=await getTranslations("becomePractitioner");const db=await createClient();const {data}=await db.from("settings").select("key,value");const settings=Object.fromEntries((data??[]).map(r=>[r.key,r.value]));const heroBenefits=t.raw("heroBenefits") as string[];const benefits=t.raw("benefits") as {line1:string;line2:string}[];const steps=t.raw("steps") as {title:string;text:string}[];const faq=t.raw("faq") as {q:string;a:string}[];const validityDays=Math.max(1,Number(settings.pack_default_valid_days)||365);const validityMonths=Math.max(1,Math.round(validityDays/(365/12)));
+export default async function BecomePractitionerPage({params}:{params:Promise<{locale:string}>}){const {locale}=await params;setRequestLocale(locale);const t=await getTranslations("becomePractitioner");const {data,error}=await readPackSettings();if(error)throw new Error("Les tarifs sont momentanément indisponibles.");const settings=Object.fromEntries((data??[]).map(r=>[r.key,r.value]));const heroBenefits=t.raw("heroBenefits") as string[];const benefits=t.raw("benefits") as {line1:string;line2:string}[];const steps=t.raw("steps") as {title:string;text:string}[];const faq=t.raw("faq") as {q:string;a:string}[];const validityDays=Math.max(1,Number(settings.pack_default_valid_days)||365);const validityMonths=Math.max(1,Math.round(validityDays/(365/12)));
 return <main>
   <section className="relative overflow-hidden bg-gradient-to-br from-soul-sand/80 via-soul-cream to-white px-4 py-16 text-center sm:py-20">
     <div aria-hidden className="absolute left-1/2 top-0 h-48 w-48 -translate-x-1/2 rounded-full bg-soul-amber/10 blur-3xl" />

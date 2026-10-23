@@ -7,6 +7,7 @@ import { formatDate } from "@/lib/utils";
 import type { CreditPack, CreditTransaction, Locale } from "@/types/database";
 import { BuyPackButton } from "./BuyPackButton";
 import { PackPrice } from "@/components/PackPrice";
+import {readPackSettings} from '@/lib/pack-settings';
 
 export const dynamic = "force-dynamic";
 
@@ -45,10 +46,12 @@ export default async function CreditsPage({
     supabase.from("settings").select("key, value"),
   ]);
   if(txError || settingsError)throw new Error('Les crédits sont momentanément indisponibles. Réessayez.');
+  const pricing=await readPackSettings();
+  if(pricing.error)throw new Error('Les tarifs sont momentanément indisponibles. Réessayez.');
   const transactions = (data as CreditTransaction[]) ?? [];
   const packs = (packData as CreditPack[]) ?? [];
   const settings = Object.fromEntries(
-    ((settingsData as { key: string; value: string }[]) ?? []).map((s) => [s.key, s.value])
+    [...((settingsData as { key: string; value: string }[]) ?? []),...(pricing.data??[])].map((s) => [s.key, s.value])
   );
   // IBAN / bénéficiaire : éditables par l'admin (Didier) depuis /admin/parametres.
   const beneficiary = settings.payment_beneficiary?.trim() || STATIC_PAYMENT.beneficiary;

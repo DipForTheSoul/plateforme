@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getPack, resolvePackPriceChf, getPromo, discountedChf } from "@/lib/credits";
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
+import {readPackSettings} from '@/lib/pack-settings';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
 
   // Prix éditables par l'admin (table `settings`) + éventuelle promo (étiquette + %).
   // Le montant est envoyé à la volée → Didier change tout dans son admin, jamais sur Stripe.
-  const { data: settingsRows, error: settingsError } = await supabase.from("settings").select("key, value");
+  const { data: settingsRows, error: settingsError } = await readPackSettings();
   if (settingsError) return NextResponse.json({error:'Les tarifs sont momentanément indisponibles.'}, {status:503});
   const settings = Object.fromEntries(
     ((settingsRows as { key: string; value: string }[]) ?? []).map((s) => [s.key, s.value])

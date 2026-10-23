@@ -2,6 +2,7 @@ import {render,screen,cleanup} from '@testing-library/react';
 import {afterEach,expect,it,vi} from 'vitest';
 import Page from '@/app/[locale]/devenir-praticien/page';
 const state=vi.hoisted(()=>({settings:[] as {key:string;value:string}[]}));
+vi.mock('@/lib/pack-settings',()=>({readPackSettings:async()=>({data:state.settings,error:null})}));
 vi.mock('next-intl/server',()=>({setRequestLocale:vi.fn(),getTranslations:async()=>Object.assign((key:string)=>key,{raw:()=>[]})}));
 vi.mock('@/lib/supabase/server',()=>({createClient:async()=>({from:()=>({select:async()=>({data:state.settings})})})}));
 vi.mock('@/i18n/navigation',()=>({Link:({children,...props}:React.ComponentProps<'a'>)=><a {...props}>{children}</a>}));
