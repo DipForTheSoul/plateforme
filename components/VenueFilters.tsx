@@ -22,18 +22,18 @@ export function VenueFilters({ search, country, canton, countries, cantons, coun
   const hasCantons = effectiveCountry === "CH" && cantons.length > 0;
   const submittedCountry = multipleCountries ? selectedCountry : selectedCanton ? effectiveCountry : "";
 
-  return <form method="get" className="mt-6 grid grid-cols-2 items-center gap-3 sm:flex sm:flex-wrap [&>div:first-child]:col-span-2 [&>div:first-child]:basis-full sm:[&>div:first-child]:basis-60">
+  return <form method="get" className="mt-6 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:flex sm:flex-wrap [&>div:first-child]:col-span-2 [&>div:first-child]:basis-full sm:[&>div:first-child]:basis-60">
     <VenueSearch {...search} />
     <input type="hidden" name="pays" value={submittedCountry} />
     {multipleCountries && <select aria-label={labels.country} className="field min-h-11 min-w-0 !w-auto !rounded-full !py-2.5 text-sm" value={selectedCountry} onChange={event => { setSelectedCountry(event.target.value); setSelectedCanton(""); }}>
       <option value="">{labels.allCountries}</option>
       {countries.map(code => <option key={code} value={code}>{countryNames[code] ?? code}</option>)}
     </select>}
-    {hasCantons ? <select name="canton" aria-label={labels.canton} className="field min-h-11 min-w-0 !w-full !rounded-full !py-2.5 text-sm sm:!w-auto" value={selectedCanton} onChange={event => setSelectedCanton(event.target.value)}>
+    {hasCantons ? <select name="canton" aria-label={labels.canton} className="field min-h-11 min-w-0 !w-full !rounded-full !py-2.5 !pl-3 !pr-7 !bg-[position:right_0.5rem_center] !text-[13px] sm:!w-auto sm:!pl-4 sm:!pr-11 sm:!bg-[position:right_1rem_center] sm:!text-sm" value={selectedCanton} onChange={event => setSelectedCanton(event.target.value)}>
       <option value="">{labels.allCantons}</option>
       {cantons.map(value => <option key={value} value={value}>{value}</option>)}
     </select> : <input type="hidden" name="canton" value="" />}
-    <button type="submit" className="btn-primary min-h-11 justify-center gap-2 !px-4 !py-2.5 !text-sm sm:!px-6">
+    <button type="submit" className="btn-primary min-h-11 justify-center gap-2 !px-3 !py-2.5 !text-sm sm:!px-6">
       <Search aria-hidden className="h-4 w-4 shrink-0" />{labels.search}
     </button>
   </form>;
