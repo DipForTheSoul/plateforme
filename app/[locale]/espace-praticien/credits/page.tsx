@@ -145,11 +145,11 @@ export default async function CreditsPage({
                 </div>
                 <p className="mt-2 font-serif text-3xl text-soul-brown">
                   {hasDiscount && (
-                    <span className="mr-2 align-middle text-xl text-soul-bronze/60 line-through">
+                    <span className="mr-2 whitespace-nowrap align-middle text-xl text-soul-bronze/60 line-through">
                       <PackPrice valueChf={priceChf} />
                     </span>
                   )}
-                  <PackPrice valueChf={finalChf} />
+                  <span className="inline-block whitespace-nowrap"><PackPrice valueChf={finalChf} /></span>
                 </p>
                 <p className="mt-1 text-xs text-soul-bronze">
                   {tr("creditsPerPublication", { price: (finalChf / pack.credits).toFixed(2) })}
