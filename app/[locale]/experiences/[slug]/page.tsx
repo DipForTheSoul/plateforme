@@ -14,6 +14,7 @@ import { ImageGallery } from "@/components/ImageGallery";
 import { StarRating } from "@/components/StarRating";
 import { JsonLd } from "@/components/JsonLd";
 import { createClient } from "@/lib/supabase/server";
+import { recordEventView } from "@/lib/event-view-counter";
 import { categoryVisual } from "@/lib/gradients";
 import { getEventBySlug, getAdjacentEvents } from "@/lib/queries";
 import { eventJsonLd } from "@/lib/seo";
@@ -67,7 +68,7 @@ export default async function EventPage({
 
   const supabase = await createClient();
   // Compteur de vues (analytics sans cookies) — best-effort.
-  await supabase.rpc("increment_event_view", { p_event_id: event.id });
+  await recordEventView(event.id);
 
   // Autres dates (occurrences liées, passées exclues).
   const parentId = event.parent_event_id ?? event.id;
