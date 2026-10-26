@@ -45,7 +45,7 @@ const cachedCategories = publicCache(async () => {
   const { data, error } = await createPublicClient().from("categories").select("*").order("position");
   if (error) throw new Error("Lecture des univers indisponible.");
   return (data as Category[]) ?? [];
-}, ["public-categories-v1"], ["public-categories"]);
+}, ["public-categories-v2"], ["public-categories"]);
 
 const cachedEvents = publicCache(async () => {
   const query = createPublicClient().from("events").select(EVENT_WITH_RELATIONS)
@@ -98,14 +98,6 @@ export async function getExchangeRateEur(): Promise<number> {
 export async function getCategories(): Promise<Category[]> {
   try {
     const categories = await cachedCategories();
-    // Visual review only: do not mutate production reference data for a preview.
-    if (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_GIT_COMMIT_REF === "apercu-univers-lieux") {
-      const proposed: Category[] = [
-        { id: "preview-cercles", name: "Cercles, rituels & cérémonies", slug: "cercles-rituels-ceremonies", position: 7 },
-        { id: "preview-tantra", name: "Tantra & Intimité consciente", slug: "tantra-intimite-consciente", position: 8 },
-      ];
-      return [...categories, ...proposed.filter(item => !categories.some(existing => existing.slug === item.slug))].sort((a, b) => a.position - b.position);
-    }
     return categories;
   } catch (error) {
     console.error("[queries/getCategories]", error instanceof Error ? error.message : "read failed");
