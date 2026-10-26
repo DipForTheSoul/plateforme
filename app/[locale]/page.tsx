@@ -267,7 +267,7 @@ export default async function HomePage({
               <Plus className="h-5 w-5 shrink-0 text-soul-bronze transition-transform duration-200 group-open:rotate-45" />
             </summary>
             <div className="space-y-3 pb-5 leading-relaxed text-soul-ink/75">
-              <p>{t("faq.propose.venue")} <Link className="text-soul-violet underline" href="/lieux#proposer-un-lieu">{t("faq.propose.venueLink")}</Link></p>
+              <p>{t("faq.propose.venue")} <Link className="text-soul-violet underline" href="/lieux">{t("faq.propose.venueLink")}</Link></p>
             </div>
           </details>] : []),
           ])}
