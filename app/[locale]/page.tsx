@@ -131,14 +131,14 @@ export default async function HomePage({
           <h2 className="font-serif text-3xl text-soul-brown">{t("categoriesTitle")}</h2>
           <p className="text-soul-bronze">{t("categoriesSubtitle")}</p>
         </div>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-6">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {categories.map((category) => {
             const visual = categoryVisual(category.slug);
             return (
               <Link
                 key={category.id}
                 href={`/experiences?categorie=${category.slug}`}
-                className="group relative flex h-44 items-end overflow-hidden rounded-2xl shadow-sm transition hover:shadow-lg"
+                className="group relative flex h-44 min-w-0 items-end overflow-hidden rounded-2xl shadow-sm transition hover:shadow-lg"
                 style={visual.image ? undefined : { background: visual.gradient }}
               >
                 {visual.image ? (
@@ -146,7 +146,7 @@ export default async function HomePage({
                     src={visual.image}
                     alt=""
                     fill
-                    sizes="(max-width: 768px) 50vw, 16vw"
+                    sizes="(max-width: 768px) 50vw, (max-width: 1152px) 25vw, 280px"
                     className="object-cover transition duration-500 group-hover:scale-105"
                   />
                 ) : (
@@ -253,18 +253,24 @@ export default async function HomePage({
           <p className="mt-1 text-soul-bronze">{t("faq.subtitle")}</p>
         </div>
         <div className="flex flex-col gap-3">
-          {(t.raw("faq.items") as { q: string; a: string }[]).map((item, i) => (
-            <details
-              key={i}
-              className="group rounded-2xl border border-soul-bronze/15 bg-white px-5 transition open:shadow-sm"
-            >
+          {(t.raw("faq.items") as { q: string; a: string }[]).flatMap((item, i) => [
+            <details key={i} className="group rounded-2xl border border-soul-bronze/15 bg-white px-5 transition open:shadow-sm">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-serif text-lg text-soul-brown marker:content-none [&::-webkit-details-marker]:hidden">
                 {item.q}
                 <Plus className="h-5 w-5 shrink-0 text-soul-bronze transition-transform duration-200 group-open:rotate-45" />
               </summary>
               <p className="pb-5 leading-relaxed text-soul-ink/75">{item.a}{i===4&&<> <Link className="text-soul-violet underline" href="/devenir-praticien">{t("recruitment.learnMore")}</Link></>}</p>
-            </details>
-          ))}
+            </details>,
+            ...(i === 4 ? [<details key="propose" className="group rounded-2xl border border-soul-bronze/15 bg-white px-5 transition open:shadow-sm">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-serif text-lg text-soul-brown marker:content-none [&::-webkit-details-marker]:hidden">
+              {t("faq.propose.question")}
+              <Plus className="h-5 w-5 shrink-0 text-soul-bronze transition-transform duration-200 group-open:rotate-45" />
+            </summary>
+            <div className="space-y-3 pb-5 leading-relaxed text-soul-ink/75">
+              <p>{t("faq.propose.venue")} <Link className="text-soul-violet underline" href="/lieux">{t("faq.propose.venueLink")}</Link></p>
+            </div>
+          </details>] : []),
+          ])}
         </div>
       </section>
 

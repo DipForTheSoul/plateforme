@@ -92,7 +92,7 @@ export default async function PractitionerDashboard() {
             </Link>
           </div>
         ) : (
-          <Link href="/espace-praticien/evenements/nouveau" className="btn-primary self-start">
+          <Link href="/espace-praticien/evenements/nouveau" className="btn-primary min-h-11 max-w-full self-start whitespace-nowrap !px-4 !text-sm sm:!px-6 sm:!text-base">
             {t("submitExperience")}
           </Link>
         )

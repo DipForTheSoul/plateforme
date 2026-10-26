@@ -8,7 +8,8 @@ import { getVenueById } from "@/lib/queries";
 import { createClient } from "@/lib/supabase/server";
 import { EVENT_WITH_RELATIONS, mapEventRow, type EventRowRaw } from "@/types/database";
 import { formatVenueLocationFull } from "@/lib/utils";
-import { Globe, MapPin, Navigation, Users } from "lucide-react";
+import { ArrowLeft, Globe, MapPin, Navigation, Users } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -58,6 +59,9 @@ export default async function VenuePage({
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
+      <Link href="/lieux" className="mb-6 inline-flex min-h-11 items-center gap-2 text-sm text-soul-violet underline underline-offset-4">
+        <ArrowLeft aria-hidden className="h-4 w-4" />{t("backToVenues")}
+      </Link>
       <header className="max-w-3xl">
         <h1 className="text-3xl text-soul-brown sm:text-4xl">{venue.name}</h1>
 
@@ -95,14 +99,6 @@ export default async function VenuePage({
               <Globe className="h-4 w-4" /> {t("website")}
             </a>
           )}
-          <a
-            href={mapsDirections}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary !py-2.5 sm:ml-auto"
-          >
-            <Navigation className="h-4 w-4" /> {t("directions")}
-          </a>
         </div>
       </header>
 
@@ -122,6 +118,17 @@ export default async function VenuePage({
           </a>
         </div>
       )}
+
+      <div className="mt-4 flex justify-start">
+        <a
+          href={mapsDirections}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-primary min-h-11 max-w-full !py-2.5"
+        >
+          <Navigation aria-hidden className="h-4 w-4 shrink-0" /> {t("directions")}
+        </a>
+      </div>
 
       <section className="mt-12">
         <h2 className="mb-6 text-2xl text-soul-brown">{t("upcoming")}</h2>

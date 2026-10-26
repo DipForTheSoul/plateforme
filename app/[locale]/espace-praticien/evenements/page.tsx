@@ -52,10 +52,10 @@ export default async function MyEventsPage({
       {flags.mise_en_avant === "succes" && <div role="status" className="rounded-2xl border border-green-300 bg-green-50 p-4 text-sm text-green-800">{t("featuredPurchaseSuccess")}</div>}
       {flags.mise_en_avant === "annule" && <div className="rounded-2xl border border-soul-amber/50 bg-soul-ivory p-4 text-sm text-soul-brown">{t("featuredPurchaseCancelled")}</div>}
 
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl text-soul-brown">{t("navEvents")}</h2>
+      <div className="flex min-w-0 flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="shrink-0 text-xl text-soul-brown">{t("navEvents")}</h2>
         {practitioner.credits > 0 && practitioner.status === "approved" && (
-          <Link href="/espace-praticien/evenements/nouveau" className="btn-primary">
+          <Link href="/espace-praticien/evenements/nouveau" className="btn-primary min-h-11 max-w-full whitespace-nowrap !px-4 !text-sm sm:!px-6 sm:!text-base">
             {t("submitExperience")}
           </Link>
         )}

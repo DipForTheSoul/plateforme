@@ -30,6 +30,14 @@ it('retourne le motif 422 en masquant toute adresse renvoyée par MailerLite', a
   expect(result.reason).not.toContain('contact.personnel');
 });
 
+it('transmet les deux nouveaux univers sans modifier leurs identifiants', async () => {
+  const fetchMock = vi.fn().mockResolvedValue(new Response('{}', {status: 201}));
+  vi.stubGlobal('fetch', fetchMock);
+  const interests = ['cercles-rituels-ceremonies', 'tantra-intimite-consciente'];
+  await expect(upsertSubscriber({email: 'univers@forthesoul.test', interests})).resolves.toBe(true);
+  expect(JSON.parse(fetchMock.mock.calls[0][1].body).fields.interests).toBe(interests.join(', '));
+});
+
 it('explique une limite temporaire et une indisponibilité sans exception', async () => {
   vi.stubGlobal('fetch', vi.fn()
     .mockResolvedValueOnce(new Response('{}', {status: 429}))

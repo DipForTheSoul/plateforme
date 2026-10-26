@@ -12,6 +12,16 @@ export interface CategoryVisual {
 }
 
 const VISUALS: Record<string, CategoryVisual> = {
+  "tantra-intimite-consciente": {
+    gradient: "linear-gradient(135deg, #825640 0%, #c9a97a 60%, #fef6ed 100%)",
+    emoji: "🤍",
+    image: "/cat-tantra-intimite-consciente-v1.webp",
+  },
+  "cercles-rituels-ceremonies": {
+    gradient: "linear-gradient(135deg, #443420 0%, #9e7c52 60%, #fef6ed 100%)",
+    emoji: "🔥",
+    image: "/cat-cercles-rituels-ceremonies.webp",
+  },
   "danse-mouvement": {
     gradient: "linear-gradient(135deg, #ff8044 0%, #f9ad4d 55%, #fdead2 100%)",
     emoji: "💃",

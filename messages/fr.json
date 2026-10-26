@@ -151,6 +151,11 @@
     "didierQuote": "Je te souhaite de vivre les mêmes magnifiques expériences que celles que j'ai vécues.",
     "didierSignature": "Didier Picamoles, fondateur",
     "faq": {
+      "propose": {
+        "question": "Comment proposer un lieu ?",
+        "venue": "Pour proposer un lieu, aucun compte n’est nécessaire : envoyez les informations par email à ForTheSoul depuis la page Lieux.",
+        "venueLink": "Proposer mon lieu"
+      },
       "title": "Questions fréquentes",
       "subtitle": "Tout ce qu'il faut savoir avant de se lancer",
       "items": [
@@ -281,6 +286,22 @@
     "notFound": "Cette fiche n'existe pas ou n'est pas encore validée."
   },
   "venues": {
+    "filterPanel": {"title":"Filtres","apply":"Appliquer les filtres","close":"Fermer les filtres","empty":"Aucun filtre supplémentaire disponible."},
+    "searchAction": "Rechercher",
+    "suggestions": "Suggestions de villes et de lieux",
+    "suggestionCity": "Ville",
+    "suggestionVenue": "Lieu",
+    "backToVenues": "Retour aux lieux",
+    "proposal": {
+      "emailSubject": "Proposition de lieu pour ForTheSoul",
+      "emailBody": "Bonjour,\n\nJe souhaite proposer mon lieu sur ForTheSoul.\n\nNom du lieu :\nAdresse complète :\nCapacité d’accueil :\nDescription :\nÉquipements disponibles (cuisine, sol, sono…) :\nSite internet :\nNom et téléphone de contact (ne seront pas publiés, uniquement pour éventuellement éclaircir certains détails) :\n\nMerci de m’indiquer les modalités de publication et de paiement pour l’offre à CHF 49.– / 12 mois.\n\nBonne journée",
+      "title": "Vous avez un lieu à faire découvrir ?",
+      "description": "Nous nous occupons de sa publication. Envoyez-nous les informations nécessaires par email et nous créons votre fiche.",
+      "price": "CHF 49.– / 12 mois",
+      "button": "Proposer mon lieu",
+      "question": "Comment proposer mon lieu sur ForTheSoul ?",
+      "answer": "La publication d’un lieu est effectuée par ForTheSoul.\n\nEnvoyez-nous simplement par email les informations que vous considérez comme pertinentes, telles que le nombre de places, la cuisine, le type de sol, la sono, les équipements disponibles, etc.\n\nAprès vérification, nous créons et publions votre fiche. Votre lieu sera alors listé, visible et facilement trouvable.\n\nTarif : CHF 49.– pour 12 mois\nVous recevrez tous les détails en réponse à votre email."
+    },
     "capacity": "Capacité : {count} personnes",
     "upcoming": "Expériences dans ce lieu",
     "notFound": "Ce lieu n'existe pas.",
@@ -559,6 +580,8 @@
     "rejected": "Refusée"
   },
   "categories": {
+    "cercles-rituels-ceremonies": "Cercles, rituels & cérémonies",
+    "tantra-intimite-consciente": "Tantra & Intimité consciente",
     "chamanisme": "(Néo) Chamanisme",
     "danse-mouvement": "Danse & Mouvement",
     "meditation": "Méditation & Pleine conscience",

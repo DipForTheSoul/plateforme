@@ -20,6 +20,6 @@ export async function AdminAudience() {
  return <section className="card p-6"><h2 className="font-serif text-lg">{t.title}</h2>
   {Number(row!.visitors)>0?<p className="my-3 font-serif text-4xl text-soul-brown">{Number(row!.visitors).toLocaleString(locale)}</p>:<p className="my-3">{t.empty}</p>}
   <p className="text-sm">{t.since} {new Date(row!.started_at).toLocaleDateString(locale,{timeZone:'Europe/Zurich'})}.</p>
-  <p className="mt-3 text-sm">{locale==='de'?'Geschätzte Besucher mit Einwilligung zur Reichweitenmessung.':locale==='en'?'Estimated visitors who accepted audience measurement.':'Estimation des visiteurs ayant accepté la mesure d’audience.'}</p>
+  <p className="mt-3 text-sm">{t.note}</p>
  </section>;
 }
