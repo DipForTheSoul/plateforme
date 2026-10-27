@@ -14,4 +14,8 @@ Inventaire des familles : INV/NAV/LIS/LOC/GEO/DEP/EDI applicables au lot (lectur
 
 Limites : Search Console/indexation réelle, Rich Results Google et amélioration de classement NON TESTÉS. Date de la fiche à confirmer par le propriétaire : startDate 24 novembre, texte mentionnant 28 novembre ; ne pas la changer par supposition. Audit Supabase et alertes antérieurs restent ouverts : aucune validation globale de plateforme.
 
-Déploiement : EN ATTENTE. Retour arrière du lot par revert du commit SEO uniquement, sans restaurer une vieille version complète ni toucher la base.
+Suite finale locale : 87 fichiers / 435 tests PASS, lint et types PASS. La CI du premier commit a détecté Zod 4.6.5 affecté par GHSA-mrhx-c7xc-m3w5. Mise à jour ciblée 4.6.6 ; suite complète rejouée : 435 PASS ; audits production et toutes dépendances : 0 vulnérabilité signalée. Aucun autre paquet modifié.
+
+Aperçu 8078b79 : Vercel 6dfwxX4wW39bosRNNNkcoGryQx88 READY ; fiche Danse Soufie réellement ouverte avec canonical exacte, hreflang FR/DE/EN et PostalAddress Neuchâtel/NE/CH. Les requêtes HTTP non authentifiées sont redirigées vers Vercel Login : BLOQUÉ pour cette méthode, pas un défaut des pages ; navigateur connecté utilisable.
+
+Déploiement production : EN ATTENTE. Retour arrière du lot par revert des changements SEO uniquement, sans restaurer une vieille version complète ni toucher la base ; préserver le patch de sécurité Zod.
