@@ -1,4 +1,5 @@
 import type {Metadata} from "next";
+import {pageAlternates} from '@/lib/metadata';
 import Image from "next/image";
 import {getTranslations,setRequestLocale} from "next-intl/server";
 import {Link} from "@/i18n/navigation";
@@ -7,10 +8,9 @@ import {CREDIT_PACKS,resolvePackPriceChf,getPromo,discountedChf} from "@/lib/cre
 import {PackPrice} from "@/components/PackPrice";
 import {ArrowRight,CalendarPlus,CircleDollarSign,FilePlus2,Heart,Languages,MapPin,Megaphone,Plus,ShieldCheck,Sparkles,UserRound,UserRoundCheck} from "lucide-react";
 
-const SITE=process.env.NEXT_PUBLIC_SITE_URL??"https://forthesoul.ch";
 const heroIcons=[Megaphone,Sparkles,Languages];
 const stepIcons=[UserRound,ShieldCheck,UserRoundCheck,CircleDollarSign,CalendarPlus];
-export async function generateMetadata({params}:{params:Promise<{locale:string}>}):Promise<Metadata>{const {locale}=await params;const t=await getTranslations({locale,namespace:"becomePractitioner"});const path="/devenir-praticien";return {title:t("metaTitle"),description:t("metaDescription"),alternates:{canonical:`${SITE}${locale==="fr"?"":`/${locale}`}${path}`,languages:{fr:`${SITE}${path}`,de:`${SITE}/de${path}`,en:`${SITE}/en${path}`}}};}
+export async function generateMetadata({params}:{params:Promise<{locale:string}>}):Promise<Metadata>{const {locale}=await params;const t=await getTranslations({locale,namespace:"becomePractitioner"});return {title:t("metaTitle"),description:t("metaDescription"),alternates:pageAlternates('/devenir-praticien',locale)};}
 
 export default async function BecomePractitionerPage({params}:{params:Promise<{locale:string}>}){const {locale}=await params;setRequestLocale(locale);const t=await getTranslations("becomePractitioner");const {data,error}=await readPackSettings();if(error)throw new Error("Les tarifs sont momentanément indisponibles.");const settings=Object.fromEntries((data??[]).map(r=>[r.key,r.value]));const heroBenefits=t.raw("heroBenefits") as string[];const benefits=t.raw("benefits") as {line1:string;line2:string}[];const steps=t.raw("steps") as {title:string;text:string}[];const faq=t.raw("faq") as {q:string;a:string}[];const validityDays=Math.max(1,Number(settings.pack_default_valid_days)||365);const validityMonths=Math.max(1,Math.round(validityDays/(365/12)));
 return <main>

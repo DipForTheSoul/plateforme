@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageAlternates } from '@/lib/metadata';
 import { parseSearchFilters } from "@/lib/search-filters";
 import { toEventLocalInput } from "@/lib/event-time";
 import { formatEventSchedule } from '@/lib/event-display';
@@ -28,7 +29,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "events" });
-  return { title: t("title"), description: t("subtitle") };
+  return { title: t("title"), description: t("subtitle"), alternates: pageAlternates('/experiences', locale) };
 }
 
 interface SearchParams {

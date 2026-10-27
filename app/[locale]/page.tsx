@@ -1,4 +1,10 @@
 import Image from "next/image";
+import { pageAlternates } from '@/lib/metadata';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  return { alternates: pageAlternates('/', locale) };
+}
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { EventCard } from "@/components/EventCard";

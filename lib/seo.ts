@@ -1,8 +1,9 @@
 import type { EventWithRelations, Practitioner } from "@/types/database";
+import { SITE_URL } from '@/lib/metadata';
+import { descriptionText } from '@/lib/description-text';
 
 /** Builders JSON-LD Schema.org (Phase 9). */
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://forthesoul.ch";
 
 export function organizationJsonLd() {
   return {
@@ -23,7 +24,7 @@ export function eventJsonLd(event: EventWithRelations) {
     "@context": "https://schema.org",
     "@type": "Event",
     name: event.title,
-    description: event.description ?? undefined,
+    description: event.description ? descriptionText(event.description) : undefined,
     startDate: event.start_date,
     endDate: event.end_date ?? undefined,
     eventStatus: "https://schema.org/EventScheduled",
@@ -35,7 +36,13 @@ export function eventJsonLd(event: EventWithRelations) {
       ? {
           "@type": "Place",
           name: event.venue.name,
-          address: event.venue.address,
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: event.venue.address,
+            addressLocality: event.venue.city ?? undefined,
+            addressRegion: event.venue.canton ?? undefined,
+            addressCountry: event.venue.country,
+          },
           geo:
             event.venue.lat !== null && event.venue.lng !== null
               ? {

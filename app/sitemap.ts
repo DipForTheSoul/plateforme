@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
+import { SITE_URL } from '@/lib/metadata';
 import { getApprovedEvents, getApprovedPractitioners } from "@/lib/queries";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://forthesoul.ch";
 
 // Le sitemap dépend de la base publique : ne pas tenter de le figer pendant
 // un build CI sans Supabase. Les lectures restent couvertes par le cache 5 min.

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageAlternates } from '@/lib/metadata';
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getVenues } from "@/lib/queries";
@@ -16,7 +17,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "venues" });
-  return { title: t("pageTitle"), description: t("pageSubtitle") };
+  return { title: t("pageTitle"), description: t("pageSubtitle"), alternates: pageAlternates('/lieux', locale) };
 }
 
 /** Page publique des lieux (§3) + filtres recherche libre / canton (arbitrage Victor). */

@@ -1,5 +1,11 @@
 # PROGRESS — ForTheSoul
 
+## Correctif SEO technique — 27 octobre 2026
+
+- Périmètre confirmé dans BUILD-BRIEF phases 8–9 : métadonnées, hreflang, Schema.org, sitemap et robots. Aucun module SEO éditorial ajouté ; URL et données métier conservées.
+- Correction préparée : canonical/hreflang propres à chaque page publique principale et fiche ; suppression de l'héritage erroné des adresses d'accueil ; domaine public final cohérent dans sitemap/robots/JSON-LD ; adresse Event structurée depuis les données existantes.
+- Contrôles et publication : voir `docs/SEO-TECHNIQUE-20261027.md`. Les contrôles du lot SEO ne constituent pas la clôture de l'audit de sécurité ni une garantie d'indexation ou de classement Google.
+
 ## Lot local — ajout ultérieur n°1 (2026-09-28, non publié)
 
 ### Terminé en local

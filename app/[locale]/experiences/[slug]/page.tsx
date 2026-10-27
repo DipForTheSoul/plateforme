@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageAlternates } from '@/lib/metadata';
 import { isVenuePublished } from '@/lib/venue-publication';
 import {descriptionText} from '@/lib/description-text';
 import {webUrlSchema} from '@/lib/web-url';
@@ -36,11 +37,12 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const event = await getEventBySlug(slug);
   if (!event || event.status !== "approved") return { title: "ForTheSoul" };
   return {
     title: event.title,
+    alternates: pageAlternates(`/experiences/${event.slug}`, locale),
     description: descriptionText(event.description).slice(0, 160),
     openGraph: {
       title: event.title,

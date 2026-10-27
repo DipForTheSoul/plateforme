@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageAlternates } from '@/lib/metadata';
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -18,13 +19,14 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const practitioner = await getPractitionerBySlug(slug);
   if (!practitioner || practitioner.status !== "approved") {
     return { title: "ForTheSoul" };
   }
   return {
     title: practitioner.name,
+    alternates: pageAlternates(`/praticiens/${practitioner.slug}`, locale),
     description: practitioner.bio?.slice(0, 160),
     openGraph: {
       title: practitioner.name,

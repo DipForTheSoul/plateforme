@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SITE_URL } from '@/lib/metadata';
 import { Playfair_Display, Work_Sans } from "next/font/google";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
@@ -25,7 +26,6 @@ const workSans = Work_Sans({
   subsets: ["latin"],
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://forthesoul.ch";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -46,10 +46,6 @@ export async function generateMetadata({
       template: "%s | ForTheSoul",
     },
     description: t("tagline"),
-    alternates: {
-      canonical: locale === "fr" ? "/" : `/${locale}`,
-      languages: { fr: "/", de: "/de", en: "/en", "x-default": "/" },
-    },
     openGraph: {
       siteName: "ForTheSoul",
       type: "website",

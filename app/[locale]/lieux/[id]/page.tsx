@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageAlternates } from '@/lib/metadata';
 import { isVenuePublished } from '@/lib/venue-publication';
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -18,10 +19,10 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string; id: string }>;
 }): Promise<Metadata> {
-  const { id } = await params;
+  const { locale, id } = await params;
   const venue = await getVenueById(id);
   return venue && isVenuePublished(venue)
-    ? { title: venue.name, description: venue.description?.slice(0, 160) }
+    ? { title: venue.name, description: venue.description?.slice(0, 160), alternates: pageAlternates(`/lieux/${venue.id}`, locale) }
     : { title: "ForTheSoul" };
 }
 
