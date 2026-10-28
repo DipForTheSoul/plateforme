@@ -1,6 +1,6 @@
 {
  "title": "Politique de confidentialité",
- "updated": "17 octobre 2026",
+ "updated": "28 octobre 2026",
  "blocks": [
   {
    "t": "h2",
@@ -412,11 +412,11 @@
   },
   {
    "t": "p",
-   "x": "Les technologies strictement nécessaires peuvent être utilisées sans consentement. La mesure d’audience interne et Google Analytics, s’il est configuré, ne sont activés qu’après acceptation dans le bandeau ; le refus n’empêche pas l’utilisation de la plateforme. Le choix est mémorisé pendant un an et peut être modifié dans « Préférences cookies », en bas de page."
+   "x": "Les technologies strictement nécessaires assurent le fonctionnement du site. Google Analytics, s’il est configuré, est activé uniquement après acceptation. Le compteur statistique interne fonctionne séparément, pour estimer l’audience de ForTheSoul sans publicité personnalisée ni rapprochement avec un compte. Une information et un bouton de désactivation sont présentés dès la première visite. Vous pouvez désactiver ou réactiver ce compteur dans « Préférences de confidentialité », en bas de page, indépendamment de votre choix pour Google. Les choix sont mémorisés pendant un an. Les refus exprimés avant la séparation sont conservés pour les deux mesures jusqu’à un nouveau choix explicite."
   },
   {
    "t": "p",
-   "x": "La mesure interne utilise un identifiant aléatoire de navigateur, renouvelé après 30 jours dans le stockage local. Le serveur conserve cet identifiant et le jour du passage, sans le rattacher au nom, à l’adresse e-mail ou au compte d’un utilisateur. Le tableau de bord déduplique les navigateurs sur les 30 derniers jours ; il ne représente pas un nombre certain de personnes. Les comptes connectés, les prévisualisations et les robots identifiés sont exclus. Le retrait du consentement arrête les nouveaux relevés et efface l’identifiant local ; il ne supprime pas rétroactivement les relevés déjà enregistrés."
+   "x": "Le compteur interne utilise un identifiant aléatoire de navigateur renouvelé après 30 jours dans le stockage local. Il mesure les consultations, la provenance générale (moteur de recherche, publicité identifiée, réseau social, autre site ou accès direct), le pays approximatif, le type d’appareil et la création d’un compte parmi les navigateurs mesurés. Aucun nom, adresse e-mail, identifiant de compte, identifiant publicitaire ou contenu de formulaire n’est enregistré dans ces statistiques. L’adresse IP sert à limiter les abus ; seul son condensat secret est utilisé par cette protection. Les nouveaux identifiants statistiques sont conservés au plus 91 jours, puis remplacés par des totaux journaliers sans identifiant. Les chiffres historiques antérieurs sont conservés. Le tableau de bord propose des périodes de 7, 30 et 90 jours ; il s’agit d’une estimation, un autre appareil, un stockage effacé ou le renouvellement de l’identifiant pouvant compter à nouveau. Comptes connectés, prévisualisations, robots identifiés et oppositions sont exclus. La désactivation arrête les nouveaux relevés et efface l’identifiant local sans remettre les chiffres historiques à zéro. Ce comptage est destiné uniquement aux statistiques du site et n’est pas transmis à Google ni à Meta."
   },
   {
    "t": "h2",

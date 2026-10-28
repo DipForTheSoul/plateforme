@@ -12,6 +12,7 @@ import { MobileTabBar } from "@/components/MobileTabBar";
 import { PageViewTracker } from "@/components/PageViewTracker";
 import { CurrencyProvider } from "@/components/CurrencyProvider";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { INTERNAL_AUDIENCE } from '@/lib/audience';
 import { getCurrentProfile } from "@/lib/auth";
 import { getExchangeRateEur } from "@/lib/queries";
 import "../globals.css";
@@ -77,6 +78,8 @@ export default async function LocaleLayout({
   const initialConsent = savedConsent === "accepted" || savedConsent === "refused"
     ? savedConsent
     : null;
+  const savedInternalChoice=cookieStore.get(INTERNAL_AUDIENCE)?.value;
+  const initialInternalChoice=savedInternalChoice==='enabled'||savedInternalChoice==='disabled'?savedInternalChoice:null;
   const accountHref = !profile
     ? "/connexion"
     : profile.role === "admin"
@@ -88,14 +91,14 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={`${playfair.variable} ${workSans.variable}`}>
       <body className="flex min-h-screen flex-col antialiased pb-20 md:pb-0">
-        <GoogleAnalytics locale={locale} initialConsent={initialConsent} />
+        {process.env.VERCEL_ENV!=='preview'&&<GoogleAnalytics locale={locale} initialConsent={initialConsent} initialInternalChoice={initialInternalChoice}/>}
         <NextIntlClientProvider>
           <CurrencyProvider rateEur={rateEur} initialCurrency={initialCurrency}>
             <Header />
             <main className="flex-1">{children}</main>
             <Footer />
             <MobileTabBar accountHref={accountHref} />
-            <PageViewTracker />
+            {process.env.VERCEL_ENV!=='preview'&&<PageViewTracker />}
           </CurrencyProvider>
         </NextIntlClientProvider>
       </body>

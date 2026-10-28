@@ -10,7 +10,9 @@ if(new URL(config.API_URL).origin!=='http://127.0.0.1:54321')throw new Error('QA
 const client=createClient(config.API_URL,config.SERVICE_ROLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
 export const qaPassword='Fts-QA-Local-2026!'; // Disposable local fixtures; never valid on remote infrastructure.
 const command=process.argv[2]??'serve';
-if(command==='verify'){
+if(command==='audience'){
+  const {verifyAudienceLocal}=await import('./qa-audience.mjs');await verifyAudienceLocal(config,qaPassword);
+}else if(command==='verify'){
   const {verifyLocal}=await import('./qa-verify.mjs');await verifyLocal(config,qaPassword);
 }else if(command==='auth'){
   const {verifyAuthLocal}=await import('./qa-auth.mjs');await verifyAuthLocal(config,qaPassword);

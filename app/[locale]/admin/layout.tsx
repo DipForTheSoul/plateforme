@@ -20,6 +20,7 @@ export default async function AdminLayout({
 
   const nav = [
     { href: "/admin", label: t("nav.dashboard") },
+    { href: "/admin/suivi", label: locale==='de'?'Besucherübersicht':locale==='en'?'Visitor tracking':'Suivi' },
     { href: "/admin/soumissions", label: t("nav.submissions") },
     { href: "/admin/mises-en-avant", label: t("nav.featured") },
     { href: "/admin/praticiens", label: t("nav.practitioners") },

@@ -5,6 +5,7 @@ import { submitWithoutReset } from "@/components/forms/submitWithoutReset";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { signUp, type AuthState } from "@/app/actions/auth";
+import {AUDIENCE_ID,INTERNAL_AUDIENCE} from '@/lib/audience';
 
 export function SignupForm({ categories }: { categories: { id: string; name: string; slug: string }[] }) {
   const t = useTranslations("auth");
@@ -14,6 +15,17 @@ export function SignupForm({ categories }: { categories: { id: string; name: str
     signUp,
     {}
   );
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    submitWithoutReset((data: FormData) => {
+      try {
+        if (localStorage.getItem(INTERNAL_AUDIENCE) === 'enabled') {
+          const browser = JSON.parse(localStorage.getItem(AUDIENCE_ID) ?? 'null');
+          if (browser?.expires > Date.now()) data.set('audienceBrowserId', browser.id);
+        }
+      } catch {}
+      formAction(data);
+    })(event);
+  };
 
   if (state.success) {
     return (
@@ -27,7 +39,7 @@ export function SignupForm({ categories }: { categories: { id: string; name: str
   }
 
   return (
-    <form action={formAction} onSubmit={submitWithoutReset(formAction)} className="flex flex-col gap-4">
+    <form action={formAction} onSubmit={handleSubmit} className="flex flex-col gap-4">
       <input type="hidden" name="locale" value={locale} />
       {/* Pot-de-miel anti-spam */}
       <input

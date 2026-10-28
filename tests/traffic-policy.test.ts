@@ -11,7 +11,8 @@ import proxy from "../proxy";
 beforeEach(() => {
   vi.clearAllMocks(); state.rate.mockResolvedValue(false);
   state.insert.mockResolvedValue({ error: null });
-  state.admin.mockReturnValue({ from: () => ({ upsert: state.insert }) });
+  state.admin.mockReturnValue({ rpc: (...args:unknown[]) => ({abortSignal:()=>state.insert(...args)}) });
+  vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY','isolated-test-statistical-secret');
   state.session.mockImplementation(async (_req, response) => response);
 });
 describe("crawl cost boundary", () => {
@@ -43,8 +44,7 @@ describe("crawl cost boundary", () => {
     const page = await proxy(new NextRequest("https://example.test/de/experiences?du=2026-10-17&vue=carte", { headers: { "user-agent": ua } }));
     expect(page.status).toBe(200); expect(state.session).toHaveBeenCalledOnce();
     const res = await POST(new NextRequest("https://example.test/api/views", { method: "POST", headers: { "user-agent": ua,origin:'https://example.test',cookie:'fts-audience-consent-v2=accepted' }, body: JSON.stringify({ path: "/de/experiences", browserId:'11111111-1111-4111-8111-111111111111' }) }));
-    expect(res.status).toBe(200); expect(state.insert).toHaveBeenCalledWith({ browser_id:'11111111-1111-4111-8111-111111111111' },{onConflict:'day,browser_id',ignoreDuplicates:true});
-    expect(state.insert).toHaveBeenCalledWith({browser_id:'11111111-1111-4111-8111-111111111111',path:'/de/experiences'},{onConflict:'day,browser_id,path',ignoreDuplicates:true});
+    expect(res.status).toBe(200); expect(state.insert).toHaveBeenCalledWith('record_internal_audience',expect.objectContaining({p_browser_id:'11111111-1111-4111-8111-111111111111',p_path:'/de/experiences',p_page_token:expect.stringMatching(/^[0-9a-f]{64}$/)}));
   });
   it.each(["", "/fr", "/de", "/en"])("blocks crawl combinations before session/render for %s", async (prefix) => {
     const response = await proxy(new NextRequest(`https://example.test${prefix}/experiences?calendrier=2099-12`, { headers: { "user-agent": "Lightpanda/1.0" } }));

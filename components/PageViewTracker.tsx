@@ -1,43 +1,42 @@
 "use client";
 
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
-import { useLocale } from "next-intl";
-import { AUDIENCE_CONSENT, AUDIENCE_ID, AUDIENCE_EVENT, isPublicAudiencePath } from '@/lib/audience';
+import {useEffect,useRef} from 'react';
+import {usePathname} from 'next/navigation';
+import {useLocale} from 'next-intl';
+import {INTERNAL_AUDIENCE,AUDIENCE_ID,AUDIENCE_EVENT,isPublicAudiencePath} from '@/lib/audience';
 
-/**
- * Mesure pseudonyme soumise au consentement : un navigateur par jour.
- * Les visites historiques ne sont pas utilisées comme visiteurs uniques.
- */
+/** A page display has its own retry token; visitor identity stays independent. */
 export function PageViewTracker() {
-  const pathname = usePathname();
-  const locale = useLocale();
-
-  useEffect(() => {
+  const pathname=usePathname();const locale=useLocale();
+  const navigation=useRef<{key:string;id:string;done:boolean}|null>(null);
+  useEffect(()=>{
     if(!isPublicAudiencePath(pathname))return;
-    let sent=false;
+    const key=locale+':'+pathname;
+    if(navigation.current?.key!==key)navigation.current={key,id:crypto.randomUUID(),done:false};
+    const event=navigation.current!;
+    let pending=false;
     const record=()=>{
-      if(sent||document.visibilityState!=='visible'||navigator.webdriver)return;
+      if(event.done||pending||document.visibilityState!=='visible'||navigator.webdriver)return;
       try{
-        if(localStorage.getItem(AUDIENCE_CONSENT)!=='accepted')return;
-        const saved=JSON.parse(localStorage.getItem(AUDIENCE_ID)??'null');
-        const identity=saved&&saved.expires>Date.now()?saved:{id:crypto.randomUUID(),expires:Date.now()+30*86400000};
+        if(localStorage.getItem(INTERNAL_AUDIENCE)!=='enabled')return;
+        let saved;try{saved=JSON.parse(localStorage.getItem(AUDIENCE_ID)??'null');}catch{}
+        const validId=typeof saved?.id==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(saved.id);
+        const identity=validId&&saved.expires>Date.now()?saved:{id:crypto.randomUUID(),expires:Date.now()+30*86400000};
         localStorage.setItem(AUDIENCE_ID,JSON.stringify(identity));
-        const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Zurich',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
-        if(identity.pagesDay===today&&Array.isArray(identity.paths)&&identity.paths.includes(pathname))return;
-        sent=true;
-        fetch('/api/views',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:pathname,locale,browserId:identity.id}),keepalive:true})
-          .then(response=>{if(response.ok&&response.status!==204&&localStorage.getItem(AUDIENCE_CONSENT)==='accepted'){
-            const latest=JSON.parse(localStorage.getItem(AUDIENCE_ID)??'null');
-            if(!latest||latest.id!==identity.id)return;
-            latest.paths=[...new Set([...(latest.pagesDay===today&&Array.isArray(latest.paths)?latest.paths:[]),pathname])].slice(-200);
-            latest.pagesDay=today;latest.lastSent=today;localStorage.setItem(AUDIENCE_ID,JSON.stringify(latest));
-          }}).catch(()=>undefined);
-      }catch{/* Storage blocked: do not invent a new visitor on every page. */}
+        const params=new URLSearchParams(location.search);
+        let referrerHost='';try{referrerHost=new URL(document.referrer).hostname;}catch{}
+        pending=true;
+        fetch('/api/views',{method:'POST',headers:{'Content-Type':'application/json'},keepalive:true,signal:AbortSignal.timeout(4000),body:JSON.stringify({
+          path:pathname,locale,browserId:identity.id,eventId:event.id,
+          acquisition:{source:(params.get('utm_source')??'').slice(0,80),medium:(params.get('utm_medium')??'').slice(0,80),referrerHost,searchAd:['gclid','wbraid','gbraid','msclkid'].some(k=>params.has(k)),socialClick:params.has('fbclid')},
+        })}).then(response=>{
+          pending=false;
+          if(response.ok)event.done=true;
+        }).catch(()=>{pending=false;});
+      }catch{/* Blocked storage must not invent a visitor on every display. */}
     };
     record();window.addEventListener(AUDIENCE_EVENT,record);document.addEventListener('visibilitychange',record);
     return()=>{window.removeEventListener(AUDIENCE_EVENT,record);document.removeEventListener('visibilitychange',record);};
-  }, [pathname, locale]);
-
+  },[pathname,locale]);
   return null;
 }

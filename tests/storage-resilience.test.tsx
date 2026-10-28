@@ -36,7 +36,7 @@ describe("résilience lorsque Safari bloque localStorage", () => {
     });
 
     render(<GoogleAnalytics locale="fr" />);
-    const refuse = await screen.findByRole("button", { name: "Refuser" });
+    const refuse = await screen.findByRole("button", { name: "Refuser Google Analytics" });
     fireEvent.click(refuse);
     await waitFor(() => expect(refuse).not.toBeInTheDocument());
   });

@@ -8,6 +8,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { slugify } from "@/lib/utils";
 import { safeRedirectPath } from '@/lib/safe-redirect';
+import {recordAudienceSignup} from '@/lib/audience-signup';
 
 export interface AuthState {
   error?: string;
@@ -108,7 +109,7 @@ export async function signUp(
   if (await isRateLimited(`signup:${ip}`)) return { error: "generic" };
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
@@ -135,6 +136,9 @@ export async function signUp(
   }
 
   // Auth trigger creates the pending practitioner in the same database transaction.
+  // Supabase masks an existing email with an empty identities array: do not count
+  // that attempt as a new registration, and never persist the user ID here.
+  if(data?.user?.identities?.length)await recordAudienceSignup(formData.get('audienceBrowserId'));
   return { success: "checkEmail" };
 }
 
