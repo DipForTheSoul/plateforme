@@ -68,3 +68,15 @@ PASS : `npm run check`, 92 fichiers et 480 tests ; build local connecté, 132 ro
 PASS navigateur Chrome réel : connexion administrateur local, lecture des mêmes chiffres, filtres 7/30/90, rendu sans débordement horizontal aux largeurs CSS 312, 819 et 1280. Les grands paragraphes sont remplacés, à la demande de Rodrigue, par une bulle par carte. Ouverture au clic, fermeture Échap et clic extérieur, bulle mobile contenue dans la largeur observée (312 px). Preuve : output/suivi-bulle-mobile-20261028.png. Vérification tactile sur appareils physiques et Safari : NON TESTÉE. Une réduction Chrome ne constitue pas une validation Safari/iPad.
 
 La preview valide la présentation ; elle ne prouve pas une collecte en production. Toute publication ultérieure nécessitera retest du navigateur public visible jusqu’à sa donnée durable, contrôle de la migration sur la cible et vérification des compteurs avant/après. Aucun chiffre ne doit être remis à zéro et aucune donnée d’exemple ne doit être copiée dans la base cliente.
+
+### Aperçu distant vérifié — 28 octobre
+
+Commit `c8abc955284405dc7221720738048cf7bdd5bca3`, branche `codex/apercu-suivi-20261028`. Déploiement Vercel `3pMuT1Dx8UvNk4STBy5X5ubgertp` Ready (Preview). Adresse : https://plateforme-git-codex-apercu-suivi-20261028-for-the-soul.vercel.app/apercu-suivi ; lien de partage limité à cet aperçu fourni dans le chat, jeton non conservé ici. CI GitHub 40671971137 : succès.
+
+Chrome distant : bandeau données d’exemple visible, période 7 jours et retour 30 jours vérifiés, bulle Pages vues ouverte, aucun script Google chargé. Preuve : `output/suivi-preview-20261028.png`. Production inchangée (`fc72254f4d96faa58ac239876691afdd2eb73f05`) ; aucune migration ni écriture Supabase distante. Présentation soumise à validation de Didier, aucun mail envoyé.
+
+### Complément : accueil administratif dans la proposition
+
+Demande de Rodrigue : montrer aussi le tableau de bord, avant décision client. Route `/apercu-suivi` : accueil par défaut (sept cartes métier fictives, acquisition compacte, consultations cumulées fictives), onglet Suivi et retour Tableau de bord. Liens des périodes maintiennent `vue=suivi`. Les autres rubriques sont présentées comme non actives, sans liens privés ni actions de gestion. L’administration authentifiée n’est pas ouverte au public ; aucune lecture de données privées dans la démonstration.
+
+Local : lint/types et 480 tests existants PASS, quatre tests supplémentaires PASS (accueil, détail, anciens liens de période, refus en production), build 132 routes PASS. Chrome : accueil → détail → 7 jours → accueil → rechargement PASS ; débordement absent à 312/819/1280 px CSS. Appareils physiques et Safari NON TESTÉS. Catalogue recette : INV/NAV/LIS/MOB/ACC/LOC/SEC/OBS/DEP applicables à la présentation ; mutations, paiements, e-mails, fichiers et intégrations métier N/A dans cette démo sans actions. Recette globale de production non revendiquée. Déploiement preview et retest distant restent à consigner après publication.
