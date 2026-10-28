@@ -1,0 +1,26 @@
+import {afterEach,expect,it,vi} from 'vitest';
+import {renderToString} from 'react-dom/server';
+import {hydrateRoot} from 'react-dom/client';
+import {act} from 'react';
+import type {AnchorHTMLAttributes} from 'react';
+vi.mock('next-intl/server',()=>({getLocale:async()=> 'fr'}));
+vi.mock('next/navigation',()=>({notFound:()=>{throw new Error('NOT_FOUND');}}));
+vi.mock('@/i18n/navigation',()=>({Link:(props:AnchorHTMLAttributes<HTMLAnchorElement>)=><a {...props}/> }));
+vi.mock('@/lib/supabase/server',()=>({createClient:()=>{throw new Error('No database in preview');}}));
+import {AdminAudienceFollowup} from '@/app/[locale]/admin/AudienceFollowup';
+afterEach(()=>vi.unstubAllEnvs());
+it.each([7,30,90] as const)('preserves SVG date labels through server rendering and hydration (%s days)',async days=>{
+ vi.stubEnv('VERCEL_ENV','preview');
+ const tree=await AdminAudienceFollowup({days,preview:true});
+ const container=document.createElement('div');
+ container.innerHTML=renderToString(tree);
+ const labels=Array.from(container.querySelectorAll('circle title')).map(node=>node.textContent);
+ expect(labels).toHaveLength(days);
+ expect(labels.every(label=>label&&/2026 : \d+$/.test(label))).toBe(true);
+ const errors:unknown[]=[];
+ let root:ReturnType<typeof hydrateRoot>|undefined;
+ await act(async()=>{root=hydrateRoot(container,tree,{onRecoverableError:error=>errors.push(error)});});
+ expect(errors).toEqual([]);
+ expect(Array.from(container.querySelectorAll('circle title')).map(node=>node.textContent)).toEqual(labels);
+ await act(async()=>root?.unmount());
+});
