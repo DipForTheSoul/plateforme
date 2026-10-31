@@ -9,6 +9,7 @@ import { getCurrentPractitioner, getCurrentProfile } from "@/lib/auth";
 import { normalizeHttpUrl } from "@/lib/utils";
 import type { ActionState } from "@/app/actions/events";
 import {actionLocale,actionMessage} from "@/lib/action-messages";
+import {formFieldErrors,formValidationCopy} from '@/lib/form-field-errors';
 
 const profileSchema = z.object({
   firstName: z.string().max(80).optional().nullable(),
@@ -62,7 +63,7 @@ export async function updatePractitionerProfile(
     photos: formData.getAll("photos").map(String).filter(Boolean),
   });
   if (!parsed.success) {
-    return { error: actionMessage(locale,"profileFields") };
+    return { error: formValidationCopy(locale).summary, fieldErrors:formFieldErrors(parsed.error.issues,locale,'profile') };
   }
   const input = parsed.data;
 
@@ -154,7 +155,8 @@ export async function adminUpdatePractitioner(
     photos: formData.getAll("photos").map(String).filter(Boolean),
   });
   if (!parsed.success) {
-    return { error: "Vérifiez les champs (les liens doivent être des URL complètes)." };
+    const locale=actionLocale(formData);
+    return { error: formValidationCopy(locale).summary, fieldErrors:formFieldErrors(parsed.error.issues,locale,'profile') };
   }
   const input = parsed.data;
 

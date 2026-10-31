@@ -5,6 +5,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { useDraftForm } from "@/components/forms/useDraftForm";
 import { DraftNotice } from "@/components/forms/DraftNotice";
 import { WebUrlInput } from "@/components/forms/WebUrlInput";
+import {BiographyInput} from '@/components/forms/BiographyInput';
+import {FormFieldErrors} from '@/components/forms/FormFieldErrors';
 import { updatePractitionerProfile } from "@/app/actions/practitioner";
 import type { ActionState } from "@/app/actions/events";
 import { ImageUploader } from "@/components/forms/ImageUploader";
@@ -72,7 +74,7 @@ function ProfileFormBody({
 
       <div>
         <label htmlFor="bio" className="label">{t("bio")}</label>
-        <textarea id="bio" name="bio" rows={6} defaultValue={practitioner.bio ?? ""}
+        <BiographyInput id="bio" name="bio" rows={6} limit={4000} error={state.fieldErrors?.bio} defaultValue={practitioner.bio ?? ""}
           className="field" placeholder={t("bioPlaceholder")} />
       </div>
 
@@ -142,7 +144,8 @@ function ProfileFormBody({
         ))}
       </div>
 
-      {state.error && <p className="text-sm text-red-700">{state.error}</p>}
+      <FormFieldErrors errors={state.fieldErrors}/>
+      {state.error && !Object.keys(state.fieldErrors??{}).length && <p role="alert" className="text-sm text-red-700">{state.error}</p>}
       {state.success && <p className="text-sm text-green-700">{state.success}</p>}
 
       <button type="submit" disabled={draft.conflict || pending || photoBusy || logoBusy} className="btn-primary self-start">

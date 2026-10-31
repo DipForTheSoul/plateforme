@@ -1,0 +1,43 @@
+import {render,screen,fireEvent,waitFor} from '@testing-library/react';
+import {beforeEach,expect,it,vi} from 'vitest';
+import {NextIntlClientProvider} from 'next-intl';
+import fr from '@/messages/fr.json';
+import de from '@/messages/de.json';
+import en from '@/messages/en.json';
+const state=vi.hoisted(()=>({signup:vi.fn()}));
+vi.mock('@/app/actions/auth',()=>({signUp:state.signup}));
+vi.mock('@/i18n/navigation',()=>({Link:({children,href}:{children:React.ReactNode;href:string})=><a href={href}>{children}</a>}));
+import {SignupForm} from '@/app/[locale]/inscription/SignupForm';
+import {BiographyInput} from '@/components/forms/BiographyInput';
+const dictionaries={fr,de,en};
+beforeEach(()=>{vi.clearAllMocks();state.signup.mockResolvedValue({error:'generic',fieldErrors:{bio:'Die Biografie muss zwischen 40 und 1.000 Zeichen enthalten.'}});});
+it.each(['fr','de','en'] as const)('accepts a bare address and preserves all fields after server rejection (%s)',async locale=>{
+ const t=dictionaries[locale].auth;
+ render(<NextIntlClientProvider locale={locale} messages={dictionaries[locale]}><SignupForm categories={[{id:'fixture',slug:'yoga',name:'Yoga'}]}/></NextIntlClientProvider>);
+ const website=screen.getByLabelText(t.websiteOptional);
+ fireEvent.change(website,{target:{value:'monsite.ch'}});fireEvent.blur(website);
+ expect(website).toHaveValue('https://monsite.ch/');expect(website).not.toHaveAttribute('type','url');
+ const bio=screen.getByLabelText(t.bio);const content='Texte à conserver '.repeat(70);
+ fireEvent.input(bio,{target:{value:content}});
+ expect(bio).toHaveValue(content);expect(bio).toHaveAttribute('aria-invalid','true');
+ fireEvent.change(screen.getByLabelText(t.email),{target:{value:'fixture@example.test'}});
+ fireEvent.change(screen.getByLabelText(t.password),{target:{value:'Fixture-only-123'}});
+ fireEvent.submit(website.closest('form')!);
+ await screen.findByRole('alert');
+ expect(bio).toHaveValue(content);expect(website).toHaveValue('https://monsite.ch/');expect(screen.getByLabelText(t.password)).toHaveValue('Fixture-only-123');
+ expect(localStorage.length).toBe(0);expect(sessionStorage.length).toBe(0);
+});
+it('recovers from a failed request without clearing the form',async()=>{
+ state.signup.mockRejectedValue(new Error('Request interrupted'));
+ render(<NextIntlClientProvider locale="fr" messages={fr}><SignupForm categories={[]}/></NextIntlClientProvider>);
+ const email=screen.getByLabelText(fr.auth.email);fireEvent.change(email,{target:{value:'fixture@example.test'}});
+ fireEvent.submit(email.closest('form')!);
+ await screen.findByText(fr.auth.errors.generic);
+ expect(email).toHaveValue('fixture@example.test');expect(screen.getByRole('button',{name:fr.auth.signupButton})).toBeEnabled();
+});
+it('updates the biography count after restoring an existing draft',async()=>{
+ render(<NextIntlClientProvider locale="fr" messages={fr}><BiographyInput id="bio" name="bio" limit={4000}/></NextIntlClientProvider>);
+ const field=document.querySelector('textarea')!;
+ fireEvent.input(field,{target:{value:'Texte restauré'}});
+ await waitFor(()=>expect(screen.getByText(/14 \/ 4/)).toBeVisible());
+});

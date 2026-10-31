@@ -69,7 +69,7 @@ export function useDraftForm(key: string, extra: Record<string, unknown> = EMPTY
               element.value = values[0] ?? '';
               // Rich editors keep a visible contenteditable surface synchronized with
               // their native form field. Notify only those fields after draft restore.
-              if (element instanceof HTMLTextAreaElement && element.dataset.richEditorBacking === 'true') {
+              if (element instanceof HTMLTextAreaElement && (element.dataset.richEditorBacking === 'true' || element.dataset.characterCount === 'true')) {
                 element.dispatchEvent(new Event('input', { bubbles: true }));
               }
             }

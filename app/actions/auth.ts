@@ -8,10 +8,13 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { slugify } from "@/lib/utils";
 import { safeRedirectPath } from '@/lib/safe-redirect';
+import {webUrlSchema} from '@/lib/web-url';
+import {formFieldErrors} from '@/lib/form-field-errors';
 
 export interface AuthState {
   error?: string;
   success?: string;
+  fieldErrors?: Record<string,string>;
 }
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -70,8 +73,8 @@ const signUpSchema = z.object({
   artistName: z.string().min(2).max(120),
   bio: z.string().min(40).max(1000),
   specialties: z.array(z.string().min(1).max(60)).min(1).max(10),
-  website: z.string().url().optional(),
-  instagram: z.string().url().optional(),
+  website: webUrlSchema,
+  instagram: webUrlSchema,
   fax: z.string().max(0), // honeypot anti-spam
 });
 
@@ -89,15 +92,15 @@ export async function signUp(
     artistName: String(formData.get("artistName") ?? "").trim(),
     bio: String(formData.get("bio") ?? "").trim(),
     specialties: formData.getAll("specialties").map(String).map(value => value.trim()).filter(Boolean),
-    website: String(formData.get("website") ?? "").trim() || undefined,
-    instagram: String(formData.get("instagram") ?? "").trim() || undefined,
+    website: formData.get("website"),
+    instagram: formData.get("instagram"),
     fax: String(formData.get("fax") ?? ""),
   });
   if (!parsed.success) {
     const passwordIssue = parsed.error.issues.some((i) =>
       i.path.includes("password")
     );
-    return { error: passwordIssue ? "weakPassword" : "generic" };
+    return { error: passwordIssue ? "weakPassword" : "generic",fieldErrors:formFieldErrors(parsed.error.issues,String(formData.get('locale')??'fr'),'signup') };
   }
   if (String(formData.get("passwordConfirm") ?? "") !== parsed.data.password) {
     return { error: "passwordMismatch" };
