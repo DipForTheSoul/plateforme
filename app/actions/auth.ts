@@ -71,7 +71,7 @@ const signUpSchema = z.object({
   firstName: z.string().min(2).max(80),
   lastName: z.string().min(2).max(80),
   artistName: z.string().min(2).max(120),
-  bio: z.string().min(40).max(1000),
+  bio: z.string().max(4000),
   specialties: z.array(z.string().min(1).max(60)).min(1).max(10),
   website: webUrlSchema,
   instagram: webUrlSchema,

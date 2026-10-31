@@ -10,14 +10,14 @@ vi.mock('@/i18n/navigation',()=>({Link:({children,href}:{children:React.ReactNod
 import {SignupForm} from '@/app/[locale]/inscription/SignupForm';
 import {BiographyInput} from '@/components/forms/BiographyInput';
 const dictionaries={fr,de,en};
-beforeEach(()=>{vi.clearAllMocks();state.signup.mockResolvedValue({error:'generic',fieldErrors:{bio:'Die Biografie muss zwischen 40 und 1.000 Zeichen enthalten.'}});});
+beforeEach(()=>{vi.clearAllMocks();state.signup.mockResolvedValue({error:'generic',fieldErrors:{bio:'Die Biografie darf höchstens 4.000 Zeichen enthalten.'}});});
 it.each(['fr','de','en'] as const)('accepts a bare address and preserves all fields after server rejection (%s)',async locale=>{
  const t=dictionaries[locale].auth;
  render(<NextIntlClientProvider locale={locale} messages={dictionaries[locale]}><SignupForm categories={[{id:'fixture',slug:'yoga',name:'Yoga'}]}/></NextIntlClientProvider>);
  const website=screen.getByLabelText(t.websiteOptional);
  fireEvent.change(website,{target:{value:'monsite.ch'}});fireEvent.blur(website);
  expect(website).toHaveValue('https://monsite.ch/');expect(website).not.toHaveAttribute('type','url');
- const bio=screen.getByLabelText(t.bio);const content='Texte à conserver '.repeat(70);
+ const bio=screen.getByLabelText(t.bio);const content='Texte à conserver '.repeat(250);
  fireEvent.input(bio,{target:{value:content}});
  expect(bio).toHaveValue(content);expect(bio).toHaveAttribute('aria-invalid','true');
  fireEvent.change(screen.getByLabelText(t.email),{target:{value:'fixture@example.test'}});

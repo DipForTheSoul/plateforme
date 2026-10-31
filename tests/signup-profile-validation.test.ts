@@ -29,11 +29,11 @@ it.each(['javascript:alert(1)','data:text/html,test','https://name:secret@exampl
  expect(result.fieldErrors?.website).toContain('Webadresse');expect(s.signup).not.toHaveBeenCalled();
 });
 it('identifies a long signup bio instead of accusing the website',async()=>{
- const f=signup();f.set('bio','a'.repeat(1001));const result=await signUp({},f);
- expect(result.fieldErrors?.bio).toContain('1.000');expect(result.fieldErrors?.website).toBeUndefined();expect(s.signup).not.toHaveBeenCalled();
+ const f=signup();f.set('bio','a'.repeat(4001));const result=await signUp({},f);
+ expect(result.fieldErrors?.bio).toContain('4.000');expect(result.fieldErrors?.website).toBeUndefined();expect(s.signup).not.toHaveBeenCalled();
 });
 it('accepts an exact-limit signup bio and optional bare links',async()=>{
- const f=signup();f.set('bio','a'.repeat(1000));expect(await signUp({},f)).toEqual({success:'checkEmail'});
+ const f=signup();f.set('bio','a'.repeat(4000));expect(await signUp({},f)).toEqual({success:'checkEmail'});
 });
 it('identifies an overlong profile biography without saving',async()=>{
  const f=profile();f.set('bio','a'.repeat(4001));const result=await updatePractitionerProfile({},f);
@@ -50,3 +50,5 @@ it('saves an exact-limit biography and normalizes the profile link',async()=>{
 it('retains the admin authorization guard',async()=>{
  s.role='practitioner';expect(await adminUpdatePractitioner('fixture',{},profile())).toEqual({error:"Réservé à l'administrateur."});expect(s.update).not.toHaveBeenCalled();
 });
+
+it.each(['', 'Court'])('accepts signup biography without a minimum: %s',async bio=>{const f=signup();f.set('bio',bio);expect(await signUp({},f)).toEqual({success:'checkEmail'});});
