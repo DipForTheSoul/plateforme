@@ -5,7 +5,8 @@ import {descriptionText} from '@/lib/description-text';
 import {webUrlSchema} from '@/lib/web-url';
 import { toEventLocalInput } from '@/lib/event-time';
 import { eventInclusiveDays, formatEventSchedule } from '@/lib/event-display';
-import { notFound } from "next/navigation";
+import {eventPublicSlug} from '@/lib/event-public-slug';
+import { notFound, permanentRedirect } from "next/navigation";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { AddToCalendar } from "@/components/AddToCalendar";
@@ -67,6 +68,7 @@ export default async function EventPage({
 
   const event = await getEventBySlug(slug);
   if (!event || event.status !== "approved") notFound();
+  if(slug!==event.slug)permanentRedirect(`${locale==='fr'?'':`/${locale}`}/experiences/${event.slug}`);
 
   const supabase = await createClient();
   // Compteur de vues (analytics sans cookies) — best-effort.
@@ -76,14 +78,14 @@ export default async function EventPage({
   const parentId = event.parent_event_id ?? event.id;
   const { data: siblingsData } = await supabase
     .from("events")
-    .select("id, slug, start_date")
+    .select("id, slug, title, start_date")
     .or(`parent_event_id.eq.${parentId},id.eq.${parentId}`)
     .neq("id", event.id)
     .eq("status", "approved")
     .gte("start_date", new Date().toISOString())
     .order("start_date")
     .limit(26);
-  const siblings = (siblingsData as Pick<Event, "id" | "slug" | "start_date">[]) ?? [];
+  const siblings = (siblingsData as Pick<Event, "id" | "slug" | "title" | "start_date">[]) ?? [];
 
   const venueLocation = event.venue
     ? `${event.venue.name}, ${event.venue.address}`
@@ -284,7 +286,7 @@ export default async function EventPage({
           <p className="mb-4 text-sm text-soul-bronze">{t("recurrenceNote")}</p>
           <div className="flex flex-wrap gap-2">
             {siblings.map((s) => (
-              <Link key={s.id} href={`/experiences/${s.slug}`} className="btn-secondary !py-2">
+              <Link key={s.id} href={`/experiences/${eventPublicSlug(s)}`} className="btn-secondary !py-2">
                 {formatDateRange(s.start_date, null, currentLocale)}
               </Link>
             ))}

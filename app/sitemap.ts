@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from '@/lib/metadata';
-import { getApprovedEvents, getApprovedPractitioners } from "@/lib/queries";
+import { getSitemapEvents, getApprovedPractitioners } from "@/lib/queries";
 
 
 // Le sitemap dépend de la base publique : ne pas tenter de le figer pendant
@@ -31,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const [events, practitioners] = await Promise.all([
-    getApprovedEvents(),
+    getSitemapEvents(),
     getApprovedPractitioners(),
   ]);
 

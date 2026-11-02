@@ -1,4 +1,5 @@
 import { createPublicClient } from "@/lib/supabase/public";
+import {eventPublicSlug,findPublicEvent} from '@/lib/event-public-slug';
 import { publicCache } from "@/lib/public-cache";
 import { readPages } from "@/lib/read-pages";
 import {
@@ -155,7 +156,7 @@ export async function getApprovedEvents(
     if (filters.country)
       events = events.filter((e) => e.venue?.country === filters.country);
 
-    return events;
+    return events.map(event=>({...event,slug:eventPublicSlug(event)}));
   } catch (error) {
     console.error("[queries/getApprovedEvents]", error instanceof Error ? error.message : "read failed");
     throw new Error('Le catalogue est momentanément indisponible. Merci de réessayer.');
@@ -165,7 +166,7 @@ export async function getApprovedEvents(
 export async function getTopEvents(limit = 3): Promise<EventWithRelations[]> {
   try {
     const now = new Date().toISOString();
-    return (await cachedEvents()).filter((event) => event.is_top
+    return (await cachedEvents()).map(event=>({...event,slug:eventPublicSlug(event)})).filter((event) => event.is_top
       && (!event.featured_until || event.featured_until > now)
       && event.start_date >= now).slice(0, limit);
   } catch (error) {
@@ -178,7 +179,8 @@ export async function getEventBySlug(
   slug: string
 ): Promise<EventWithRelations | null> {
   try {
-    return (await cachedEvents()).find((event) => event.slug === slug) ?? null;
+    const event=findPublicEvent(await cachedEvents(),slug);
+    return event?{...event,slug:eventPublicSlug(event)}:null;
   } catch {
     throw new Error("La fiche est momentanément indisponible. Merci de réessayer.");
   }
@@ -198,8 +200,8 @@ export async function getAdjacentEvents(
     const prev = index > 0 ? events[index - 1] : null;
     const next = index >= 0 && index < events.length - 1 ? events[index + 1] : null;
     return {
-      prev: prev ? { slug: prev.slug, title: prev.title } : null,
-      next: next ? { slug: next.slug, title: next.title } : null,
+      prev: prev ? { slug: eventPublicSlug(prev), title: prev.title } : null,
+      next: next ? { slug: eventPublicSlug(next), title: next.title } : null,
     };
   } catch {
     throw new Error('La navigation entre les expériences est momentanément indisponible. Réessayez.');
@@ -246,7 +248,7 @@ export async function getEventsByIds(
   if (!ids.length) return [];
   try {
     const requested = new Set(ids);
-    return (await cachedEvents()).filter((event) => requested.has(event.id));
+    return (await cachedEvents()).filter((event) => requested.has(event.id)).map(event=>({...event,slug:eventPublicSlug(event)}));
   } catch {
     throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");
   }
@@ -263,3 +265,6 @@ export async function getPractitionersByIds(
     throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");
   }
 }
+
+/** Published detail pages remain indexable after leaving the upcoming catalogue. */
+export async function getSitemapEvents(){return (await cachedEvents()).map(event=>({...event,slug:eventPublicSlug(event)}));}
