@@ -1,8 +1,9 @@
+import {getTranslations} from 'next-intl/server';
 import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-export const alt = "Des expériences qui nourrissent l’âme — ForTheSoul";
+export const alt = 'ForTheSoul';
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -10,7 +11,9 @@ export const contentType = "image/png";
  * Image Open Graph (partage social) : photo immersive + logo centré + wordmark.
  * Le logo et la photo sont embarqués en base64 (satori ne lit pas le FS via URL).
  */
-export default async function OpenGraphImage() {
+export default async function OpenGraphImage({params}:{params:Promise<{locale:string}>}) {
+  const {locale}=await params;
+  const t=await getTranslations({locale,namespace:'home'});
   const [photo, logo] = await Promise.all([
     readFile(join(process.cwd(), "public/hero-poster.jpg")),
     readFile(join(process.cwd(), "public/logo-icon.png")),
@@ -70,7 +73,7 @@ export default async function OpenGraphImage() {
               textShadow: "0 2px 12px rgba(0,0,0,0.55)",
             }}
           >
-            Des expériences qui nourrissent l’âme
+            {t('heroTitle')}
           </div>
           <div
             style={{
@@ -82,7 +85,7 @@ export default async function OpenGraphImage() {
               textShadow: "0 2px 10px rgba(0,0,0,0.6)",
             }}
           >
-            Retraites, ateliers et expériences pour le corps, l’esprit et l’âme
+            {t('heroSubtitle')}
           </div>
         </div>
       </div>

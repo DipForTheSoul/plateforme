@@ -19,7 +19,7 @@ return <main>
     <div className="relative mx-auto max-w-3xl">
       <h1 className="mx-auto max-w-3xl leading-[1.12] text-soul-brown">
         <span className="block text-[clamp(2rem,7vw,4.25rem)]">{t("titleLine1")}</span>
-        <span className="mt-1 block whitespace-nowrap text-[clamp(2rem,7vw,4.25rem)]">{t("titleLine2")}</span>
+        <span className="mt-1 block text-[clamp(2rem,7vw,4.25rem)]">{t("titleLine2")}</span>
       </h1>
       <p className="mx-auto mt-5 max-w-3xl text-[clamp(0.9rem,2.5vw,1.125rem)] font-normal leading-relaxed text-soul-bronze/90">{t("introMobile")}</p>
       <ul className="mx-auto mt-7 grid max-w-3xl grid-cols-3 gap-2 text-[clamp(0.58rem,2.5vw,0.75rem)] font-medium leading-tight text-soul-brown sm:gap-5 sm:text-sm">
@@ -32,7 +32,7 @@ return <main>
     </div>
   </section>
   <section className="mx-auto max-w-6xl px-4 py-16">
-    <h2 className="whitespace-nowrap text-[clamp(1.45rem,6vw,2.25rem)] leading-tight text-soul-brown">{t("benefitsTitle")}</h2>
+    <h2 className="text-[clamp(1.45rem,6vw,2.25rem)] leading-tight text-soul-brown">{t("benefitsTitle")}</h2>
     <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {benefits.map((item,index)=>{const BenefitIcon=heroIcons[index]??Sparkles;return <article className="group relative overflow-hidden rounded-3xl border border-soul-violet/10 bg-gradient-to-br from-white via-white to-soul-violet/[0.06] p-5 shadow-[0_10px_30px_rgba(74,52,37,0.08)] transition duration-300 hover:-translate-y-1 hover:border-soul-violet/25 hover:shadow-[0_16px_38px_rgba(74,52,37,0.13)] sm:p-6" key={`${item.line1} ${item.line2}`}>
         <div aria-hidden className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-soul-violet/[0.07] transition-transform duration-300 group-hover:scale-125" />
@@ -115,8 +115,8 @@ return <main>
   </section>
   <section className="mx-auto max-w-3xl px-4 py-16">
     <div className="mb-8 text-center">
-      <h2 className="whitespace-nowrap font-serif text-[clamp(1.45rem,6vw,2.25rem)] leading-tight text-soul-brown">{t("faqTitle")}</h2>
-      <p className="mt-3 whitespace-nowrap text-[clamp(0.8rem,3.5vw,1.125rem)] leading-relaxed text-soul-bronze">{t("faqSubtitle")}</p>
+      <h2 className="font-serif text-[clamp(1.45rem,6vw,2.25rem)] leading-tight text-soul-brown">{t("faqTitle")}</h2>
+      <p className="mt-3 text-[clamp(0.8rem,3.5vw,1.125rem)] leading-relaxed text-soul-bronze">{t("faqSubtitle")}</p>
     </div>
     <div className="flex flex-col gap-3">{faq.map(item=><details className="group rounded-2xl border border-soul-bronze/15 bg-white px-5 transition open:shadow-sm" key={item.q}><summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-serif text-lg text-soul-brown marker:content-none [&::-webkit-details-marker]:hidden">{item.q}<Plus className="h-5 w-5 shrink-0 text-soul-bronze transition-transform duration-200 group-open:rotate-45"/></summary><p className="pb-5 leading-relaxed text-soul-ink/75">{item.a}</p></details>)}</div>
   </section>

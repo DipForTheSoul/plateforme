@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import {publicPath} from '@/i18n/public-pathnames';
 import { SITE_URL } from '@/lib/metadata';
 import { getSitemapEvents, getApprovedPractitioners } from "@/lib/queries";
 
@@ -10,9 +11,9 @@ export const dynamic = "force-dynamic";
 /** URL localisée : FR sans préfixe, DE/EN préfixées (voir i18n/routing.ts). */
 function localized(path: string) {
   return {
-    fr: `${SITE_URL}${path}`,
-    de: `${SITE_URL}/de${path}`,
-    en: `${SITE_URL}/en${path}`,
+    fr: `${SITE_URL}${publicPath(path||'/', 'fr')}`,
+    de: `${SITE_URL}${publicPath(path||'/', 'de')}`,
+    en: `${SITE_URL}${publicPath(path||'/', 'en')}`,
   };
 }
 

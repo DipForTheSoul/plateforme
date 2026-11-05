@@ -2,11 +2,21 @@ import createIntlMiddleware from "next-intl/middleware";
 import { NextResponse, type NextRequest } from "next/server";
 import { shouldStopCatalogueCrawl } from "./lib/traffic-policy";
 import { routing } from "./i18n/routing";
+import {publicPath,publicPathnames} from './i18n/public-pathnames';
 import { updateSession } from "./lib/supabase/middleware";
 
 const intlMiddleware = createIntlMiddleware(routing);
 
 export default async function proxy(request: NextRequest) {
+  const alias=request.nextUrl.pathname.match(/^\/(de|en)(\/.*)$/);
+  if(alias&&publicPathnames[alias[2]]){
+    const destination=request.nextUrl.clone();
+    const canonicalPath=publicPath(alias[2],alias[1]);
+    if(canonicalPath!==destination.pathname){
+      destination.pathname=canonicalPath;
+      return NextResponse.redirect(destination,308);
+    }
+  }
   if ((request.method === "GET" || request.method === "HEAD") &&
       shouldStopCatalogueCrawl(request.nextUrl, request.headers.get("user-agent"))) {
     // Do not cache a bot response across user agents, or touch Auth/DB/rendering.

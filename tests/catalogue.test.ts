@@ -1,4 +1,4 @@
-import {beforeEach,it,expect,vi} from 'vitest';
+import {afterEach,beforeEach,it,expect,vi} from 'vitest';
 import {getApprovedEvents,getApprovedPractitioners,getVenues} from '@/lib/queries';
 const state=vi.hoisted(()=>({failed:false,ranges:[] as number[],practitionerName:'QA'}));
 vi.mock('@/lib/supabase/public',()=>({createPublicClient:()=>({from:(table:string)=>{
@@ -6,7 +6,12 @@ vi.mock('@/lib/supabase/public',()=>({createPublicClient:()=>({from:(table:strin
   const query={select:()=>query,eq:()=>query,order:()=>query,range:(from:number,to:number)=>{offset=from;end=to;state.ranges.push(from);return query;},then:(resolve:(v:unknown)=>unknown)=>resolve({error:state.failed?{message:'unavailable'}:null,data:table==='settings'?[{key:'event_delist_days',value:'15'}]:Array.from({length:1105},(_,i)=>({id:String(i),name:'QA',title:i===4?'Méditation':'Atelier',slug:`event-${i}`,status:'approved',start_date:'2026-10-20T12:00:00Z',end_date:null,languages:['fr'],price:10,duration_minutes:60,practitioner:{id:'p',name:state.practitionerName,slug:'didier'},category:{id:'c',slug:i===1104?'rare':'common'},event_categories:[]})).slice(offset,end+1)})};
   return query;
 }})}));
-beforeEach(()=>{state.failed=false;state.ranges=[];state.practitionerName='QA';});
+beforeEach(()=>{
+  state.failed=false;state.ranges=[];state.practitionerName='QA';
+  // Keep the catalogue fixtures within the publication window regardless of the real date.
+  vi.spyOn(Date,'now').mockReturnValue(Date.parse('2026-09-30T12:00:00Z'));
+});
+afterEach(()=>vi.restoreAllMocks());
 it('décompte le délai depuis la fin du séjour et conserve le filtre de début choisi',async()=>{
   vi.spyOn(Date,'now').mockReturnValue(Date.parse('2026-09-30T12:00:00Z'));
   try {
