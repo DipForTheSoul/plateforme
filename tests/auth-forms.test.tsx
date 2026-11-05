@@ -35,7 +35,7 @@ it('crée le lien de récupération sur l’origine réellement visitée',async(
   const callback=new URL(state.redirectTo);
   expect(callback.origin).toBe(window.location.origin);
   expect(callback.pathname).toBe('/api/auth/callback');
-  expect(callback.searchParams.get('next')).toBe('/de/reinitialiser-mot-de-passe');
+  expect(callback.searchParams.get('next')).toBe('/de/passwort-zuruecksetzen');
 });
 it('ne contourne pas la limite côté serveur',async()=>{
   state.resetGate={success:'resetSent'};

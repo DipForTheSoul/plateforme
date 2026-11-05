@@ -15,5 +15,5 @@ it('garde les marqueurs éloignés dans le cadre et borne les tuiles SSR',()=>{
     expect(Number(marker.getAttribute('cy'))).toBeLessThanOrEqual(372);
   }
   expect(container.querySelector('svg')).toHaveAttribute('preserveAspectRatio','xMidYMid meet');
-  expect(container.querySelector('svg a')).toHaveAttribute('href','/de/experiences/west');
+  expect(container.querySelector('svg a')).toHaveAttribute('href','/de/erlebnisse/west');
 });

@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { requestPasswordReset } from "@/app/actions/auth";
 import { createClient } from "@/lib/supabase/client";
+import {publicPath} from '@/i18n/public-pathnames';
 
 export function ForgotPasswordForm() {
   const locale = useLocale();
@@ -30,9 +31,7 @@ export function ForgotPasswordForm() {
     }
 
     const email = String(formData.get("email") ?? "").trim();
-    const localizedResetPath = ["de", "en"].includes(locale)
-      ? `/${locale}/reinitialiser-mot-de-passe`
-      : "/reinitialiser-mot-de-passe";
+    const localizedResetPath = publicPath('/reinitialiser-mot-de-passe',locale);
     const callback = new URL("/api/auth/callback", window.location.origin);
     callback.searchParams.set("next", localizedResetPath);
 

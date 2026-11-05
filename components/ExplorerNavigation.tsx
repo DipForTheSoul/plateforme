@@ -40,7 +40,7 @@ export function ExplorerNavigation({ children }: { children: ReactNode }) {
     pendingQuery.current = query;
     startTransition(() => {
       setOptimisticQuery(query);
-      router.replace(`${pathname}${query ? `?${query}` : ""}`, { scroll: false });
+      router.replace({pathname,query:Object.fromEntries(params)}, { scroll: false });
     });
   }, [pathname, router, setOptimisticQuery]);
 

@@ -1,4 +1,5 @@
 import type {Metadata} from "next";
+import {pageAlternates} from '@/lib/metadata';
 import {getTranslations,setRequestLocale} from "next-intl/server";
-export async function generateMetadata({params}:{params:Promise<{locale:string}>}):Promise<Metadata>{const {locale}=await params;const t=await getTranslations({locale,namespace:"legalFixed.cgv"});return {title:t("title"),description:t("intro")}}
+export async function generateMetadata({params}:{params:Promise<{locale:string}>}):Promise<Metadata>{const {locale}=await params;const t=await getTranslations({locale,namespace:"legalFixed.cgv"});return {title:t("title"),description:t("intro"),alternates:pageAlternates('/cgv',locale)}}
 export default async function CgvPage({params}:{params:Promise<{locale:string}>}){const {locale}=await params;setRequestLocale(locale);const t=await getTranslations("legalFixed.cgv");const sections=t.raw("sections") as {title:string;text:string}[];return <main className="mx-auto max-w-4xl px-4 py-12"><h1 className="text-4xl">{t("title")}</h1><p className="mt-4 text-soul-bronze">{t("intro")}</p>{sections.map(s=><section className="mt-8" key={s.title}><h2 className="text-2xl">{s.title}</h2><p className="mt-2 whitespace-pre-line leading-relaxed">{s.text}</p></section>)}</main>}

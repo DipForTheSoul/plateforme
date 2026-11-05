@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { pageAlternates } from '@/lib/metadata';
+import {publicPath} from '@/i18n/public-pathnames';
 import { isVenuePublished } from '@/lib/venue-publication';
 import {descriptionText} from '@/lib/description-text';
 import {webUrlSchema} from '@/lib/web-url';
@@ -68,7 +69,7 @@ export default async function EventPage({
 
   const event = await getEventBySlug(slug);
   if (!event || event.status !== "approved") notFound();
-  if(slug!==event.slug)permanentRedirect(`${locale==='fr'?'':`/${locale}`}/experiences/${event.slug}`);
+  if(slug!==event.slug)permanentRedirect(publicPath(`/experiences/${event.slug}`,locale));
 
   const supabase = await createClient();
   // Compteur de vues (analytics sans cookies) — best-effort.
@@ -129,7 +130,7 @@ export default async function EventPage({
 
   return (
     <article className="mx-auto min-w-0 max-w-4xl px-4 py-10 [overflow-wrap:anywhere]">
-      <JsonLd data={eventJsonLd(event)} />
+      <JsonLd data={eventJsonLd(event,locale)} />
 
       {event.images.length > 0 ? (
         <div className="relative">
@@ -177,7 +178,7 @@ export default async function EventPage({
         {event.practitioner && (
           <p className="mt-2 text-soul-bronze">
             {t("practitioner")}{" "}
-            <Link href={`/praticiens/${event.practitioner.slug}`}
+            <Link href={{pathname:"/praticiens/[slug]",params:{slug:event.practitioner.slug}}}
               className="font-medium text-soul-brown underline">
               {event.practitioner.name}
             </Link>{" "}
@@ -193,7 +194,7 @@ export default async function EventPage({
       {/* Actions : réserver + ajouter à l'agenda */}
       <div className="mt-6 flex flex-wrap items-center gap-3">
         {event.practitioner ? (
-          <Link href={`/praticiens/${event.practitioner.slug}`} className="btn-accent">
+          <Link href={{pathname:"/praticiens/[slug]",params:{slug:event.practitioner.slug}}} className="btn-accent">
             {t("reserve")}
           </Link>
         ) : null}
@@ -237,7 +238,7 @@ export default async function EventPage({
         {event.venue && (
           <p className="flex items-center gap-3 text-sm text-soul-ink">
             <MapPin className="h-4 w-4 shrink-0 text-soul-bronze" />
-            {isVenuePublished(event.venue) ? <Link href={`/lieux/${event.venue.id}`} className="underline">
+            {isVenuePublished(event.venue) ? <Link href={{pathname:"/lieux/[id]",params:{id:event.venue.id}}} className="underline">
               {event.venue.name}
             </Link> : <span>{event.venue.name}</span>}
             <span className="text-soul-bronze">
@@ -286,7 +287,7 @@ export default async function EventPage({
           <p className="mb-4 text-sm text-soul-bronze">{t("recurrenceNote")}</p>
           <div className="flex flex-wrap gap-2">
             {siblings.map((s) => (
-              <Link key={s.id} href={`/experiences/${eventPublicSlug(s)}`} className="btn-secondary !py-2">
+              <Link key={s.id} href={{pathname:"/experiences/[slug]",params:{slug:eventPublicSlug(s)}}} className="btn-secondary !py-2">
                 {formatDateRange(s.start_date, null, currentLocale)}
               </Link>
             ))}
@@ -346,7 +347,7 @@ export default async function EventPage({
       {(prev || next) && (
         <nav className="mt-12 flex items-stretch justify-between gap-3 border-t border-soul-bronze/15 pt-6">
           {prev ? (
-            <Link href={`/experiences/${prev.slug}`}
+            <Link href={{pathname:"/experiences/[slug]",params:{slug:prev.slug}}}
               className="group flex max-w-[48%] items-center gap-2 text-left text-sm text-soul-brown transition hover:text-soul-violet">
               <ArrowLeft className="h-4 w-4 shrink-0" />
               <span className="flex min-w-0 flex-col">
@@ -356,7 +357,7 @@ export default async function EventPage({
             </Link>
           ) : <span />}
           {next ? (
-            <Link href={`/experiences/${next.slug}`}
+            <Link href={{pathname:"/experiences/[slug]",params:{slug:next.slug}}}
               className="group flex max-w-[48%] items-center gap-2 text-right text-sm text-soul-brown transition hover:text-soul-violet">
               <span className="flex min-w-0 flex-col">
                 <span className="text-xs uppercase tracking-wide text-soul-bronze">{t("next")}</span>

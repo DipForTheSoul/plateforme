@@ -4,7 +4,7 @@ import {AdminExperienceViews} from '@/app/[locale]/admin/ExperienceViews';
 
 const state = vi.hoisted(() => ({failure: '', rows: [{id:'1', title:'Offre sans vue', slug:'offre-zero', view_count:0}], calls: [] as unknown[][]}));
 vi.mock('next-intl/server', () => ({getLocale:async ()=>'fr', getTranslations:async ()=>(key:string)=>key}));
-vi.mock('@/i18n/navigation', () => ({Link:({href,children}:{href:string;children:React.ReactNode})=><a href={href}>{children}</a>}));
+vi.mock('@/i18n/navigation', () => ({Link:({href,children}:{href:string|{pathname:string;params:{slug:string}};children:React.ReactNode})=><a href={typeof href==='string'?href:href.pathname.replace('[slug]',href.params.slug)}>{children}</a>}));
 vi.mock('@/lib/supabase/server', () => ({createClient:async () => ({from:(table:string) => {
   state.calls.push(['from',table]);
   const q = {

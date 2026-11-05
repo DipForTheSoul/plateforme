@@ -143,7 +143,7 @@ export default async function HomePage({
             return (
               <Link
                 key={category.id}
-                href={`/experiences?categorie=${category.slug}`}
+                href={{pathname:'/experiences',query:{categorie:category.slug}}}
                 className="group relative flex h-44 min-w-0 items-end overflow-hidden rounded-2xl shadow-sm transition hover:shadow-lg"
                 style={visual.image ? undefined : { background: visual.gradient }}
               >

@@ -30,7 +30,7 @@ describe("crawl cost boundary", () => {
     const res=await POST(new NextRequest('https://example.test/api/views',{method:'POST',headers:{origin:'https://other.test',cookie:'fts-audience-consent-v2=accepted'},body:'{}'}));
     expect(res.status).toBe(403);expect(state.rate).not.toHaveBeenCalled();
   });
-  it.each(['/admin','/de/admin','/espace-praticien/evenements','/auth/callback','//other.test'])("never records private path %s",async(path)=>{
+  it.each(['/admin','/de/admin','/espace-praticien/evenements','/auth/callback','//other.test','/de/anmelden','/de/registrierung','/en/sign-in','/en/sign-up','/de/passwort-vergessen','/de/passwort-zuruecksetzen','/en/forgot-password','/en/reset-password'])("never records private path %s",async(path)=>{
     const res=await POST(new NextRequest('https://example.test/api/views',{method:'POST',headers:{origin:'https://example.test',cookie:'fts-audience-consent-v2=accepted'},body:JSON.stringify({path,browserId:'11111111-1111-4111-8111-111111111111'})}));
     expect(res.status).toBe(204);expect(state.admin).not.toHaveBeenCalled();
   });
@@ -40,7 +40,7 @@ describe("crawl cost boundary", () => {
   });
   it.each(["Mozilla/5.0 (iPad) AppleWebKit/605.1.15 Safari/604.1", "Mozilla/5.0 Firefox/146.0", "Mozilla/5.0 Chrome/155.0.0.0", "Mozilla/5.0 Ddg/26.6"])("keeps human filtering and counting: %s", async (ua) => {
     expect(isAutomatedAgent(ua)).toBe(false);
-    const page = await proxy(new NextRequest("https://example.test/de/experiences?du=2026-10-17&vue=carte", { headers: { "user-agent": ua } }));
+    const page = await proxy(new NextRequest("https://example.test/de/erlebnisse?du=2026-10-17&vue=carte", { headers: { "user-agent": ua } }));
     expect(page.status).toBe(200); expect(state.session).toHaveBeenCalledOnce();
     const res = await POST(new NextRequest("https://example.test/api/views", { method: "POST", headers: { "user-agent": ua,origin:'https://example.test',cookie:'fts-audience-consent-v2=accepted' }, body: JSON.stringify({ path: "/de/experiences", browserId:'11111111-1111-4111-8111-111111111111' }) }));
     expect(res.status).toBe(200); expect(state.insert).toHaveBeenCalledWith({ browser_id:'11111111-1111-4111-8111-111111111111' },{onConflict:'day,browser_id',ignoreDuplicates:true});
@@ -49,6 +49,10 @@ describe("crawl cost boundary", () => {
   it.each(["", "/fr", "/de", "/en"])("blocks crawl combinations before session/render for %s", async (prefix) => {
     const response = await proxy(new NextRequest(`https://example.test${prefix}/experiences?calendrier=2099-12`, { headers: { "user-agent": "Lightpanda/1.0" } }));
     expect(response.status).toBe(403); expect(response.headers.get("cache-control")).toContain("no-store"); expect(state.session).not.toHaveBeenCalled();
+  });
+  it('keeps the translated catalogue behind the same crawl-cost boundary',async()=>{
+    const response=await proxy(new NextRequest('https://example.test/de/erlebnisse?vue=carte',{headers:{'user-agent':'Googlebot/2.1'}}));
+    expect(response.status).toBe(403);expect(state.session).not.toHaveBeenCalled();
   });
   it.each(["/experiences", "/de/experiences/offer", "/admin?du=x", "/auth/callback?du=x"])("does not block canonical/detail/auth paths %s", (path) => {
     expect(shouldStopCatalogueCrawl(new URL(`https://example.test${path}`), "Googlebot/2.1")).toBe(false);

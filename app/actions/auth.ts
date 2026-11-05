@@ -10,6 +10,7 @@ import { slugify } from "@/lib/utils";
 import { safeRedirectPath } from '@/lib/safe-redirect';
 import {webUrlSchema} from '@/lib/web-url';
 import {formFieldErrors} from '@/lib/form-field-errors';
+import {publicPath} from '@/i18n/public-pathnames';
 
 export interface AuthState {
   error?: string;
@@ -21,7 +22,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 function localizedPath(formData: FormData, path: string) {
   const locale = String(formData.get('locale'));
-  return ['de', 'en'].includes(locale) ? `/${locale}${path}` : path;
+  return publicPath(path,['de','en'].includes(locale)?locale:'fr');
 }
 
 /** Connexion e-mail / mot de passe. */

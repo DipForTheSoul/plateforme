@@ -6,6 +6,7 @@ import type * as LeafletNS from "leaflet";
 import {escapeHtml} from '@/lib/html';
 import {StaticEventsMap} from './StaticEventsMap';
 import {useTranslations} from 'next-intl';
+import {publicPath} from '@/i18n/public-pathnames';
 
 export interface MapItem {
   id: string;
@@ -97,7 +98,7 @@ export function EventsMapExplorer({
           : "";
         const recurrence = it.recurrenceLabel ? `<div style="background:#604ca0;color:white;border-radius:999px;padding:3px 8px;display:inline-block;margin-top:6px">${escapeHtml(it.recurrenceLabel)}</div>` : '';
         marker.bindPopup(
-          `<a href="${escapeHtml(hrefPrefix)}/experiences/${encodeURIComponent(it.slug)}" style="font-family:serif;font-weight:600;color:#443420;font-size:14px;text-decoration:none;overflow-wrap:anywhere;">${escapeHtml(it.title)}</a>${venue}<div style="color:#9e7c52;font-size:12px;margin-top:2px;overflow-wrap:anywhere;">${escapeHtml(it.dateLabel)} · ${escapeHtml(it.priceLabel)}</div>${recurrence}`,
+          `<a href="${escapeHtml(publicPath(`/experiences/${encodeURIComponent(it.slug)}`,hrefPrefix.slice(1)||'fr'))}" style="font-family:serif;font-weight:600;color:#443420;font-size:14px;text-decoration:none;overflow-wrap:anywhere;">${escapeHtml(it.title)}</a>${venue}<div style="color:#9e7c52;font-size:12px;margin-top:2px;overflow-wrap:anywhere;">${escapeHtml(it.dateLabel)} · ${escapeHtml(it.priceLabel)}</div>${recurrence}`,
           {maxWidth:Math.max(100,Math.min(300,map.getSize().x-80)), autoPanPadding:[16,16], keepInView:true}
         );
         marker.on("click", () => {
@@ -179,7 +180,7 @@ export function EventsMapExplorer({
             ref={(el) => {
               cardRefs.current[it.id] = el;
             }}
-            href={`${hrefPrefix}/experiences/${it.slug}`}
+            href={publicPath(`/experiences/${encodeURIComponent(it.slug)}`,hrefPrefix.slice(1)||'fr')}
             onMouseEnter={() => setSelected(it.id)}
             onFocus={() => setSelected(it.id)}
             className={`flex gap-3 rounded-2xl border p-3 transition ${

@@ -4,7 +4,7 @@ export function isAutomatedAgent(userAgent: string | null): boolean {
 }
 
 export function shouldStopCatalogueCrawl(url: URL, userAgent: string | null): boolean {
-  if (!/^\/(?:fr\/|de\/|en\/)?experiences\/?$/.test(url.pathname)) return false;
+  if (!/^\/(?:fr\/|de\/|en\/)?(?:experiences|erlebnisse)\/?$/.test(url.pathname)) return false;
   if (!isAutomatedAgent(userAgent)) return false;
   // Keep the canonical catalogue and individual offers discoverable.
   return ["du", "au", "calendrier", "vue"].some((key) => url.searchParams.has(key));

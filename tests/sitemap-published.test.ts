@@ -3,5 +3,5 @@ vi.mock('@/lib/queries',()=>({getSitemapEvents:async()=>[{slug:'ancienne-experie
 import sitemap from '@/app/sitemap';
 it('includes published detail pages and their language alternatives independently of the upcoming catalogue',async()=>{
  const entries=await sitemap();const event=entries.find(x=>x.url.endsWith('/experiences/ancienne-experience'));
- expect(event).toBeDefined();expect(event?.alternates?.languages?.de).toContain('/de/experiences/ancienne-experience');
+ expect(event).toBeDefined();expect(event?.alternates?.languages?.de).toContain('/de/erlebnisse/ancienne-experience');
 });

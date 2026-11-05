@@ -14,9 +14,9 @@ vi.mock('@/lib/queries', () => ({
 describe('public page identity', () => {
   it.each(['fr', 'de', 'en'])('keeps the complete page path in %s', locale => {
     const links = pageAlternates('/experiences/danse-soufie', locale);
-    expect(links.canonical).toBe(`${SITE_URL}${locale === 'fr' ? '' : `/${locale}`}/experiences/danse-soufie`);
+    expect(links.canonical).toBe(`${SITE_URL}${locale === 'fr' ? '/experiences' : locale === 'de' ? '/de/erlebnisse' : '/en/experiences'}/danse-soufie`);
     expect(links.languages?.fr).toBe(`${SITE_URL}/experiences/danse-soufie`);
-    expect(links.languages?.de).toBe(`${SITE_URL}/de/experiences/danse-soufie`);
+    expect(links.languages?.de).toBe(`${SITE_URL}/de/erlebnisse/danse-soufie`);
     expect(links.languages?.en).toBe(`${SITE_URL}/en/experiences/danse-soufie`);
   });
   it('retains the home language links', () => {
@@ -26,12 +26,12 @@ describe('public page identity', () => {
   it('event metadata identifies the event rather than the home page', async () => {
     const { generateMetadata } = await import('@/app/[locale]/experiences/[slug]/page');
     const result = await generateMetadata({ params: Promise.resolve({ locale: 'de', slug: 'danse-soufie' }) });
-    expect(result.alternates?.canonical).toBe(`${SITE_URL}/de/experiences/danse-soufie`);
+    expect(result.alternates?.canonical).toBe(`${SITE_URL}/de/erlebnisse/danse-soufie`);
   });
   it('practitioner metadata identifies the practitioner', async () => {
     const { generateMetadata } = await import('@/app/[locale]/praticiens/[slug]/page');
     const result = await generateMetadata({ params: Promise.resolve({ locale: 'en', slug: 'cynthia' }) });
-    expect(result.alternates?.canonical).toBe(`${SITE_URL}/en/praticiens/cynthia`);
+    expect(result.alternates?.canonical).toBe(`${SITE_URL}/en/practitioners/cynthia`);
   });
   it('venue metadata identifies the public venue', async () => {
     const { generateMetadata } = await import('@/app/[locale]/lieux/[id]/page');

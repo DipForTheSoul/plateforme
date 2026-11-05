@@ -59,7 +59,7 @@ export default async function PractitionersPage({
       <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {practitioners.map((p) => (
           <article key={p.id} className="card group relative">
-            <Link href={`/praticiens/${p.slug}`} className="absolute inset-0 z-10">
+            <Link href={{pathname:"/praticiens/[slug]",params:{slug:p.slug}}} className="absolute inset-0 z-10">
               <span className="sr-only">{p.name}</span>
             </Link>
             <div className="relative aspect-[4/5] w-full overflow-hidden bg-soul-sand/30">

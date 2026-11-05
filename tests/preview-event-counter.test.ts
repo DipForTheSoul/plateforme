@@ -20,4 +20,4 @@ it('utilise le compteur serveur en production', async () => {
   expect(state.rpc).toHaveBeenCalledExactlyOnceWith('increment_event_view', { p_event_id: 'fixture' });
 });
 
-it.each(['fr','de','en'])('redirects old aliases before counting a view (%s)',async locale=>{await expect(EventPage({params:Promise.resolve({locale,slug:'old-fixture'})})).rejects.toMatchObject({digest:expect.stringContaining(`${locale==='fr'?'':`/${locale}`}/experiences/fixture`)});expect(state.rpc).not.toHaveBeenCalled();});
+it.each(['fr','de','en'])('redirects old aliases before counting a view (%s)',async locale=>{await expect(EventPage({params:Promise.resolve({locale,slug:'old-fixture'})})).rejects.toMatchObject({digest:expect.stringContaining(`${locale==='fr'?'/experiences':locale==='de'?'/de/erlebnisse':'/en/experiences'}/fixture`)});expect(state.rpc).not.toHaveBeenCalled();});

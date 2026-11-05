@@ -48,8 +48,11 @@ export async function verifyAuthLocal(config,password){
     const destination=await followEmail();check('confirmation PKCE via la route Next, langue conservée',destination.pathname==='/de/espace-praticien');
     client=make();check('session utilisable après confirmation',ok(await client.auth.getUser()).user.id===userId);
     ok(await client.auth.signOut());jar.clear();client=make();
-    ok(await client.auth.resetPasswordForEmail(email,{redirectTo:'http://localhost:3100/api/auth/callback?next=/de/reinitialiser-mot-de-passe'}));
-    check('lien de récupération vers la page allemande',(await followEmail()).pathname==='/de/reinitialiser-mot-de-passe');
+    ok(await client.auth.resetPasswordForEmail(email,{redirectTo:'http://localhost:3100/api/auth/callback?next=/de/passwort-zuruecksetzen'}));
+    const resetDestination=await followEmail();
+    check('lien de récupération vers la nouvelle adresse allemande',resetDestination.pathname==='/de/passwort-zuruecksetzen');
+    const resetPage=await fetch(resetDestination,{headers:{cookie:[...jar].map(([name,value])=>`${name}=${value}`).join('; ')}});
+    check('page de récupération traduite réellement accessible',resetPage.ok&&(await resetPage.text()).includes('Neues Passwort'));
     client=make();const replacement='Fts-QA-Changed-2026!';ok(await client.auth.updateUser({password:replacement}));ok(await client.auth.signOut());jar.clear();client=make();
     check('ancien mot de passe refusé après remplacement',Boolean((await client.auth.signInWithPassword({email,password})).error));
     check('nouveau mot de passe accepté',ok(await client.auth.signInWithPassword({email,password:replacement})).user.id===userId);

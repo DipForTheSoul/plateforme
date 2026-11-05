@@ -89,7 +89,7 @@ export function FavoritesClient({
               const visual = categoryVisual(event.category?.slug);
               return (
                 <article key={event.id} className="card group relative">
-                  <Link href={`/experiences/${event.slug}`} className="absolute inset-0 z-10">
+                  <Link href={{pathname:"/experiences/[slug]",params:{slug:event.slug}}} className="absolute inset-0 z-10">
                     <span className="sr-only">{event.title}</span>
                   </Link>
                   <div className="relative h-40 w-full overflow-hidden">
@@ -130,7 +130,7 @@ export function FavoritesClient({
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {practitioners.map((p) => (
               <article key={p.id} className="card group relative flex items-center gap-4 p-4">
-                <Link href={`/praticiens/${p.slug}`} className="absolute inset-0 z-10">
+                <Link href={{pathname:"/praticiens/[slug]",params:{slug:p.slug}}} className="absolute inset-0 z-10">
                   <span className="sr-only">{p.name}</span>
                 </Link>
                 <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full">

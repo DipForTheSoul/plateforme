@@ -1,4 +1,5 @@
 import type { MapItem } from './EventsMapExplorer';
+import {publicPath} from '@/i18n/public-pathnames';
 
 /** Bounded, server-rendered map: no application JavaScript is needed. */
 export function StaticEventsMap({items, hrefPrefix}: {items: MapItem[]; hrefPrefix: string}) {
@@ -24,7 +25,7 @@ export function StaticEventsMap({items, hrefPrefix}: {items: MapItem[]; hrefPref
   return <div data-testid="static-map" className="relative h-full min-h-64 overflow-hidden bg-soul-sand">
     <svg viewBox="0 0 512 384" className="h-full w-full" role="img" aria-label="OpenStreetMap" preserveAspectRatio="xMidYMid meet">
       {tiles}
-      {points.map(item => {const [x,y]=project(item.lat,item.lng);return <a key={item.id} href={`${hrefPrefix}/experiences/${encodeURIComponent(item.slug)}`} aria-label={item.title}><circle cx={x*scale-left} cy={y*scale-top} r="12" fill="#604ca0" stroke="white" strokeWidth="3"/><title>{item.title}</title></a>;})}
+      {points.map(item => {const [x,y]=project(item.lat,item.lng);return <a key={item.id} href={publicPath(`/experiences/${encodeURIComponent(item.slug)}`,hrefPrefix.slice(1)||'fr')} aria-label={item.title}><circle cx={x*scale-left} cy={y*scale-top} r="12" fill="#604ca0" stroke="white" strokeWidth="3"/><title>{item.title}</title></a>;})}
     </svg>
     <a className="absolute bottom-0 right-0 bg-white px-2 text-xs text-soul-brown" href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>
   </div>;

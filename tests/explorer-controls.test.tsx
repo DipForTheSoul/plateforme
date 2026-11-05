@@ -11,6 +11,7 @@ import en from '@/messages/en.json';
 const {replace}=vi.hoisted(()=>({replace:vi.fn()}));
 vi.mock('next/navigation',()=>({useSearchParams:()=>new URLSearchParams(),usePathname:()=>'/experiences'}));
 vi.mock('@/i18n/navigation',()=>({useRouter:()=>({replace}),usePathname:()=>'/experiences'}));
+function lastNavigationURL(){const {pathname,query}=replace.mock.calls.at(-1)![0];const url=new URL(pathname,'http://localhost');url.search=new URLSearchParams(query).toString();return url;}
 function SwitchCurrency(){const {setCurrency}=useCurrency();return <><button onClick={()=>setCurrency('EUR')}>Euros</button><button onClick={()=>setCurrency('CHF')}>Francs</button></>;}
 it.each([['fr',fr,'Prix max'],['de',de,'Max. Preis'],['en',en,'Max price']] as const)('conserve le seuil affiché en CHF en %s quelle que soit la devise du catalogue', (locale,messages,label)=>{
   localStorage.removeItem('fts-currency');
@@ -19,7 +20,7 @@ it.each([['fr',fr,'Prix max'],['de',de,'Max. Preis'],['en',en,'Max price']] as c
   const price=screen.getByRole('combobox',{name:`${label} (CHF)`});
   expect(screen.getByRole('option',{name:'≤ CHF 50.–',hidden:true})).toHaveValue('50');
   fireEvent.change(price,{target:{value:'50'}});
-  expect(new URL(replace.mock.calls.at(-1)![0],'http://localhost').searchParams.get('prix')).toBe('50');
+  expect(lastNavigationURL().searchParams.get('prix')).toBe('50');
   fireEvent.click(screen.getByRole('button',{name:'Francs'}));
   expect(screen.getByRole('combobox',{name:`${label} (CHF)`})).toBeInTheDocument();
   localStorage.removeItem('fts-currency');
@@ -31,7 +32,7 @@ it('cumule les changements rapides de filtres avant la réponse de navigation',(
   fireEvent.change(screen.getByRole('combobox',{name:'Pays'}),{target:{value:'CH'}});
   fireEvent.change(screen.getByRole('combobox',{name:'Prix max (CHF)'}),{target:{value:'50'}});
   fireEvent.change(screen.getByRole('combobox',{name:'Durée max'}),{target:{value:'90'}});
-  const url=new URL(replace.mock.calls.at(-1)![0],'http://localhost');
+  const url=lastNavigationURL();
   expect(Object.fromEntries(url.searchParams)).toEqual({langue:'fr',pays:'CH',prix:'50',duree:'90'});
 });
 it('laisse choisir les deux dates avant de soumettre le filtre',()=>{
@@ -46,8 +47,8 @@ it('laisse choisir les deux dates avant de soumettre le filtre',()=>{
   const submit=new Event('submit',{bubbles:true,cancelable:true});
   fireEvent(form,submit);
   expect(submit.defaultPrevented).toBe(true);
-  expect(Object.fromEntries(new URL(replace.mock.calls.at(-1)![0],'http://localhost').searchParams)).toEqual({du:'2026-10-17',au:'2026-10-18'});
+  expect(Object.fromEntries(lastNavigationURL().searchParams)).toEqual({du:'2026-10-17',au:'2026-10-18'});
   fireEvent.change(screen.getByRole('combobox',{name:'Langue'}),{target:{value:'fr'}});
-  const url=new URL(replace.mock.calls.at(-1)![0],'http://localhost');
+  const url=lastNavigationURL();
   expect(Object.fromEntries(url.searchParams)).toEqual({du:'2026-10-17',au:'2026-10-18',langue:'fr'});
 });

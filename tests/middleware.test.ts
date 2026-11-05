@@ -10,7 +10,7 @@ it('protège aussi /fr/admin et conserve le retour en langue allemande',async()=
   expect(fr.status).toBe(307);
   const de=await updateSession(new NextRequest('http://localhost/de/espace-praticien/profil?x=1'),NextResponse.next());
   const location=new URL(de.headers.get('location')!);
-  expect(location.pathname).toBe('/de/connexion');expect(location.searchParams.get('next')).toBe('/de/espace-praticien/profil?x=1');
+  expect(location.pathname).toBe('/de/anmelden');expect(location.searchParams.get('next')).toBe('/de/espace-praticien/profil?x=1');
 });
 it('transmet la session rafraîchie au navigateur ET aux composants serveur sans perdre la locale',async()=>{
   mock.user={id:'local'};mock.refresh=true;

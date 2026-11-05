@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import {publicPath} from '@/i18n/public-pathnames';
 
 /** Routes réservées aux utilisateurs connectés (préfixe de locale retiré). */
 const PROTECTED_PREFIXES = ["/espace-praticien", "/admin"];
@@ -61,7 +62,7 @@ export async function updateSession(
   if (isProtected && !user) {
     const url = request.nextUrl.clone();
     const locale = pathname.match(/^\/(de|en)(?=\/|$)/)?.[1];
-    url.pathname = `${locale ? '/' + locale : ''}/connexion`;
+    url.pathname = publicPath('/connexion',locale??'fr');
     url.search = '';
     url.searchParams.set("next", pathname + request.nextUrl.search);
     const redirectResponse = NextResponse.redirect(url);

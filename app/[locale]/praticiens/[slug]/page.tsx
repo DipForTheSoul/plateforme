@@ -56,7 +56,7 @@ export default async function PractitionerPage({
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
-      <JsonLd data={practitionerJsonLd(practitioner)} />
+      <JsonLd data={practitionerJsonLd(practitioner,locale)} />
 
       <div className="grid gap-8 md:grid-cols-[280px_1fr]">
         <div>

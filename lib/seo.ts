@@ -1,6 +1,7 @@
 import type { EventWithRelations, Practitioner } from "@/types/database";
 import { SITE_URL } from '@/lib/metadata';
 import { descriptionText } from '@/lib/description-text';
+import {publicPath} from '@/i18n/public-pathnames';
 
 /** Builders JSON-LD Schema.org (Phase 9). */
 
@@ -19,7 +20,7 @@ export function organizationJsonLd() {
   };
 }
 
-export function eventJsonLd(event: EventWithRelations) {
+export function eventJsonLd(event: EventWithRelations,locale='fr') {
   return {
     "@context": "https://schema.org",
     "@type": "Event",
@@ -29,7 +30,7 @@ export function eventJsonLd(event: EventWithRelations) {
     endDate: event.end_date ?? undefined,
     eventStatus: "https://schema.org/EventScheduled",
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-    url: `${SITE_URL}/experiences/${event.slug}`,
+    url: `${SITE_URL}${publicPath(`/experiences/${event.slug}`,locale)}`,
     image: event.images[0] ?? undefined,
     inLanguage: event.languages,
     location: event.venue
@@ -57,7 +58,7 @@ export function eventJsonLd(event: EventWithRelations) {
       ? {
           "@type": "Person",
           name: event.practitioner.name,
-          url: `${SITE_URL}/praticiens/${event.practitioner.slug}`,
+          url: `${SITE_URL}${publicPath(`/praticiens/${event.practitioner.slug}`,locale)}`,
         }
       : undefined,
     offers:
@@ -66,20 +67,20 @@ export function eventJsonLd(event: EventWithRelations) {
             "@type": "Offer",
             price: Number(event.price),
             priceCurrency: event.currency,
-            url: `${SITE_URL}/experiences/${event.slug}`,
+            url: `${SITE_URL}${publicPath(`/experiences/${event.slug}`,locale)}`,
             availability: "https://schema.org/InStock",
           }
         : undefined,
   };
 }
 
-export function practitionerJsonLd(practitioner: Practitioner) {
+export function practitionerJsonLd(practitioner: Practitioner,locale='fr') {
   return {
     "@context": "https://schema.org",
     "@type": "Person",
     name: practitioner.name,
     description: practitioner.bio ?? undefined,
-    url: `${SITE_URL}/praticiens/${practitioner.slug}`,
+    url: `${SITE_URL}${publicPath(`/praticiens/${practitioner.slug}`,locale)}`,
     image: practitioner.photos[0] ?? undefined,
     knowsLanguage: practitioner.languages,
     jobTitle: practitioner.specialties.join(" · ") || undefined,

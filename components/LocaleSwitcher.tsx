@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale } from "next-intl";
+import {useParams} from 'next/navigation';
 import { routing } from "@/i18n/routing";
 import { Link, usePathname } from "@/i18n/navigation";
 
@@ -8,13 +9,16 @@ import { Link, usePathname } from "@/i18n/navigation";
 export function LocaleSwitcher({ compact = false }: { compact?: boolean }) {
   const locale = useLocale();
   const pathname = usePathname();
+  const params = Object.fromEntries(Object.entries(useParams()).filter(
+    (entry):entry is [string,string|string[]]=>entry[1]!==undefined
+  ));
 
   return (
     <div className={`flex items-center gap-0.5 rounded-full border border-soul-bronze/25 bg-white ${compact ? "p-0.5" : "p-1"}`}>
       {routing.locales.map((l) => (
         <Link
           key={l}
-          href={pathname}
+          href={pathname.includes('[')?{pathname,params}:pathname}
           locale={l}
           aria-current={l === locale ? "page" : undefined}
           className={`rounded-full font-semibold uppercase transition ${

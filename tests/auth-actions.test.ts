@@ -28,5 +28,5 @@ it('absorbe les demandes limitées sans révéler leur état',async()=>{
   expect(await requestPasswordReset({},form({email:'qa@example.test'}))).toEqual({success:'resetSent'});
 });
 it('conserve la langue après remplacement du mot de passe',async()=>{
-  await expect(updatePassword({},form({password:'password',passwordConfirm:'password',locale:'en'}))).rejects.toThrow('redirect:/en/connexion');
+  await expect(updatePassword({},form({password:'password',passwordConfirm:'password',locale:'en'}))).rejects.toThrow('redirect:/en/sign-in');
 });

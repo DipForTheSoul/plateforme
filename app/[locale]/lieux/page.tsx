@@ -104,7 +104,7 @@ export default async function VenuesPage({
           {venues.map((v) => (
             <Link
               key={v.id}
-              href={`/lieux/${v.id}`}
+              href={{pathname:"/lieux/[id]",params:{id:v.id}}}
               className="card group flex h-full flex-col p-6 transition hover:shadow-lg"
             >
               <h2 className="font-serif text-xl text-soul-brown">{v.name}</h2>
