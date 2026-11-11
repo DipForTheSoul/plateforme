@@ -1,10 +1,23 @@
 import { beforeEach, expect, it, vi } from 'vitest';
 import { updateSettings } from '@/app/actions/settings';
+import { updateTag } from 'next/cache';
 const mocks = vi.hoisted(() => ({upsert:vi.fn(), profile:vi.fn()}));
-vi.mock('next/cache',()=>({revalidatePath:vi.fn()}));
+vi.mock('next/cache',()=>({revalidatePath:vi.fn(),updateTag:vi.fn()}));
 vi.mock('@/lib/auth',()=>({getCurrentProfile:mocks.profile}));
 vi.mock('@/lib/supabase/server',()=>({createClient:async()=>({from:()=>({upsert:mocks.upsert})})}));
-beforeEach(()=>{mocks.upsert.mockReset().mockResolvedValue({error:null}); mocks.profile.mockResolvedValue({role:'admin'});});
+beforeEach(()=>{mocks.upsert.mockReset().mockResolvedValue({error:null}); mocks.profile.mockResolvedValue({role:'admin'});vi.mocked(updateTag).mockClear();});
+it('expire immédiatement le délai public après enregistrement des 10 jours',async()=>{
+  const fd=new FormData();fd.set('event_delist_days','10');
+  expect((await updateSettings({},fd)).success).toBeTruthy();
+  expect(mocks.upsert.mock.calls[0][0][0]).toMatchObject({key:'event_delist_days',value:'10'});
+  expect(updateTag).toHaveBeenCalledWith('public-settings');
+});
+it('ne rafraîchit pas le cache si l’enregistrement échoue',async()=>{
+  mocks.upsert.mockResolvedValue({error:{message:'unavailable'}});
+  const fd=new FormData();fd.set('event_delist_days','10');
+  expect((await updateSettings({},fd)).error).toBeTruthy();
+  expect(updateTag).not.toHaveBeenCalled();
+});
 it('ne supprime pas une promotion en modifiant uniquement une durée',async()=>{
   const fd=new FormData();fd.set('featured_default_days','30');
   expect((await updateSettings({},fd)).success).toBeTruthy();

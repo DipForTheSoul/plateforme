@@ -1,4 +1,5 @@
 import { createPublicClient } from "@/lib/supabase/public";
+import { createAdminClient } from "@/lib/supabase/admin";
 import {eventPublicSlug,findPublicEvent} from '@/lib/event-public-slug';
 import { publicCache } from "@/lib/public-cache";
 import { readPages } from "@/lib/read-pages";
@@ -41,6 +42,21 @@ const cachedSettings = publicCache(async () => {
   if (error) throw new Error("Lecture des réglages indisponible.");
   return Object.fromEntries(((data ?? []) as { key: string; value: string }[]).map((row) => [row.key, row.value]));
 }, ["public-settings-v1"], ["public-settings"]);
+
+const cachedDelistDays = publicCache(async () => {
+  // This setting is deliberately hidden by RLS. Read only this key on the
+  // server; an anonymous read would silently apply 15 days instead of the
+  // administrator's configured delay.
+  const { data, error } = await createAdminClient().from("settings")
+    .select("value").eq("key", "event_delist_days").maybeSingle();
+  if (error) throw new Error("Lecture du délai de retrait indisponible.");
+  if (!data) return 15;
+  const days = Number(data.value);
+  if (!String(data.value).trim() || !Number.isInteger(days) || days < 0 || days > 36500) {
+    throw new Error("Délai de retrait invalide.");
+  }
+  return days;
+}, ["public-event-delist-days-v1"], ["public-settings"]);
 
 const cachedCategories = publicCache(async () => {
   const { data, error } = await createPublicClient().from("categories").select("*").order("position");
@@ -114,9 +130,8 @@ export async function getApprovedEvents(
     // (réglé par l'admin via `settings.event_delist_days`, défaut 15). Au-delà,
     // il n'apparaît plus dans le catalogue/la recherche — mais sa PAGE reste en
     // ligne (accessible par URL, pour le référencement).
-    const delistDays = Number((await cachedSettings()).event_delist_days ?? 15);
-    const floorDays = Number.isFinite(delistDays) && delistDays >= 0 ? delistDays : 15;
-    const delistFloor = new Date(Date.now() - floorDays * 86_400_000).toISOString();
+    const delistDays = await cachedDelistDays();
+    const delistFloor = new Date(Date.now() - delistDays * 86_400_000).toISOString();
 
     let events = (await cachedEvents()).filter((event) =>
       (event.end_date ?? event.start_date) >= delistFloor || event.start_date >= delistFloor

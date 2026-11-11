@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth";
 import type { ActionState } from "@/app/actions/events";
@@ -79,6 +79,7 @@ export async function updateSettings(
 
   if (error) return { error: "Enregistrement impossible." };
 
+  updateTag("public-settings");
   revalidatePath("/admin/parametres");
   revalidatePath("/", "layout"); // rafraîchit le taux affiché côté visiteur
   return { success: "Paramètres enregistrés." };
