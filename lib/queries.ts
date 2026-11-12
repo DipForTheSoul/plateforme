@@ -1,6 +1,7 @@
 import { createPublicClient } from "@/lib/supabase/public";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {eventPublicSlug,findPublicEvent} from '@/lib/event-public-slug';
+import { findPublicPractitioner, withPublicPractitionerSlug } from '@/lib/practitioner-public-slug';
 import { publicCache } from "@/lib/public-cache";
 import { readPages } from "@/lib/read-pages";
 import {
@@ -71,8 +72,11 @@ const cachedEvents = publicCache(async () => {
     .order("start_date", { ascending: true })
     .order("id", { ascending: true });
   const data = await readPages((from, to) => query.range(from, to));
-  return ((data as unknown as EventRowRaw[]) ?? []).map(mapEventRow);
-}, ["public-approved-events-v1"], ["public-events"]);
+  return ((data as unknown as EventRowRaw[]) ?? []).map(mapEventRow).map(event => ({
+    ...event,
+    practitioner: event.practitioner ? withPublicPractitionerSlug(event.practitioner) : null,
+  }));
+}, ["public-approved-events-v2"], ["public-events"]);
 
 const cachedPractitioners = publicCache(async () => {
   const query = createPublicClient().from("practitioners").select("*")
@@ -164,8 +168,10 @@ export async function getApprovedEvents(
       events = events.filter((e) =>
         e.categories.some((c) => c.slug === filters.category)
       );
-    if (filters.practitioner)
-      events = events.filter((e) => e.practitioner?.slug === filters.practitioner);
+    if (filters.practitioner) {
+      const practitioner = await getPractitionerBySlug(filters.practitioner);
+      events = practitioner ? events.filter(event => event.practitioner?.id === practitioner.id) : [];
+    }
     if (filters.canton)
       events = events.filter((e) => e.venue?.canton === filters.canton);
     if (filters.country)
@@ -225,7 +231,7 @@ export async function getAdjacentEvents(
 
 export async function getApprovedPractitioners(): Promise<Practitioner[]> {
   try {
-    return await cachedPractitioners();
+    return (await cachedPractitioners()).map(withPublicPractitionerSlug);
   } catch {
     throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");
   }
@@ -235,7 +241,8 @@ export async function getPractitionerBySlug(
   slug: string
 ): Promise<Practitioner | null> {
   try {
-    return (await cachedPractitioners()).find((practitioner) => practitioner.slug === slug) ?? null;
+    const practitioner = findPublicPractitioner(await cachedPractitioners(), slug);
+    return practitioner ? withPublicPractitionerSlug(practitioner) : null;
   } catch {
     throw new Error("La fiche est momentanément indisponible. Merci de réessayer.");
   }
@@ -275,7 +282,7 @@ export async function getPractitionersByIds(
   if (!ids.length) return [];
   try {
     const requested = new Set(ids);
-    return (await cachedPractitioners()).filter((practitioner) => requested.has(practitioner.id));
+    return (await cachedPractitioners()).filter((practitioner) => requested.has(practitioner.id)).map(withPublicPractitionerSlug);
   } catch {
     throw new Error("Les données sont momentanément indisponibles. Merci de réessayer.");
   }

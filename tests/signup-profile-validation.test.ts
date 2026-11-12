@@ -1,7 +1,7 @@
 import {beforeEach,expect,it,vi} from 'vitest';
 const s=vi.hoisted(()=>({signup:vi.fn(),update:vi.fn(),role:'admin',practitioner:true}));
 vi.mock('next/headers',()=>({headers:async()=>new Headers()}));
-vi.mock('next/cache',()=>({revalidatePath:vi.fn()}));
+vi.mock('next/cache',()=>({revalidatePath:vi.fn(),updateTag:vi.fn()}));
 vi.mock('@/lib/rate-limit',()=>({isRateLimited:async()=>false}));
 vi.mock('@/lib/auth',()=>({getCurrentPractitioner:async()=>s.practitioner?{id:'fixture',slug:'fixture',status:'approved',links:{}}:null,getCurrentProfile:async()=>({role:s.role})}));
 vi.mock('@/lib/supabase/admin',()=>({createAdminClient:vi.fn()}));
@@ -11,6 +11,7 @@ vi.mock('@/lib/supabase/server',()=>({createClient:async()=>({auth:{signUp:s.sig
 }})}));
 import {signUp} from '@/app/actions/auth';
 import {updatePractitionerProfile,adminUpdatePractitioner} from '@/app/actions/practitioner';
+import {updateTag} from 'next/cache';
 const form=(values:Record<string,string>)=>{const f=new FormData();Object.entries(values).forEach(([k,v])=>f.set(k,v));return f;};
 const signup=()=>form({email:'fixture@example.test',password:'Fixture-only-123',passwordConfirm:'Fixture-only-123',role:'practitioner',firstName:'Test',lastName:'Fixture',artistName:'Test Fixture',bio:'Eine ausreichend lange Biografie für einen isolierten Test.',specialties:'Yoga',locale:'de'});
 const profile=()=>form({name:'Test Fixture',bio:'Biographie conservée',locale:'de'});
@@ -46,6 +47,12 @@ it('returns the same precise biography error in admin editing',async()=>{
 it('saves an exact-limit biography and normalizes the profile link',async()=>{
  const f=profile();f.set('bio','a'.repeat(4000));f.set('website','monsite.ch');
  expect(await updatePractitionerProfile({},f)).toHaveProperty('success');expect(s.update.mock.calls[0][0].bio).toHaveLength(4000);expect(s.update.mock.calls[0][0].contact.website).toBe('https://monsite.ch/');
+ expect(updateTag).toHaveBeenCalledWith('public-practitioners');expect(updateTag).toHaveBeenCalledWith('public-events');
+});
+it('actualise les liens publics après modification du nom par l’administrateur',async()=>{
+ const f=profile();f.set('name','Nouveau nom');
+ expect(await adminUpdatePractitioner('fixture',{},f)).toHaveProperty('success');
+ expect(updateTag).toHaveBeenCalledWith('public-practitioners');expect(updateTag).toHaveBeenCalledWith('public-events');
 });
 it('retains the admin authorization guard',async()=>{
  s.role='practitioner';expect(await adminUpdatePractitioner('fixture',{},profile())).toEqual({error:"Réservé à l'administrateur."});expect(s.update).not.toHaveBeenCalled();

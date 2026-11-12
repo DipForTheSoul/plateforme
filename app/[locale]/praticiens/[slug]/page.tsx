@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { pageAlternates } from '@/lib/metadata';
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
+import { publicPath } from '@/i18n/public-pathnames';
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { EventCard } from "@/components/EventCard";
 import { FavoriteButton } from "@/components/FavoriteButton";
@@ -38,8 +39,10 @@ export async function generateMetadata({
 /** Fiche praticien publique (Phase 4) + prochaines expériences. */
 export default async function PractitionerPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string; slug: string }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
@@ -48,8 +51,16 @@ export default async function PractitionerPage({
 
   const practitioner = await getPractitionerBySlug(slug);
   if (!practitioner || practitioner.status !== "approved") notFound();
+  if (slug !== practitioner.slug) {
+    const query = new URLSearchParams();
+    for (const [key, value] of Object.entries(await searchParams ?? {})) {
+      for (const item of Array.isArray(value) ? value : value === undefined ? [] : [value]) query.append(key, item);
+    }
+    const suffix = query.size ? `?${query}` : '';
+    permanentRedirect(publicPath(`/praticiens/${practitioner.slug}`, locale) + suffix);
+  }
 
-  const events = await getApprovedEvents({ practitioner: slug });
+  const events = await getApprovedEvents({ practitioner: practitioner.slug });
   // A linked account always has an auth/profile email; the address itself is
   // deliberately resolved only inside the server action and never exposed.
   const hasContactRecipient = Boolean(practitioner.user_id);

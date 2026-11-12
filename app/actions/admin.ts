@@ -2,6 +2,7 @@
 
 import { revalidatePath, updateTag } from "next/cache";
 import { getPrivateContactEmail } from "@/lib/practitioner-private";
+import { practitionerPublicSlug } from '@/lib/practitioner-public-slug';
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
@@ -174,12 +175,14 @@ export async function moderatePractitioner(formData: FormData): Promise<void> {
     .eq("id", practitionerId);
   if(updateError)throw new Error('La décision n’a pas pu être enregistrée. Aucune notification envoyée.');
 
+  updateTag("public-practitioners");
+  updateTag("public-events");
   const to = practitioner ? await getPrivateContactEmail(supabase, practitioner.id) : undefined;
   if (to && practitioner) {
     const lang = await getPractitionerLang(supabase, practitioner.user_id);
     const tpl =
       decision === "approved"
-        ? practitionerApprovedEmail(practitioner.name, practitioner.slug, lang)
+        ? practitionerApprovedEmail(practitioner.name, practitionerPublicSlug(practitioner), lang)
         : practitionerRejectedEmail(practitioner.name, message, lang);
     await sendEmail({ to, ...tpl });
   }

@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { z } from "zod";
 import { webUrlSchema } from '@/lib/web-url';
 import { createClient } from "@/lib/supabase/server";
@@ -109,6 +109,8 @@ export async function updatePractitionerProfile(
     if(resubmissionError)return {error:actionMessage(locale,"profileResubmit")};
   }
 
+  updateTag("public-practitioners");
+  updateTag("public-events");
   revalidatePath("/espace-praticien/profil");
   revalidatePath(`/praticiens/${practitioner.slug}`);
   if (practitioner.status === "rejected") {
@@ -199,6 +201,8 @@ export async function adminUpdatePractitioner(
 
   if (error) return { error: "Mise à jour impossible." };
 
+  updateTag("public-practitioners");
+  updateTag("public-events");
   revalidatePath("/admin/praticiens");
   if ((current as { slug: string } | null)?.slug) {
     revalidatePath(`/praticiens/${(current as { slug: string }).slug}`);

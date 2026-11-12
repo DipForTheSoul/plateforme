@@ -7,6 +7,7 @@ import { CalendarPlus } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { createClient } from "@/lib/supabase/client";
+import { withPublicPractitionerSlug } from '@/lib/practitioner-public-slug';
 import { getFavoriteEventIds, getFavoritePractitionerIds, favoritesAreTemporary } from "@/lib/favorites";
 import { categoryVisual } from "@/lib/gradients";
 import { formatDate } from "@/lib/utils";
@@ -54,7 +55,7 @@ export function FavoritesClient({
         if(eventsRes.error || practitionersRes.error)throw new Error('Favorites unavailable');
         setFailed(false);
         setEvents((eventsRes.data as EventRow[]) ?? []);
-        setPractitioners((practitionersRes.data as Practitioner[]) ?? []);
+        setPractitioners(((practitionersRes.data as Practitioner[]) ?? []).map(withPublicPractitionerSlug));
       } catch {
         if(request!==current)return;
         setFailed(true);
