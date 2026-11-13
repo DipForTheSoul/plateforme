@@ -31,3 +31,9 @@ it.each(['error','throw'])('isole une panne %s sans afficher un faux zéro',asyn
 it('garde le bloc visible si aucune offre publiée existe',async()=>{
   state.rows=[];const html=renderToStaticMarkup(await AdminExperienceViews());expect(html).toContain('dashboard.topExperiences');expect(html).toContain('dashboard.noData');
 });
+it('utilise aussi un lien lisible pour une expérience importée dans le tableau de bord',async()=>{
+  state.rows=[{id:'4cba3fe6-d553-4c20-ac31-a3e7a79a2518',title:'Einzelcoaching',slug:'experience-da0ef2ac-2059-4d38-aa81-c07abd9211dd',view_count:10}];
+  const html=renderToStaticMarkup(await AdminExperienceViews());
+  expect(html).toContain('/experiences/einzelcoaching-4cba3fe6d553');
+  expect(html).not.toContain('/experiences/experience-da0ef2ac');
+});

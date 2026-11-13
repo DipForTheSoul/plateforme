@@ -4,6 +4,9 @@ import {eventPublicSlug,findPublicEvent} from '@/lib/event-public-slug';
 import { findPublicPractitioner, withPublicPractitionerSlug } from '@/lib/practitioner-public-slug';
 import { publicCache } from "@/lib/public-cache";
 import { readPages } from "@/lib/read-pages";
+import { groupEventSeries } from '@/lib/event-series';
+import { findPublicVenue } from '@/lib/venue-public-slug';
+import { isVenuePublished } from '@/lib/venue-publication';
 import {
   EVENT_WITH_RELATIONS,
   mapEventRow,
@@ -196,6 +199,11 @@ export async function getTopEvents(limit = 3): Promise<EventWithRelations[]> {
   }
 }
 
+/** Same date window and grouping as the unfiltered public catalogue. */
+export async function getCatalogueEventCount(): Promise<number> {
+  return groupEventSeries(await getApprovedEvents()).length;
+}
+
 export async function getEventBySlug(
   slug: string
 ): Promise<EventWithRelations | null> {
@@ -254,6 +262,11 @@ export async function getVenueById(id: string): Promise<Venue | null> {
   } catch {
     throw new Error("La fiche est momentanément indisponible. Merci de réessayer.");
   }
+}
+
+/** Public aliases never resolve a private or pending venue. */
+export async function getVenueByPublicSlug(slug: string): Promise<Venue | null> {
+  return findPublicVenue((await getVenues()).filter(isVenuePublished), slug);
 }
 
 export async function getVenues(): Promise<Venue[]> {

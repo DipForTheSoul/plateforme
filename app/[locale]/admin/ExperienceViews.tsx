@@ -1,6 +1,7 @@
 import {getLocale, getTranslations} from 'next-intl/server';
 import {Link} from '@/i18n/navigation';
 import {createClient} from '@/lib/supabase/server';
+import {eventPublicSlug} from '@/lib/event-public-slug';
 
 const notes = {
   fr: 'Vues cumulées des fiches, distinctes du nombre de visiteurs uniques.',
@@ -33,7 +34,7 @@ export async function AdminExperienceViews() {
         {rows.map(row => <li key={row.id} className="flex min-w-0 items-start gap-4 py-3 text-sm">
           <span className="w-16 shrink-0 text-right font-semibold tabular-nums text-soul-brown">{row.view_count.toLocaleString(locale)}</span>
           <div aria-hidden className="mt-1.5 h-2 shrink-0 rounded-full bg-soul-violet/70" style={{width:`${row.view_count>0?Math.max(1,row.view_count/Math.max(1,rows[0].view_count)*30):0}%`}} />
-          <Link href={{pathname:"/experiences/[slug]",params:{slug:row.slug}}} className="min-w-0 break-words text-soul-bronze underline-offset-4 hover:text-soul-violet hover:underline">{row.title}</Link>
+          <Link href={{pathname:"/experiences/[slug]",params:{slug:eventPublicSlug(row)}}} className="min-w-0 break-words text-soul-bronze underline-offset-4 hover:text-soul-violet hover:underline">{row.title}</Link>
         </li>)}
       </ul>}
     <p className="mt-4 text-xs leading-relaxed text-soul-bronze">{notes[locale as keyof typeof notes] ?? notes.fr}</p>

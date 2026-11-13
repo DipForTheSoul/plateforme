@@ -1,7 +1,7 @@
 import {beforeEach,it,expect,vi} from 'vitest';
 import {adminUpdateVenue} from '@/app/actions/venues';
 const state=vi.hoisted(()=>({role:'admin',update:vi.fn(),geo:vi.fn()}));
-vi.mock('next/cache',()=>({revalidatePath:vi.fn()}));
+vi.mock('next/cache',()=>({revalidatePath:vi.fn(),updateTag:vi.fn()}));
 vi.mock('@/lib/auth',()=>({getCurrentProfile:async()=>({role:state.role})}));
 vi.mock('@/lib/geocode',()=>({geocodeAddress:state.geo}));
 vi.mock('@/lib/supabase/server',()=>({createClient:async()=>({from:()=>({

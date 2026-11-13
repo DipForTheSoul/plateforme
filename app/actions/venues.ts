@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { z } from "zod";
 import { webUrlSchema } from '@/lib/web-url';
 import { createClient } from "@/lib/supabase/server";
@@ -90,6 +90,7 @@ export async function createVenue(
     .single();
 
   if (error || !data) return { error: msg.save };
+  updateTag('public-venues');
 
   revalidatePath("/admin/lieux");
   revalidatePath("/[locale]/lieux", "page");
@@ -155,6 +156,8 @@ export async function adminUpdateVenue(
     .eq("id", venueId);
 
   if (error) return { error: "Mise à jour du lieu impossible." };
+  updateTag('public-venues');
+  updateTag('public-events');
 
   revalidatePath("/admin/lieux");
   revalidatePath(`/lieux/${venueId}`);
@@ -175,6 +178,8 @@ export async function deleteVenue(formData: FormData): Promise<void> {
   const supabase = await createClient();
   const {error}=await supabase.from("venues").delete().eq("id", venueId);
   if(error)throw new Error('Le lieu n’a pas pu être supprimé. Il peut être lié à une expérience.');
+  updateTag('public-venues');
+  updateTag('public-events');
 
   revalidatePath("/admin/lieux");
 }

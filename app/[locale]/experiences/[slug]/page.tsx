@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { pageAlternates } from '@/lib/metadata';
 import {publicPath} from '@/i18n/public-pathnames';
 import { isVenuePublished } from '@/lib/venue-publication';
+import { venuePublicSlug } from '@/lib/venue-public-slug';
 import {descriptionText} from '@/lib/description-text';
 import {webUrlSchema} from '@/lib/web-url';
 import { toEventLocalInput } from '@/lib/event-time';
@@ -238,7 +239,7 @@ export default async function EventPage({
         {event.venue && (
           <p className="flex items-center gap-3 text-sm text-soul-ink">
             <MapPin className="h-4 w-4 shrink-0 text-soul-bronze" />
-            {isVenuePublished(event.venue) ? <Link href={{pathname:"/lieux/[id]",params:{id:event.venue.id}}} className="underline">
+            {isVenuePublished(event.venue) ? <Link href={{pathname:"/lieux/[id]",params:{id:venuePublicSlug(event.venue)}}} className="underline">
               {event.venue.name}
             </Link> : <span>{event.venue.name}</span>}
             <span className="text-soul-bronze">

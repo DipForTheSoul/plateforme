@@ -1,5 +1,5 @@
 import { beforeEach, expect, it, vi } from 'vitest';
-import { getApprovedEvents, getEventBySlug } from '@/lib/queries';
+import { getApprovedEvents, getEventBySlug, getCatalogueEventCount } from '@/lib/queries';
 
 const state = vi.hoisted(() => ({ days: '10' as string | null, failed: false, reads: [] as string[] }));
 const events = [
@@ -33,6 +33,11 @@ it('applique les 10 jours enregistrés même lorsque le réglage est caché au p
 });
 it('conserve la fiche approuvée accessible après le retrait des listes', async () => {
   expect((await getEventBySlug('love-lounge'))?.id).toBe('old');
+});
+it('compte les expériences visibles en regroupant la série même si sa première date est retirée', async () => {
+  expect(await getCatalogueEventCount()).toBe(3);
+  state.days = '15';
+  expect(await getCatalogueEventCount()).toBe(4);
 });
 it('reprend la durée modifiée par l’administrateur et accepte zéro jour', async () => {
   state.days = '15';

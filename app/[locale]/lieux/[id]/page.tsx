@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { pageAlternates } from '@/lib/metadata';
 import { isVenuePublished } from '@/lib/venue-publication';
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
+import { publicPath } from '@/i18n/public-pathnames';
+import { venuePublicSlug } from '@/lib/venue-public-slug';
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { EventCard } from "@/components/EventCard";
 import { VenueMap } from "@/components/VenueMap";
-import { getVenueById } from "@/lib/queries";
+import { getVenueByPublicSlug } from "@/lib/queries";
 import { createClient } from "@/lib/supabase/server";
 import { EVENT_WITH_RELATIONS, mapEventRow, type EventRowRaw } from "@/types/database";
 import { formatVenueLocationFull } from "@/lib/utils";
@@ -20,24 +22,34 @@ export async function generateMetadata({
   params: Promise<{ locale: string; id: string }>;
 }): Promise<Metadata> {
   const { locale, id } = await params;
-  const venue = await getVenueById(id);
+  const venue = await getVenueByPublicSlug(id);
   return venue && isVenuePublished(venue)
-    ? { title: venue.name, description: venue.description?.slice(0, 160), alternates: pageAlternates(`/lieux/${venue.id}`, locale) }
+    ? { title: venue.name, description: venue.description?.slice(0, 160), alternates: pageAlternates(`/lieux/${venuePublicSlug(venue)}`, locale) }
     : { title: "ForTheSoul" };
 }
 
 /** Fiche lieu publique (Phase 4) + expériences programmées. */
 export default async function VenuePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string; id: string }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale, id } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("venues");
 
-  const venue = await getVenueById(id);
+  const venue = await getVenueByPublicSlug(id);
   if (!venue || !isVenuePublished(venue)) notFound();
+  const canonical = venuePublicSlug(venue);
+  if (id !== canonical) {
+    const query = new URLSearchParams();
+    for (const [key, value] of Object.entries(await searchParams ?? {})) {
+      for (const item of Array.isArray(value) ? value : value === undefined ? [] : [value]) query.append(key, item);
+    }
+    permanentRedirect(publicPath(`/lieux/${canonical}`, locale) + (query.size ? `?${query}` : ''));
+  }
 
   const supabase = await createClient();
   const { data } = await supabase

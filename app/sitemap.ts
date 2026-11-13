@@ -1,7 +1,9 @@
 import type { MetadataRoute } from "next";
 import {publicPath} from '@/i18n/public-pathnames';
 import { SITE_URL } from '@/lib/metadata';
-import { getSitemapEvents, getApprovedPractitioners } from "@/lib/queries";
+import { getSitemapEvents, getApprovedPractitioners, getVenues } from "@/lib/queries";
+import { venuePublicSlug } from '@/lib/venue-public-slug';
+import { isVenuePublished } from '@/lib/venue-publication';
 
 
 // Le sitemap dépend de la base publique : ne pas tenter de le figer pendant
@@ -31,9 +33,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     alternates: { languages: localized(path) },
   }));
 
-  const [events, practitioners] = await Promise.all([
+  const [events, practitioners, venues] = await Promise.all([
     getSitemapEvents(),
     getApprovedPractitioners(),
+    getVenues(),
   ]);
 
   for (const event of events) {
@@ -54,6 +57,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
       alternates: { languages: localized(`/praticiens/${practitioner.slug}`) },
     });
+  }
+
+  for (const venue of venues.filter(isVenuePublished)) {
+    const path = `/lieux/${venuePublicSlug(venue)}`;
+    entries.push({url: `${SITE_URL}${path}`, changeFrequency: 'weekly', priority: 0.6, alternates: {languages: localized(path)}});
   }
 
   return entries;

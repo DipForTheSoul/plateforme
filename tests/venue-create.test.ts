@@ -1,7 +1,7 @@
 import {beforeEach, expect, it, vi} from 'vitest';
 import {createVenue} from '@/app/actions/venues';
 const mocks = vi.hoisted(() => ({insert:vi.fn(), geocode:vi.fn(), user: {id:'qa'}}));
-vi.mock('next/cache', () => ({revalidatePath:vi.fn()}));
+vi.mock('next/cache', () => ({revalidatePath:vi.fn(),updateTag:vi.fn()}));
 vi.mock('@/lib/auth', () => ({getCurrentProfile: async () => ({id:'qa', role:'practitioner'})}));
 vi.mock('@/lib/geocode', () => ({geocodeAddress:mocks.geocode}));
 vi.mock('@/lib/supabase/server', () => ({createClient:async () => ({auth:{getUser:async () => ({data:{user:mocks.user}})}, from:() => ({insert:mocks.insert})})}));

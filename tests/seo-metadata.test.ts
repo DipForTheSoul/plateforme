@@ -8,7 +8,7 @@ vi.mock('@/i18n/navigation', () => ({ Link: () => null }));
 vi.mock('@/lib/queries', () => ({
   getEventBySlug: async () => ({ slug: 'danse-soufie', status: 'approved', title: 'Danse', description: 'Texte', images: [] }),
   getPractitionerBySlug: async () => ({ slug: 'cynthia', status: 'approved', name: 'Cynthia', photos: [] }),
-  getVenueById: async () => ({ id: 'venue-test', name: 'Lieu', review_status: 'approved', is_public: true }),
+  getVenueByPublicSlug: async () => ({ id: 'venue-test', name: 'Lieu', review_status: 'approved', is_public: true }),
 }));
 
 describe('public page identity', () => {
@@ -36,7 +36,7 @@ describe('public page identity', () => {
   it('venue metadata identifies the public venue', async () => {
     const { generateMetadata } = await import('@/app/[locale]/lieux/[id]/page');
     const result = await generateMetadata({ params: Promise.resolve({ locale: 'fr', id: 'venue-test' }) });
-    expect(result.alternates?.canonical).toBe(`${SITE_URL}/lieux/venue-test`);
+    expect(result.alternates?.canonical).toBe(`${SITE_URL}/lieux/lieu-venuetest`);
   });
 });
 

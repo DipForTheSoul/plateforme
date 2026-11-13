@@ -5,6 +5,7 @@ import { Suspense } from 'react';
 import { AdminAudience } from './Audience';
 import { AdminExperienceViews } from './ExperienceViews';
 import { AdminPageViews } from './PageViews';
+import { getCatalogueEventCount } from '@/lib/queries';
 
 export const dynamic = "force-dynamic";
 
@@ -19,21 +20,22 @@ export async function AdminCards() {
   const [
     pendingEvents,
     pendingPractitioners,
-    approvedEvents,
     rejectedEvents,
     activePractitioners,
     creditsConsumed,
     contacts,
-  ] = await Promise.all([
+    onlineEvents,
+  ] = await Promise.all([...[
     supabase.from("events").select("id", { count: "exact", head: true }).eq("status", "pending").is("parent_event_id", null),
     supabase.from("practitioners").select("id", { count: "exact", head: true }).eq("status", "pending"),
-    supabase.from("events").select("id", { count: "exact", head: true }).eq("status", "approved"),
     supabase.from("events").select("id", { count: "exact", head: true }).eq("status", "rejected"),
     supabase.from("practitioners").select("id", { count: "exact", head: true }).eq("status", "approved"),
     supabase.from("credit_transactions").select("id", { count: "exact", head: true }).eq("type", "consumption").gte("created_at", since.toISOString()),
     supabase.from("contacts").select("id", { count: "exact", head: true }),
-  ].map(query=>query.abortSignal(AbortSignal.timeout(4000))));
-  if ([pendingEvents,pendingPractitioners,approvedEvents,rejectedEvents,activePractitioners,creditsConsumed,contacts].some(result=>result.error)) {
+  ].map(query=>query.abortSignal(AbortSignal.timeout(4000))),
+    getCatalogueEventCount().then(count => ({count, error: null})).catch(() => ({count: null, error: {message: 'Catalogue unavailable'}})),
+  ]);
+  if ([pendingEvents,pendingPractitioners,onlineEvents,rejectedEvents,activePractitioners,creditsConsumed,contacts].some(result=>result.error)) {
     return <p role="status">{t('dashboard.unavailable')}</p>;
   }
 
@@ -41,7 +43,7 @@ export async function AdminCards() {
   const cards = [
     { label: t("dashboard.pendingSubmissions"), value: pendingEvents.count ?? 0, href: "/admin/soumissions", accent: true },
     { label: t("dashboard.pendingPractitioners"), value: pendingPractitioners.count ?? 0, href: "/admin/praticiens", accent: true },
-    { label: t("dashboard.eventsOnline"), value: approvedEvents.count ?? 0, href: "/admin/soumissions" },
+    { label: t("dashboard.eventsOnline"), value: onlineEvents.count ?? 0, href: "/experiences" },
     { label: t("dashboard.rejected"), value: rejectedEvents.count ?? 0, href: "/admin/soumissions" },
     { label: t("dashboard.activePractitioners"), value: activePractitioners.count ?? 0, href: "/admin/praticiens" },
     { label: t("dashboard.creditsConsumed30d"), value: creditsConsumed.count ?? 0, href: "/admin/credits" },

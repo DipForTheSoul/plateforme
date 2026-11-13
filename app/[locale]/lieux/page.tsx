@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { getVenues } from "@/lib/queries";
 import { VenueFilters } from "@/components/VenueFilters";
 import { isVenuePublished } from '@/lib/venue-publication';
+import { venuePublicSlug } from '@/lib/venue-public-slug';
 import { formatVenueLocationFull } from "@/lib/utils";
 import { ArrowRight, MapPin, Plus, Users, X } from "lucide-react";
 
@@ -104,7 +105,7 @@ export default async function VenuesPage({
           {venues.map((v) => (
             <Link
               key={v.id}
-              href={{pathname:"/lieux/[id]",params:{id:v.id}}}
+              href={{pathname:"/lieux/[id]",params:{id:venuePublicSlug(v)}}}
               className="card group flex h-full flex-col p-6 transition hover:shadow-lg"
             >
               <h2 className="font-serif text-xl text-soul-brown">{v.name}</h2>

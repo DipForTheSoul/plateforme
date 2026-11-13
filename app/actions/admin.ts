@@ -1,4 +1,5 @@
 "use server";
+import { eventPublicSlug } from '@/lib/event-public-slug';
 
 import { revalidatePath, updateTag } from "next/cache";
 import { getPrivateContactEmail } from "@/lib/practitioner-private";
@@ -76,7 +77,7 @@ export async function moderateEvent(formData: FormData): Promise<void> {
     const lang = await getPractitionerLang(supabase, practitioner?.user_id);
     const tpl =
       decision === "approved"
-        ? eventApprovedEmail(practitioner!.name, event.title, event.slug, message, lang)
+        ? eventApprovedEmail(practitioner!.name, event.title, eventPublicSlug(event), message, lang)
         : eventRejectedEmail(practitioner!.name, event.title, message, lang);
     await sendEmail({ to, ...tpl });
   }
