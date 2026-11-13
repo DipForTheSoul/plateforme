@@ -36,7 +36,7 @@ describe('public page identity', () => {
   it('venue metadata identifies the public venue', async () => {
     const { generateMetadata } = await import('@/app/[locale]/lieux/[id]/page');
     const result = await generateMetadata({ params: Promise.resolve({ locale: 'fr', id: 'venue-test' }) });
-    expect(result.alternates?.canonical).toBe(`${SITE_URL}/lieux/lieu-venuetest`);
+    expect(result.alternates?.canonical).toBe(`${SITE_URL}/lieux/lieu`);
   });
 });
 

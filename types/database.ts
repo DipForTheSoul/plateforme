@@ -40,6 +40,7 @@ export interface Practitioner {
 }
 
 export interface Venue {
+  slug?: string | null;
   review_status?: 'pending' | 'approved';
   is_public?: boolean;
   id: string;

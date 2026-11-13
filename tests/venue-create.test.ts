@@ -24,3 +24,10 @@ it('inclut la ville dans le géocodage historique et conserve l’erreur sans cr
   expect(mocks.geocode).toHaveBeenCalledWith('Adresse manuelle à vérifier, Genève','CH');
   expect(mocks.insert).not.toHaveBeenCalled();
 });
+
+it('essaie une adresse courte numérotée uniquement si le nom existe déjà',async()=>{
+ mocks.insert.mockReset().mockReturnValueOnce({select:()=>({single:async()=>({data:null,error:{code:'23505',message:'venues_public_slug_unique'}})})}).mockReturnValue({select:()=>({single:async()=>({data:{id:'new-venue'},error:null})})});
+ expect(await createVenue({},form())).toHaveProperty('venueId','new-venue');
+ expect(mocks.insert.mock.calls[0][0].slug).toBe('lieu-qa');
+ expect(mocks.insert.mock.calls[1][0].slug).toBe('lieu-qa-2');
+});

@@ -19,7 +19,7 @@ vi.mock('@/lib/supabase/server', () => ({createClient: async () => ({from: () =>
 beforeEach(() => {cleanup(); state.lat = 46; state.lng = 6;});
 
 it('place l’itinéraire après la carte et conserve son adresse de destination', async () => {
-  render(await VenuePage({params: Promise.resolve({locale: 'fr', id: 'lieu-test-venuetest'})}));
+  render(await VenuePage({params: Promise.resolve({locale: 'fr', id: 'lieu-test'})}));
   const directions = screen.getByRole('link', {name: 'directions'});
   const map = screen.getByTestId('venue-map');
   expect(map.compareDocumentPosition(directions) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
@@ -29,7 +29,7 @@ it('place l’itinéraire après la carte et conserve son adresse de destination
 
 it('conserve le lien itinéraire quand le lieu n’a pas de coordonnées', async () => {
   state.lat = null; state.lng = null;
-  render(await VenuePage({params: Promise.resolve({locale: 'fr', id: 'lieu-test-venuetest'})}));
+  render(await VenuePage({params: Promise.resolve({locale: 'fr', id: 'lieu-test'})}));
   expect(screen.queryByTestId('venue-map')).not.toBeInTheDocument();
   expect(screen.getByRole('link', {name: 'directions'})).toBeInTheDocument();
 });

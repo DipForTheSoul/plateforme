@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { geocodeAddress } from "@/lib/geocode";
 import {readVenuePoint} from '@/lib/address-search';
 import { getCurrentProfile } from "@/lib/auth";
-import { normalizeHttpUrl } from "@/lib/utils";
+import { normalizeHttpUrl, slugify } from "@/lib/utils";
 import type { ActionState } from "@/app/actions/events";
 
 const venueSchema = z.object({
@@ -68,33 +68,44 @@ export async function createVenue(
     };
   }
 
-  const { data, error } = await supabase
-    .from("venues")
-    .insert({
-      name: input.name,
-      address: input.address,
-      lat: geo?.lat ?? null,
-      lng: geo?.lng ?? null,
-      review_status: isAdmin ? 'approved' : 'pending',
-      is_public: isPublic,
-      city: input.city,
-      canton: input.canton,
-      country: input.country,
-      description: input.description,
-      capacity: input.capacity,
-      rooms: input.rooms,
-      contact: input.website ? { website: input.website } : {},
-      created_by: user.id,
-    })
-    .select("id")
-    .single();
+  const baseSlug = slugify(input.name).slice(0, 60).replace(/-+$/, '') || 'lieu';
+  let savedId: string | undefined;
+  // The unique index arbitrates simultaneous creations, including names of
+  // private venues that the current user's RLS policy cannot enumerate.
+  for (let attempt = 1; attempt <= 100; attempt++) {
+    const { data, error } = await supabase
+      .from("venues")
+      .insert({
+        slug: attempt === 1 ? baseSlug : `${baseSlug}-${attempt}`,
+        name: input.name,
+        address: input.address,
+        lat: geo?.lat ?? null,
+        lng: geo?.lng ?? null,
+        review_status: isAdmin ? 'approved' : 'pending',
+        is_public: isPublic,
+        city: input.city,
+        canton: input.canton,
+        country: input.country,
+        description: input.description,
+        capacity: input.capacity,
+        rooms: input.rooms,
+        contact: input.website ? { website: input.website } : {},
+        created_by: user.id,
+      })
+      .select("id")
+      .single();
 
-  if (error || !data) return { error: msg.save };
+    if (error?.code === '23505' && error.message?.includes('venues_public_slug_unique')) continue;
+    if (error || !data) return { error: msg.save };
+    savedId = data.id;
+    break;
+  }
+  if (!savedId) return { error: msg.save };
   updateTag('public-venues');
 
   revalidatePath("/admin/lieux");
   revalidatePath("/[locale]/lieux", "page");
-  return { success: msg.ok, venueId: data.id };
+  return { success: msg.ok, venueId: savedId };
 }
 
 /**
