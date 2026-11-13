@@ -14,3 +14,9 @@ it('preserves already readable links and rejects unknown identities',()=>{
  expect(eventPublicSlug({...event,slug:'danse-soufie-abc12'})).toBe('danse-soufie-abc12');
  expect(findPublicEvent([event],'inconnu-ffffffffffff')).toBeNull();
 });
+it('publie le nom court persistant et retrouve aussi les deux anciens formats',()=>{
+ const current={...event,public_slug:'danse-soufie-a-neuchatel'};
+ expect(eventPublicSlug(current)).toBe('danse-soufie-a-neuchatel');
+ for(const address of [event.slug,eventPublicSlug(event),current.public_slug])expect(findPublicEvent([current],address)?.id).toBe(event.id);
+ expect(eventPublicSlug({...current,title:'Nouveau titre'})).toBe(current.public_slug);
+});

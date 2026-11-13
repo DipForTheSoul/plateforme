@@ -2,6 +2,14 @@ import { expect, it } from 'vitest';
 import { findPublicPractitioner, practitionerPublicSlug } from '@/lib/practitioner-public-slug';
 
 const profile = { id: '0aa5de4e-6e0a-41f6-a063-3c7453d729a7', name: 'Cynthia', slug: 'fadoua-1cfe0e' };
+it('utilise le nom court enregistré et conserve les anciens liens après renommage',()=>{
+ const current={...profile,public_slug:'cynthia'};
+ expect(practitionerPublicSlug(current)).toBe('cynthia');
+ for(const address of ['cynthia',profile.slug,practitionerPublicSlug(profile)])expect(findPublicPractitioner([current],address)?.id).toBe(profile.id);
+ expect(practitionerPublicSlug({...current,name:'Autre nom'})).toBe('cynthia');
+ const other={...current,id:'autre',public_slug:'cynthia-2'};
+ expect(findPublicPractitioner([current,other],'cynthia-2')?.id).toBe('autre');
+});
 it('uniformise aussi une ancienne adresse courte portant un autre nom', () => {
   expect(practitionerPublicSlug(profile)).toBe('cynthia-0aa5de4e6e0a');
   expect(findPublicPractitioner([profile], 'fadoua-1cfe0e')).toBe(profile);

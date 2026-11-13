@@ -53,7 +53,7 @@ export async function moderateEvent(formData: FormData): Promise<void> {
 
   const { data: event } = await supabase
     .from("events")
-    .select("id, title, slug, practitioner:practitioners(id, name, user_id)")
+    .select("id, title, slug, public_slug, practitioner:practitioners(id, name, user_id)")
     .eq("id", eventId)
     .single();
   if (!event) return;
@@ -166,7 +166,7 @@ export async function moderatePractitioner(formData: FormData): Promise<void> {
   const supabase = await createClient();
   const { data: practitioner } = await supabase
     .from("practitioners")
-    .select("id, name, slug, user_id")
+    .select("id, name, slug, public_slug, user_id")
     .eq("id", practitionerId)
     .single();
 

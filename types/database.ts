@@ -18,6 +18,7 @@ export interface Profile {
 }
 
 export interface Practitioner {
+  public_slug?: string | null;
   id: string;
   user_id: string | null;
   name: string;
@@ -69,6 +70,7 @@ export interface Category {
 }
 
 export interface Event {
+  public_slug?: string | null;
   id: string;
   title: string;
   slug: string;
@@ -225,5 +227,5 @@ export interface CreditTransaction {
 export const EVENT_WITH_RELATIONS = `*,
   category:categories!events_category_id_fkey(*),
   event_categories(category:categories(*)),
-  practitioner:practitioners(id, name, slug),
+  practitioner:practitioners(id, name, slug, public_slug),
   venue:venues(*)`;

@@ -80,7 +80,7 @@ export default async function EventPage({
   const parentId = event.parent_event_id ?? event.id;
   const { data: siblingsData } = await supabase
     .from("events")
-    .select("id, slug, title, start_date")
+    .select("id, slug, public_slug, title, start_date")
     .or(`parent_event_id.eq.${parentId},id.eq.${parentId}`)
     .neq("id", event.id)
     .eq("status", "approved")

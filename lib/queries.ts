@@ -79,14 +79,14 @@ const cachedEvents = publicCache(async () => {
     ...event,
     practitioner: event.practitioner ? withPublicPractitionerSlug(event.practitioner) : null,
   }));
-}, ["public-approved-events-v3"], ["public-events"]);
+}, ["public-approved-events-v4"], ["public-events"]);
 
 const cachedPractitioners = publicCache(async () => {
   const query = createPublicClient().from("practitioners").select("*")
     .eq("status", "approved").order("name").order("id");
   const data = await readPages((from, to) => query.range(from, to));
   return ((data as Practitioner[]) ?? []).filter((p) => p.name.trim().toLowerCase() !== "praticien test");
-}, ["public-practitioners-v1"], ["public-practitioners"]);
+}, ["public-practitioners-v2"], ["public-practitioners"]);
 
 const cachedVenues = publicCache(async () => {
   const query = createPublicClient().from("venues").select("*").order("name").order("id");

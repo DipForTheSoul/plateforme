@@ -13,12 +13,12 @@ const notes = {
 export async function AdminExperienceViews() {
   const t = await getTranslations('admin');
   const locale = await getLocale();
-  let rows: {id: string; title: string; slug: string; view_count: number}[] = [];
+  let rows: {id: string; title: string; slug: string; public_slug?: string | null; view_count: number}[] = [];
   let unavailable = false;
   try {
     const db = await createClient();
     const {data, error} = await db.from('events')
-      .select('id,title,slug,view_count').eq('status', 'approved')
+      .select('id,title,slug,public_slug,view_count').eq('status', 'approved')
       .order('view_count', {ascending: false}).order('id')
       .limit(8).abortSignal(AbortSignal.timeout(4000));
     if (error) unavailable = true;

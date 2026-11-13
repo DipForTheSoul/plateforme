@@ -1,9 +1,10 @@
 import { slugify } from '@/lib/utils';
 
-type Identity = { id: string; name: string; slug: string };
+type Identity = { id: string; name: string; slug: string; public_slug?: string | null };
 
-/** One bounded, readable public address; stored slugs remain legacy aliases. */
+/** Persist the short address separately; stored historical slugs remain aliases. */
 export function practitionerPublicSlug(practitioner: Identity): string {
+  if (practitioner.public_slug) return practitioner.public_slug;
   const name = slugify(practitioner.name).slice(0, 60).replace(/-+$/, '') || 'praticien';
   return `${name}-${practitioner.id.replaceAll('-', '').slice(0, 12).toLowerCase()}`;
 }
@@ -13,7 +14,7 @@ export function withPublicPractitionerSlug<T extends Identity>(practitioner: T):
 }
 
 export function findPublicPractitioner<T extends Identity>(practitioners: T[], slug: string): T | null {
-  const stored = practitioners.find(practitioner => practitioner.slug === slug);
+  const stored = practitioners.find(practitioner => practitioner.id === slug || practitioner.slug === slug);
   if (stored) return stored;
   const canonical = practitioners.filter(practitioner => practitionerPublicSlug(practitioner) === slug);
   if (canonical.length) return canonical.length === 1 ? canonical[0] : null;
