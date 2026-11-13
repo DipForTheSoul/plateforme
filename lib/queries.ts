@@ -79,7 +79,7 @@ const cachedEvents = publicCache(async () => {
     ...event,
     practitioner: event.practitioner ? withPublicPractitionerSlug(event.practitioner) : null,
   }));
-}, ["public-approved-events-v2"], ["public-events"]);
+}, ["public-approved-events-v3"], ["public-events"]);
 
 const cachedPractitioners = publicCache(async () => {
   const query = createPublicClient().from("practitioners").select("*")
@@ -92,7 +92,7 @@ const cachedVenues = publicCache(async () => {
   const query = createPublicClient().from("venues").select("*").order("name").order("id");
   const data = await readPages((from, to) => query.range(from, to));
   return (data as Venue[]) ?? [];
-}, ["public-venues-v1"], ["public-venues"]);
+}, ["public-venues-v2"], ["public-venues"]);
 
 function distanceKm(lat1: number, lng1: number, lat2: number, lng2: number) {
   const radians = (value: number) => value * Math.PI / 180;
