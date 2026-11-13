@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import {descriptionText} from '@/lib/description-text';
 import { getEventBySlug } from "@/lib/queries";
 import { buildICS } from "@/lib/calendar";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+import { SITE_URL } from '@/lib/metadata';
 
 /** Fichier .ics d'un événement — « Ajouter à mon agenda » (universel). */
 export async function GET(
