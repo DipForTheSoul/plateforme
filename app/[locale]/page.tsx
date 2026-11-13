@@ -265,7 +265,7 @@ export default async function HomePage({
                 {item.q}
                 <Plus className="h-5 w-5 shrink-0 text-soul-bronze transition-transform duration-200 group-open:rotate-45" />
               </summary>
-              <p className="pb-5 leading-relaxed text-soul-ink/75">{item.a}{i===4&&<> <Link className="text-soul-violet underline" href="/devenir-praticien">{t("recruitment.learnMore")}</Link></>}</p>
+              <p className="whitespace-pre-line pb-5 leading-relaxed text-soul-ink/75">{item.a}{i===4&&<> <Link className="text-soul-violet underline" href="/devenir-praticien">{t("recruitment.learnMore")}</Link></>}</p>
             </details>,
             ...(i === 4 ? [<details key="propose" className="group rounded-2xl border border-soul-bronze/15 bg-white px-5 transition open:shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-serif text-lg text-soul-brown marker:content-none [&::-webkit-details-marker]:hidden">
@@ -305,11 +305,8 @@ export default async function HomePage({
             <h2 className="font-serif text-3xl leading-tight text-soul-brown sm:text-4xl">
               {t("didierTitle")}
             </h2>
-            <blockquote className="mt-6 border-l-2 border-soul-bronze/60 pl-5 font-serif text-xl italic leading-relaxed text-soul-brown">
-              « {t("didierQuote")} »
-            </blockquote>
-            <p className="mt-3 text-sm text-soul-bronze">{t("didierSignature")}</p>
-            <p className="mt-6 max-w-xl text-soul-brown/80">{t("didierText")}</p>
+            <p className="mt-6 text-lg font-semibold leading-relaxed text-soul-brown">{t("didierQuote")}</p>
+            <p className="mt-4 max-w-xl whitespace-pre-line leading-relaxed text-soul-brown/80">{t("didierText")}</p>
             <Link
               href="/a-propos"
               className="mt-8 inline-flex items-center gap-2 rounded-full bg-soul-violet px-6 py-3 text-sm font-semibold text-white transition hover:bg-soul-violet-dark"

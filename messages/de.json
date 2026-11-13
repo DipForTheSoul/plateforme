@@ -78,7 +78,7 @@
     "priceFree": "Kostenlos",
     "priceUnspecified": "Preis nicht angegeben",
     "siteName": "ForTheSoul",
-    "tagline": "Bewusste Erlebnisse in der Schweiz, mit Herz ausgewählt",
+    "tagline": "Bewusste Erlebnisse in der Schweiz und im Ausland, mit Herz ausgewählt",
     "nav": {
       "experiences": "Erlebnisse",
       "practitioners": "Anbieter:innen",
@@ -131,8 +131,8 @@
     "categoriesTitle": "Nach Welten stöbern",
     "topTitle": "Aktuelle Auswahl",
     "topSubtitle": "Hervorgehobene Erlebnisse",
-    "didierTitle": "Mit Herz gewählt, von Didier geprüft",
-    "didierText": "ForTheSoul ist kein weiteres Verzeichnis: Jede:r Anbieter:in und jedes Erlebnis wird von Didier Picamoles, Gründer der Plattform und Schöpfer der Humanic Dance, persönlich geprüft.",
+    "didierTitle": "Mit Herz ausgewählt und geprüft",
+    "didierText": "ForTheSoul bringt Menschen, Praktiken und Orte zusammen, die Offenheit für Bewusstsein, Selbsterkundung und menschliche Begegnungen teilen.\n\nWir möchten authentische Angebote, Menschen, die sich ihrer Praxis mit Hingabe widmen, und Erlebnisse sichtbar machen, die über eine einfache Aktivität hinausgehen. Jede Veröffentlichung wird vor ihrer Freischaltung geprüft.",
     "didierCta": "Die Geschichte von ForTheSoul entdecken",
     "upcomingTitle": "Nächste Erlebnisse",
     "heroBadge1": "Sorgfältig geprüft",
@@ -147,8 +147,8 @@
     "categoriesSubtitle": "Finde die Praxis, die dich ruft",
     "upcomingSubtitle": "Die nächsten Termine in deiner Nähe",
     "upcomingCta": "Alle Erlebnisse ansehen",
-    "didierEyebrow": "Von Didier persönlich ausgewählt",
-    "didierQuote": "Ich wünsche dir, dieselben wunderbaren Erlebnisse zu erleben wie ich.",
+    "didierEyebrow": "Eine menschliche Auswahl",
+    "didierQuote": "ForTheSoul ist weit mehr als eine Plattform für Einträge.",
     "didierSignature": "Didier Picamoles, Gründer",
     "faq": {
       "propose": {
@@ -160,8 +160,8 @@
       "subtitle": "Alles Wichtige, bevor du startest",
       "items": [
         {
-          "q": "Was ist ForTheSoul ?",
-          "a": "Eine Schweizer Plattform für bewusste Erlebnisse — Tanz, Meditation, Yoga, Klangreisen, Retreats — einzeln von Didier Picamoles ausgewählt. Kein Algorithmus, sondern echte Begegnungen."
+          "q": "Was ist ForTheSoul.ch?",
+          "a": "ForTheSoul.ch ist eine Plattform, die bewusste Erlebnisse, Anbieterinnen und Anbieter, Veranstaltende und inspirierende Orte in der Schweiz und im Ausland zusammenbringt.\n\nHier finden Sie bewusste Aktivitäten und Veranstaltungen rund um Yoga, freien Tanz, Meditation, Breathwork, Klangreisen, Männer- und Frauenkreise, Zeremonien, Tantra und Massage sowie Workshops und Retreats.\n\nOb Sie neue Praktiken entdecken, an einem Erlebnis teilnehmen, Anbieterinnen und Anbieter kennenlernen oder Ihre eigenen Aktivitäten teilen möchten: ForTheSoul erleichtert Begegnungen und Entdeckungen rund um Erlebnisse, die Körper und Seele nähren."
         },
         {
           "q": "Wie werden die Erlebnisse ausgewählt ?",
