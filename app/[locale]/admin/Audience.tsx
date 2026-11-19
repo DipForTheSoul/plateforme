@@ -33,8 +33,8 @@ export async function AdminAudience({month}: {month?: string | string[]} = {}) {
   <form method="get" action="#audience-visitors" className="mt-4 flex flex-wrap items-end gap-3">
    <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm text-soul-brown" htmlFor="audience-period">
     {l.period}
-    <select id="audience-period" name="audienceMonth" defaultValue={selected ?? ''} className="min-h-11 w-full rounded-xl border border-soul-bronze/30 bg-white px-3 py-2 text-soul-ink">
-     <option value="">{l.rolling}</option>
+    <select id="audience-period" name="audienceMonth" defaultValue={selected ?? 'rolling'} className="min-h-11 w-full rounded-xl border border-soul-bronze/30 bg-white px-3 py-2 text-soul-ink">
+     <option value="rolling">{l.rolling}</option>
      {months.map(value=><option key={value} value={value}>{new Date(value+'-01T12:00:00Z').toLocaleDateString(locale,{month:'long',year:'numeric',timeZone:'Europe/Zurich'})}</option>)}
     </select>
    </label>

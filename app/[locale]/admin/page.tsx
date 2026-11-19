@@ -71,7 +71,7 @@ export default async function AdminDashboard({searchParams}: {searchParams?: Pro
   const query = await searchParams;
   return <div className="flex flex-col gap-8">
     <Suspense fallback={<p role="status">{t('dashboard.loading')}</p>}><AdminCards /></Suspense>
-    <Suspense key={String(query?.audienceMonth ?? '')} fallback={<p role="status">{t('dashboard.audience30d')}…</p>}><AdminAudience month={query?.audienceMonth} /></Suspense>
+    <Suspense key={String(query?.audienceMonth ?? 'current')} fallback={<p role="status">{t('dashboard.audience30d')}…</p>}><AdminAudience month={query?.audienceMonth} /></Suspense>
     <Suspense fallback={<p role="status">{t('dashboard.topExperiences')}…</p>}><AdminExperienceViews /></Suspense>
     <Suspense fallback={<p role="status">{t('dashboard.audience30d')}…</p>}><AdminPageViews /></Suspense>
   </div>;

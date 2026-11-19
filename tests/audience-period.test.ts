@@ -48,7 +48,7 @@ it('refuse les appels non admin, y compris identité non établie, et anonymes',
 it('valide les mois URL et énumère les données disponibles avec le fuseau suisse',()=>{
  const today=new Date('2026-11-19T12:00:00Z');
  expect(audienceMonth('2026-10',today)).toBe('2026-10');expect(audienceMonth('2026-13',today)).toBe('2026-11');expect(audienceMonth(['2026-10'],today)).toBe('2026-11');
- expect(audienceMonth(undefined,today)).toBe('2026-11');expect(audienceMonth('',today)).toBeUndefined();expect(audienceMonth('2099-01',today)).toBe('2026-11');
+ expect(audienceMonth(undefined,today)).toBe('2026-11');expect(audienceMonth('',today)).toBeUndefined();expect(audienceMonth('rolling',today)).toBeUndefined();expect(audienceMonth('2099-01',today)).toBe('2026-11');
  expect(audienceMonth(undefined,new Date('2026-11-30T23:30:00Z'))).toBe('2026-12');
  expect(audienceMonth(undefined,new Date('2026-12-31T23:30:00Z'))).toBe('2027-01');
  expect(audienceMonths('2025-12-31T23:30:00Z','2026-03-19')).toEqual(['2026-03','2026-02','2026-01']);
