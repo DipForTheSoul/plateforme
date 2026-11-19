@@ -1,6 +1,8 @@
-/** Calendar months only; unrecognised URL input leaves the default rolling view. */
-export function audienceMonth(value?: string | string[]): string | undefined {
-  return typeof value === 'string' && /^20\d{2}-(0[1-9]|1[0-2])$/.test(value) ? value : undefined;
+/** Default to this calendar month in Switzerland; an explicit empty value selects rolling days. */
+export function audienceMonth(value?: string | string[], now = new Date()): string | undefined {
+  if (value === '') return undefined;
+  const current = now.toLocaleDateString('en-CA', {timeZone: 'Europe/Zurich', year: 'numeric', month: '2-digit'}).slice(0, 7);
+  return typeof value === 'string' && /^20\d{2}-(0[1-9]|1[0-2])$/.test(value) && value <= current ? value : current;
 }
 
 export function audienceMonths(startedAt: string, end: string): string[] {
