@@ -66,11 +66,12 @@ export async function AdminCards() {
   );
 }
 
-export default async function AdminDashboard() {
+export default async function AdminDashboard({searchParams}: {searchParams?: Promise<{audienceMonth?: string | string[]}>}) {
   const t=await getTranslations('admin');
+  const query = await searchParams;
   return <div className="flex flex-col gap-8">
     <Suspense fallback={<p role="status">{t('dashboard.loading')}</p>}><AdminCards /></Suspense>
-    <Suspense fallback={<p role="status">{t('dashboard.audience30d')}…</p>}><AdminAudience /></Suspense>
+    <Suspense key={String(query?.audienceMonth ?? '')} fallback={<p role="status">{t('dashboard.audience30d')}…</p>}><AdminAudience month={query?.audienceMonth} /></Suspense>
     <Suspense fallback={<p role="status">{t('dashboard.topExperiences')}…</p>}><AdminExperienceViews /></Suspense>
     <Suspense fallback={<p role="status">{t('dashboard.audience30d')}…</p>}><AdminPageViews /></Suspense>
   </div>;
