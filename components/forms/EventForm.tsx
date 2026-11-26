@@ -86,6 +86,7 @@ function EventFormBody({
   const [submissionId, setSubmissionId] = useState<string>(() => crypto.randomUUID());
   const [updatedAt, setUpdatedAt] = useState(event?.updated_at ?? '');
   const [customDates, setCustomDates] = useState<string[]>(event?.recurrence === 'custom' ? occurrences.map(o => toLocalInput(o.start_date)) : []);
+  const [customDateIds, setCustomDateIds] = useState<(string | null)[]>(event?.recurrence === 'custom' ? occurrences.map(o => o.id) : []);
   const [visibleOccurrences, setVisibleOccurrences] = useState(occurrences);
   const [removing, startRemoving] = useTransition();
   const [occurrenceError, setOccurrenceError] = useState('');
@@ -108,7 +109,7 @@ function EventFormBody({
     return false;
   });
 
-  const draftExtra = { images, recurrence, recurrenceCount, selectedVenue, multiDay, startDate, endDate, venueList, submissionId, customDates, priceMode, priceValue };
+  const draftExtra = { images, recurrence, recurrenceCount, selectedVenue, multiDay, startDate, endDate, venueList, submissionId, customDates, customDateIds, priceMode, priceValue };
   const draft = useDraftForm(`event:${draftOwner}:${event?.id ?? (practitioners ? 'admin-new' : 'new')}`,
     draftExtra, (data, fields) => {
       if (Array.isArray(data.images)) setImages(data.images.filter((v): v is string => typeof v === 'string'));
@@ -148,7 +149,11 @@ function EventFormBody({
       // its editable content, never its stale optimistic-lock timestamp: the
       // current page version must be submitted to avoid a false conflict.
       const restoredCustom = fields.occurrence_dates ?? data.customDates;
-      if (Array.isArray(restoredCustom)) setCustomDates(restoredCustom.filter((v): v is string => typeof v === 'string'));
+      if (Array.isArray(restoredCustom)) {
+        const dates=restoredCustom.filter((v): v is string => typeof v === 'string');
+        setCustomDates(dates);
+        setCustomDateIds(dates.map((date,index)=>Array.isArray(data.customDateIds) && typeof data.customDateIds[index] === 'string' ? data.customDateIds[index] : occurrences.find(o=>toLocalInput(o.start_date)===date)?.id ?? null));
+      }
     }, { persistent: true, updatedAt });
 
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
@@ -156,9 +161,13 @@ function EventFormBody({
       try {
         const result = await action(prev, data);
         if (result.success) {
-          draft.clear();
+          if(result.occurrences) {
+            const dates=result.occurrences.map(o=>toLocalInput(o.start_date));
+            const ids=result.occurrences.map(o=>o.id);
+            draft.clear({...draftExtra,customDates:dates,customDateIds:ids});
+            setVisibleOccurrences(result.occurrences);setCustomDates(dates);setCustomDateIds(ids);
+          } else draft.clear();
           if (result.updatedAt) setUpdatedAt(result.updatedAt);
-          if (result.occurrences) setVisibleOccurrences(result.occurrences);
           if (result.redirectTo) router.push(result.redirectTo);
         }
         return result;
@@ -167,6 +176,12 @@ function EventFormBody({
     {}
   );
 
+  function removeDraftDate(index: number) {
+    const dates=customDates.filter((_,i)=>i!==index);
+    setCustomDates(dates);
+    setCustomDateIds(ids=>ids.filter((_,i)=>i!==index));
+    if (!dates.length) setRecurrence('');
+  }
 
   function toggleNewVenue() {
     setShowNewVenue((open) => {
@@ -397,7 +412,13 @@ function EventFormBody({
             <div>
               <label htmlFor="recurrence" className="label">{t("recurrenceLabel")}</label>
               <select id="recurrence" name="recurrence" value={recurrence}
-                onChange={(e) => setRecurrence(e.target.value)} className="field">
+                onChange={(e) => {
+                  if(e.target.value==='custom' && !customDates.length && visibleOccurrences.length) {
+                    setCustomDates(visibleOccurrences.map(o=>toLocalInput(o.start_date)));
+                    setCustomDateIds(visibleOccurrences.map(o=>o.id));
+                  }
+                  setRecurrence(e.target.value);
+                }} className="field">
                 <option value="">{t("recurrenceNone")}</option>
                 <option value="weekly">{t("recurrenceWeekly")}</option>
                 <option value="biweekly">{t("recurrenceBiweekly")}</option>
@@ -421,9 +442,9 @@ function EventFormBody({
                 <input type="datetime-local" name="occurrence_dates" required min={startDate} aria-label={t('customDate', { number: index + 1 })} className="field min-w-0" value={date}
                   onInput={e => { const value = e.currentTarget.value; setCustomDates(dates => dates.map((d, i) => i === index ? value : d)); }}
                   onChange={e => setCustomDates(dates => dates.map((d, i) => i === index ? e.target.value : d))} />
-                <button type="button" className="btn-secondary" onClick={() => setCustomDates(dates => dates.filter((_, i) => i !== index))}>{t('removeOccurrence')}</button>
+                <button type="button" className="btn-secondary" onClick={() => removeDraftDate(index)}>{t('removeOccurrence')}</button>
               </div>)}
-              <button type="button" className="btn-secondary self-start" disabled={customDates.length >= 25} onClick={() => setCustomDates(dates => [...dates, ''])}>{t('addDate')}</button>
+              <button type="button" className="btn-secondary self-start" disabled={customDates.length >= 25} onClick={() => {setCustomDates(dates => [...dates, '']);setCustomDateIds(ids=>[...ids,null]);}}>{t('addDate')}</button>
             </div>}
             {event && <p className="text-xs sm:col-span-2">{t('seriesEditHint')}</p>}
           </div>
@@ -444,16 +465,29 @@ function EventFormBody({
                     }).format(new Date(occurrence.start_date))}
                   </time>
                   <button type="button" disabled={removing || pending} onClick={() => startRemoving(async () => {
-                    if(draft.hasChanges()) { setOccurrenceError(t('saveBeforeDelete')); return; }
+                    if(draft.hasChanges()) {
+                      if(occurrence.id===event.id) {setOccurrenceError(t('saveBeforeDelete'));return;}
+                      const dates=recurrence==='custom'?customDates:visibleOccurrences.map(o=>toLocalInput(o.start_date));
+                      const ids=recurrence==='custom'?customDateIds:visibleOccurrences.map(o=>o.id);
+                      const index=ids.indexOf(occurrence.id);
+                      if(index<0) {setOccurrenceError(t('saveBeforeDelete'));return;}
+                      if(index>=0) {
+                        const remaining=dates.filter((_,i)=>i!==index);
+                        setCustomDates(remaining);setCustomDateIds(ids.filter((_,i)=>i!==index));
+                        setRecurrence(remaining.length?'custom':'');
+                      }
+                      setOccurrenceError(t('saveDateRemoval'));return;
+                    }
                     try {
                       const result = await removeOccurrence(occurrence.id, event.id, locale);
                       if (result.error) { setOccurrenceError(result.error); return; }
                       if (result.redirectTo) { draft.clear(); router.push(result.redirectTo); return; }
                       const remaining = visibleOccurrences.filter(o => o.id !== occurrence.id);
-                      draft.clear({...draftExtra, recurrence: remaining.length ? 'custom' : '', customDates: remaining.map(o => toLocalInput(o.start_date))});
+                      draft.clear({...draftExtra, recurrence: remaining.length ? 'custom' : '', customDates: remaining.map(o => toLocalInput(o.start_date)), customDateIds:remaining.map(o=>o.id)});
                       setVisibleOccurrences(remaining);
                       setRecurrence(remaining.length ? 'custom' : '');
                       setCustomDates(remaining.map(o => toLocalInput(o.start_date)));
+                      setCustomDateIds(remaining.map(o=>o.id));
                       if (result.updatedAt) setUpdatedAt(result.updatedAt);
                       setOccurrenceError('');
                     } catch { setOccurrenceError(td('networkError')); }

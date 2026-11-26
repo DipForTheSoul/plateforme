@@ -22,6 +22,26 @@ const wrap = (child: React.ReactNode, locale: keyof typeof messages = 'fr') => <
 const eventForm = (action = vi.fn(async () => ({ error: 'Univers manquant' }))) => <EventForm categories={categories} venues={[]} defaultLanguages={['fr']} action={action} />;
 
 describe('Régressions signalées par Didier', () => {
+  it('repasse en événement unique quand la dernière date supplémentaire est retirée',()=>{
+    const event={id:'last-date',title:'Série de test',start_date:'2027-01-09T09:00:00Z',images:[],languages:['fr'],recurrence:'custom',recurrence_count:2} as unknown as Event;
+    render(wrap(<EventForm categories={categories} venues={[]} defaultLanguages={['fr']} event={event} occurrences={[{id:'last-child',start_date:'2027-02-09T09:00:00Z'}]}/>));
+    fireEvent.click(screen.getAllByRole('button',{name:fr.eventForm.removeOccurrence})[0]);
+    expect(screen.getByLabelText(fr.eventForm.recurrenceLabel)).toHaveValue('');
+    expect(screen.queryByLabelText(/Date supplémentaire/)).not.toBeInTheDocument();
+  });
+  it('prépare un retrait après une modification de date sans perdre la saisie', async()=>{
+    const action=vi.fn(async()=>({error:'Validation de test'}));
+    const event={id:'edited-series',title:'Série de test',start_date:'2027-01-09T09:00:00Z',images:[],languages:['fr'],recurrence:'custom',recurrence_count:3} as unknown as Event;
+    render(wrap(<EventForm categories={categories} venues={[]} defaultLanguages={['fr']} event={event} action={action} occurrences={[2,3].map(m=>({id:`month-${m}`,start_date:`2027-0${m}-09T09:00:00Z`}))}/>));
+    fireEvent.change(screen.getByLabelText(fr.eventForm.titleLabel),{target:{value:'Titre conservé'}});
+    fireEvent.change(screen.getByLabelText(fr.eventForm.customDate.replace('{number}','1')),{target:{value:'2027-02-10T10:00'}});
+    const section=within(screen.getByText(fr.eventForm.occurrencesList).closest('section')!);
+    fireEvent.click(section.getAllByRole('button',{name:fr.eventForm.removeOccurrence})[1]);
+    await waitFor(()=>expect(screen.getAllByLabelText(/Date supplémentaire/)).toHaveLength(1));
+    expect(screen.getByLabelText(fr.eventForm.titleLabel)).toHaveValue('Titre conservé');
+    expect(screen.getByLabelText(/Date supplémentaire/)).toHaveValue('2027-03-09T10:00');
+    expect(action).not.toHaveBeenCalled();
+  });
   it('exige un tarif explicite, réserve le montant au prix fixe et conserve le brouillon', async () => {
     const view = render(wrap(eventForm()));
     const mode = screen.getByLabelText(fr.eventForm.priceType);

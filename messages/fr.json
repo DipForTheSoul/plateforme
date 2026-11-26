@@ -531,6 +531,7 @@
     "occurrencesLabel": "Nombre d'occurrences",
     "occurrencesHint": "Toutes les dates sont générées automatiquement — 1 seul crédit consommé.",
     "occurrencesList": "Dates publiées dans cette série",
+    "saveDateRemoval": "Date retirée du formulaire. Enregistrez les modifications pour confirmer son retrait et conserver vos autres changements.",
     "saveBeforeDelete": "Enregistrez d’abord vos modifications avant de supprimer une date. Votre saisie est conservée.",
     "removeOccurrence": "Supprimer cette date",
     "draftRestored": "Brouillon restauré automatiquement.",

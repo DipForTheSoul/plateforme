@@ -531,6 +531,7 @@
     "occurrencesLabel": "Anzahl der Termine",
     "occurrencesHint": "Alle Daten werden automatisch erzeugt — nur 1 Guthaben verbraucht.",
     "occurrencesList": "Veröffentlichte Termine dieser Serie",
+    "saveDateRemoval": "Termin aus dem Formular entfernt. Speichern Sie die Änderungen, um das Entfernen und Ihre weiteren Änderungen zu bestätigen.",
     "saveBeforeDelete": "Speichern Sie zuerst Ihre Änderungen, bevor Sie einen Termin löschen. Ihre Eingaben bleiben erhalten.",
     "removeOccurrence": "Diesen Termin löschen",
     "draftRestored": "Entwurf wurde automatisch wiederhergestellt.",

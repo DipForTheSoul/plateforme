@@ -531,6 +531,7 @@
     "occurrencesLabel": "Number of occurrences",
     "occurrencesHint": "All dates are generated automatically — only 1 credit consumed.",
     "occurrencesList": "Dates published in this series",
+    "saveDateRemoval": "Date removed from the form. Save changes to confirm its removal together with your other edits.",
     "saveBeforeDelete": "Save your changes before deleting a date. Your input is preserved.",
     "removeOccurrence": "Delete this date",
     "draftRestored": "Draft restored automatically.",
